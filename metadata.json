@@ -1,0 +1,6 @@
+{
+  "name": "Ellix Connect Android",
+  "description": "Business management, without the complexity. The modern retail platform for billing, inventory, customers, payments, and business insights.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

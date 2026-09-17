@@ -1,0 +1,40 @@
+# Ellix Connect Android
+
+> The modern retail and business operating platform for sub-second billing, real-time inventory control, digital khata customer credit, unified payments, and actionable business insights.
+
+## Project Summary
+Ellix Connect is an enterprise-grade retail Point of Sale (POS) and inventory management operating system engineered for retailers, wholesalers, supermarkets, apparel boutiques, and distribution merchants. It provides offline-first local persistence, sub-second barcode scanning, cloud synchronization via Google Cloud Firestore, dynamic UPI payments, and end-of-day statutory GST tax filing reports.
+
+## Core Capabilities & Modules
+
+- **Billing & Invoices**: Sub-second barcode scanning (<0.25s latency), thermal receipt printing (ESC/POS 80mm/58mm), automatic GST/tax calculations, and instant PDF receipts.
+- **Inventory Control**: Real-time batch-level inventory tracking, minimum stock threshold alerts, barcode generation, multi-warehouse synchronization, and zero-leakage stock reconciliation.
+- **Catalog & Product Management**: Comprehensive SKU management supporting variants (size, color, pack size), multi-tier wholesale/retail pricing, and bulk CSV catalog imports.
+- **Digital Khata & Customer CRM**: Tamper-proof customer credit ledger, automatic WhatsApp payment balance reminders, loyalty reward point tracking, and full purchase history.
+- **Payments & Multi-Tender**: Integrated dynamic UPI QR codes (GPay, PhonePe, Paytm, BHIM), card terminal support, cash drawer reconciliation, and split-tender settlements.
+- **Transactions & Cashier Shifts**: Cashier shift handover logs, opening/closing cash tally, return credit notes, and tamper-evident audit trails.
+- **Reports & Statutory Tax**: Automated end-of-day P&L reports, category gross margin analytics, and export-ready GSTR-1 and GSTR-3B tax schedules (Excel, CSV, PDF).
+- **Business Insights**: AI-powered sales velocity rankings, dead-stock detection (>30 days zero sales), customer repeat purchase rate, and peak-hour store traffic analysis.
+- **Enterprise RBAC Administration**: Centralized role-based access control (Admin, Wholesaler, Store Manager, Cashier). Only verified administrators can assign or elevate user roles.
+
+## Technical Architecture & Specifications
+
+- **Client Runtime**: React 18+ Single Page Application with TypeScript, Vite, and Tailwind CSS.
+- **Persistence Layer**: Offline-first client-side state with durable Google Cloud Firestore synchronization for cross-device multi-register management.
+- **Authentication**: Firebase Authentication supporting Google OAuth (Verified 1-Click), Corporate Email with password recovery, and Phone SMS OTP.
+- **Security**: Strict Role-Based Access Control (RBAC) enforced centrally; zero client-side role elevation.
+- **Hardware Integrations**: USB/Bluetooth HID Barcode Scanners, ESC/POS Thermal Printers, Cash Drawers, and Customer Display Terminals.
+- **Compliance**: 100% Indian GST compliant (CGST, SGST, IGST, HSN/SAC codes, E-Way bills).
+
+## Machine-Readable Data Endpoints
+
+- **Live About & Metadata API**: `/api/about` (returns structured JSON describing application state, modules, and specifications)
+- **Health Check**: `/api/health`
+- **Sitemap**: `/sitemap.xml`
+- **Full LLM Context**: `/llms-full.txt`
+
+## Developer & Admin Contact
+- Platform: Ellix Connect
+- Administrator: Akash Joshi
+- Cloud Project: nice-unity-1mbw7
+- Documentation: https://ellixconnect.com

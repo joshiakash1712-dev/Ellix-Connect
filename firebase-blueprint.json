@@ -1,0 +1,242 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Authenticated user profile with synchronized auth providers and verified credentials",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Unique Firebase Authentication UID"
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Primary user email"
+        },
+        "emailVerified": {
+          "type": "boolean",
+          "description": "Whether email has been verified"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Primary user phone number in E.164 format"
+        },
+        "phoneVerified": {
+          "type": "boolean",
+          "description": "Whether phone has been verified via OTP"
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Full name or business owner name"
+        },
+        "photoURL": {
+          "type": "string",
+          "maxLength": 2048,
+          "description": "Avatar photo URL"
+        },
+        "role": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "User business role (retailer, wholesaler, admin, employee)"
+        },
+        "linkedProviders": {
+          "type": "array",
+          "description": "List of linked authentication provider IDs (google.com, password, phone)"
+        },
+        "passwordSynchronized": {
+          "type": "boolean",
+          "description": "Whether master synchronized password is set across credentials"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of account registration"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last credential synchronization or update"
+        }
+      },
+      "required": ["uid"]
+    },
+    "Store": {
+      "title": "Store",
+      "description": "Retail merchant store location and operational configuration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "gstin": { "type": "string", "maxLength": 32 },
+        "address": { "type": "string", "maxLength": 256 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "email": { "type": "string", "maxLength": 128 },
+        "currency": { "type": "string", "maxLength": 8 },
+        "upiId": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "ownerUid"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Inventory product item with stock tracking and pricing",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 256 },
+        "barcode": { "type": "string", "maxLength": 64 },
+        "brand": { "type": "string", "maxLength": 128 },
+        "category": { "type": "string", "maxLength": 128 },
+        "stock": { "type": "number" },
+        "unit": { "type": "string", "maxLength": 32 },
+        "minThreshold": { "type": "number" },
+        "purchasePrice": { "type": "number" },
+        "sellingPrice": { "type": "number" },
+        "mrp": { "type": "number" },
+        "taxRate": { "type": "number" },
+        "batchNumber": { "type": "string", "maxLength": 64 },
+        "expiryDate": { "type": "string", "maxLength": 32 },
+        "warehouseLocation": { "type": "string", "maxLength": 64 },
+        "sharedWithWholesalers": { "type": "boolean" },
+        "storeId": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "stock", "sellingPrice"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer and client profile with ledger and credit details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "email": { "type": "string", "maxLength": 128 },
+        "address": { "type": "string", "maxLength": 256 },
+        "gstNumber": { "type": "string", "maxLength": 32 },
+        "totalPurchases": { "type": "number" },
+        "creditBalance": { "type": "number" },
+        "creditLimit": { "type": "number" },
+        "trustScore": { "type": "number" },
+        "preferredTemplateId": { "type": "string", "maxLength": 64 },
+        "segment": { "type": "string", "maxLength": 32 },
+        "storeId": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "phone"]
+    },
+    "POSInvoice": {
+      "title": "POSInvoice",
+      "description": "Billing receipt and tax invoice transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "invoiceNumber": { "type": "string", "maxLength": 64 },
+        "customerName": { "type": "string", "maxLength": 128 },
+        "customerPhone": { "type": "string", "maxLength": 32 },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "taxAmount": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "paymentMethod": { "type": "string", "maxLength": 32 },
+        "paymentStatus": { "type": "string", "maxLength": 32 },
+        "createdAt": { "type": "string" },
+        "templateId": { "type": "string", "maxLength": 64 },
+        "storeId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "invoiceNumber"]
+    },
+    "RestockOrder": {
+      "title": "RestockOrder",
+      "description": "B2B restock purchase order between retailer and wholesaler",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "orderNumber": { "type": "string", "maxLength": 64 },
+        "productId": { "type": "string", "maxLength": 128 },
+        "productName": { "type": "string", "maxLength": 256 },
+        "quantity": { "type": "number" },
+        "requestedPrice": { "type": "number" },
+        "status": { "type": "string", "maxLength": 32 },
+        "wholesalerId": { "type": "string", "maxLength": 128 },
+        "wholesalerName": { "type": "string", "maxLength": 128 },
+        "requestedAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "storeId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "productId"]
+    },
+    "CustomerOrder": {
+      "title": "CustomerOrder",
+      "description": "Store pickup or delivery order placed by a customer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "orderNumber": { "type": "string", "maxLength": 64 },
+        "customerName": { "type": "string", "maxLength": 128 },
+        "customerPhone": { "type": "string", "maxLength": 32 },
+        "items": { "type": "array" },
+        "totalAmount": { "type": "number" },
+        "orderStatus": { "type": "string", "maxLength": 32 },
+        "paymentStatus": { "type": "string", "maxLength": 32 },
+        "pickupOtp": { "type": "string", "maxLength": 16 },
+        "createdAt": { "type": "string" },
+        "storeId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "orderNumber", "totalAmount", "orderStatus"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Security and business audit log record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string" },
+        "action": { "type": "string", "maxLength": 128 },
+        "details": { "type": "string", "maxLength": 512 },
+        "user": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "maxLength": 32 },
+        "storeId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "timestamp", "action"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile with synchronized auth credentials and roles"
+    },
+    "/stores/{storeId}": {
+      "schema": "Store",
+      "description": "Store profile and operational settings"
+    },
+    "/stores/{storeId}/products/{productId}": {
+      "schema": "Product",
+      "description": "Store inventory products and stock levels"
+    },
+    "/stores/{storeId}/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Store customer CRM records and ledger"
+    },
+    "/stores/{storeId}/invoices/{invoiceId}": {
+      "schema": "POSInvoice",
+      "description": "Store sales invoices and receipts"
+    },
+    "/stores/{storeId}/restockOrders/{orderId}": {
+      "schema": "RestockOrder",
+      "description": "B2B wholesaler restocking orders"
+    },
+    "/stores/{storeId}/customerOrders/{orderId}": {
+      "schema": "CustomerOrder",
+      "description": "Retail customer pickup and delivery orders"
+    },
+    "/stores/{storeId}/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Store operational audit trail"
+    }
+  }
+}

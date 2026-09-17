@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------- */
+/* BRAND COLOR TOKENS & SYSTEM THEME VARIABLES                   */
+/* ------------------------------------------------------------- */
+:root {
+  --color-brand-primary: #059669;        /* emerald-600 */
+  --color-brand-primary-light: #10b981;  /* emerald-500 */
+  --color-brand-accent: #14b8a6;         /* teal-500 */
+  --color-brand-highlight: #34d399;      /* emerald-400 */
+  --color-brand-dark: #0f172a;           /* slate-900 */
+  --color-brand-surface-dark: #1e293b;   /* slate-800 */
+  --color-brand-bg-light: #fafafa;       /* page bg light */
+  --color-brand-bg-dark: #020617;        /* page bg dark / slate-950 */
+  --gradient-brand: linear-gradient(135deg, #059669 0%, #14b8a6 50%, #34d399 100%);
+}
+
+.dark {
+  --color-brand-text-accent: #34d399;
+}
+
+/* ------------------------------------------------------------- */
+/* GLASSMORPHISM DESIGN TOKEN (ELLIX CONNECT FROSTED GLASS)      */
+/* ------------------------------------------------------------- */
+.glass-panel {
+  background-color: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.dark .glass-panel,
+html.dark .glass-panel {
+  background-color: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+}
+
+/* Interactive hover enhancement for clickable glass cards & buttons */
+.glass-panel-interactive {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.glass-panel-interactive:hover {
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2), 0 0 20px rgba(16, 185, 129, 0.12);
+}
+
+/* ------------------------------------------------------------- */
+/* GLOBAL VIEWPORT CONTAINMENT & OVERFLOW PREVENTION             */
+/* ------------------------------------------------------------- */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  position: relative;
+}
+
+#root {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Base transitions for smooth theme switching */
+html {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+}
+
+

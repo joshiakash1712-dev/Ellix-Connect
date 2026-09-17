@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80" fill="none">
+  <defs>
+    <linearGradient id="ellix-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+    <linearGradient id="ellix-teal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#14b8a6" />
+    </linearGradient>
+    <filter id="subtle-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#10b981" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <style>
+    .brand-title { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; font-weight: 800; font-size: 26px; fill: #0f172a; }
+    .brand-accent { fill: #059669; }
+    .brand-tagline { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; font-weight: 600; font-size: 9.5px; fill: #64748b; letter-spacing: 0.12em; }
+    @media (prefers-color-scheme: dark) {
+      .brand-title { fill: #f8fafc; }
+      .brand-accent { fill: #34d399; }
+      .brand-tagline { fill: #94a3b8; }
+    }
+  </style>
+
+  <!-- Logo Mark Container (Squircle) -->
+  <g transform="translate(10, 10)">
+    <!-- Container Shadow & Body -->
+    <rect width="60" height="60" rx="16" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
+    
+    <!-- 3-Tier Isometric Connected Layers -->
+    <!-- Top Layer (Solid with subtle gradient) -->
+    <path d="M30 18L18 24.5L30 31L42 24.5L30 18Z" fill="url(#ellix-teal)" opacity="0.95" />
+    
+    <!-- Middle Layer (Stroke) -->
+    <path d="M18 31.5L30 38L42 31.5" stroke="url(#ellix-grad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+    
+    <!-- Bottom Layer (Stroke) -->
+    <path d="M18 38.5L30 45L42 38.5" stroke="url(#ellix-grad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Center Accent Dot -->
+    <circle cx="30" cy="24.5" r="2" fill="#ffffff" />
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="84" y="44" class="brand-title">
+    Ellix<tspan class="brand-accent">Connect</tspan>
+  </text>
+  <text x="85" y="60" class="brand-tagline">
+    RETAIL BUSINESS OPERATING SYSTEM
+  </text>
+</svg>

@@ -1,0 +1,52 @@
+# Ellix Connect Android: Comprehensive AI Technical & Product Reference
+
+## 1. System Overview
+Ellix Connect is a modern retail point-of-sale (POS), billing, inventory management, and business intelligence operating system tailored for independent retailers, wholesale distributors, supermarkets, and chain stores. It bridges fast offline-capable counter billing with continuous real-time cloud data synchronization.
+
+## 2. Core Functional Modules
+
+### A. Sub-Second Billing & Checkout
+- Barcode scanning via camera, Bluetooth scanner, or USB HID with <0.25s recognition latency.
+- Instant item lookup with automatic price tiers (Retail MRP, Wholesale discounted tier, Customer custom pricing).
+- Automatic tax breakdown: GST 0%, 5%, 12%, 18%, 28% with CGST/SGST/IGST separation.
+- ESC/POS thermal printing support (80mm and 58mm widths) and PDF invoice sharing via WhatsApp/Email.
+
+### B. Inventory & Catalog Engine
+- Batch-level tracking with expiry dates, manufacturing dates, and supplier purchase prices.
+- Low stock threshold indicators triggering real-time alerts.
+- Automated barcode generator supporting EAN-13, Code 128, and QR codes.
+- Stock adjustments with audit tags: Damage, Expiry, Theft, Physical Count Correction, Inter-store Transfer.
+
+### C. Digital Khata & Customer CRM
+- Credit management for recurring customers with customizable credit limits.
+- Transaction ledger recording debit (credit sales) and credit (payments received).
+- One-click WhatsApp payment reminders with dynamic UPI payment links.
+- Customer loyalty point engine: Points earned per purchase, customizable redemption rates.
+
+### D. Payments & Cash Drawer Tally
+- Dynamic UPI QR codes generated per bill amount for zero-error digital collection.
+- Support for split-tenders: Part Cash, part UPI, part Card, part Khata credit.
+- Cashier shift tracking: Opening cash, cash collected, cash refunded, closing cash reconciliation, and cash drawer mismatch audit.
+
+### E. Business Insights & Analytics
+- Sales velocity metrics: Fast-moving items vs. slow-moving stock.
+- Dead-stock detector: Highlights inventory without sales for >30 days to free up working capital.
+- Gross Margin % per category to optimize product mix.
+- Hourly customer traffic trends to optimize cashier staffing.
+
+### F. Enterprise Role-Based Access Control (RBAC)
+- Admin: Full governance, financial exports, inventory cost data, staff role assignments, system settings.
+- Wholesaler: Multi-tiered B2B pricing, bulk order dispatch, supplier purchase management.
+- Store Manager: Day-end reports, inventory receiving, price edits, shift authorizations.
+- Cashier: Fast billing, customer lookup, shift start/end cash reconciliation. Restricted from deleting bills or accessing profit margins.
+
+## 3. Storage & Synchronization
+- Local Persistence: Instant offline performance with IndexedDB and local state.
+- Cloud Sync: Google Cloud Firestore (multi-region, automated conflict resolution).
+- Security Rules: Server-side validation enforcing user identity and administrative role verification.
+
+## 4. API Endpoints
+- `GET /api/health`: Health status of container and database connection.
+- `GET /api/about`: Machine-readable JSON summary of application features, version, and architecture.
+- `GET /llms.txt`: Standard AI markdown manifest.
+- `GET /sitemap.xml`: XML sitemap for search engines and web crawlers.

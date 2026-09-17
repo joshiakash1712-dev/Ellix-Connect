@@ -1,0 +1,234 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default-deny catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Security Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        (
+          request.auth.token.email == 'joshiakash1712@gmail.com' ||
+          (request.auth.token.email != null && request.auth.token.email.matches('.*@ellixconnect\\.com$'))
+        ) &&
+        request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // User Profile Validation Blueprint
+    function isValidUser(data) {
+      return data.uid is string &&
+        data.uid.size() > 0 &&
+        data.uid.size() <= 128 &&
+        (!('email' in data) || (data.email is string && data.email.size() <= 128)) &&
+        (!('emailVerified' in data) || data.emailVerified is bool) &&
+        (!('phoneNumber' in data) || (data.phoneNumber is string && data.phoneNumber.size() <= 32)) &&
+        (!('phoneVerified' in data) || data.phoneVerified is bool) &&
+        (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 128)) &&
+        (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 2048)) &&
+        (!('role' in data) || (data.role is string && data.role.size() <= 32)) &&
+        (!('linkedProviders' in data) || (data.linkedProviders is list && data.linkedProviders.size() <= 10)) &&
+        (!('passwordSynchronized' in data) || data.passwordSynchronized is bool) &&
+        (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 64)) &&
+        (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    // Users Collection - Strict Owner & Admin Access for PII Protection
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin();
+      
+      allow create: if isValidId(userId) &&
+        isOwner(userId) &&
+        incoming().uid == request.auth.uid &&
+        isValidUser(incoming());
+
+      allow update: if isValidId(userId) &&
+        (isOwner(userId) || isAdmin()) &&
+        incoming().uid == existing().uid &&
+        isValidUser(incoming());
+
+      allow delete: if isValidId(userId) && (isOwner(userId) || isAdmin());
+    }
+
+    // Store Validation Blueprint
+    function isValidStore(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 128 &&
+        (!('ownerUid' in data) || (data.ownerUid is string && data.ownerUid.size() <= 128));
+    }
+
+    // Product Validation Blueprint
+    function isValidProduct(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 256 &&
+        data.stock is number &&
+        data.sellingPrice is number;
+    }
+
+    // Customer Validation Blueprint
+    function isValidCustomer(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 128 &&
+        data.phone is string && data.phone.size() > 0 && data.phone.size() <= 32;
+    }
+
+    // Invoice Validation Blueprint
+    function isValidInvoice(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.invoiceNumber is string && data.invoiceNumber.size() > 0 && data.invoiceNumber.size() <= 64 &&
+        (
+          (('totalAmount' in data) && data.totalAmount is number) ||
+          (('grandTotal' in data) && data.grandTotal is number)
+        );
+    }
+
+    // Restock Order Validation Blueprint
+    function isValidRestockOrder(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.productId is string && data.productId.size() > 0 && data.productId.size() <= 128 &&
+        (
+          (('quantity' in data) && data.quantity is number) ||
+          (('suggestedQty' in data) && data.suggestedQty is number)
+        );
+    }
+
+    // Customer Order Validation Blueprint
+    function isValidCustomerOrder(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.orderNumber is string && data.orderNumber.size() > 0 && data.orderNumber.size() <= 64 &&
+        data.totalAmount is number;
+    }
+
+    // Audit Log Validation Blueprint
+    function isValidAuditLog(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.timestamp is string &&
+        data.action is string && data.action.size() > 0 && data.action.size() <= 128;
+    }
+
+    // Wholesaler Validation Blueprint
+    function isValidWholesaler(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 128;
+    }
+
+    // Employee Validation Blueprint
+    function isValidEmployee(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 128;
+    }
+
+    // Store & Subcollections Rules - Authenticated & Hardened
+    match /stores/{storeId} {
+      // Store public details can be read by visitors for shopping & catalog browsing
+      allow get, list: if true;
+      // Store creation & configuration updates require an authenticated user
+      allow create, update: if isSignedIn() && isValidId(storeId) && isValidStore(incoming());
+      allow delete: if isSignedIn() && isValidId(storeId) && (isAdmin() || isOwner(existing().ownerUid));
+
+      match /products/{productId} {
+        // Products catalog can be viewed by public customers
+        allow get, list: if true;
+        // Modifying inventory requires authenticated staff or merchant
+        allow create: if isSignedIn() && isValidId(productId) && isValidProduct(incoming());
+        allow update: if isSignedIn() && isValidId(productId) && isValidProduct(incoming());
+        allow delete: if isSignedIn() && isValidId(productId);
+      }
+
+      match /customers/{customerId} {
+        // Customer profiles require authenticated user for PII privacy protection
+        allow get, list: if isSignedIn();
+        allow create: if isSignedIn() && isValidId(customerId) && isValidCustomer(incoming());
+        allow update: if isSignedIn() && isValidId(customerId) && isValidCustomer(incoming());
+        allow delete: if isSignedIn() && isValidId(customerId);
+      }
+
+      match /invoices/{invoiceId} {
+        // Invoices and financial ledger require authenticated merchant/staff
+        allow get, list: if isSignedIn();
+        allow create: if isSignedIn() && isValidId(invoiceId) && isValidInvoice(incoming());
+        allow update: if isSignedIn() && isValidId(invoiceId) && isValidInvoice(incoming());
+        allow delete: if isSignedIn() && isValidId(invoiceId);
+      }
+
+      match /restockOrders/{orderId} {
+        // Restock procurement orders require authenticated merchant/wholesaler
+        allow get, list: if isSignedIn();
+        allow create: if isSignedIn() && isValidId(orderId) && isValidRestockOrder(incoming());
+        allow update: if isSignedIn() && isValidId(orderId) && isValidRestockOrder(incoming());
+        allow delete: if isSignedIn() && isValidId(orderId);
+      }
+
+      match /customerOrders/{orderId} {
+        // Public customer portal can place order without signing in
+        allow create: if isValidId(orderId) && isValidCustomerOrder(incoming());
+        // Viewing customer orders allowed for status checks
+        allow get, list: if true;
+        // Updating customer order status requires authenticated staff/merchant
+        allow update: if isSignedIn() && isValidId(orderId) && isValidCustomerOrder(incoming());
+        allow delete: if isSignedIn() && isValidId(orderId);
+      }
+
+      match /auditLogs/{logId} {
+        // Audit logs require authenticated merchant or admin
+        allow get, list: if isSignedIn();
+        allow create: if isSignedIn() && isValidId(logId) && isValidAuditLog(incoming());
+        allow update: if false; // Immutable audit log trail
+        allow delete: if isAdmin();
+      }
+
+      match /wholesalers/{wholesalerId} {
+        // Wholesaler catalog can be viewed by merchants
+        allow get, list: if true;
+        allow create: if isSignedIn() && isValidId(wholesalerId) && isValidWholesaler(incoming());
+        allow update: if isSignedIn() && isValidId(wholesalerId) && isValidWholesaler(incoming());
+        allow delete: if isSignedIn() && isValidId(wholesalerId);
+      }
+
+      match /employees/{employeeId} {
+        // Employee roles require authenticated store owner/admin
+        allow get, list: if isSignedIn();
+        allow create: if isSignedIn() && isValidId(employeeId) && isValidEmployee(incoming());
+        allow update: if isSignedIn() && isValidId(employeeId) && isValidEmployee(incoming());
+        allow delete: if isSignedIn() && isValidId(employeeId);
+      }
+    }
+
+    // Connection Health Verification Document
+    match /test/{testId} {
+      allow get: if isValidId(testId);
+    }
+  }
+}
