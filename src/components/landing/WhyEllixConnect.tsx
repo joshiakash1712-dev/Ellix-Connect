@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Sparkles,
   Zap,
   Award,
   ShieldCheck,
   Network,
-  Check,
-  ChevronRight,
-  Info
+  CheckCircle2,
+  ArrowRight,
+  MousePointer2,
+  Terminal,
+  WifiOff,
+  RefreshCw,
+  Keyboard
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 
 interface BenefitItem {
   id: string;
@@ -20,6 +24,13 @@ interface BenefitItem {
   icon: React.ElementType;
   keyMetric: string;
   bullets: string[];
+  metrics: Array<{ label: string; value: string }>;
+  previewData: {
+    badgeText: string;
+    headline: string;
+    statusText: string;
+    snippet: React.ReactNode;
+  };
 }
 
 const benefits: BenefitItem[] = [
@@ -34,8 +45,49 @@ const benefits: BenefitItem[] = [
     bullets: [
       'Clean, distraction-free interfaces',
       'No specialized IT training needed',
-      'One-click item selection'
-    ]
+      'One-click item selection & keyboard hotkeys'
+    ],
+    metrics: [
+      { label: 'Staff Onboarding', value: '< 2 Minutes' },
+      { label: 'Checkout Steps', value: '3 Taps / Hotkeys' },
+      { label: 'IT Overhead', value: 'Zero Setup' }
+    ],
+    previewData: {
+      badgeText: 'Zero-Friction Cashier HUD',
+      headline: 'One-Tap Hotkey & Smart Search Workflow',
+      statusText: 'First-shift ready without training',
+      snippet: (
+        <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2.5 border border-slate-800 shadow-inner">
+          <div className="flex justify-between items-center text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+            <span className="flex items-center gap-1.5">
+              <Keyboard className="w-3.5 h-3.5" />
+              <span>INTUITIVE COUNTER SHORTCUTS</span>
+            </span>
+            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">
+              ACTIVE MODE
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-[11px]">
+            <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              <div className="text-emerald-400 font-bold">[F2] New Bill</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Auto-focus scanner</div>
+            </div>
+            <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              <div className="text-emerald-400 font-bold">[F4] Quick Cash</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">1-tap exact tender</div>
+            </div>
+            <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              <div className="text-emerald-400 font-bold">[F8] Item Lookup</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Fuzzy name/SKU</div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center text-[11px] text-slate-300 pt-1 border-t border-slate-800/80">
+            <span>Cashier Prompt: &quot;Scan item or press Enter to print&quot;</span>
+            <span className="text-emerald-400 font-bold">0 Config Needed</span>
+          </div>
+        </div>
+      )
+    }
   },
   {
     id: 'fast',
@@ -46,10 +98,51 @@ const benefits: BenefitItem[] = [
     icon: Zap,
     keyMetric: '0.4s barcode response',
     bullets: [
-      'Sub-second SKU lookups',
-      'Instant UPI dynamic QR generation',
-      'Rapid thermal receipt dispatch'
-    ]
+      'Sub-second SKU lookups (< 15ms local cache)',
+      'Instant UPI dynamic QR generation (< 200ms)',
+      'Rapid thermal receipt dispatch with zero lag'
+    ],
+    metrics: [
+      { label: 'SKU Cache Lookup', value: '< 15ms Memory' },
+      { label: 'Barcode Response', value: '0.4s End-to-End' },
+      { label: 'Dynamic UPI QR', value: '< 200ms Render' }
+    ],
+    previewData: {
+      badgeText: 'High-Frequency POS Engine',
+      headline: 'Sub-Second Scanner & Spooler Benchmark',
+      statusText: 'Peak Rush-Hour Certified',
+      snippet: (
+        <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
+          <div className="flex justify-between items-center text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+            <span className="flex items-center gap-1.5">
+              <Terminal className="w-3.5 h-3.5" />
+              <span>COUNTER LATENCY TELEMETRY</span>
+            </span>
+            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">
+              120 FPS UI
+            </span>
+          </div>
+          <div className="space-y-1.5 text-[11px] text-slate-300">
+            <div className="flex justify-between">
+              <span>1. Optical Barcode Decode → Local SKU Cache</span>
+              <span className="text-emerald-400 font-bold">12 ms</span>
+            </div>
+            <div className="flex justify-between">
+              <span>2. GST Slab & Cart Total Recalculation</span>
+              <span className="text-emerald-400 font-bold">4 ms</span>
+            </div>
+            <div className="flex justify-between">
+              <span>3. Dynamic Exact-Amount UPI QR Payload</span>
+              <span className="text-emerald-400 font-bold">165 ms</span>
+            </div>
+            <div className="flex justify-between pt-1 border-t border-slate-800 text-white font-bold">
+              <span>Total Queue Turnaround Time</span>
+              <span className="text-emerald-400">&lt; 8.5s / Customer</span>
+            </div>
+          </div>
+        </div>
+      )
+    }
   },
   {
     id: 'professional',
@@ -60,10 +153,47 @@ const benefits: BenefitItem[] = [
     icon: Award,
     keyMetric: '100% Tax Compliant',
     bullets: [
-      'Clean branded PDF & thermal bills',
-      'Automated WhatsApp billing updates',
-      'Transparent customer Khata ledgers'
-    ]
+      'Clean branded PDF & 80mm thermal bills',
+      'Automated WhatsApp digital billing updates',
+      'Transparent itemized GST & customer Khata ledgers'
+    ],
+    metrics: [
+      { label: 'Tax Compliance', value: '100% GST / HSN' },
+      { label: 'Digital Delivery', value: '1-Tap WhatsApp' },
+      { label: 'Brand Identity', value: 'Custom Store Header' }
+    ],
+    previewData: {
+      badgeText: 'Branded Tax Invoice Engine',
+      headline: 'Verified GST Receipt & WhatsApp Dispatch',
+      statusText: 'GSTR-1 & HSN Compliant',
+      snippet: (
+        <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
+          <div className="flex justify-between items-center border-b border-slate-800 pb-1.5">
+            <div>
+              <div className="font-bold text-white">SHARMA SUPERMART · GSTIN 27AABCS1429B1Z</div>
+              <div className="text-[10px] text-slate-400">Tax Invoice #INV-2026-4910 · HSN Verified</div>
+            </div>
+            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60 font-bold">
+              WHATSAPP SENT
+            </span>
+          </div>
+          <div className="space-y-1 text-[11px] text-slate-300">
+            <div className="flex justify-between">
+              <span>Itemized Subtotal (4 Items · HSN 1006/1514)</span>
+              <span>₹1,240.00</span>
+            </div>
+            <div className="flex justify-between text-slate-400">
+              <span>CGST (2.5%): ₹31.00  |  SGST (2.5%): ₹31.00</span>
+              <span>₹62.00</span>
+            </div>
+            <div className="flex justify-between pt-1 border-t border-slate-800 text-white font-bold">
+              <span>Grand Total (Loyalty Earned: +13 Pts)</span>
+              <span className="text-emerald-400">₹1,302.00</span>
+            </div>
+          </div>
+        </div>
+      )
+    }
   },
   {
     id: 'reliable',
@@ -74,10 +204,46 @@ const benefits: BenefitItem[] = [
     icon: ShieldCheck,
     keyMetric: '99.99% Uptime Guarantee',
     bullets: [
-      'Works seamlessly offline',
-      'Automatic background cloud sync',
-      'Bank-grade encrypted records'
-    ]
+      'Works seamlessly during internet drops',
+      'Automatic background cloud queue reconciliation',
+      'Bank-grade multi-tenant encrypted records'
+    ],
+    metrics: [
+      { label: 'Counter Uptime', value: '99.99% Resilient' },
+      { label: 'Offline Engine', value: 'Local Queue Cache' },
+      { label: 'Cloud Recovery', value: 'Auto-Reconcile' }
+    ],
+    previewData: {
+      badgeText: 'Offline-First Sync Engine',
+      headline: 'Zero-Downtime Local Queue & Auto-Recovery',
+      statusText: 'Zero Lost Bills Guaranteed',
+      snippet: (
+        <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
+          <div className="flex justify-between items-center border-b border-slate-800 pb-1.5 font-bold">
+            <span className="flex items-center gap-1.5 text-amber-400">
+              <WifiOff className="w-3.5 h-3.5" />
+              <span>NETWORK DROP DETECTED → LOCAL MODE</span>
+            </span>
+            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">
+              POS UNINTERRUPTED
+            </span>
+          </div>
+          <div className="space-y-1.5 text-[11px] text-slate-300">
+            <div className="flex justify-between">
+              <span>Local Encrypted Queue (Invoices #1042–#1048)</span>
+              <span className="text-white font-bold">7 Bills Cached</span>
+            </div>
+            <div className="flex justify-between items-center text-emerald-400">
+              <span className="flex items-center gap-1.5">
+                <RefreshCw className="w-3 h-3" />
+                <span>Connection Restored → Atomic Cloud Flush</span>
+              </span>
+              <span className="font-bold">Synced in 180ms ✓</span>
+            </div>
+          </div>
+        </div>
+      )
+    }
   },
   {
     id: 'connected',
@@ -88,25 +254,146 @@ const benefits: BenefitItem[] = [
     icon: Network,
     keyMetric: 'Unified Architecture',
     bullets: [
-      'Automatic stock decrements on sale',
+      'Automatic stock decrements on every sale',
       'Zero manual spreadsheet reconciliation',
-      'Real-time multi-register sync'
-    ]
+      'Real-time multi-store & multi-register sync'
+    ],
+    metrics: [
+      { label: 'Architecture', value: 'Single Source Hub' },
+      { label: 'Manual Re-Entry', value: '0 Spreadsheets' },
+      { label: 'Store Sync', value: 'Real-Time Live' }
+    ],
+    previewData: {
+      badgeText: 'Unified Event Bus Architecture',
+      headline: 'Single-Sale Multi-Module Synchronization',
+      statusText: 'All Store Modules Linked',
+      snippet: (
+        <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
+          <div className="flex justify-between items-center text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+            <span>EVENT: SALE_COMMITTED (#INV-2026-884)</span>
+            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">
+              5/5 MODULES SYNCED
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
+            <div className="bg-slate-900 p-2 rounded-lg border border-slate-800 flex justify-between">
+              <span>Inventory Stock</span>
+              <span className="text-emerald-400 font-bold">-3 Units ✓</span>
+            </div>
+            <div className="bg-slate-900 p-2 rounded-lg border border-slate-800 flex justify-between">
+              <span>Shift Cash Till</span>
+              <span className="text-emerald-400 font-bold">+₹880.00 ✓</span>
+            </div>
+            <div className="bg-slate-900 p-2 rounded-lg border border-slate-800 flex justify-between">
+              <span>Customer Khata</span>
+              <span className="text-emerald-400 font-bold">Ledger Updated ✓</span>
+            </div>
+            <div className="bg-slate-900 p-2 rounded-lg border border-slate-800 flex justify-between">
+              <span>GSTR-1 Tax P&amp;L</span>
+              <span className="text-emerald-400 font-bold">+₹40.00 GST ✓</span>
+            </div>
+          </div>
+        </div>
+      )
+    }
   }
 ];
 
 export const WhyEllixConnect: React.FC = () => {
   const [selectedBenefitId, setSelectedBenefitId] = useState<string>('simple');
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [originIndex, setOriginIndex] = useState<number>(0);
+
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const selectedBenefit = benefits.find((b) => b.id === selectedBenefitId) || benefits[0];
   const SelectedIcon = selectedBenefit.icon;
 
+  // Spatial transform-origin mapped to the 3-top + 2-bottom card layout
+  const getOrigin = (index: number) => {
+    switch (index) {
+      case 0:
+        return '16.6% 25%'; // Top-left card (Simple)
+      case 1:
+        return '50.0% 25%'; // Top-center card (Fast)
+      case 2:
+        return '83.3% 25%'; // Top-right card (Professional)
+      case 3:
+        return '25.0% 75%'; // Bottom-left card (Reliable)
+      case 4:
+        return '75.0% 75%'; // Bottom-right card (Connected)
+      default:
+        return '50.0% 50%';
+    }
+  };
+
+  const handleCardMouseEnter = (id: string, index: number) => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current);
+      leaveTimeoutRef.current = null;
+    }
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    // 50ms intentional buffer to prevent rapid accidental flickering
+    hoverTimeoutRef.current = setTimeout(() => {
+      setSelectedBenefitId(id);
+      setOriginIndex(index);
+      setIsHovered(true);
+    }, 50);
+  };
+
+  const handleSectionMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    // 160ms grace buffer before returning to the 5-pillar card composition
+    leaveTimeoutRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 160);
+  };
+
+  const handleSectionMouseEnter = () => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current);
+      leaveTimeoutRef.current = null;
+    }
+  };
+
+  const handleCardKeyDown = (e: React.KeyboardEvent, id: string, index: number) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setSelectedBenefitId(id);
+      setOriginIndex(index);
+      setIsHovered(true);
+    } else if (e.key === 'Escape' && isHovered) {
+      e.preventDefault();
+      setIsHovered(false);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      const nextIdx = (index + 1) % benefits.length;
+      setSelectedBenefitId(benefits[nextIdx].id);
+      setOriginIndex(nextIdx);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const prevIdx = (index - 1 + benefits.length) % benefits.length;
+      setSelectedBenefitId(benefits[prevIdx].id);
+      setOriginIndex(prevIdx);
+    }
+  };
+
   return (
-    <section id="why-ellix" className="py-20 md:py-28 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors">
+    <section
+      id="why-ellix"
+      className="py-20 md:py-28 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors relative overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-12">
+        <div className="max-w-3xl mb-12 lg:mb-16">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
             Why Ellix Connect
           </div>
@@ -114,150 +401,420 @@ export const WhyEllixConnect: React.FC = () => {
             Built for modern retail. Built to last.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-            Click any of the five pillars below to view its in-depth architectural explanation and learn why store owners trust Ellix Connect.
+            Five architectural pillars engineered so store owners and counter staff can run their entire business with confidence.
+            <span className="hidden lg:inline text-emerald-600 dark:text-emerald-400 font-semibold ml-1">
+              Hover over any pillar below to explore its live architectural deep dive in-place.
+            </span>
           </p>
         </div>
 
-        {/* 5 Benefits Selectable Grid: 3 on top, 2 on bottom */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {benefits.slice(0, 3).map((benefit) => {
-            const Icon = benefit.icon;
-            const isSelected = selectedBenefitId === benefit.id;
+        {/* ============================================================ */}
+        {/* DESKTOP EXPERIENCE (lg: screens and wider): MORPHING WORKSPACE */}
+        {/* ============================================================ */}
+        <div
+          className="hidden lg:block relative min-h-[580px]"
+          onMouseEnter={handleSectionMouseEnter}
+          onMouseLeave={handleSectionMouseLeave}
+        >
+          {/* Layer 1: Background 5-Pillar Card Composition (3 Top + 2 Bottom) */}
+          <div
+            className={`space-y-6 transition-all duration-200 ease-out will-change-transform ${
+              isHovered
+                ? 'opacity-20 scale-[0.99] pointer-events-auto'
+                : 'opacity-100 scale-100'
+            }`}
+          >
+            {/* Top Row: First 3 Pillars */}
+            <div className="grid grid-cols-3 gap-6">
+              {benefits.slice(0, 3).map((benefit, index) => {
+                const Icon = benefit.icon;
+                const isSelected = selectedBenefitId === benefit.id;
 
-            return (
-              <button
-                key={benefit.id}
-                id={`benefit-${benefit.id}`}
-                type="button"
-                data-cursor="card"
-                onClick={() => setSelectedBenefitId(benefit.id)}
-                className={`website-card-hover p-7 rounded-2xl text-left border transition-all flex flex-col justify-between cursor-pointer ${
-                  isSelected
-                    ? 'bg-emerald-50/50 dark:bg-emerald-950/40 border-emerald-500 shadow-md ring-2 ring-emerald-500/20'
-                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:shadow-md'
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-5">
-                    <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
-                        isSelected
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700'
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
+                return (
+                  <div
+                    key={benefit.id}
+                    id={`benefit-${benefit.id}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={isSelected}
+                    data-cursor="card"
+                    onMouseEnter={() => handleCardMouseEnter(benefit.id, index)}
+                    onClick={() => handleCardMouseEnter(benefit.id, index)}
+                    onKeyDown={(e) => handleCardKeyDown(e, benefit.id, index)}
+                    className={`website-card-hover p-6 rounded-2xl text-left flex flex-col justify-between cursor-pointer border transition-all duration-200 ${
+                      isSelected && !isHovered
+                        ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-colors">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <span className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60">
+                          {benefit.keyMetric}
+                        </span>
+                      </div>
+
+                      <div className="text-[10px] font-bold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-1">
+                        {benefit.subtitle}
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                        {benefit.description}
+                      </p>
                     </div>
-                    <span className="text-xs font-mono font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
-                      {benefit.keyMetric}
-                    </span>
-                  </div>
 
-                  <div className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">
-                    {benefit.subtitle}
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-950 dark:text-white mb-3 flex items-center justify-between">
-                    <span>{benefit.title}</span>
-                    <ChevronRight className={`w-4 h-4 transition-transform ${isSelected ? 'translate-x-1 text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
-                  </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
-                    {benefit.description}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                  {benefit.bullets.map((b, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
-                      <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>{b}</span>
+                    <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                      {benefit.bullets.map((b, idx) => (
+                        <div key={idx} className="flex items-center gap-1.5 truncate">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <span className="truncate">{b}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Bottom 2 Benefits: wider 2-col layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {benefits.slice(3, 5).map((benefit) => {
-            const Icon = benefit.icon;
-            const isSelected = selectedBenefitId === benefit.id;
-
-            return (
-              <button
-                key={benefit.id}
-                id={`benefit-${benefit.id}`}
-                type="button"
-                data-cursor="card"
-                onClick={() => setSelectedBenefitId(benefit.id)}
-                className={`website-card-hover p-7 rounded-2xl text-left border transition-all flex flex-col sm:flex-row justify-between gap-6 cursor-pointer ${
-                  isSelected
-                    ? 'bg-emerald-50/50 dark:bg-emerald-950/40 border-emerald-500 shadow-md ring-2 ring-emerald-500/20'
-                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:shadow-md'
-                }`}
-              >
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-5">
-                    <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
-                        isSelected
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700'
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-mono font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
-                      {benefit.keyMetric}
-                    </span>
                   </div>
-
-                  <div className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">
-                    {benefit.subtitle}
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-950 dark:text-white mb-3 flex items-center justify-between">
-                    <span>{benefit.title}</span>
-                    <ChevronRight className={`w-4 h-4 transition-transform ${isSelected ? 'translate-x-1 text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
-                  </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                    {benefit.description}
-                  </p>
-                </div>
-
-                <div className="sm:w-64 pt-4 sm:pt-0 sm:pl-6 border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 flex flex-col justify-center space-y-2.5">
-                  {benefit.bullets.map((b, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
-                      <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>{b}</span>
-                    </div>
-                  ))}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Selected Benefit Deep-Dive Explanation Banner */}
-        <div className="mt-8 p-6 sm:p-8 rounded-2xl bg-slate-900 text-white border border-slate-800 shadow-lg">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-bold uppercase tracking-wider">
-                <Info className="w-4 h-4" />
-                <span>Architectural Deep Dive: {selectedBenefit.title}</span>
-              </div>
-              <h4 className="text-xl font-bold text-white">
-                How "{selectedBenefit.title}" is engineered in Ellix Connect
-              </h4>
-              <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
-                {selectedBenefit.expandedDetails}
-              </p>
+                );
+              })}
             </div>
-            <div className="shrink-0">
-              <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 text-center">
-                <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Key Performance Target</div>
-                <div className="text-xl font-mono font-bold text-emerald-400">{selectedBenefit.keyMetric}</div>
+
+            {/* Bottom Row: Remaining 2 Pillars */}
+            <div className="grid grid-cols-2 gap-6">
+              {benefits.slice(3, 5).map((benefit, offset) => {
+                const index = offset + 3;
+                const Icon = benefit.icon;
+                const isSelected = selectedBenefitId === benefit.id;
+
+                return (
+                  <div
+                    key={benefit.id}
+                    id={`benefit-${benefit.id}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={isSelected}
+                    data-cursor="card"
+                    onMouseEnter={() => handleCardMouseEnter(benefit.id, index)}
+                    onClick={() => handleCardMouseEnter(benefit.id, index)}
+                    onKeyDown={(e) => handleCardKeyDown(e, benefit.id, index)}
+                    className={`website-card-hover p-6 rounded-2xl text-left flex flex-row justify-between gap-6 cursor-pointer border transition-all duration-200 ${
+                      isSelected && !isHovered
+                        ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                    }`}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-colors">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <span className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60">
+                          {benefit.keyMetric}
+                        </span>
+                      </div>
+
+                      <div className="text-[10px] font-bold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-1">
+                        {benefit.subtitle}
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        {benefit.description}
+                      </p>
+                    </div>
+
+                    <div className="w-60 pl-6 border-l border-slate-100 dark:border-slate-800/80 flex flex-col justify-center space-y-2 text-[11px] text-slate-500 dark:text-slate-400">
+                      {benefit.bullets.map((b, idx) => (
+                        <div key={idx} className="flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <span>{b}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Layer 2: Morphing Interactive Architectural Workspace */}
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div
+                key="why-ellix-expanded-workspace"
+                initial={
+                  prefersReducedMotion
+                    ? { opacity: 0 }
+                    : {
+                        opacity: 0,
+                        scale: 0.96,
+                        transformOrigin: getOrigin(originIndex)
+                      }
+                }
+                animate={
+                  prefersReducedMotion
+                    ? { opacity: 1 }
+                    : {
+                        opacity: 1,
+                        scale: 1,
+                        transformOrigin: getOrigin(originIndex)
+                      }
+                }
+                exit={
+                  prefersReducedMotion
+                    ? { opacity: 0 }
+                    : {
+                        opacity: 0,
+                        scale: 0.96,
+                        transformOrigin: getOrigin(originIndex)
+                      }
+                }
+                transition={{
+                  duration: 0.24,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
+                className="absolute inset-0 z-20 p-6 sm:p-8 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 flex flex-col justify-between"
+              >
+                {/* Top Interactive Pillar Switcher Ribbon */}
+                <div>
+                  <div className="flex items-center justify-between gap-2 pb-4 mb-6 border-b border-slate-200/80 dark:border-slate-800/80">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200">
+                        Architectural Deep-Dive Workspace
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-mono font-bold border border-emerald-300/60 dark:border-emerald-800/60">
+                        {selectedBenefit.keyMetric}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      <MousePointer2 className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>Hover any pillar pill to transform workspace</span>
+                    </div>
+                  </div>
+
+                  {/* 5 Pillar Dock Pills */}
+                  <div className="grid grid-cols-5 gap-2 mb-6 p-1.5 rounded-2xl bg-slate-100/90 dark:bg-slate-950/90 border border-slate-200/90 dark:border-slate-800/80 shadow-inner">
+                    {benefits.map((b, idx) => {
+                      const PillarIcon = b.icon;
+                      const isActive = b.id === selectedBenefitId;
+                      return (
+                        <button
+                          key={b.id}
+                          type="button"
+                          data-cursor="hover"
+                          aria-pressed={isActive}
+                          onMouseEnter={() => handleCardMouseEnter(b.id, idx)}
+                          onClick={() => handleCardMouseEnter(b.id, idx)}
+                          className={`relative py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-150 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer ${
+                            isActive
+                              ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500/50 shadow-sm ring-1 ring-emerald-500/20'
+                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-900/60 border border-transparent'
+                          }`}
+                        >
+                          <PillarIcon className={`w-4 h-4 shrink-0 ${isActive ? 'text-emerald-500' : 'text-slate-400'}`} />
+                          <span className="truncate">{b.title}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Workspace Content: Two-Column Fluid Morphing State */}
+                <div className="flex-1 flex flex-col lg:flex-row items-start justify-between gap-8">
+                  {/* Left: Architectural Deep Dive, Checklist & Key Metrics */}
+                  <motion.div
+                    key={`why-left-${selectedBenefit.id}`}
+                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: -10 }}
+                    animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-full lg:w-[48%] space-y-4"
+                  >
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-300/60 dark:border-emerald-800/60">
+                      <SelectedIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <span>{selectedBenefit.subtitle}</span>
+                    </div>
+
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight">
+                      How &ldquo;{selectedBenefit.title}&rdquo; is engineered in Ellix Connect
+                    </h3>
+
+                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+                      {selectedBenefit.expandedDetails}
+                    </p>
+
+                    {/* Pillar Checklist */}
+                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 space-y-2">
+                      <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+                        Core Architectural Guarantees:
+                      </div>
+                      <div className="grid grid-cols-1 gap-2 text-xs font-medium text-slate-700 dark:text-slate-200">
+                        {selectedBenefit.bullets.map((point, idx) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>{point}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Metric Badges */}
+                    <div className="grid grid-cols-3 gap-2.5 pt-1">
+                      {selectedBenefit.metrics.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 shadow-xs"
+                        >
+                          <div className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-bold truncate">
+                            {item.label}
+                          </div>
+                          <div className="text-xs font-extrabold text-slate-900 dark:text-white mt-0.5 truncate">
+                            {item.value}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+
+                  {/* Right: Live Architectural Simulation Preview */}
+                  <motion.div
+                    key={`why-right-${selectedBenefit.id}`}
+                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: 10 }}
+                    animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-full lg:w-[52%]"
+                  >
+                    <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-lg space-y-3.5">
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="text-xs font-bold text-slate-900 dark:text-white font-mono">
+                            {selectedBenefit.previewData.badgeText}
+                          </span>
+                        </div>
+                        <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
+                          {selectedBenefit.keyMetric}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">
+                          {selectedBenefit.previewData.headline}
+                        </h4>
+                        {selectedBenefit.previewData.snippet}
+                      </div>
+
+                      <div className="pt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80">
+                        <span>Key Performance Target: {selectedBenefit.keyMetric}</span>
+                        <span className="text-emerald-500 font-semibold">
+                          {selectedBenefit.previewData.statusText}
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* ============================================================ */}
+        {/* MOBILE & TABLET EXPERIENCE (< lg screens): CLEAN & ACCESSIBLE */}
+        {/* ============================================================ */}
+        <div className="block lg:hidden space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {benefits.map((benefit) => {
+              const Icon = benefit.icon;
+              const isSelected = selectedBenefitId === benefit.id;
+
+              return (
+                <button
+                  key={benefit.id}
+                  id={`mobile-benefit-${benefit.id}`}
+                  type="button"
+                  onClick={() => setSelectedBenefitId(benefit.id)}
+                  aria-pressed={isSelected}
+                  className={`p-5 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
+                    isSelected
+                      ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/40 shadow-md text-slate-900 dark:text-white'
+                      : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          isSelected
+                            ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400">
+                        {benefit.keyMetric}
+                      </span>
+                    </div>
+
+                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">
+                      {benefit.subtitle}
+                    </div>
+                    <h3 className="text-base font-bold mb-1.5">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {benefit.description}
+                    </p>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span>{isSelected ? 'Viewing architectural details ↓' : 'Tap to preview'}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Mobile Detail Panel */}
+          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
+                <SelectedIcon className="w-3.5 h-3.5" />
+                <span>{selectedBenefit.subtitle}</span>
               </div>
+              <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                {selectedBenefit.keyMetric}
+              </span>
+            </div>
+
+            <h3 className="text-xl font-extrabold text-slate-950 dark:text-white">
+              How &ldquo;{selectedBenefit.title}&rdquo; is engineered in Ellix Connect
+            </h3>
+
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              {selectedBenefit.expandedDetails}
+            </p>
+
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-2">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                Core Architectural Guarantees:
+              </div>
+              <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                {selectedBenefit.bullets.map((pt, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <span>{pt}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-2">
+              {selectedBenefit.previewData.snippet}
             </div>
           </div>
         </div>
