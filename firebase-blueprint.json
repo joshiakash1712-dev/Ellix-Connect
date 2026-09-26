@@ -41,7 +41,26 @@
         "role": {
           "type": "string",
           "maxLength": 32,
-          "description": "User business role (retailer, wholesaler, admin, employee)"
+          "description": "User business role (super_admin, ellix_admin, client, crew, wholesaler_admin)"
+        },
+        "clientId": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Tenant client ID partition"
+        },
+        "store_id": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Primary assigned store ID for crew/cashier"
+        },
+        "storeId": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Alias for primary assigned store ID"
+        },
+        "assignedStoreIds": {
+          "type": "array",
+          "description": "Array of store IDs assigned for crew members"
         },
         "linkedProviders": {
           "type": "array",
@@ -70,6 +89,7 @@
         "id": { "type": "string", "maxLength": 128 },
         "name": { "type": "string", "maxLength": 128 },
         "ownerUid": { "type": "string", "maxLength": 128 },
+        "clientId": { "type": "string", "maxLength": 128 },
         "gstin": { "type": "string", "maxLength": 32 },
         "address": { "type": "string", "maxLength": 256 },
         "phone": { "type": "string", "maxLength": 32 },
@@ -146,7 +166,8 @@
         "paymentStatus": { "type": "string", "maxLength": 32 },
         "createdAt": { "type": "string" },
         "templateId": { "type": "string", "maxLength": 64 },
-        "storeId": { "type": "string", "maxLength": 128 }
+        "storeId": { "type": "string", "maxLength": 128 },
+        "clientId": { "type": "string", "maxLength": 128 }
       },
       "required": ["id", "invoiceNumber"]
     },
@@ -203,9 +224,61 @@
         "storeId": { "type": "string", "maxLength": 128 }
       },
       "required": ["id", "timestamp", "action"]
+    },
+    "BusinessApplication": {
+      "title": "BusinessApplication",
+      "description": "Application submitted by new merchant for onboarding and approval",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "businessName": { "type": "string", "maxLength": 128 },
+        "ownerName": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "status": { "type": "string", "maxLength": 32 },
+        "storeCount": { "type": "number" },
+        "submittedAt": { "type": "string" }
+      },
+      "required": ["id", "businessName", "ownerName", "email", "phone", "status"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "Store vendor and supplier contact profiles",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "contactPerson": { "type": "string", "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "email": { "type": "string", "maxLength": 128 },
+        "storeId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "name"]
+    },
+    "RestockLog": {
+      "title": "RestockLog",
+      "description": "Audit trail for manual inventory restocking with supplier and crew tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "storeId": { "type": "string", "maxLength": 128 },
+        "productId": { "type": "string", "maxLength": 128 },
+        "productName": { "type": "string", "maxLength": 128 },
+        "quantity": { "type": "number" },
+        "supplierId": { "type": "string", "maxLength": 128 },
+        "supplierName": { "type": "string", "maxLength": 128 },
+        "crewId": { "type": "string", "maxLength": 128 },
+        "crewName": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "storeId", "productId", "quantity"]
     }
   },
   "firestore": {
+    "/businessApplications/{applicationId}": {
+      "schema": "BusinessApplication",
+      "description": "Client business onboarding application records"
+    },
     "/users/{userId}": {
       "schema": "User",
       "description": "User profile with synchronized auth credentials and roles"
@@ -225,6 +298,14 @@
     "/stores/{storeId}/invoices/{invoiceId}": {
       "schema": "POSInvoice",
       "description": "Store sales invoices and receipts"
+    },
+    "/stores/{storeId}/suppliers/{supplierId}": {
+      "schema": "Supplier",
+      "description": "Store suppliers managed by owner"
+    },
+    "/stores/{storeId}/restockLogs/{logId}": {
+      "schema": "RestockLog",
+      "description": "Restock history records tracking crew and supplier"
     },
     "/stores/{storeId}/restockOrders/{orderId}": {
       "schema": "RestockOrder",

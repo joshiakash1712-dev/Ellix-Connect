@@ -7,22 +7,15 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // Hardened Security Primitives
+    // -------------------------------------------------------------
+    // Hardened Security Primitives & Identity Hierarchy
+    // -------------------------------------------------------------
     function isSignedIn() {
       return request.auth != null;
     }
 
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
-    }
-
-    function isAdmin() {
-      return isSignedIn() &&
-        (
-          request.auth.token.email == 'joshiakash1712@gmail.com' ||
-          (request.auth.token.email != null && request.auth.token.email.matches('.*@ellixconnect\\.com$'))
-        ) &&
-        request.auth.token.email_verified == true;
     }
 
     function isValidId(id) {
@@ -37,7 +30,109 @@ service cloud.firestore {
       return resource.data;
     }
 
-    // User Profile Validation Blueprint
+    // User lookup helper without hard-coded emails
+    function getUserDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function hasUserDoc() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    // Level 1: Super Admin (System Creator)
+    function isSuperAdmin() {
+      return isSignedIn() && hasUserDoc() && getUserDoc().role == 'super_admin';
+    }
+
+    // Level 2: Ellix Admin (Platform Admin team)
+    function isEllixAdmin() {
+      return isSignedIn() && hasUserDoc() && (
+        getUserDoc().role == 'ellix_admin' ||
+        getUserDoc().role == 'super_admin' ||
+        getUserDoc().role == 'platform_admin'
+      );
+    }
+
+    // Level 3: Client (Merchant business owner)
+    function isClient() {
+      return isSignedIn() && hasUserDoc() && (
+        getUserDoc().role == 'client' ||
+        getUserDoc().role == 'retailer' ||
+        isEllixAdmin()
+      );
+    }
+
+    // Master Gate: fetch parent store document
+    function getStore(storeId) {
+      return get(/databases/$(database)/documents/stores/$(storeId)).data;
+    }
+
+    // -------------------------------------------------------------
+    // Store-Level Isolation & Cross-Tenant Guards
+    // -------------------------------------------------------------
+
+    // Validates that any store identifier within the payload strictly matches the request path storeId
+    function hasValidStoreId(data, storeId) {
+      return (
+        (!('storeId' in data) || data.storeId == storeId) &&
+        (!('store_id' in data) || data.store_id == storeId)
+      );
+    }
+
+    // Ensures storeId / store_id cannot be tampered with or modified across updates
+    function maintainsStoreId(storeId) {
+      return hasValidStoreId(incoming(), storeId) &&
+        (!('storeId' in existing()) || !('storeId' in incoming()) || incoming().storeId == existing().storeId) &&
+        (!('store_id' in existing()) || !('store_id' in incoming()) || incoming().store_id == existing().store_id);
+    }
+
+    // Validates that any tenant/client identifier within the payload strictly matches the parent store's clientId
+    function hasValidClientId(data, storeId) {
+      return (
+        (!('clientId' in data) || !('clientId' in getStore(storeId)) || data.clientId == getStore(storeId).clientId) &&
+        (!('client_id' in data) || !('client_id' in getStore(storeId)) || data.client_id == getStore(storeId).client_id)
+      );
+    }
+
+    // Check if user is assigned to this specific store_id (as Crew / Employee / Cashier)
+    function isCrewAssignedToStore(storeId) {
+      return isSignedIn() && hasUserDoc() && (
+        isEllixAdmin() ||
+        (
+          getUserDoc().role in ['crew', 'employee', 'cashier'] &&
+          (
+            ('store_id' in getUserDoc() && getUserDoc().store_id == storeId) ||
+            ('storeId' in getUserDoc() && getUserDoc().storeId == storeId) ||
+            ('assignedStoreIds' in getUserDoc() && getUserDoc().assignedStoreIds is list && storeId in getUserDoc().assignedStoreIds)
+          )
+        )
+      );
+    }
+
+    // Check if user is the Client / Tenant Owner of this specific store
+    function isClientOwnerOfStore(storeId) {
+      return isSignedIn() && (
+        isEllixAdmin() ||
+        (
+          hasUserDoc() &&
+          getUserDoc().role in ['client', 'retailer'] &&
+          (
+            getStore(storeId).ownerUid == request.auth.uid ||
+            ('clientId' in getStore(storeId) && 'clientId' in getUserDoc() && getStore(storeId).clientId == getUserDoc().clientId) ||
+            ('client_id' in getStore(storeId) && 'client_id' in getUserDoc() && getStore(storeId).client_id == getUserDoc().client_id)
+          )
+        )
+      );
+    }
+
+    // Authorized user for this store context (Client owner or assigned Crew)
+    function isStoreAuthorizedUser(storeId) {
+      return isClientOwnerOfStore(storeId) || isCrewAssignedToStore(storeId);
+    }
+
+    // -------------------------------------------------------------
+    // Data Shape Validation Blueprints
+    // -------------------------------------------------------------
     function isValidUser(data) {
       return data.uid is string &&
         data.uid.size() > 0 &&
@@ -45,43 +140,32 @@ service cloud.firestore {
         (!('email' in data) || (data.email is string && data.email.size() <= 128)) &&
         (!('emailVerified' in data) || data.emailVerified is bool) &&
         (!('phoneNumber' in data) || (data.phoneNumber is string && data.phoneNumber.size() <= 32)) &&
-        (!('phoneVerified' in data) || data.phoneVerified is bool) &&
         (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 128)) &&
         (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 2048)) &&
         (!('role' in data) || (data.role is string && data.role.size() <= 32)) &&
-        (!('linkedProviders' in data) || (data.linkedProviders is list && data.linkedProviders.size() <= 10)) &&
-        (!('passwordSynchronized' in data) || data.passwordSynchronized is bool) &&
-        (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 64)) &&
-        (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+        (!('clientId' in data) || (data.clientId is string && data.clientId.size() <= 128)) &&
+        (!('store_id' in data) || (data.store_id is string && data.store_id.size() <= 128)) &&
+        (!('storeId' in data) || (data.storeId is string && data.storeId.size() <= 128)) &&
+        (!('assignedStoreIds' in data) || (data.assignedStoreIds is list && data.assignedStoreIds.size() <= 50));
     }
 
-    // Users Collection - Strict Owner & Admin Access for PII Protection
-    match /users/{userId} {
-      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
-      allow list: if isAdmin();
-      
-      allow create: if isValidId(userId) &&
-        isOwner(userId) &&
-        incoming().uid == request.auth.uid &&
-        isValidUser(incoming());
-
-      allow update: if isValidId(userId) &&
-        (isOwner(userId) || isAdmin()) &&
-        incoming().uid == existing().uid &&
-        isValidUser(incoming());
-
-      allow delete: if isValidId(userId) && (isOwner(userId) || isAdmin());
+    function isValidBusinessApplication(data) {
+      return data.id is string && data.id.size() > 0 && data.id.size() <= 128 &&
+        data.businessName is string && data.businessName.size() > 0 && data.businessName.size() <= 128 &&
+        data.ownerName is string && data.ownerName.size() > 0 && data.ownerName.size() <= 128 &&
+        data.email is string && data.email.size() > 0 && data.email.size() <= 128 &&
+        data.phone is string && data.phone.size() > 0 && data.phone.size() <= 32 &&
+        data.status is string && data.status.size() <= 32;
     }
 
-    // Store Validation Blueprint
     function isValidStore(data) {
       return data.id is string &&
         data.id.size() > 0 && data.id.size() <= 128 &&
         data.name is string && data.name.size() > 0 && data.name.size() <= 128 &&
-        (!('ownerUid' in data) || (data.ownerUid is string && data.ownerUid.size() <= 128));
+        (!('ownerUid' in data) || (data.ownerUid is string && data.ownerUid.size() <= 128)) &&
+        (!('clientId' in data) || (data.clientId is string && data.clientId.size() <= 128));
     }
 
-    // Product Validation Blueprint
     function isValidProduct(data) {
       return data.id is string &&
         data.id.size() > 0 && data.id.size() <= 128 &&
@@ -90,7 +174,6 @@ service cloud.firestore {
         data.sellingPrice is number;
     }
 
-    // Customer Validation Blueprint
     function isValidCustomer(data) {
       return data.id is string &&
         data.id.size() > 0 && data.id.size() <= 128 &&
@@ -98,7 +181,6 @@ service cloud.firestore {
         data.phone is string && data.phone.size() > 0 && data.phone.size() <= 32;
     }
 
-    // Invoice Validation Blueprint
     function isValidInvoice(data) {
       return data.id is string &&
         data.id.size() > 0 && data.id.size() <= 128 &&
@@ -109,7 +191,6 @@ service cloud.firestore {
         );
     }
 
-    // Restock Order Validation Blueprint
     function isValidRestockOrder(data) {
       return data.id is string &&
         data.id.size() > 0 && data.id.size() <= 128 &&
@@ -120,7 +201,6 @@ service cloud.firestore {
         );
     }
 
-    // Customer Order Validation Blueprint
     function isValidCustomerOrder(data) {
       return data.id is string &&
         data.id.size() > 0 && data.id.size() <= 128 &&
@@ -128,7 +208,6 @@ service cloud.firestore {
         data.totalAmount is number;
     }
 
-    // Audit Log Validation Blueprint
     function isValidAuditLog(data) {
       return data.id is string &&
         data.id.size() > 0 && data.id.size() <= 128 &&
@@ -136,99 +215,428 @@ service cloud.firestore {
         data.action is string && data.action.size() > 0 && data.action.size() <= 128;
     }
 
-    // Wholesaler Validation Blueprint
-    function isValidWholesaler(data) {
-      return data.id is string &&
-        data.id.size() > 0 && data.id.size() <= 128 &&
-        data.name is string && data.name.size() > 0 && data.name.size() <= 128;
-    }
-
-    // Employee Validation Blueprint
     function isValidEmployee(data) {
       return data.id is string &&
         data.id.size() > 0 && data.id.size() <= 128 &&
         data.name is string && data.name.size() > 0 && data.name.size() <= 128;
     }
 
-    // Store & Subcollections Rules - Authenticated & Hardened
+    function isValidSupplier(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 128;
+    }
+
+    function isValidRestockLog(data) {
+      return data.id is string &&
+        data.id.size() > 0 && data.id.size() <= 128 &&
+        data.productId is string && data.productId.size() > 0 && data.productId.size() <= 128 &&
+        (
+          (('quantity' in data) && data.quantity is number) ||
+          (('quantityAdded' in data) && data.quantityAdded is number)
+        );
+    }
+
+    // -------------------------------------------------------------
+    // Users Collection - Role Escalation Prevention
+    // -------------------------------------------------------------
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isEllixAdmin());
+      allow list: if isEllixAdmin();
+
+      allow create: if isValidId(userId) &&
+        isOwner(userId) &&
+        incoming().uid == request.auth.uid &&
+        isValidUser(incoming()) &&
+        // Regular signups cannot grant themselves super_admin or ellix_admin
+        (
+          !(incoming().role in ['super_admin', 'ellix_admin']) ||
+          isSuperAdmin()
+        );
+
+      allow update: if isValidId(userId) &&
+        (isOwner(userId) || isEllixAdmin()) &&
+        incoming().uid == existing().uid &&
+        isValidUser(incoming()) &&
+        (
+          // No role change: user updating own profile info (e.g. name, photo)
+          (incoming().role == existing().role) ||
+          // Super Admin can assign or elevate any role
+          (isSuperAdmin()) ||
+          // Ellix Admin can manage lower tiers (client, crew), but CANNOT assign super_admin or ellix_admin, nor edit existing super/ellix admins
+          (
+            isEllixAdmin() &&
+            !(incoming().role in ['super_admin', 'ellix_admin']) &&
+            !(existing().role in ['super_admin', 'ellix_admin'])
+          )
+        );
+
+      allow delete: if isValidId(userId) && (isSuperAdmin() || (isOwner(userId) && !isSuperAdmin()));
+    }
+
+    // -------------------------------------------------------------
+    // Business Applications Collection (Onboarding Queue)
+    // -------------------------------------------------------------
+    match /businessApplications/{applicationId} {
+      // Prospective clients can submit application
+      allow create: if isValidId(applicationId) &&
+        isValidBusinessApplication(incoming()) &&
+        incoming().status == 'pending';
+
+      // Ellix Admins and Super Admins can review, list, update and manage applications
+      allow get, list: if isEllixAdmin();
+      allow update: if isEllixAdmin() && isValidId(applicationId) && isValidBusinessApplication(incoming());
+      allow delete: if isEllixAdmin() && isValidId(applicationId);
+    }
+
+    // -------------------------------------------------------------
+    // Store & Subcollections Rules - Store-Level Isolation & Validation
+    // -------------------------------------------------------------
     match /stores/{storeId} {
-      // Store public details can be read by visitors for shopping & catalog browsing
-      allow get, list: if true;
-      // Store creation & configuration updates require an authenticated user
-      allow create, update: if isSignedIn() && isValidId(storeId) && isValidStore(incoming());
-      allow delete: if isSignedIn() && isValidId(storeId) && (isAdmin() || isOwner(existing().ownerUid));
+      // Store details restricted to Super Admin, Ellix Admin, Store Owner (Client), and Crew assigned to storeId
+      allow get, list: if isSignedIn() && (
+        isEllixAdmin() ||
+        isCrewAssignedToStore(storeId) ||
+        (
+          hasUserDoc() &&
+          getUserDoc().role in ['client', 'retailer'] &&
+          (
+            resource.data.ownerUid == request.auth.uid ||
+            ('clientId' in resource.data && 'clientId' in getUserDoc() && resource.data.clientId == getUserDoc().clientId) ||
+            ('client_id' in resource.data && 'client_id' in getUserDoc() && resource.data.client_id == getUserDoc().client_id)
+          )
+        )
+      );
 
+      // Store creation & configuration: Client owners and Admins only
+      allow create: if isSignedIn() && isValidId(storeId) && isValidStore(incoming()) &&
+        hasValidStoreId(incoming(), storeId) &&
+        (
+          isEllixAdmin() ||
+          (isClient() && incoming().ownerUid == request.auth.uid)
+        );
+
+      allow update: if isSignedIn() && isValidId(storeId) && isValidStore(incoming()) &&
+        isClientOwnerOfStore(storeId) &&
+        maintainsStoreId(storeId);
+
+      allow delete: if isSignedIn() && isValidId(storeId) &&
+        (isEllixAdmin() || isClientOwnerOfStore(storeId));
+
+      // Master Gate: Products (Isolated to storeId)
+      // Crew can create new products and set initial stock / prices in their assigned store.
+      // Crew can restock, but cannot secretly alter selling price or product identity.
       match /products/{productId} {
-        // Products catalog can be viewed by public customers
-        allow get, list: if true;
-        // Modifying inventory requires authenticated staff or merchant
-        allow create: if isSignedIn() && isValidId(productId) && isValidProduct(incoming());
-        allow update: if isSignedIn() && isValidId(productId) && isValidProduct(incoming());
-        allow delete: if isSignedIn() && isValidId(productId);
+        allow get, list: if isStoreAuthorizedUser(storeId);
+
+        allow create: if isValidId(productId) &&
+          isStoreAuthorizedUser(storeId) &&
+          isValidProduct(incoming()) &&
+          hasValidStoreId(incoming(), storeId) &&
+          hasValidClientId(incoming(), storeId);
+
+        allow update: if isValidId(productId) &&
+          maintainsStoreId(storeId) &&
+          hasValidClientId(incoming(), storeId) &&
+          (
+            (isClientOwnerOfStore(storeId) && isValidProduct(incoming())) ||
+            (
+              isCrewAssignedToStore(storeId) &&
+              incoming().name == existing().name &&
+              incoming().sellingPrice == existing().sellingPrice &&
+              incoming().diff(existing()).affectedKeys().hasOnly(['stock', 'updatedAt', 'lastRestockedAt', 'lastRestockedBy', 'lastRestockedQty'])
+            )
+          );
+
+        allow delete: if isValidId(productId) && isClientOwnerOfStore(storeId);
       }
 
+      // Master Gate: Customers & CRM (Isolated to storeId and tenant)
       match /customers/{customerId} {
-        // Customer profiles require authenticated user for PII privacy protection
-        allow get, list: if isSignedIn();
-        allow create: if isSignedIn() && isValidId(customerId) && isValidCustomer(incoming());
-        allow update: if isSignedIn() && isValidId(customerId) && isValidCustomer(incoming());
-        allow delete: if isSignedIn() && isValidId(customerId);
+        allow get, list: if isStoreAuthorizedUser(storeId);
+
+        allow create: if isValidId(customerId) &&
+          isValidCustomer(incoming()) &&
+          isStoreAuthorizedUser(storeId) &&
+          hasValidStoreId(incoming(), storeId) &&
+          hasValidClientId(incoming(), storeId);
+
+        allow update: if isValidId(customerId) &&
+          isValidCustomer(incoming()) &&
+          isStoreAuthorizedUser(storeId) &&
+          maintainsStoreId(storeId) &&
+          hasValidClientId(incoming(), storeId);
+
+        allow delete: if isValidId(customerId) && isClientOwnerOfStore(storeId);
       }
 
+      // Master Gate: POS Invoices (Strict Store-Level & Crew Privacy Isolation)
+      // RULE: Crew members can only read their OWN invoices (resource.data.cashierId == request.auth.uid)
+      // RULE: Crew members cannot forge cashierId
+      // RULE: Crew members must NEVER be able to apply or approve discounts
       match /invoices/{invoiceId} {
-        // Invoices and financial ledger require authenticated merchant/staff
-        allow get, list: if isSignedIn();
-        allow create: if isSignedIn() && isValidId(invoiceId) && isValidInvoice(incoming());
-        allow update: if isSignedIn() && isValidId(invoiceId) && isValidInvoice(incoming());
-        allow delete: if isSignedIn() && isValidId(invoiceId);
+        allow get: if isClientOwnerOfStore(storeId) ||
+          (isCrewAssignedToStore(storeId) && resource.data.cashierId == request.auth.uid);
+
+        allow list: if isClientOwnerOfStore(storeId) ||
+          (isCrewAssignedToStore(storeId) && resource.data.cashierId == request.auth.uid);
+
+        allow create: if isValidId(invoiceId) &&
+          isValidInvoice(incoming()) &&
+          hasValidStoreId(incoming(), storeId) &&
+          hasValidClientId(incoming(), storeId) &&
+          (
+            isClientOwnerOfStore(storeId) ||
+            (
+              isCrewAssignedToStore(storeId) &&
+              // Enforce that Crew records their own authenticated UID
+              (
+                (('cashierId' in incoming()) && incoming().cashierId == request.auth.uid) ||
+                (('createdById' in incoming()) && incoming().createdById == request.auth.uid)
+              ) &&
+              // Strictly enforce 0 discount for crew in request payload
+              (!('discountTotal' in incoming()) || incoming().discountTotal == 0) &&
+              (!('discountPercent' in incoming()) || incoming().discountPercent == 0)
+            )
+          );
+
+        // Invoices are immutable to crew: only Store Owner or Admin can adjust or void
+        allow update: if isValidId(invoiceId) &&
+          isValidInvoice(incoming()) &&
+          isClientOwnerOfStore(storeId) &&
+          maintainsStoreId(storeId) &&
+          hasValidClientId(incoming(), storeId);
+
+        allow delete: if isValidId(invoiceId) && isClientOwnerOfStore(storeId);
       }
 
-      match /restockOrders/{orderId} {
-        // Restock procurement orders require authenticated merchant/wholesaler
-        allow get, list: if isSignedIn();
-        allow create: if isSignedIn() && isValidId(orderId) && isValidRestockOrder(incoming());
-        allow update: if isSignedIn() && isValidId(orderId) && isValidRestockOrder(incoming());
-        allow delete: if isSignedIn() && isValidId(orderId);
-      }
-
-      match /customerOrders/{orderId} {
-        // Public customer portal can place order without signing in
-        allow create: if isValidId(orderId) && isValidCustomerOrder(incoming());
-        // Viewing customer orders allowed for status checks
-        allow get, list: if true;
-        // Updating customer order status requires authenticated staff/merchant
-        allow update: if isSignedIn() && isValidId(orderId) && isValidCustomerOrder(incoming());
-        allow delete: if isSignedIn() && isValidId(orderId);
-      }
-
-      match /auditLogs/{logId} {
-        // Audit logs require authenticated merchant or admin
-        allow get, list: if isSignedIn();
-        allow create: if isSignedIn() && isValidId(logId) && isValidAuditLog(incoming());
-        allow update: if false; // Immutable audit log trail
-        allow delete: if isAdmin();
-      }
-
-      match /wholesalers/{wholesalerId} {
-        // Wholesaler catalog can be viewed by merchants
-        allow get, list: if true;
-        allow create: if isSignedIn() && isValidId(wholesalerId) && isValidWholesaler(incoming());
-        allow update: if isSignedIn() && isValidId(wholesalerId) && isValidWholesaler(incoming());
-        allow delete: if isSignedIn() && isValidId(wholesalerId);
-      }
-
+      // Master Gate: Staff & RBAC (Isolated to Store Owner; Forbidden for Crew)
       match /employees/{employeeId} {
-        // Employee roles require authenticated store owner/admin
-        allow get, list: if isSignedIn();
-        allow create: if isSignedIn() && isValidId(employeeId) && isValidEmployee(incoming());
-        allow update: if isSignedIn() && isValidId(employeeId) && isValidEmployee(incoming());
-        allow delete: if isSignedIn() && isValidId(employeeId);
+        allow get, list: if isClientOwnerOfStore(storeId);
+
+        allow create: if isValidId(employeeId) &&
+          isValidEmployee(incoming()) &&
+          isClientOwnerOfStore(storeId) &&
+          hasValidStoreId(incoming(), storeId) &&
+          hasValidClientId(incoming(), storeId);
+
+        allow update: if isValidId(employeeId) &&
+          isValidEmployee(incoming()) &&
+          isClientOwnerOfStore(storeId) &&
+          maintainsStoreId(storeId) &&
+          hasValidClientId(incoming(), storeId);
+
+        allow delete: if isValidId(employeeId) && isClientOwnerOfStore(storeId);
+      }
+
+      // Master Gate: Suppliers (Owner management; Crew can only read to select during restock)
+      match /suppliers/{supplierId} {
+        allow get, list: if isStoreAuthorizedUser(storeId);
+
+        allow create: if isValidId(supplierId) &&
+          isClientOwnerOfStore(storeId) &&
+          isValidSupplier(incoming()) &&
+          hasValidStoreId(incoming(), storeId) &&
+          hasValidClientId(incoming(), storeId);
+
+        allow update: if isValidId(supplierId) &&
+          isClientOwnerOfStore(storeId) &&
+          isValidSupplier(incoming()) &&
+          maintainsStoreId(storeId) &&
+          hasValidClientId(incoming(), storeId);
+
+        allow delete: if isValidId(supplierId) && isClientOwnerOfStore(storeId);
+      }
+
+      // Master Gate: Restock Logs (Audited Restock Records with Crew & Supplier Info)
+      match /restockLogs/{logId} {
+        allow get, list: if isStoreAuthorizedUser(storeId);
+
+        allow create: if isValidId(logId) &&
+          isStoreAuthorizedUser(storeId) &&
+          isValidRestockLog(incoming()) &&
+          hasValidStoreId(incoming(), storeId) &&
+          hasValidClientId(incoming(), storeId) &&
+          (
+            isClientOwnerOfStore(storeId) ||
+            (
+              isCrewAssignedToStore(storeId) &&
+              (
+                (('crewId' in incoming()) && incoming().crewId == request.auth.uid) ||
+                (('addedById' in incoming()) && incoming().addedById == request.auth.uid)
+              )
+            )
+          );
+
+        allow update, delete: if isClientOwnerOfStore(storeId);
+      }
+
+      // Master Gate: Restock Orders (Isolated to storeId)
+      match /restockOrders/{orderId} {
+        allow get, list: if isStoreAuthorizedUser(storeId);
+
+        allow create: if isValidId(orderId) &&
+          isValidRestockOrder(incoming()) &&
+          isStoreAuthorizedUser(storeId) &&
+          hasValidStoreId(incoming(), storeId) &&
+          hasValidClientId(incoming(), storeId);
+
+        allow update: if isValidId(orderId) &&
+          isValidRestockOrder(incoming()) &&
+          isStoreAuthorizedUser(storeId) &&
+          maintainsStoreId(storeId) &&
+          hasValidClientId(incoming(), storeId);
+
+        allow delete: if isValidId(orderId) && isClientOwnerOfStore(storeId);
+      }
+
+      // Master Gate: Customer Pickup / Delivery Orders (Validated by storeId)
+      match /customerOrders/{orderId} {
+        allow create: if isValidId(orderId) &&
+          isValidCustomerOrder(incoming()) &&
+          isStoreAuthorizedUser(storeId) &&
+          hasValidStoreId(incoming(), storeId);
+
+        allow get, list: if isStoreAuthorizedUser(storeId);
+
+        allow update: if isValidId(orderId) &&
+          isValidCustomerOrder(incoming()) &&
+          isStoreAuthorizedUser(storeId) &&
+          maintainsStoreId(storeId);
+
+        allow delete: if isValidId(orderId) && isClientOwnerOfStore(storeId);
+      }
+
+      // Master Gate: Audit Trail (Immutable & Isolated to storeId)
+      match /auditLogs/{logId} {
+        allow get, list: if isClientOwnerOfStore(storeId);
+
+        allow create: if isSignedIn() &&
+          isValidId(logId) &&
+          isValidAuditLog(incoming()) &&
+          isStoreAuthorizedUser(storeId) &&
+          hasValidStoreId(incoming(), storeId);
+
+        allow update: if false; // Immutable audit log trail
+        allow delete: if isSuperAdmin();
+      }
+
+      // Wholesalers linked to Store
+      match /wholesalers/{wholesalerId} {
+        allow get, list: if isStoreAuthorizedUser(storeId);
+        allow create, update, delete: if isClientOwnerOfStore(storeId) && maintainsStoreId(storeId);
+      }
+
+      // Master Gate: Notifications (Isolated to storeId, role-targeted)
+      match /notifications/{notificationId} {
+        // Client/Owner and Admins can read all store notifications.
+        // Crew can ONLY read notifications that are NOT targeted specifically to client/owner!
+        allow get, list: if isStoreAuthorizedUser(storeId) && (
+          isClientOwnerOfStore(storeId) ||
+          isEllixAdmin() ||
+          (isCrewAssignedToStore(storeId) && (!('targetRole' in resource.data) || resource.data.targetRole != 'client'))
+        );
+
+        allow create: if isStoreAuthorizedUser(storeId) &&
+          hasValidStoreId(incoming(), storeId);
+
+        allow update, delete: if isClientOwnerOfStore(storeId);
       }
     }
 
     // Connection Health Verification Document
     match /test/{testId} {
       allow get: if isValidId(testId);
+    }
+
+    // -------------------------------------------------------------
+    // Clients & Subscriptions Collection (Multi-Tenant Billing)
+    // -------------------------------------------------------------
+    match /clients/{clientId} {
+      allow get, list: if isSignedIn() && (
+        isEllixAdmin() ||
+        (
+          hasUserDoc() &&
+          getUserDoc().role in ['client', 'retailer'] &&
+          (
+            ('clientId' in getUserDoc() && getUserDoc().clientId == clientId) ||
+            ('client_id' in getUserDoc() && getUserDoc().client_id == clientId)
+          )
+        )
+      );
+
+      // Client root document provisioning is restricted to Platform Admins / Server Admin SDK
+      allow create: if isSignedIn() && isEllixAdmin();
+
+      // Clients may only update non-protected business profile fields; status/plan/billing/approval fields are strictly Admin/Server-only
+      allow update: if isSignedIn() && (
+        isEllixAdmin() ||
+        (
+          hasUserDoc() &&
+          getUserDoc().role in ['client', 'retailer'] &&
+          (
+            ('clientId' in getUserDoc() && getUserDoc().clientId == clientId) ||
+            ('client_id' in getUserDoc() && getUserDoc().client_id == clientId)
+          ) &&
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'name',
+            'businessName',
+            'phone',
+            'email',
+            'address',
+            'city',
+            'gstin',
+            'updatedAt'
+          ])
+        )
+      );
+
+      // Direct client document deletion is restricted to Platform Admins / Server Admin SDK
+      allow delete: if isSignedIn() && isEllixAdmin();
+
+      // Client current subscription document
+      // READ: Allowed to Client Owner (their own tenant) and Admins.
+      // WRITE: Strictly RESTRICTED to Ellix Admin & Super Admin (or server Admin SDK).
+      // Normal Clients cannot self-extend renewalDate, modify status, or clear grace periods!
+      match /subscription/{docId} {
+        allow get, list: if isSignedIn() && (
+          isEllixAdmin() ||
+          (
+            hasUserDoc() &&
+            getUserDoc().role in ['client', 'retailer'] &&
+            (
+              ('clientId' in getUserDoc() && getUserDoc().clientId == clientId) ||
+              ('client_id' in getUserDoc() && getUserDoc().client_id == clientId)
+            )
+          )
+        );
+
+        allow create, update: if isSignedIn() && isEllixAdmin();
+
+        allow delete: if isSuperAdmin();
+      }
+
+      // Client subscription payments ledger
+      // READ: Allowed to Client Owner (their own tenant) and Admins.
+      // WRITE: Strictly RESTRICTED to Platform Admins / Server.
+      // Clients cannot insert fake or unverified payment records!
+      match /subscriptionPayments/{paymentId} {
+        allow get, list: if isSignedIn() && (
+          isEllixAdmin() ||
+          (
+            hasUserDoc() &&
+            getUserDoc().role in ['client', 'retailer'] &&
+            (
+              ('clientId' in getUserDoc() && getUserDoc().clientId == clientId) ||
+              ('client_id' in getUserDoc() && getUserDoc().client_id == clientId)
+            )
+          )
+        );
+
+        allow create, update: if isSignedIn() && isEllixAdmin();
+
+        allow delete: if isSuperAdmin();
+      }
     }
   }
 }

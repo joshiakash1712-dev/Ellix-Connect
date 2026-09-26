@@ -40,7 +40,9 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
   const customerPhone = invoice.customerPhone || '';
   const paymentMethod = (invoice.paymentMethod || 'cash').toUpperCase();
   const invoiceDate = invoice.date || '2026-08-01';
-  const invoiceTime = (invoice as any).time || '14:30 PM';
+  const invoiceTime = (invoice as any).time || (invoice.date?.includes(' ') ? invoice.date.split(' ')[1] : '') || '14:30 PM';
+  const cashierName = invoice.cashierName || (invoice as any).crewName || invoice.createdBy || 'Staff Cashier';
+  const storeName = invoice.storeName || branding.storeDisplayName || 'Ellix Store';
 
   const previousBalance = additionalInfo?.previousBalance ?? 0;
   const receivedAmount = additionalInfo?.receivedAmount ?? (paymentMethod === 'CASH' || paymentMethod === 'UPI' ? grandTotal : 0);
@@ -139,6 +141,9 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
               <div className="mt-2 text-right text-xs space-y-0.5">
                 <p><span className="text-slate-500 font-medium">Invoice No:</span> <span className="font-mono font-bold text-amber-950">{invoiceId}</span></p>
                 <p><span className="text-slate-500 font-medium">Invoice Date:</span> <span className="font-bold">{invoiceDate}</span></p>
+                <p><span className="text-slate-500 font-medium">Time:</span> <span className="font-mono">{invoiceTime}</span></p>
+                <p><span className="text-slate-500 font-medium">Billed By:</span> <span className="font-bold text-amber-950">{cashierName}</span></p>
+                <p><span className="text-slate-500 font-medium">Store:</span> <span className="font-semibold text-slate-800">{storeName}</span></p>
                 {additionalInfo?.dueDate && (
                   <p><span className="text-slate-500 font-medium">Due Date:</span> <span className="font-bold text-rose-700">{additionalInfo.dueDate}</span></p>
                 )}
@@ -387,6 +392,8 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
               <p><span className="text-slate-500">Invoice No:</span> <span className="font-bold font-mono">{invoiceId}</span></p>
               <p><span className="text-slate-500">Date:</span> <span className="font-bold">{invoiceDate}</span></p>
               <p><span className="text-slate-500">Time:</span> <span className="font-mono text-slate-600">{invoiceTime}</span></p>
+              <p><span className="text-slate-500">Cashier:</span> <span className="font-bold text-sky-800">{cashierName}</span></p>
+              <p><span className="text-slate-500">Store:</span> <span className="font-medium text-slate-800">{storeName}</span></p>
             </div>
           </div>
         </div>
@@ -545,6 +552,7 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
           </div>
           <div className="text-right text-xs">
             <p className="font-bold text-slate-700">Invoice Date: <span className="font-mono text-slate-900">{invoiceDate}</span></p>
+            <p className="text-slate-600">Time: <span className="font-mono text-slate-900">{invoiceTime}</span></p>
             <p className="text-slate-600">Due Date: <span className="font-mono text-slate-900">{additionalInfo?.dueDate || '07/12/2026'}</span></p>
           </div>
         </div>
@@ -561,6 +569,8 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
             <p className="font-bold text-[10px] uppercase tracking-wider text-slate-600 mb-0.5">INVOICE METADATA</p>
             <p className="text-slate-700">Invoice No: <span className="font-mono font-bold text-sm text-slate-900">{invoiceId}</span></p>
             <p className="text-slate-600">Payment: <span className="font-semibold text-slate-900">{paymentMethod}</span></p>
+            <p className="text-slate-600">Cashier: <span className="font-bold text-slate-900">{cashierName}</span></p>
+            <p className="text-slate-600">Store: <span className="font-medium text-slate-800">{storeName}</span></p>
           </div>
         </div>
 
@@ -673,6 +683,9 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
           <div className="text-right text-xs space-y-0.5">
             <p><span className="text-slate-500">Invoice No:</span> <span className="font-mono font-bold text-sky-950">{invoiceId}</span></p>
             <p><span className="text-slate-500">Invoice Date:</span> <span className="font-bold">{invoiceDate}</span></p>
+            <p><span className="text-slate-500">Time:</span> <span className="font-mono text-slate-700">{invoiceTime}</span></p>
+            <p><span className="text-slate-500">Cashier:</span> <span className="font-bold text-sky-900">{cashierName}</span></p>
+            <p><span className="text-slate-500">Store:</span> <span className="font-medium text-slate-800">{storeName}</span></p>
             <p><span className="text-slate-500">Due Date:</span> <span className="font-bold text-rose-700">{additionalInfo?.dueDate || '28/01/2026'}</span></p>
           </div>
         </div>
@@ -811,6 +824,7 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
       <div className="text-[10px] space-y-0.5 pb-2 border-b border-dashed border-slate-400 mb-2">
         <div className="flex justify-between"><span>Inv No: {invoiceId}</span> <span>{invoiceDate}</span></div>
         <div className="flex justify-between"><span>Time: {invoiceTime}</span> <span>Pay: {paymentMethod}</span></div>
+        <div className="flex justify-between"><span>Store: {storeName}</span> <span>Cashier: {cashierName}</span></div>
         <div className="flex justify-between font-semibold pt-0.5">
           <span>Bill To: {customerName}</span>
           {customerPhone && <span>{customerPhone}</span>}

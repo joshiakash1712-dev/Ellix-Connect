@@ -90,10 +90,15 @@ export const AccountSyncHubModal: React.FC = () => {
       await linkGoogleAccount();
       setSuccessMessage('Google account successfully linked and synchronized!');
     } catch (err: any) {
-      if (err.code === 'auth/credential-already-in-use') {
+      const code = err?.code || '';
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        setErrorMessage(null);
+      } else if (code === 'auth/popup-blocked') {
+        setErrorMessage('Popup was blocked by your browser. Please allow popups or open in a new tab.');
+      } else if (code === 'auth/credential-already-in-use') {
         setErrorMessage('This Google account is already associated with another login. Please use a different Google account or log in with that account.');
       } else {
-        setErrorMessage(err.message || 'Failed to link Google account.');
+        setErrorMessage(err?.message || 'Failed to link Google account.');
       }
     } finally {
       setLoading(false);

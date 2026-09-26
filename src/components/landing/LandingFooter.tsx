@@ -1,5 +1,6 @@
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
+import { EllixConnectLogo } from '../branding/EllixConnectLogo';
 
 interface LandingFooterProps {
   onOpenSignIn?: () => void;
@@ -26,24 +27,7 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
           {/* Col 1: Brand & Tagline (2 cols on md) */}
           <div className="col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-slate-900 dark:bg-slate-800 flex items-center justify-center text-white border border-transparent dark:border-slate-700">
-                <svg
-                  className="w-4 h-4 text-emerald-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                  <polyline points="2 17 12 22 22 17" />
-                  <polyline points="2 12 12 17 22 12" />
-                </svg>
-              </div>
-              <span className="font-extrabold text-base tracking-tight text-slate-950 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]">
-                Ellix <span className="text-emerald-600 dark:text-emerald-400">Connect</span>
-              </span>
+              <EllixConnectLogo size="sm" alt="Ellix Connect Official Logo" />
             </div>
 
             <p className="text-slate-600 dark:text-slate-400 max-w-sm leading-relaxed text-sm">
@@ -249,29 +233,33 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
           <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <button
               type="button"
+              data-cursor="hover"
               onClick={onOpenAiMetadata}
-              className="text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 font-medium"
+              className="text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 font-medium cursor-pointer"
             >
               <span>AI & Crawlers Ready</span>
             </button>
             <button
               type="button"
+              data-cursor="hover"
               onClick={onOpenPrivacy}
-              className="hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+              className="hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
             >
               Privacy
             </button>
             <button
               type="button"
+              data-cursor="hover"
               onClick={onOpenTerms}
-              className="hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+              className="hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
             >
               Terms
             </button>
             <button
               type="button"
+              data-cursor="hover"
               onClick={onOpenContact}
-              className="hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+              className="hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
             >
               Contact
             </button>

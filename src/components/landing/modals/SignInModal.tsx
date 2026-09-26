@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MarketingModal } from './MarketingModal';
 import { useAuth } from '../../../context/AuthContext';
+import { EllixConnectLogo } from '../../branding/EllixConnectLogo';
 import {
   Lock,
   ArrowRight,
@@ -67,10 +68,14 @@ export const SignInModal: React.FC<SignInModalProps> = ({
         }, 600);
       }
     } catch (err: any) {
-      if (err?.code === 'auth/popup-closed-by-user') {
-        setErrorMessage('Google sign-in was cancelled.');
+      const code = err?.code || '';
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        // User closed or dismissed the popup intentionally
+        setErrorMessage(null);
+      } else if (code === 'auth/popup-blocked') {
+        setErrorMessage('Sign-in popup was blocked by your browser. Please allow popups or open in a new tab.');
       } else {
-        setErrorMessage(err.message || 'Google sign-in failed. Please try again.');
+        setErrorMessage(err?.message || 'Google sign-in failed. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -116,6 +121,10 @@ export const SignInModal: React.FC<SignInModalProps> = ({
       subtitle="Unified authentication with Google, Phone OTP, and synchronized credentials."
     >
       <div className="space-y-4">
+        {/* Brand Logo Header */}
+        <div className="flex justify-center pb-1">
+          <EllixConnectLogo size="sm" />
+        </div>
         
         {/* Already Authenticated Banner */}
         {currentUser ? (

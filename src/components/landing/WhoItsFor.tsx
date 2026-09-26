@@ -156,11 +156,12 @@ export const WhoItsFor: React.FC = () => {
                 key={vert.id}
                 id={`vertical-${vert.id}`}
                 type="button"
+                data-cursor="card"
                 onClick={() => setSelectedVerticalId(vert.id)}
-                className={`p-5 rounded-2xl text-left border transition-all flex flex-col justify-between cursor-pointer ${
+                className={`website-card-hover p-5 rounded-2xl text-left border transition-all flex flex-col justify-between cursor-pointer ${
                   isSelected
                     ? 'bg-white dark:bg-slate-900 border-emerald-500 shadow-md ring-2 ring-emerald-500/20'
-                    : 'bg-white/70 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm'
+                    : 'bg-white/70 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:shadow-md'
                 }`}
               >
                 <div>

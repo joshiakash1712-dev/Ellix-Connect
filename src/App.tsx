@@ -14,12 +14,16 @@ import { CustomerCRM } from './components/retailer/CustomerCRM';
 import { ReportsAnalytics } from './components/retailer/ReportsAnalytics';
 import { EmployeeRoles } from './components/retailer/EmployeeRoles';
 import { InvoiceTemplates } from './components/retailer/InvoiceTemplates';
+import { CrewSales } from './components/retailer/CrewSales';
+import { SupplierManager } from './components/retailer/SupplierManager';
+import { SubscriptionPaywall } from './components/subscription/SubscriptionPaywall';
 import { WholesalerPortal } from './components/wholesaler/WholesalerPortal';
 import { AdminPanel } from './components/admin/AdminPanel';
 import { CustomerJourneyMap } from './components/research/CustomerJourneyMap';
 import { AuthModal } from './components/auth/AuthModal';
 import { AccountSyncHubModal } from './components/auth/AccountSyncHubModal';
 import { SaveStatusToast } from './components/common/SaveStatusToast';
+import { SupportChatbot } from './components/common/SupportChatbot';
 import { ShieldCheck, Mail, AlertCircle, X, Zap } from 'lucide-react';
 
 // Material motion transition preset (Shared Axis with subtle scale & fade)
@@ -54,7 +58,8 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
-  const { activeModule, setActiveModule } = useStore();
+  const { activeModule, setActiveModule, subscription, activeRole } = useStore();
+  const { userProfile } = useAuth();
   const [activeView, setActiveView] = useState<string>('dashboard');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
 
@@ -62,6 +67,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
     // Universal journey map view accessible from any module
     if (activeView === 'journey_map') {
       return <CustomerJourneyMap />;
+    }
+
+    // Authoritative Subscription Paywall: Restrict core retail operations if blocked or cancelled
+    const isClient = activeRole === 'client' || userProfile?.role === 'client';
+    const isSubscriptionBlocked = subscription && (subscription.status === 'blocked' || subscription.status === 'cancelled');
+    if (isClient && isSubscriptionBlocked) {
+      return <SubscriptionPaywall />;
     }
 
     // Retailer Views
@@ -73,12 +85,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
           return <BillingPOS />;
         case 'inventory':
           return <InventoryManager />;
+        case 'suppliers':
+          return <SupplierManager />;
         case 'crm':
           return <CustomerCRM />;
+        case 'my_sales':
+          return <CrewSales />;
         case 'templates':
           return <InvoiceTemplates />;
         case 'reports':
-          return <ReportsAnalytics />;
+          return <ReportsAnalytics onNavigateToPOS={() => setActiveView('pos')} />;
         case 'employees':
           return <EmployeeRoles />;
         case 'dashboard':
@@ -129,7 +145,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-white w-full max-w-full overflow-x-hidden">
+    <div className="min-h-screen bg-[#0A0E1A] text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-white w-full max-w-full overflow-x-hidden">
       
       {/* Top Main Navigation */}
       <Navbar
@@ -213,6 +229,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
       <BottomNavigation
         activeView={activeView}
         onSelectView={setActiveView}
+        onOpenMenu={() => setIsMobileDrawerOpen(true)}
+        isMenuOpen={isMobileDrawerOpen}
       />
 
       {/* Machine-Readable AI Context & Application Data for Headless Agents and Scrapers */}
@@ -262,7 +280,11 @@ const AppContent: React.FC = () => {
   return (
     <>
       {viewMode === 'landing' ? (
-        <EllixLandingPage onLaunchApp={() => handleSwitchView('app')} />
+        <>
+          <EllixLandingPage onLaunchApp={() => handleSwitchView('app')} />
+          {/* 24/7 AI Customer Support Chatbot - only available on website */}
+          <SupportChatbot />
+        </>
       ) : (
         <MainLayout onNavigateToWebsite={() => handleSwitchView('landing')} />
       )}

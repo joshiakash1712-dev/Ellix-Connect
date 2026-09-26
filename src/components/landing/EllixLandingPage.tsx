@@ -12,6 +12,7 @@ import { FAQSection } from './FAQSection';
 import { FinalCTA } from './FinalCTA';
 import { LandingFooter } from './LandingFooter';
 import { BackToTop } from './BackToTop';
+import { WebsiteCursor } from './WebsiteCursor';
 import { SignInModal } from './modals/SignInModal';
 import { GetStartedModal } from './modals/GetStartedModal';
 import { ContactModal } from './modals/ContactModal';
@@ -40,8 +41,11 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp 
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-white antialiased overflow-x-hidden w-full max-w-full transition-colors duration-200">
+    <div className="website-root min-h-screen bg-[#fafafa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-white antialiased overflow-x-hidden w-full max-w-full transition-colors duration-200">
       
+      {/* Website-Only Smooth Interactive Cursor */}
+      <WebsiteCursor />
+
       {/* 1. Header */}
       <LandingHeader
         onOpenSignIn={handleOpenSignIn}

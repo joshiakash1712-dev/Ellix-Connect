@@ -162,11 +162,12 @@ export const ProductPreview: React.FC = () => {
         <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mb-6">
           <button
             type="button"
+            data-cursor="hover"
             onClick={() => {
               setActiveTab('dashboard');
               setSelectedHotspot(null);
             }}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95 ${
               activeTab === 'dashboard'
                 ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
@@ -178,11 +179,12 @@ export const ProductPreview: React.FC = () => {
 
           <button
             type="button"
+            data-cursor="hover"
             onClick={() => {
               setActiveTab('billing');
               setSelectedHotspot(null);
             }}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95 ${
               activeTab === 'billing'
                 ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
@@ -194,11 +196,12 @@ export const ProductPreview: React.FC = () => {
 
           <button
             type="button"
+            data-cursor="hover"
             onClick={() => {
               setActiveTab('inventory');
               setSelectedHotspot(null);
             }}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95 ${
               activeTab === 'inventory'
                 ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
@@ -210,11 +213,12 @@ export const ProductPreview: React.FC = () => {
 
           <button
             type="button"
+            data-cursor="hover"
             onClick={() => {
               setActiveTab('customers');
               setSelectedHotspot(null);
             }}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95 ${
               activeTab === 'customers'
                 ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
@@ -226,11 +230,12 @@ export const ProductPreview: React.FC = () => {
 
           <button
             type="button"
+            data-cursor="hover"
             onClick={() => {
               setActiveTab('reports');
               setSelectedHotspot(null);
             }}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95 ${
               activeTab === 'reports'
                 ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'

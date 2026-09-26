@@ -13,7 +13,7 @@ export const SaveStatusToast: React.FC = () => {
     <div
       id="save-status-toast"
       aria-live="polite"
-      className="fixed bottom-4 right-4 z-40 pointer-events-none transition-all duration-300 ease-out"
+      className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40 pointer-events-none transition-all duration-300 ease-out"
     >
       <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 dark:bg-slate-900/95 backdrop-blur border border-slate-700/70 shadow-lg text-xs">
         {saveFeedback.status === 'saving' && (

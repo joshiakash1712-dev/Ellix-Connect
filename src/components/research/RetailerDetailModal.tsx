@@ -140,7 +140,7 @@ export const RetailerDetailModal: React.FC<RetailerDetailModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
       <div
         id="retailer-detail-modal"
-        className="relative w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col"
+        className="relative w-full max-w-4xl glass-panel border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col"
       >
         {/* Modal Header */}
         <div className="p-6 border-b border-slate-800 bg-slate-950/80 flex items-center justify-between gap-4 shrink-0">

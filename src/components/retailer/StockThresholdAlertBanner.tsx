@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../../context/StoreContext';
 import { Product } from '../../types';
+import { StockStatusBadge } from '../common/StockStatusBadge';
 import {
   AlertTriangle,
   AlertCircle,
@@ -539,22 +540,9 @@ export const StockThresholdAlertBanner: React.FC<StockThresholdAlertBannerProps>
                           </div>
 
                           {/* Stock status pill */}
-                          <div className="text-right shrink-0">
-                            <span
-                              className={`text-[10px] font-black px-2 py-0.5 rounded-lg border uppercase inline-flex items-center gap-1 ${
-                                isOut
-                                  ? 'bg-red-500/20 text-red-300 border-red-500/40 animate-pulse'
-                                  : isCritical
-                                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                                  : 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
-                              }`}
-                            >
-                              <TrendingDown className="w-2.5 h-2.5" />
-                              <span>
-                                {p.stock} {p.unit}
-                              </span>
-                            </span>
-                            <div className="text-[9px] text-slate-500 mt-0.5">
+                          <div className="text-right shrink-0 flex flex-col items-end gap-1">
+                            <StockStatusBadge stock={p.stock} unit={p.unit} showQuantity={true} size="sm" />
+                            <div className="text-[9px] text-slate-500">
                               Min: <strong className="text-slate-300">{p.minThreshold} {p.unit}</strong>
                             </div>
                           </div>

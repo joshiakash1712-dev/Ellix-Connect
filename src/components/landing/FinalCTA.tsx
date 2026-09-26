@@ -39,8 +39,9 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onOpenGetStarted }) => {
               <button
                 id="btn-final-cta-getstarted"
                 type="button"
+                data-cursor="hover"
                 onClick={onOpenGetStarted}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-base font-bold shadow-lg transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                className="website-btn-glow w-full sm:w-auto px-8 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-base font-bold shadow-lg hover:shadow-xl hover:shadow-emerald-500/25 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group cursor-pointer"
               >
                 <span>Get Started</span>
                 <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />

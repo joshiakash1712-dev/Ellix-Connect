@@ -221,14 +221,14 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-lg font-black text-white tracking-tight">Growth & Traction Telemetry</h2>
+                <h2 className="text-lg font-black text-white tracking-tight">Growth & Sales Trends</h2>
                 <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
                   <Sparkles className="w-3 h-3 text-emerald-400" />
                   <span>+34.8% YoY Trajectory</span>
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Live performance curves, compound revenue expansion, customer cohort velocity, and predictive forecast models.
+                Performance curves, revenue expansion, customer retention, and estimated sales projections.
               </p>
             </div>
           </div>
@@ -307,7 +307,7 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
         {/* Metric 2: Customer Acquisition Velocity */}
         <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-2 relative overflow-hidden group">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-            <span>Customer Base Velocity</span>
+            <span>Customer Base & Growth</span>
             <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
               <Users className="w-4 h-4" />
             </div>
@@ -321,7 +321,7 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
             </span>
           </div>
           <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800 flex justify-between">
-            <span>Cohort Retention SLA:</span>
+            <span>Repeat Customer Rate:</span>
             <span className="text-emerald-400 font-bold">88.9% active</span>
           </div>
         </div>
@@ -329,7 +329,7 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
         {/* Metric 3: Average Order Value (AOV) Growth */}
         <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-2 relative overflow-hidden group">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-            <span>Average Ticket (AOV)</span>
+            <span>Average Bill (AOV)</span>
             <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">
               <ShoppingCart className="w-4 h-4" />
             </div>
@@ -341,15 +341,15 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
             </span>
           </div>
           <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800 flex justify-between">
-            <span>Basket Size:</span>
-            <span className="text-purple-300 font-bold">4.2 items / txn</span>
+            <span>Items per Bill:</span>
+            <span className="text-purple-300 font-bold">4.2 items</span>
           </div>
         </div>
 
         {/* Metric 4: Net Margin & Profit Expansion */}
         <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-2 relative overflow-hidden group">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-            <span>Gross Margin Expansion</span>
+            <span>Estimated Profit Margin</span>
             <div className="p-1.5 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20">
               <Percent className="w-4 h-4" />
             </div>
@@ -361,7 +361,7 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
             </span>
           </div>
           <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800 flex justify-between">
-            <span>Estimated Gross Profit:</span>
+            <span>Estimated Profit:</span>
             <span className="text-emerald-400 font-bold font-mono">₹{Math.round(forecastMetrics.currentRunRate * 0.27).toLocaleString('en-IN')}</span>
           </div>
         </div>
@@ -371,11 +371,11 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
       {/* 3. Interactive Metric Dimension Switcher Tabs */}
       <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg overflow-x-auto no-scrollbar">
         {[
-          { id: 'revenue_profit', label: 'Revenue & Gross Profit Expansion', icon: DollarSign },
-          { id: 'customer_retention', label: 'Customer Cohort & Retention', icon: Users },
-          { id: 'aov_basket', label: 'AOV & Basket Size Velocity', icon: ShoppingCart },
-          { id: 'category_velocity', label: 'Category & SKU Velocity', icon: Layers },
-          { id: 'outlet_comparison', label: 'Multi-Branch Fleet Comparison', icon: Building2 }
+          { id: 'revenue_profit', label: 'Sales & Estimated Profit', icon: DollarSign },
+          { id: 'customer_retention', label: 'Customers & Repeat Visits', icon: Users },
+          { id: 'aov_basket', label: 'Average Bill & Basket Size', icon: ShoppingCart },
+          { id: 'category_velocity', label: 'Category & Product Sales Speed', icon: Layers },
+          { id: 'outlet_comparison', label: 'Multi-Store Comparison', icon: Building2 }
         ].map(tab => {
           const Icon = tab.icon;
           const isActive = activeMetric === tab.id;
@@ -673,13 +673,13 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
                     contentStyle={{ backgroundColor: '#090d16', borderColor: '#334155', borderRadius: '14px', fontSize: '12px' }}
                     formatter={(val: any, name: any) => [
                       `₹${Number(val).toLocaleString('en-IN')}`,
-                      name === 'store1' ? 'Connaught Place Branch' : name === 'store2' ? 'South Extension Hub' : 'Indiranagar Outlet'
+                      name === 'store1' ? 'Connaught Place Store' : name === 'store2' ? 'South Extension Store' : 'Indiranagar Store'
                     ]}
                   />
                   <Legend />
-                  <Line type="monotone" dataKey="store1" stroke="#10b981" strokeWidth={2.5} name="Connaught Place Branch" />
-                  <Line type="monotone" dataKey="store2" stroke="#3b82f6" strokeWidth={2} name="South Extension Hub" />
-                  <Line type="monotone" dataKey="store3" stroke="#f59e0b" strokeWidth={2} name="Indiranagar Outlet" />
+                  <Line type="monotone" dataKey="store1" stroke="#10b981" strokeWidth={2.5} name="Connaught Place Store" />
+                  <Line type="monotone" dataKey="store2" stroke="#3b82f6" strokeWidth={2} name="South Extension Store" />
+                  <Line type="monotone" dataKey="store3" stroke="#f59e0b" strokeWidth={2} name="Indiranagar Store" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -709,7 +709,7 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">Projected CMGR Rate:</span>
+            <span className="text-xs text-slate-400 font-medium">Projected Growth Rate:</span>
             <span className="text-xs font-black text-amber-400 px-2 py-1 bg-slate-800 rounded-lg border border-slate-700 font-mono">
               +{projectionRate}%
             </span>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MarketingModal } from './MarketingModal';
-import { Mail, Phone, MapPin, MessageSquare, Clock, CheckCircle2, Send } from 'lucide-react';
+import { EllixConnectLogo } from '../../branding/EllixConnectLogo';
+import { Mail, Phone, MapPin, MessageSquare, Clock, CheckCircle2, Send, Bot, Sparkles } from 'lucide-react';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -27,6 +28,11 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
       maxWidth="max-w-xl"
     >
       <div className="space-y-6">
+        {/* Brand Logo Header */}
+        <div className="flex justify-center pb-1">
+          <EllixConnectLogo size="sm" />
+        </div>
+
         {/* Contact Info Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
@@ -64,6 +70,35 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
               Mon–Sat, 8am–10pm
             </div>
           </div>
+        </div>
+
+        {/* 24/7 Instant AI Assistant Banner */}
+        <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border border-emerald-500/30 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-slate-900 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-sm p-1">
+              <EllixConnectLogo variant="symbol" size={24} alt="Ellix Assistant" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <span>Need Instant Answers?</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold">24/7 Active</span>
+              </div>
+              <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                Ask our AI assistant about hardware, thermal printing, GST, or billing.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            id="btn-contact-modal-launch-chatbot"
+            onClick={() => {
+              onClose();
+              window.dispatchEvent(new CustomEvent('open-support-chat'));
+            }}
+            className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shrink-0 transition-colors shadow-sm"
+          >
+            Start Chat
+          </button>
         </div>
 
         {/* Static Contact Inquiry Form */}

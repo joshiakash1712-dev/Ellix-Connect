@@ -129,11 +129,12 @@ export const WhyEllixConnect: React.FC = () => {
                 key={benefit.id}
                 id={`benefit-${benefit.id}`}
                 type="button"
+                data-cursor="card"
                 onClick={() => setSelectedBenefitId(benefit.id)}
-                className={`p-7 rounded-2xl text-left border transition-all flex flex-col justify-between cursor-pointer ${
+                className={`website-card-hover p-7 rounded-2xl text-left border transition-all flex flex-col justify-between cursor-pointer ${
                   isSelected
                     ? 'bg-emerald-50/50 dark:bg-emerald-950/40 border-emerald-500 shadow-md ring-2 ring-emerald-500/20'
-                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:shadow-md'
                 }`}
               >
                 <div>
@@ -188,11 +189,12 @@ export const WhyEllixConnect: React.FC = () => {
                 key={benefit.id}
                 id={`benefit-${benefit.id}`}
                 type="button"
+                data-cursor="card"
                 onClick={() => setSelectedBenefitId(benefit.id)}
-                className={`p-7 rounded-2xl text-left border transition-all flex flex-col sm:flex-row justify-between gap-6 cursor-pointer ${
+                className={`website-card-hover p-7 rounded-2xl text-left border transition-all flex flex-col sm:flex-row justify-between gap-6 cursor-pointer ${
                   isSelected
                     ? 'bg-emerald-50/50 dark:bg-emerald-950/40 border-emerald-500 shadow-md ring-2 ring-emerald-500/20'
-                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:shadow-md'
                 }`}
               >
                 <div className="flex-1">

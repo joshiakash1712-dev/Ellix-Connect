@@ -134,10 +134,11 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onOpenContact }) => {
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
+                data-cursor="hover"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search questions (e.g., inventory, offline, billing)..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-slate-400"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-slate-400 hover:border-emerald-500/40"
               />
             </div>
 
@@ -145,16 +146,18 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onOpenContact }) => {
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 self-end sm:self-auto">
               <button
                 type="button"
+                data-cursor="hover"
                 onClick={expandAll}
-                className="px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 Expand All
               </button>
               <span>·</span>
               <button
                 type="button"
+                data-cursor="hover"
                 onClick={collapseAll}
-                className="px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 Collapse All
               </button>
@@ -172,18 +175,19 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onOpenContact }) => {
                 <div
                   key={item.id}
                   id={`faq-item-${item.id}`}
-                  className={`rounded-2xl border transition-all overflow-hidden ${
+                  className={`website-card-hover rounded-2xl border transition-all overflow-hidden ${
                     isOpen
                       ? 'bg-slate-50/70 dark:bg-slate-800/60 border-slate-300 dark:border-slate-700 shadow-sm'
-                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500/40'
                   }`}
                 >
                   <button
                     type="button"
+                    data-cursor="hover"
                     onClick={() => toggleItem(item.id)}
                     aria-expanded={isOpen}
                     aria-controls={`faq-answer-${item.id}`}
-                    className="w-full px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    className="w-full px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
                   >
                     <span className="font-bold text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-3">
                       <HelpCircle className={`w-5 h-5 shrink-0 transition-colors ${isOpen ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />

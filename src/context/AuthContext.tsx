@@ -27,15 +27,30 @@ import {
 } from 'firebase/firestore';
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from '../lib/firebase';
 
+export type ProfileRole =
+  | 'super_admin'
+  | 'ellix_admin'
+  | 'client'
+  | 'crew'
+  // Legacy compatibility
+  | 'retailer'
+  | 'wholesaler'
+  | 'admin'
+  | 'employee';
+
 export interface UserProfile {
   uid: string;
+  name?: string;
   email?: string;
   emailVerified: boolean;
   phoneNumber?: string;
   phoneVerified: boolean;
   displayName?: string;
   photoURL?: string;
-  role: 'retailer' | 'wholesaler' | 'admin' | 'employee';
+  role: ProfileRole;
+  clientId?: string;
+  assignedStoreIds?: string[];
+  status?: 'active' | 'pending_approval' | 'suspended';
   linkedProviders: string[]; // e.g. ['google.com', 'password', 'phone']
   passwordSynchronized: boolean;
   createdAt?: string;
@@ -60,7 +75,7 @@ interface AuthContextType {
     email: string,
     password: string,
     displayName: string,
-    role?: 'retailer' | 'wholesaler' | 'admin' | 'employee'
+    role?: ProfileRole
   ) => Promise<void>;
   setUpPhoneRecaptcha: (containerId: string) => RecaptchaVerifier;
   sendPhoneOtp: (phoneNumber: string, recaptchaVerifier: RecaptchaVerifier) => Promise<ConfirmationResult>;
@@ -68,7 +83,7 @@ interface AuthContextType {
     confirmationResult: ConfirmationResult,
     otpCode: string,
     displayName?: string,
-    role?: 'retailer' | 'wholesaler' | 'admin' | 'employee'
+    role?: ProfileRole
   ) => Promise<void>;
   linkGoogleAccount: () => Promise<void>;
   linkEmailAndPassword: (email: string, password: string) => Promise<void>;
@@ -78,7 +93,7 @@ interface AuthContextType {
   sendPasswordReset: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUserProfile: () => Promise<void>;
-  loginWithDemoRole: (role: 'retailer' | 'wholesaler' | 'admin') => Promise<void>;
+  loginWithDemoRole: (role: ProfileRole) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -114,18 +129,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const existingData = snap.data() as UserProfile;
         const mergedProviders = Array.from(new Set([...linkedProviders, ...(existingData.linkedProviders || [])]));
         
+        // Preserve authoritative role already saved in Firestore; only allow dev overrides in development mode
+        const authoritativeRole: ProfileRole =
+          existingData.role ||
+          ((import.meta as any).env?.DEV ? additionalData?.role : undefined) ||
+          (isAdminUser ? 'super_admin' : 'client');
+
+        const { role: _ignoredRole, ...safeAdditionalData } = additionalData || {};
+
         const updates: Partial<UserProfile> = {
+          ...safeAdditionalData,
           email: user.email || existingData.email || '',
           emailVerified: isEmailVerified,
           phoneNumber: user.phoneNumber || existingData.phoneNumber || '',
           phoneVerified: hasPhone,
           displayName: user.displayName || existingData.displayName || (user.email ? user.email.split('@')[0] : 'Merchant'),
           photoURL: user.photoURL || existingData.photoURL || '',
-          role: isAdminUser ? 'admin' : (additionalData?.role || existingData.role || 'retailer'),
+          role: authoritativeRole,
+          clientId: existingData.clientId || safeAdditionalData.clientId || 'client-001',
+          assignedStoreIds: existingData.assignedStoreIds || safeAdditionalData.assignedStoreIds || ['store-1', 'store-2'],
+          status: existingData.status || 'active',
           linkedProviders: mergedProviders,
           passwordSynchronized: existingData.passwordSynchronized ?? hasPassword,
-          updatedAt: nowIso,
-          ...additionalData
+          updatedAt: nowIso
         };
 
         await updateDoc(userDocRef, updates);
@@ -133,20 +159,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUserProfile(updatedProfile);
         return updatedProfile;
       } else {
+        const requestedRole = additionalData?.role;
+        const initialRole: ProfileRole = isAdminUser
+          ? 'super_admin'
+          : ((import.meta as any).env?.DEV && requestedRole)
+          ? requestedRole
+          : (requestedRole && requestedRole !== 'super_admin' && requestedRole !== 'ellix_admin' && requestedRole !== 'admin')
+          ? requestedRole
+          : 'client';
+
+        const { role: _ignoredRole, ...safeAdditionalData } = additionalData || {};
+
         const newProfile: UserProfile = {
+          ...safeAdditionalData,
           uid: user.uid,
           email: user.email || '',
           emailVerified: isEmailVerified,
           phoneNumber: user.phoneNumber || '',
           phoneVerified: hasPhone,
-          displayName: user.displayName || additionalData?.displayName || (user.email ? user.email.split('@')[0] : 'Business Owner'),
+          displayName: user.displayName || safeAdditionalData.displayName || (user.email ? user.email.split('@')[0] : 'Merchant'),
           photoURL: user.photoURL || '',
-          role: isAdminUser ? 'admin' : (additionalData?.role || 'retailer'),
+          role: initialRole,
+          clientId: safeAdditionalData.clientId || 'client-001',
+          assignedStoreIds: safeAdditionalData.assignedStoreIds || ['store-1', 'store-2'],
+          status: 'active',
           linkedProviders: linkedProviders.length > 0 ? linkedProviders : ['anonymous'],
           passwordSynchronized: hasPassword,
           createdAt: nowIso,
-          updatedAt: nowIso,
-          ...additionalData
+          updatedAt: nowIso
         };
 
         await setDoc(userDocRef, newProfile);
@@ -219,7 +259,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       closeAuthModal();
     } catch (error: any) {
-      console.error('[Auth] Google Sign-In Error:', error);
+      const code = error?.code || '';
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        console.info('[Auth] Google Sign-In popup closed or cancelled by user.');
+      } else {
+        console.error('[Auth] Google Sign-In Error:', error);
+      }
       throw error;
     }
   };
@@ -274,21 +319,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // 3b. Quick Demo Account Login / Auto-Registration for Testing
-  const loginWithDemoRole = async (role: 'retailer' | 'wholesaler' | 'admin') => {
+  // 3b. Quick Demo Account Login / Auto-Registration for Testing (Development Only)
+  const loginWithDemoRole = async (role: ProfileRole) => {
+    if (!(import.meta as any).env?.DEV) {
+      throw new Error('Demo role login is disabled in production builds.');
+    }
     let demoEmail = '';
     const demoPass = 'EllixSecure2026!';
     let demoName = '';
 
-    if (role === 'retailer') {
-      demoEmail = 'retailer@ellixconnect.com';
-      demoName = 'Vikram Retailer (Demo)';
+    if (role === 'super_admin') {
+      demoEmail = 'superadmin@ellixconnect.com';
+      demoName = 'Akash Joshi (Super Admin)';
+    } else if (role === 'ellix_admin' || role === 'admin') {
+      demoEmail = 'admin@ellixconnect.com';
+      demoName = 'Siddharth Admin (Ellix Connect)';
+    } else if (role === 'client' || role === 'retailer') {
+      demoEmail = 'client@ellixconnect.com';
+      demoName = 'Vikram Malhotra (Client Owner)';
+    } else if (role === 'crew' || role === 'employee') {
+      demoEmail = 'crew@ellixconnect.com';
+      demoName = 'Rahul Sharma (Store Crew)';
     } else if (role === 'wholesaler') {
       demoEmail = 'wholesaler@ellixconnect.com';
-      demoName = 'Metro Wholesaler (Demo)';
+      demoName = 'Metro Wholesaler (Supplier)';
     } else {
-      demoEmail = 'joshiakash1712@gmail.com';
-      demoName = 'Akash Joshi (Admin)';
+      demoEmail = 'client@ellixconnect.com';
+      demoName = 'Vikram Malhotra (Client Owner)';
     }
 
     try {
@@ -404,7 +461,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const result = await linkWithPopup(auth.currentUser, googleProvider);
       await syncProfileDoc(result.user, { emailVerified: true });
     } catch (error: any) {
-      console.error('[Auth] Link Google Error:', error);
+      const code = error?.code || '';
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        console.info('[Auth] Link Google popup closed or cancelled by user.');
+      } else {
+        console.error('[Auth] Link Google Error:', error);
+      }
       throw error;
     }
   };

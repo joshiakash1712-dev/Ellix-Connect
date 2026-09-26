@@ -5,6 +5,8 @@ import {
   deleteDoc,
   onSnapshot,
   writeBatch,
+  query,
+  where,
   Unsubscribe
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -18,6 +20,8 @@ import {
   Wholesaler,
   Employee,
   Store,
+  Supplier,
+  RestockLog,
   OfflineSyncItem,
   CloudSyncState,
   SaveFeedback
@@ -84,8 +88,11 @@ export interface StoreSyncListeners {
   onAuditLogsUpdate?: (logs: AuditLog[]) => void;
   onWholesalersUpdate?: (wholesalers: Wholesaler[]) => void;
   onEmployeesUpdate?: (employees: Employee[]) => void;
+  onSuppliersUpdate?: (suppliers: Supplier[]) => void;
+  onRestockLogsUpdate?: (logs: RestockLog[]) => void;
   onSyncStateChange?: (state: Partial<CloudSyncState>) => void;
   onSaveFeedback?: (feedback: SaveFeedback) => void;
+  onInitialDataLoaded?: () => void;
 }
 
 export class FirestoreSyncManager {
@@ -147,15 +154,9 @@ export class FirestoreSyncManager {
   public subscribeToStore(
     storeId: string,
     callbacks: StoreSyncListeners,
-    initialFallbacks?: {
-      products?: Product[];
-      customers?: CustomerProfile[];
-      invoices?: POSInvoice[];
-      restockOrders?: RestockOrder[];
-      customerOrders?: CustomerOrder[];
-      auditLogs?: AuditLog[];
-      wholesalers?: Wholesaler[];
-      employees?: Employee[];
+    authOptions?: {
+      userUid?: string;
+      userRole?: string;
     }
   ): () => void {
     this.unsubscribeAll();
@@ -175,8 +176,27 @@ export class FirestoreSyncManager {
       restockOrders: 0,
       customerOrders: 0,
       wholesalers: 0,
-      employees: 0
+      employees: 0,
+      suppliers: 0,
+      restockLogs: 0
     };
+
+    const initialReady = new Set<string>();
+    let hasNotifiedInitialLoad = false;
+    const checkInitialLoad = (name: string) => {
+      initialReady.add(name);
+      if (!hasNotifiedInitialLoad && initialReady.has('products') && initialReady.has('customers') && initialReady.has('invoices') && initialReady.has('suppliers')) {
+        hasNotifiedInitialLoad = true;
+        callbacks.onInitialDataLoaded?.();
+      }
+    };
+
+    const safetyTimer = setTimeout(() => {
+      if (!hasNotifiedInitialLoad) {
+        hasNotifiedInitialLoad = true;
+        callbacks.onInitialDataLoaded?.();
+      }
+    }, 1500);
 
     const notifySynced = () => {
       callbacks.onSyncStateChange?.({
@@ -188,19 +208,16 @@ export class FirestoreSyncManager {
     };
 
     try {
-      // 1. Products Collection (Real-Time Live Listener)
+      // 1. Products Collection (Strictly Store-Isolated - No cross-store seeding)
       const productsRef = collection(db, 'stores', storeId, 'products');
       const unsubProducts = onSnapshot(
         productsRef,
         (snapshot) => {
           counts.products = snapshot.size;
-          if (snapshot.empty && initialFallbacks?.products && initialFallbacks.products.length > 0) {
-            this.seedProducts(storeId, initialFallbacks.products);
-          } else {
-            const list = snapshot.docs.map(doc => doc.data() as Product);
-            callbacks.onProductsUpdate?.(list);
-          }
+          const list = snapshot.docs.map(doc => doc.data() as Product);
+          callbacks.onProductsUpdate?.(list);
           notifySynced();
+          checkInitialLoad('products');
         },
         (error) => {
           console.warn('[FirestoreSync] Products snapshot warning:', error.message);
@@ -208,133 +225,152 @@ export class FirestoreSyncManager {
             status: 'offline',
             lastError: error.message
           });
+          checkInitialLoad('products');
         }
       );
       this.unsubs.push(unsubProducts);
 
-      // 2. Customers Collection (Real-Time Live Listener)
+      // 2. Customers Collection
       const customersRef = collection(db, 'stores', storeId, 'customers');
       const unsubCustomers = onSnapshot(
         customersRef,
         (snapshot) => {
           counts.customers = snapshot.size;
-          if (snapshot.empty && initialFallbacks?.customers && initialFallbacks.customers.length > 0) {
-            this.seedCustomers(storeId, initialFallbacks.customers);
-          } else {
-            const list = snapshot.docs.map(doc => doc.data() as CustomerProfile);
-            callbacks.onCustomersUpdate?.(list);
-          }
+          const list = snapshot.docs.map(doc => doc.data() as CustomerProfile);
+          callbacks.onCustomersUpdate?.(list);
           notifySynced();
+          checkInitialLoad('customers');
         },
-        (error) => console.warn('[FirestoreSync] Customers snapshot warning:', error.message)
+        (error) => {
+          console.warn('[FirestoreSync] Customers snapshot warning:', error.message);
+          checkInitialLoad('customers');
+        }
       );
       this.unsubs.push(unsubCustomers);
 
-      // 3. Invoices Collection (Real-Time Live Listener)
-      const invoicesRef = collection(db, 'stores', storeId, 'invoices');
+      // 3. Invoices Collection (Enforce Crew Privacy: Crew queries only their own cashierId)
+      const isCrewRole = authOptions?.userRole === 'crew' || authOptions?.userRole === 'cashier' || authOptions?.userRole === 'employee';
+      const invoicesQuery = (isCrewRole && authOptions?.userUid)
+        ? query(collection(db, 'stores', storeId, 'invoices'), where('cashierId', '==', authOptions.userUid))
+        : collection(db, 'stores', storeId, 'invoices');
+
       const unsubInvoices = onSnapshot(
-        invoicesRef,
+        invoicesQuery,
         (snapshot) => {
           counts.invoices = snapshot.size;
-          if (snapshot.empty && initialFallbacks?.invoices && initialFallbacks.invoices.length > 0) {
-            this.seedInvoices(storeId, initialFallbacks.invoices);
-          } else {
-            const list = snapshot.docs.map(doc => doc.data() as POSInvoice);
-            callbacks.onInvoicesUpdate?.(list);
-          }
+          const list = snapshot.docs.map(doc => doc.data() as POSInvoice);
+          callbacks.onInvoicesUpdate?.(list);
           notifySynced();
+          checkInitialLoad('invoices');
         },
-        (error) => console.warn('[FirestoreSync] Invoices snapshot warning:', error.message)
+        (error) => {
+          console.warn('[FirestoreSync] Invoices snapshot warning:', error.message);
+          checkInitialLoad('invoices');
+        }
       );
       this.unsubs.push(unsubInvoices);
 
-      // 4. Restock Orders Collection (Real-Time Live Listener)
+      // 4. Restock Orders Collection
       const restockRef = collection(db, 'stores', storeId, 'restockOrders');
       const unsubRestock = onSnapshot(
         restockRef,
         (snapshot) => {
           counts.restockOrders = snapshot.size;
-          if (snapshot.empty && initialFallbacks?.restockOrders && initialFallbacks.restockOrders.length > 0) {
-            this.seedRestockOrders(storeId, initialFallbacks.restockOrders);
-          } else {
-            const list = snapshot.docs.map(doc => doc.data() as RestockOrder);
-            callbacks.onRestockOrdersUpdate?.(list);
-          }
+          const list = snapshot.docs.map(doc => doc.data() as RestockOrder);
+          callbacks.onRestockOrdersUpdate?.(list);
           notifySynced();
         },
         (error) => console.warn('[FirestoreSync] Restock orders snapshot warning:', error.message)
       );
       this.unsubs.push(unsubRestock);
 
-      // 5. Customer Orders Collection (Real-Time Live Listener)
+      // 5. Customer Orders Collection
       const customerOrdersRef = collection(db, 'stores', storeId, 'customerOrders');
       const unsubCustomerOrders = onSnapshot(
         customerOrdersRef,
         (snapshot) => {
           counts.customerOrders = snapshot.size;
-          if (snapshot.empty && initialFallbacks?.customerOrders && initialFallbacks.customerOrders.length > 0) {
-            this.seedCustomerOrders(storeId, initialFallbacks.customerOrders);
-          } else {
-            const list = snapshot.docs.map(doc => doc.data() as CustomerOrder);
-            callbacks.onCustomerOrdersUpdate?.(list);
-          }
+          const list = snapshot.docs.map(doc => doc.data() as CustomerOrder);
+          callbacks.onCustomerOrdersUpdate?.(list);
           notifySynced();
         },
         (error) => console.warn('[FirestoreSync] Customer orders snapshot warning:', error.message)
       );
       this.unsubs.push(unsubCustomerOrders);
 
-      // 6. Audit Logs Collection (Real-Time Live Listener)
+      // 6. Audit Logs Collection
       const auditRef = collection(db, 'stores', storeId, 'auditLogs');
       const unsubAudit = onSnapshot(
         auditRef,
         (snapshot) => {
-          if (snapshot.empty && initialFallbacks?.auditLogs && initialFallbacks.auditLogs.length > 0) {
-            this.seedAuditLogs(storeId, initialFallbacks.auditLogs);
-          } else {
-            const list = snapshot.docs.map(doc => doc.data() as AuditLog);
-            callbacks.onAuditLogsUpdate?.(list);
-          }
+          const list = snapshot.docs.map(doc => doc.data() as AuditLog);
+          callbacks.onAuditLogsUpdate?.(list);
         },
         (error) => console.warn('[FirestoreSync] Audit logs snapshot warning:', error.message)
       );
       this.unsubs.push(unsubAudit);
 
-      // 7. Wholesalers Collection (Real-Time Live Listener)
+      // 7. Wholesalers Collection
       const wholesalersRef = collection(db, 'stores', storeId, 'wholesalers');
       const unsubWholesalers = onSnapshot(
         wholesalersRef,
         (snapshot) => {
           counts.wholesalers = snapshot.size;
-          if (snapshot.empty && initialFallbacks?.wholesalers && initialFallbacks.wholesalers.length > 0) {
-            this.seedWholesalers(storeId, initialFallbacks.wholesalers);
-          } else {
-            const list = snapshot.docs.map(doc => doc.data() as Wholesaler);
-            callbacks.onWholesalersUpdate?.(list);
-          }
+          const list = snapshot.docs.map(doc => doc.data() as Wholesaler);
+          callbacks.onWholesalersUpdate?.(list);
           notifySynced();
         },
         (error) => console.warn('[FirestoreSync] Wholesalers snapshot warning:', error.message)
       );
       this.unsubs.push(unsubWholesalers);
 
-      // 8. Employees Collection (Real-Time Live Listener)
-      const employeesRef = collection(db, 'stores', storeId, 'employees');
-      const unsubEmployees = onSnapshot(
-        employeesRef,
-        (snapshot) => {
-          counts.employees = snapshot.size;
-          if (snapshot.empty && initialFallbacks?.employees && initialFallbacks.employees.length > 0) {
-            this.seedEmployees(storeId, initialFallbacks.employees);
-          } else {
+      // 8. Employees Collection (Client/Owner only)
+      if (!isCrewRole) {
+        const employeesRef = collection(db, 'stores', storeId, 'employees');
+        const unsubEmployees = onSnapshot(
+          employeesRef,
+          (snapshot) => {
+            counts.employees = snapshot.size;
             const list = snapshot.docs.map(doc => doc.data() as Employee);
             callbacks.onEmployeesUpdate?.(list);
-          }
+            notifySynced();
+          },
+          (error) => console.warn('[FirestoreSync] Employees snapshot warning:', error.message)
+        );
+        this.unsubs.push(unsubEmployees);
+      }
+
+      // 9. Suppliers Collection (Store-level vendor profiles)
+      const suppliersRef = collection(db, 'stores', storeId, 'suppliers');
+      const unsubSuppliers = onSnapshot(
+        suppliersRef,
+        (snapshot) => {
+          counts.suppliers = snapshot.size;
+          const list = snapshot.docs.map(doc => doc.data() as Supplier);
+          callbacks.onSuppliersUpdate?.(list);
+          notifySynced();
+          checkInitialLoad('suppliers');
+        },
+        (error) => {
+          console.warn('[FirestoreSync] Suppliers snapshot warning:', error.message);
+          checkInitialLoad('suppliers');
+        }
+      );
+      this.unsubs.push(unsubSuppliers);
+
+      // 10. Restock Logs Collection (Audited restock transactions)
+      const restockLogsRef = collection(db, 'stores', storeId, 'restockLogs');
+      const unsubRestockLogs = onSnapshot(
+        restockLogsRef,
+        (snapshot) => {
+          counts.restockLogs = snapshot.size;
+          const list = snapshot.docs.map(doc => doc.data() as RestockLog);
+          callbacks.onRestockLogsUpdate?.(list);
           notifySynced();
         },
-        (error) => console.warn('[FirestoreSync] Employees snapshot warning:', error.message)
+        (error) => console.warn('[FirestoreSync] RestockLogs snapshot warning:', error.message)
       );
-      this.unsubs.push(unsubEmployees);
+      this.unsubs.push(unsubRestockLogs);
 
       // Flush any queued offline modifications
       this.flushQueue();
@@ -345,9 +381,13 @@ export class FirestoreSyncManager {
         status: 'offline',
         lastError: err.message
       });
+      callbacks.onInitialDataLoaded?.();
     }
 
-    return () => this.unsubscribeAll();
+    return () => {
+      clearTimeout(safetyTimer);
+      this.unsubscribeAll();
+    };
   }
 
   public unsubscribeAll(): void {
@@ -785,6 +825,48 @@ export class FirestoreSyncManager {
         docId: employeeId
       });
       this.notifyFeedback('error', 'Removed locally. Will sync when connected.');
+    }
+  }
+
+  // Suppliers Management (Client/Owner only writes; Crew can read)
+  public async syncSupplier(storeId: string, supplier: Supplier): Promise<void> {
+    this.notifyFeedback('saving', 'Saving supplier details...');
+    const sanitized = sanitizeData({ ...supplier, storeId, updatedAt: new Date().toISOString() });
+    try {
+      const docRef = doc(db, 'stores', storeId, 'suppliers', supplier.id);
+      await setDoc(docRef, sanitized, { merge: true });
+      this.notifyFeedback('saved', 'Supplier saved');
+    } catch (err) {
+      this.notifyFeedback('error', 'Failed to save supplier to cloud.');
+    }
+  }
+
+  public async deleteSupplier(storeId: string, supplierId: string): Promise<void> {
+    this.notifyFeedback('saving', 'Removing supplier...');
+    try {
+      const docRef = doc(db, 'stores', storeId, 'suppliers', supplierId);
+      await deleteDoc(docRef);
+      this.notifyFeedback('saved', 'Supplier removed');
+    } catch (err) {
+      this.notifyFeedback('error', 'Failed to remove supplier from cloud.');
+    }
+  }
+
+  // Restock Logs (Audited inventory restock transactions)
+  public async syncRestockLog(storeId: string, log: RestockLog): Promise<void> {
+    this.notifyFeedback('saving', 'Recording restock log...');
+    const sanitized = sanitizeData({
+      ...log,
+      storeId,
+      quantity: log.quantity || log.quantityAdded || 0,
+      createdAt: log.createdAt || log.date || new Date().toISOString()
+    });
+    try {
+      const docRef = doc(db, 'stores', storeId, 'restockLogs', log.id);
+      await setDoc(docRef, sanitized, { merge: true });
+      this.notifyFeedback('saved', 'Restock logged');
+    } catch (err) {
+      this.notifyFeedback('error', 'Failed to save restock log to cloud.');
     }
   }
 

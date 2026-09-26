@@ -322,16 +322,15 @@ export const AdminUsersRBAC: React.FC = () => {
   };
 
   const handleDelete = (id: string, name: string) => {
-    if (window.confirm(`Revoke all platform access and remove employee record for "${name}"?`)) {
-      deleteEmployee(id);
-      setSelectedIds(prev => prev.filter(item => item !== id));
-    }
+    deleteEmployee(id);
+    setSelectedIds(prev => prev.filter(item => item !== id));
+    showFeedback(`Removed staff record for "${name}".`);
   };
 
   const handleResetPin = (emp: Employee) => {
     const randomPin = Math.floor(1000 + Math.random() * 9000).toString();
     updateEmployee(emp.id, { pin: randomPin });
-    alert(`Security PIN for ${emp.name} has been reset to: ${randomPin}`);
+    showFeedback(`Security PIN for ${emp.name} reset to: ${randomPin}`);
   };
 
   // RBAC Matrix definitions
@@ -347,7 +346,7 @@ export const AdminUsersRBAC: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 tabular-nums">
       
       {/* Header & Add Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -364,7 +363,7 @@ export const AdminUsersRBAC: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleOpenAdd}
-            className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition-all"
+            className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>+ Add Staff Member</span>
@@ -396,7 +395,7 @@ export const AdminUsersRBAC: React.FC = () => {
       </AnimatePresence>
 
       {/* Search, Filters, Selection & View Controls */}
-      <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-3">
+      <div className="p-4 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-3">
         <div className="flex flex-col lg:flex-row items-center gap-3">
           
           {/* Search Input */}
@@ -407,7 +406,7 @@ export const AdminUsersRBAC: React.FC = () => {
               placeholder="Search staff by full name, email, phone number..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
+              className="w-full pl-10 pr-4 py-2 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
             />
           </div>
 
@@ -415,7 +414,7 @@ export const AdminUsersRBAC: React.FC = () => {
           <select
             value={roleFilter}
             onChange={e => setRoleFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
+            className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
           >
             <option value="all">All Roles</option>
             <option value="owner">Franchise Owner</option>
@@ -429,7 +428,7 @@ export const AdminUsersRBAC: React.FC = () => {
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value as any)}
-            className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm w-full sm:w-auto"
+            className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm w-full sm:w-auto"
           >
             <option value="all">All Statuses</option>
             <option value="active">Active Accounts Only</option>
@@ -437,7 +436,7 @@ export const AdminUsersRBAC: React.FC = () => {
           </select>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center gap-1 bg-slate-800 p-1 rounded-xl border border-slate-700 shrink-0">
+          <div className="flex items-center gap-1 bg-[#0A0E1A] p-1 rounded-xl border border-slate-800 shrink-0">
             <button
               onClick={() => setViewMode('grid')}
               className={`p-1.5 rounded-lg transition-colors ${
@@ -493,26 +492,26 @@ export const AdminUsersRBAC: React.FC = () => {
               <span>Quick Select:</span>
               <button
                 onClick={() => handleQuickSelect('active')}
-                className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 transition-colors"
+                className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 transition-colors"
               >
                 Active
               </button>
               <button
                 onClick={() => handleQuickSelect('suspended')}
-                className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-rose-400 transition-colors"
+                className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-rose-400 transition-colors"
               >
                 Suspended
               </button>
               <button
                 onClick={() => handleQuickSelect('cashiers')}
-                className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-teal-400 transition-colors"
+                className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-teal-400 transition-colors"
               >
                 Cashiers
               </button>
               {selectedIds.length > 0 && (
                 <button
                   onClick={() => handleQuickSelect('none')}
-                  className="px-2 py-0.5 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 transition-colors font-semibold"
+                  className="px-2 py-0.5 rounded-md bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 transition-colors font-semibold"
                 >
                   Clear Selection
                 </button>
@@ -533,10 +532,10 @@ export const AdminUsersRBAC: React.FC = () => {
             initial={{ opacity: 0, scale: 0.96, y: -8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -8 }}
-            className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-900 border-2 border-emerald-500/60 shadow-2xl shadow-emerald-950/50 flex flex-col md:flex-row md:items-center justify-between gap-4"
+            className="p-4 rounded-xl bg-gradient-to-r from-emerald-950 via-[#121826] to-[#121826] border-2 border-emerald-500/60 shadow-2xl shadow-emerald-950/50 flex flex-col md:flex-row md:items-center justify-between gap-4"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400">
+              <div className="p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400">
                 <CheckSquare className="w-5 h-5" />
               </div>
               <div>
@@ -544,7 +543,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   <span className="text-xs font-extrabold text-white">
                     {selectedIds.length} Staff Member{selectedIds.length > 1 ? 's' : ''} Selected
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                     Batch Actions Active
                   </span>
                 </div>
@@ -560,7 +559,7 @@ export const AdminUsersRBAC: React.FC = () => {
               {/* Batch Role Assignment */}
               <button
                 onClick={() => openBatchModal('role')}
-                className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 shadow-sm flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 shadow-sm flex items-center gap-1.5 transition-colors"
                 title="Assign role to all selected users"
               >
                 <Shield className="w-3.5 h-3.5 text-emerald-400" />
@@ -570,7 +569,7 @@ export const AdminUsersRBAC: React.FC = () => {
               {/* Batch Deactivate */}
               <button
                 onClick={() => openBatchModal('deactivate')}
-                className="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-bold border border-rose-500/30 shadow-sm flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-bold border border-rose-500/30 shadow-sm flex items-center gap-1.5 transition-colors"
                 title="Suspend access for selected users"
               >
                 <UserX className="w-3.5 h-3.5 text-rose-400" />
@@ -580,7 +579,7 @@ export const AdminUsersRBAC: React.FC = () => {
               {/* Batch Activate */}
               <button
                 onClick={() => openBatchModal('activate')}
-                className="px-3 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 shadow-sm flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 shadow-sm flex items-center gap-1.5 transition-colors"
                 title="Re-enable access for selected users"
               >
                 <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
@@ -590,7 +589,7 @@ export const AdminUsersRBAC: React.FC = () => {
               {/* Batch Branch Assign */}
               <button
                 onClick={() => openBatchModal('store')}
-                className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 shadow-sm flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 shadow-sm flex items-center gap-1.5 transition-colors"
                 title="Reassign selected users to outlet"
               >
                 <Building2 className="w-3.5 h-3.5 text-teal-400" />
@@ -600,7 +599,7 @@ export const AdminUsersRBAC: React.FC = () => {
               {/* Batch Shift Assign */}
               <button
                 onClick={() => openBatchModal('shift')}
-                className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 shadow-sm flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 shadow-sm flex items-center gap-1.5 transition-colors"
                 title="Assign shift schedule"
               >
                 <Clock className="w-3.5 h-3.5 text-indigo-400" />
@@ -610,7 +609,7 @@ export const AdminUsersRBAC: React.FC = () => {
               {/* Batch Reset PIN */}
               <button
                 onClick={() => openBatchModal('reset_pin')}
-                className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 shadow-sm flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 shadow-sm flex items-center gap-1.5 transition-colors"
                 title="Bulk reset POS security PINs"
               >
                 <KeyRound className="w-3.5 h-3.5 text-amber-400" />
@@ -620,7 +619,7 @@ export const AdminUsersRBAC: React.FC = () => {
               {/* Batch Delete */}
               <button
                 onClick={() => openBatchModal('delete')}
-                className="px-3 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 text-xs font-bold border border-rose-800/60 shadow-sm flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 text-xs font-bold border border-rose-800/60 shadow-sm flex items-center gap-1.5 transition-colors"
                 title="Bulk delete selected users"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -630,7 +629,7 @@ export const AdminUsersRBAC: React.FC = () => {
               {/* Cancel Selection */}
               <button
                 onClick={() => setSelectedIds([])}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+                className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
                 title="Deselect All"
               >
                 <X className="w-4 h-4" />
@@ -651,7 +650,7 @@ export const AdminUsersRBAC: React.FC = () => {
               <div
                 key={emp.id}
                 onClick={() => handleToggleSelectUser(emp.id)}
-                className={`p-5 rounded-2xl bg-slate-900 border transition-all flex flex-col justify-between gap-4 shadow-xl cursor-pointer select-none relative ${
+                className={`p-5 rounded-xl bg-[#121826] border transition-all flex flex-col justify-between gap-4 shadow-lg cursor-pointer select-none relative ${
                   isSelected
                     ? 'border-emerald-500 ring-2 ring-emerald-500/40 bg-emerald-950/20'
                     : emp.active
@@ -679,7 +678,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="text-sm font-bold text-white tracking-tight">{emp.name}</h3>
-                          <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded border ${
+                          <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-lg border ${
                             emp.role === 'owner'
                               ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
                               : emp.role === 'manager'
@@ -717,11 +716,11 @@ export const AdminUsersRBAC: React.FC = () => {
 
                   {/* Details Pills */}
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                    <div className="p-2.5 rounded-lg bg-[#0A0E1A] border border-slate-800">
                       <span className="text-[10px] text-slate-400 block font-semibold">Assigned Branch</span>
                       <span className="font-bold text-slate-200 truncate block">{storeAssigned?.name || 'Main Branch'}</span>
                     </div>
-                    <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60" onClick={e => e.stopPropagation()}>
+                    <div className="p-2.5 rounded-lg bg-[#0A0E1A] border border-slate-800" onClick={e => e.stopPropagation()}>
                       <span className="text-[10px] text-slate-400 block font-semibold">Terminal PIN</span>
                       <div className="flex items-center justify-between">
                         <span className="font-mono font-bold text-emerald-400">•••• ({emp.pin})</span>
@@ -775,10 +774,10 @@ export const AdminUsersRBAC: React.FC = () => {
         </div>
       ) : (
         /* TABLE / LIST VIEW WITH MULTI-SELECTION */
-        <div className="rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden">
+        <div className="rounded-xl bg-[#121826] border border-slate-800 shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-800/90 text-slate-300 text-[11px] uppercase tracking-wider font-bold border-b border-slate-800">
+              <thead className="bg-[#0A0E1A]/90 text-slate-400 text-[11px] uppercase tracking-wider font-bold border-b border-slate-800">
                 <tr>
                   <th className="p-3.5 w-10">
                     <button
@@ -842,7 +841,7 @@ export const AdminUsersRBAC: React.FC = () => {
                           <div className="text-[11px] text-slate-400">{emp.email} • {emp.phone}</div>
                         </td>
                         <td className="p-3.5">
-                          <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded border ${
+                          <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-lg border ${
                             emp.role === 'owner'
                               ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
                               : emp.role === 'manager'
@@ -868,7 +867,7 @@ export const AdminUsersRBAC: React.FC = () => {
                         <td className="p-3.5" onClick={e => e.stopPropagation()}>
                           <button
                             onClick={() => handleToggleActive(emp)}
-                            className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-colors flex items-center gap-1.5 ${
+                            className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-colors flex items-center gap-1.5 ${
                               emp.active
                                 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
                                 : 'bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20'
@@ -907,7 +906,7 @@ export const AdminUsersRBAC: React.FC = () => {
       )}
 
       {/* RBAC PERMISSION MATRIX SECTION */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+      <div className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
             <Lock className="w-4 h-4 text-emerald-400" />
@@ -920,7 +919,7 @@ export const AdminUsersRBAC: React.FC = () => {
 
         <div className="overflow-x-auto rounded-xl border border-slate-800">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-800/80 text-slate-300 text-[11px] uppercase tracking-wider font-bold">
+            <thead className="bg-[#0A0E1A]/90 text-slate-400 text-[11px] uppercase tracking-wider font-bold border-b border-slate-800">
               <tr>
                 <th className="p-3.5">Security Domain & Operation</th>
                 <th className="p-3.5 text-center">Owner</th>
@@ -935,50 +934,50 @@ export const AdminUsersRBAC: React.FC = () => {
                 <tr key={idx} className="hover:bg-slate-800/40 transition-colors">
                   <td className="p-3.5 font-semibold text-slate-200">{item.module}</td>
                   <td className="p-3.5 text-center">
-                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400">
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400">
                       ✓
                     </span>
                   </td>
                   <td className="p-3.5 text-center">
                     {item.manager ? (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400">
                         ✓
                       </span>
                     ) : (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-slate-500">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-slate-800 text-slate-500">
                         —
                       </span>
                     )}
                   </td>
                   <td className="p-3.5 text-center">
                     {item.cashier ? (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400">
                         ✓
                       </span>
                     ) : (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-slate-500">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-slate-800 text-slate-500">
                         —
                       </span>
                     )}
                   </td>
                   <td className="p-3.5 text-center">
                     {item.inventory_manager ? (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400">
                         ✓
                       </span>
                     ) : (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-slate-500">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-slate-800 text-slate-500">
                         —
                       </span>
                     )}
                   </td>
                   <td className="p-3.5 text-center">
                     {item.wholesaler_admin ? (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400">
                         ✓
                       </span>
                     ) : (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-slate-500">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-slate-800 text-slate-500">
                         —
                       </span>
                     )}
@@ -993,17 +992,17 @@ export const AdminUsersRBAC: React.FC = () => {
       {/* ================= MODAL: BATCH ROLE ASSIGNMENT & CONFIRMATION ================= */}
       <AnimatePresence>
         {batchActionType === 'role' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
+              className="w-full max-w-lg rounded-2xl bg-[#161D2C] border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className={`p-2 rounded-xl border ${
+                  <div className={`p-2 rounded-lg border ${
                     batchRoleStep === 'confirm' 
                       ? 'bg-amber-500/20 border-amber-500/40 text-amber-400' 
                       : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
@@ -1032,13 +1031,13 @@ export const AdminUsersRBAC: React.FC = () => {
               {/* Step 1: Role Selection */}
               {batchRoleStep === 'select' && (
                 <div className="space-y-4 text-xs overflow-y-auto pr-1">
-                  <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                  <div className="p-3 rounded-xl bg-[#121826] border border-slate-800">
                     <span className="text-slate-400 block text-[11px] mb-1">Target Personnel:</span>
                     <div className="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto">
                       {selectedEmployees.map(emp => (
                         <span
                           key={emp.id}
-                          className="px-2 py-0.5 rounded-lg bg-slate-700/80 text-slate-200 text-[11px] font-medium border border-slate-600/60 flex items-center gap-1"
+                          className="px-2 py-0.5 rounded-lg bg-[#0A0E1A] text-slate-200 text-[11px] font-medium border border-slate-800 flex items-center gap-1"
                         >
                           <span>{emp.name}</span>
                           <span className="text-[9px] text-slate-400 capitalize">({emp.role.replace('_', ' ')})</span>
@@ -1090,7 +1089,7 @@ export const AdminUsersRBAC: React.FC = () => {
                           className={`p-3 rounded-xl border flex items-start gap-3 cursor-pointer transition-all ${
                             batchRole === r.id
                               ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-sm'
-                              : 'bg-slate-800/50 border-slate-700/60 text-slate-300 hover:bg-slate-800'
+                              : 'bg-[#121826] border-slate-800 text-slate-300 hover:bg-slate-800/70'
                           }`}
                         >
                           <input
@@ -1103,7 +1102,7 @@ export const AdminUsersRBAC: React.FC = () => {
                           <div className="flex-1">
                             <div className="flex items-center justify-between gap-2">
                               <span className="font-bold block text-slate-100">{r.name}</span>
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${r.badgeColor}`}>
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border ${r.badgeColor}`}>
                                 {r.id.replace('_', ' ').toUpperCase()}
                               </span>
                             </div>
@@ -1135,7 +1134,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     <span className="text-slate-300 font-bold block mb-2">
                       Roster Impact Preview ({selectedEmployees.length} users):
                     </span>
-                    <div className="rounded-xl border border-slate-800 bg-slate-950/50 max-h-48 overflow-y-auto divide-y divide-slate-800/60">
+                    <div className="rounded-xl border border-slate-800 bg-[#0A0E1A] max-h-48 overflow-y-auto divide-y divide-slate-800/60">
                       {selectedEmployees.map(emp => (
                         <div key={emp.id} className="p-2.5 flex items-center justify-between gap-2">
                           <div className="min-w-0 flex-1">
@@ -1143,11 +1142,11 @@ export const AdminUsersRBAC: React.FC = () => {
                             <div className="text-[10px] text-slate-400 truncate">{emp.email}</div>
                           </div>
                           <div className="flex items-center gap-1.5 flex-shrink-0">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 capitalize">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 capitalize">
                               {emp.role.replace('_', ' ')}
                             </span>
                             <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase">
                               {batchRole.replace('_', ' ')}
                             </span>
                           </div>
@@ -1157,7 +1156,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   </div>
 
                   {/* Role Capabilities Note */}
-                  <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 text-[11px] text-slate-300 space-y-1">
+                  <div className="p-3 rounded-xl bg-[#121826] border border-slate-800 text-[11px] text-slate-300 space-y-1">
                     <span className="font-bold text-slate-200 block">Security & RBAC Enforcement:</span>
                     <ul className="list-disc pl-4 space-y-0.5 text-slate-400">
                       <li>New terminal capabilities take effect immediately on next token refresh.</li>
@@ -1166,12 +1165,12 @@ export const AdminUsersRBAC: React.FC = () => {
                   </div>
 
                   {/* Safety Checkbox */}
-                  <label className="p-3 rounded-xl bg-slate-800/70 border border-slate-700/80 flex items-start gap-2.5 cursor-pointer hover:bg-slate-800 transition-colors">
+                  <label className="p-3 rounded-xl bg-[#121826] border border-slate-800 flex items-start gap-2.5 cursor-pointer hover:bg-slate-800/70 transition-colors">
                     <input
                       type="checkbox"
                       checked={batchRoleCheck}
                       onChange={e => setBatchRoleCheck(e.target.checked)}
-                      className="mt-0.5 rounded border-slate-600 text-emerald-600 focus:ring-emerald-500 bg-slate-900"
+                      className="mt-0.5 rounded border-slate-600 text-emerald-600 focus:ring-emerald-500 bg-[#0A0E1A]"
                     />
                     <span className="text-[11px] text-slate-200 leading-snug">
                       I verify and approve the role update to <strong>{batchRole.replace('_', ' ').toUpperCase()}</strong> for all {selectedEmployees.length} selected accounts.
@@ -1189,7 +1188,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       setBatchRoleStep('select');
                       setBatchRoleCheck(false);
                     }}
-                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                    className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                   >
                     Back to Role Selection
                   </button>
@@ -1197,7 +1196,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   <button
                     type="button"
                     onClick={closeBatchModal}
-                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                    className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                   >
                     Cancel
                   </button>
@@ -1208,7 +1207,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setBatchRoleStep('confirm')}
-                      className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
+                      className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
                     >
                       <span>Review & Confirm Role Change</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -1218,7 +1217,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       type="button"
                       disabled={!batchRoleCheck}
                       onClick={handleExecuteBatchRole}
-                      className={`px-4 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all flex items-center gap-1.5 ${
+                      className={`px-4 py-2.5 rounded-lg font-bold text-xs shadow-md transition-all flex items-center gap-1.5 ${
                         batchRoleCheck
                           ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30'
                           : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
@@ -1238,17 +1237,17 @@ export const AdminUsersRBAC: React.FC = () => {
       {/* ================= MODAL: BATCH DEACTIVATION CONFIRMATION DIALOG ================= */}
       <AnimatePresence>
         {batchActionType === 'deactivate' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-2xl bg-slate-900 border-2 border-rose-600/60 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
+              className="w-full max-w-lg rounded-2xl bg-[#161D2C] border border-rose-600/60 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
             >
               {/* Danger Modal Header */}
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-400">
+                  <div className="p-2 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-400">
                     <ShieldAlert className="w-5 h-5" />
                   </div>
                   <div>
@@ -1290,7 +1289,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   <span className="text-slate-300 font-bold block mb-1.5">
                     Accounts To Be Suspended ({selectedEmployees.length}):
                   </span>
-                  <div className="rounded-xl border border-slate-800 bg-slate-950/50 max-h-40 overflow-y-auto divide-y divide-slate-800/60">
+                  <div className="rounded-xl border border-slate-800 bg-[#0A0E1A] max-h-40 overflow-y-auto divide-y divide-slate-800/60">
                     {selectedEmployees.map(emp => {
                       const empStore = stores.find(s => s.id === emp.storeId) || stores[0];
                       return (
@@ -1299,7 +1298,7 @@ export const AdminUsersRBAC: React.FC = () => {
                             <div className="font-bold text-slate-200 truncate">{emp.name}</div>
                             <div className="text-[10px] text-slate-400 truncate">{emp.email} • {empStore.name}</div>
                           </div>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 uppercase flex-shrink-0">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30 uppercase flex-shrink-0">
                             {emp.role.replace('_', ' ')}
                           </span>
                         </div>
@@ -1314,7 +1313,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     type="checkbox"
                     checked={batchDeactivateCheck}
                     onChange={e => setBatchDeactivateCheck(e.target.checked)}
-                    className="mt-0.5 rounded border-rose-700 text-rose-600 focus:ring-rose-500 bg-slate-900"
+                    className="mt-0.5 rounded border-rose-700 text-rose-600 focus:ring-rose-500 bg-[#0A0E1A]"
                   />
                   <span className="text-[11px] text-rose-200 leading-snug">
                     I confirm that I want to deactivate <strong>{selectedEmployees.length} staff account(s)</strong> immediately and revoke terminal login rights.
@@ -1327,7 +1326,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 <button
                   type="button"
                   onClick={closeBatchModal}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                  className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                 >
                   Cancel
                 </button>
@@ -1335,7 +1334,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   type="button"
                   disabled={!batchDeactivateCheck}
                   onClick={handleExecuteBatchDeactivate}
-                  className={`px-4 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all flex items-center gap-1.5 ${
+                  className={`px-4 py-2.5 rounded-lg font-bold text-xs shadow-lg transition-all flex items-center gap-1.5 ${
                     batchDeactivateCheck
                       ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-600/30'
                       : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
@@ -1353,16 +1352,16 @@ export const AdminUsersRBAC: React.FC = () => {
       {/* ================= MODAL: BATCH ACTIVATION CONFIRMATION DIALOG ================= */}
       <AnimatePresence>
         {batchActionType === 'activate' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md rounded-2xl bg-slate-900 border border-emerald-500/50 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
+              className="w-full max-w-md rounded-2xl bg-[#161D2C] border border-emerald-500/50 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400">
+                  <div className="p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400">
                     <UserCheck className="w-5 h-5" />
                   </div>
                   <div>
@@ -1376,7 +1375,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 </div>
                 <button
                   onClick={closeBatchModal}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1387,7 +1386,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   You are about to re-authorize and enable terminal access for <strong className="text-white font-bold">{selectedEmployees.length}</strong> accounts:
                 </p>
 
-                <div className="rounded-xl border border-slate-800 bg-slate-950/50 max-h-36 overflow-y-auto divide-y divide-slate-800/60">
+                <div className="rounded-xl border border-slate-800 bg-[#0A0E1A] max-h-36 overflow-y-auto divide-y divide-slate-800/60">
                   {selectedEmployees.map(emp => (
                     <div key={emp.id} className="p-2 flex items-center justify-between gap-2">
                       <span className="font-bold text-slate-200 truncate">{emp.name}</span>
@@ -1404,13 +1403,13 @@ export const AdminUsersRBAC: React.FC = () => {
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800 mt-auto">
                 <button
                   onClick={closeBatchModal}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                  className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleExecuteBatchActivate}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/20 transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/20 transition-colors flex items-center gap-1.5"
                 >
                   <Check className="w-4 h-4" />
                   <span>Confirm & Re-Activate ({selectedEmployees.length} Accounts)</span>
@@ -1424,16 +1423,16 @@ export const AdminUsersRBAC: React.FC = () => {
       {/* ================= MODAL: BATCH BRANCH REASSIGNMENT ================= */}
       <AnimatePresence>
         {batchActionType === 'store' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
+              className="w-full max-w-md rounded-2xl bg-[#161D2C] border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-teal-500/20 border border-teal-500/40 text-teal-400">
+                  <div className="p-2 rounded-lg bg-teal-500/20 border border-teal-500/40 text-teal-400">
                     <Building2 className="w-5 h-5" />
                   </div>
                   <div>
@@ -1447,7 +1446,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 </div>
                 <button
                   onClick={closeBatchModal}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1458,7 +1457,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 <select
                   value={batchStoreId}
                   onChange={e => setBatchStoreId(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 text-xs"
+                  className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 text-xs"
                 >
                   {stores.map(st => (
                     <option key={st.id} value={st.id}>
@@ -1467,7 +1466,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   ))}
                 </select>
 
-                <div className="rounded-xl border border-slate-800 bg-slate-950/50 max-h-32 overflow-y-auto divide-y divide-slate-800/60 p-2">
+                <div className="rounded-xl border border-slate-800 bg-[#0A0E1A] max-h-32 overflow-y-auto divide-y divide-slate-800/60 p-2">
                   <span className="text-[10px] text-slate-400 font-bold block mb-1">Affected Staff:</span>
                   {selectedEmployees.map(emp => (
                     <div key={emp.id} className="py-1 text-slate-300 text-[11px] truncate">
@@ -1480,13 +1479,13 @@ export const AdminUsersRBAC: React.FC = () => {
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800 mt-auto">
                 <button
                   onClick={closeBatchModal}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                  className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleExecuteBatchStore}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
                 >
                   <Check className="w-4 h-4" />
                   <span>Confirm Branch Reassignment</span>
@@ -1500,16 +1499,16 @@ export const AdminUsersRBAC: React.FC = () => {
       {/* ================= MODAL: BATCH SHIFT ASSIGNMENT ================= */}
       <AnimatePresence>
         {batchActionType === 'shift' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
+              className="w-full max-w-md rounded-2xl bg-[#161D2C] border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400">
+                  <div className="p-2 rounded-lg bg-indigo-500/20 border border-indigo-500/40 text-indigo-400">
                     <Clock className="w-5 h-5" />
                   </div>
                   <div>
@@ -1523,7 +1522,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 </div>
                 <button
                   onClick={closeBatchModal}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1534,7 +1533,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 <select
                   value={batchShift}
                   onChange={e => setBatchShift(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 text-xs"
+                  className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 text-xs"
                 >
                   <option value="Morning (09:00 AM - 05:00 PM)">Morning (09:00 AM - 05:00 PM)</option>
                   <option value="Evening (02:00 PM - 10:00 PM)">Evening (02:00 PM - 10:00 PM)</option>
@@ -1543,7 +1542,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   <option value="Weekend Special (11:00 AM - 09:00 PM)">Weekend Special (11:00 AM - 09:00 PM)</option>
                 </select>
 
-                <div className="rounded-xl border border-slate-800 bg-slate-950/50 max-h-32 overflow-y-auto divide-y divide-slate-800/60 p-2">
+                <div className="rounded-xl border border-slate-800 bg-[#0A0E1A] max-h-32 overflow-y-auto divide-y divide-slate-800/60 p-2">
                   <span className="text-[10px] text-slate-400 font-bold block mb-1">Affected Staff:</span>
                   {selectedEmployees.map(emp => (
                     <div key={emp.id} className="py-1 text-slate-300 text-[11px] truncate">
@@ -1556,13 +1555,13 @@ export const AdminUsersRBAC: React.FC = () => {
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800 mt-auto">
                 <button
                   onClick={closeBatchModal}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                  className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleExecuteBatchShift}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
                 >
                   <Check className="w-4 h-4" />
                   <span>Confirm Shift Schedule</span>
@@ -1576,16 +1575,16 @@ export const AdminUsersRBAC: React.FC = () => {
       {/* ================= MODAL: BATCH PIN RESET CONFIRMATION ================= */}
       <AnimatePresence>
         {batchActionType === 'reset_pin' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md rounded-2xl bg-slate-900 border border-amber-500/50 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
+              className="w-full max-w-md rounded-2xl bg-[#161D2C] border border-amber-500/50 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400">
+                  <div className="p-2 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-400">
                     <KeyRound className="w-5 h-5" />
                   </div>
                   <div>
@@ -1599,7 +1598,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 </div>
                 <button
                   onClick={closeBatchModal}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1613,7 +1612,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   Existing PINs will immediately become invalid. Staff will be prompted to use their updated temporary PIN on their next cashier login.
                 </div>
 
-                <div className="rounded-xl border border-slate-800 bg-slate-950/50 max-h-32 overflow-y-auto divide-y divide-slate-800/60 p-2">
+                <div className="rounded-xl border border-slate-800 bg-[#0A0E1A] max-h-32 overflow-y-auto divide-y divide-slate-800/60 p-2">
                   <span className="text-[10px] text-slate-400 font-bold block mb-1">Affected Staff:</span>
                   {selectedEmployees.map(emp => (
                     <div key={emp.id} className="py-1 text-slate-300 text-[11px] truncate">
@@ -1626,13 +1625,13 @@ export const AdminUsersRBAC: React.FC = () => {
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800 mt-auto">
                 <button
                   onClick={closeBatchModal}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                  className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleExecuteBatchResetPin}
-                  className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
                 >
                   <KeyRound className="w-4 h-4" />
                   <span>Confirm & Generate New PINs</span>
@@ -1646,16 +1645,16 @@ export const AdminUsersRBAC: React.FC = () => {
       {/* ================= MODAL: BATCH DELETE CONFIRMATION ================= */}
       <AnimatePresence>
         {batchActionType === 'delete' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-2xl bg-slate-900 border-2 border-rose-800 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
+              className="w-full max-w-lg rounded-2xl bg-[#161D2C] border border-rose-800 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-400">
+                  <div className="p-2 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-400">
                     <Trash2 className="w-5 h-5" />
                   </div>
                   <div>
@@ -1669,7 +1668,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 </div>
                 <button
                   onClick={closeBatchModal}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1683,7 +1682,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-800 bg-slate-950/50 max-h-36 overflow-y-auto divide-y divide-slate-800/60 p-2">
+                <div className="rounded-xl border border-slate-800 bg-[#0A0E1A] max-h-36 overflow-y-auto divide-y divide-slate-800/60 p-2">
                   <span className="text-[10px] text-slate-400 font-bold block mb-1">Accounts to be purged:</span>
                   {selectedEmployees.map(emp => (
                     <div key={emp.id} className="py-1 text-slate-300 text-[11px] truncate flex justify-between">
@@ -1698,7 +1697,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     type="checkbox"
                     checked={batchDeleteCheck}
                     onChange={e => setBatchDeleteCheck(e.target.checked)}
-                    className="mt-0.5 rounded border-rose-700 text-rose-600 focus:ring-rose-500 bg-slate-900"
+                    className="mt-0.5 rounded border-rose-700 text-rose-600 focus:ring-rose-500 bg-[#0A0E1A]"
                   />
                   <span className="text-[11px] text-rose-200 leading-snug">
                     I understand that this action is irreversible and permanently removes these {selectedEmployees.length} staff accounts.
@@ -1710,7 +1709,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 <button
                   type="button"
                   onClick={closeBatchModal}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                  className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                 >
                   Cancel
                 </button>
@@ -1718,7 +1717,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   type="button"
                   disabled={!batchDeleteCheck}
                   onClick={handleExecuteBatchDelete}
-                  className={`px-4 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all flex items-center gap-1.5 ${
+                  className={`px-4 py-2.5 rounded-lg font-bold text-xs shadow-lg transition-all flex items-center gap-1.5 ${
                     batchDeleteCheck
                       ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-600/30'
                       : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
@@ -1736,12 +1735,12 @@ export const AdminUsersRBAC: React.FC = () => {
       {/* ================= MODAL: ADD EMPLOYEE ================= */}
       <AnimatePresence>
         {isAddModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+              className="w-full max-w-lg rounded-2xl bg-[#161D2C] border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -1750,7 +1749,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 </h3>
                 <button
                   onClick={() => setIsAddModalOpen(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1758,24 +1757,24 @@ export const AdminUsersRBAC: React.FC = () => {
 
               <form onSubmit={handleCreate} className="space-y-4 text-xs">
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-400 block mb-1">Full Name *</label>
+                  <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Full Name *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Ramesh Kulkarni"
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Assigned Role</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Assigned Role</label>
                     <select
                       value={formData.role}
                       onChange={e => setFormData(prev => ({ ...prev, role: e.target.value as UserRole }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     >
                       <option value="cashier">POS Cashier</option>
                       <option value="manager">Store Manager</option>
@@ -1785,11 +1784,11 @@ export const AdminUsersRBAC: React.FC = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Assigned Outlet</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Assigned Outlet</label>
                     <select
                       value={formData.storeId}
                       onChange={e => setFormData(prev => ({ ...prev, storeId: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     >
                       {stores.map(st => (
                         <option key={st.id} value={st.id}>
@@ -1802,46 +1801,46 @@ export const AdminUsersRBAC: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Email Address *</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Email Address *</label>
                     <input
                       type="email"
                       required
                       placeholder="ramesh@ellixconnect.com"
                       value={formData.email}
                       onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Phone Number</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Phone Number</label>
                     <input
                       type="text"
                       placeholder="+91 98000 11223"
                       value={formData.phone}
                       onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Quick Terminal PIN (4-Digits)</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Quick Terminal PIN (4-Digits)</label>
                     <input
                       type="password"
                       maxLength={4}
                       value={formData.pin}
                       onChange={e => setFormData(prev => ({ ...prev, pin: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white font-mono text-center tracking-widest focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono text-center tracking-widest focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Shift Schedule</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Shift Schedule</label>
                     <input
                       type="text"
                       value={formData.shift}
                       onChange={e => setFormData(prev => ({ ...prev, shift: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -1850,13 +1849,13 @@ export const AdminUsersRBAC: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsAddModalOpen(false)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Provision Staff
                   </button>
@@ -1870,12 +1869,12 @@ export const AdminUsersRBAC: React.FC = () => {
       {/* ================= MODAL: EDIT EMPLOYEE ================= */}
       <AnimatePresence>
         {editingEmployee && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+              className="w-full max-w-lg rounded-2xl bg-[#161D2C] border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -1884,7 +1883,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 </h3>
                 <button
                   onClick={() => setEditingEmployee(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1892,23 +1891,23 @@ export const AdminUsersRBAC: React.FC = () => {
 
               <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-400 block mb-1">Full Name</label>
+                  <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Full Name</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Role Hierarchy</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Role Hierarchy</label>
                     <select
                       value={formData.role}
                       onChange={e => setFormData(prev => ({ ...prev, role: e.target.value as UserRole }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     >
                       <option value="cashier">POS Cashier</option>
                       <option value="manager">Store Manager</option>
@@ -1918,11 +1917,11 @@ export const AdminUsersRBAC: React.FC = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Assigned Store</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Assigned Store</label>
                     <select
                       value={formData.storeId}
                       onChange={e => setFormData(prev => ({ ...prev, storeId: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     >
                       {stores.map(st => (
                         <option key={st.id} value={st.id}>
@@ -1935,22 +1934,22 @@ export const AdminUsersRBAC: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Shift</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Shift</label>
                     <input
                       type="text"
                       value={formData.shift}
                       onChange={e => setFormData(prev => ({ ...prev, shift: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">PIN</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">PIN</label>
                     <input
                       type="password"
                       maxLength={4}
                       value={formData.pin}
                       onChange={e => setFormData(prev => ({ ...prev, pin: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white font-mono text-center tracking-widest focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono text-center tracking-widest focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -1959,13 +1958,13 @@ export const AdminUsersRBAC: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setEditingEmployee(null)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Save Changes
                   </button>

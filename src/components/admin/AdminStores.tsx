@@ -78,6 +78,13 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
     });
   }, [stores, searchQuery, cityFilter]);
 
+  const [statusFeedback, setStatusFeedback] = useState<string | null>(null);
+
+  const showStatusFeedback = (msg: string) => {
+    setStatusFeedback(msg);
+    setTimeout(() => setStatusFeedback(null), 3500);
+  };
+
   const handleOpenAdd = () => {
     setFormData({
       name: '',
@@ -132,16 +139,21 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
 
   const handleDelete = (id: string, name: string) => {
     if (stores.length <= 1) {
-      alert('Cannot decommission the only registered store outlet.');
+      showStatusFeedback('Cannot decommission the only registered store outlet.');
       return;
     }
-    if (window.confirm(`Are you sure you want to decommission and remove "${name}" from the active franchise network?`)) {
-      deleteStore(id);
-    }
+    deleteStore(id);
+    showStatusFeedback(`Decommissioned store outlet "${name}".`);
   };
 
   return (
     <div className="space-y-6">
+      {statusFeedback && (
+        <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center justify-between animate-fade-in">
+          <span>{statusFeedback}</span>
+          <button onClick={() => setStatusFeedback(null)} className="text-amber-400 hover:text-white font-bold ml-2">✕</button>
+        </div>
+      )}
       
       {/* Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -157,7 +169,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
 
         <button
           onClick={handleOpenAdd}
-          className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition-all"
+          className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>+ Provision Branch</span>
@@ -173,7 +185,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
             placeholder="Search branches by store name, GSTIN, city, manager, or address..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
           />
         </div>
 
@@ -181,7 +193,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
           <select
             value={cityFilter}
             onChange={e => setCityFilter(e.target.value)}
-            className="bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
+            className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
           >
             {cities.map(c => (
               <option key={c} value={c}>
@@ -202,7 +214,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
           return (
             <div
               key={st.id}
-              className={`p-5 rounded-2xl bg-slate-900 border transition-all flex flex-col justify-between gap-4 shadow-xl ${
+              className={`p-5 rounded-xl bg-[#121826] border transition-all flex flex-col justify-between gap-4 shadow-lg ${
                 isCurrent ? 'border-emerald-500/60 shadow-emerald-500/10' : 'border-slate-800 hover:border-slate-700'
               }`}
             >
@@ -213,7 +225,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="text-sm font-bold text-white tracking-tight">{st.name}</h3>
                       {isCurrent && (
-                        <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-extrabold border border-emerald-500/30">
+                        <span className="text-[9px] px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-400 font-extrabold border border-emerald-500/30">
                           Active Branch
                         </span>
                       )}
@@ -246,11 +258,11 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
 
                 {/* Details Pills */}
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                  <div className="p-2.5 rounded-lg bg-[#0A0E1A] border border-slate-800">
                     <span className="text-[10px] text-slate-400 block font-semibold">GSTIN Registered</span>
                     <span className="font-mono font-bold text-slate-200 text-[11px] truncate block">{st.gstin}</span>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                  <div className="p-2.5 rounded-lg bg-[#0A0E1A] border border-slate-800">
                     <span className="text-[10px] text-slate-400 block font-semibold">Store Manager</span>
                     <span className="font-bold text-slate-200 truncate block">{st.ownerName}</span>
                   </div>
@@ -301,12 +313,12 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
       {/* MODAL: ADD STORE */}
       <AnimatePresence>
         {isAddModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+              className="w-full max-w-lg rounded-2xl bg-[#161D2C] border border-slate-700/80 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -315,7 +327,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                 </h3>
                 <button
                   onClick={() => setIsAddModalOpen(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -330,7 +342,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     placeholder="e.g. Ellix Supermart - Bandra West"
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -343,7 +355,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       placeholder="27AAAAA0000A1Z5"
                       value={formData.gstin}
                       onChange={e => setFormData(prev => ({ ...prev, gstin: e.target.value.toUpperCase() }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
@@ -354,7 +366,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       placeholder="e.g. Mumbai"
                       value={formData.city}
                       onChange={e => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -366,7 +378,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="text"
                       value={formData.ownerName}
                       onChange={e => setFormData(prev => ({ ...prev, ownerName: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
@@ -375,7 +387,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="text"
                       value={formData.phone}
                       onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -386,7 +398,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     type="text"
                     value={formData.address}
                     onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -397,7 +409,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="text"
                       value={formData.timings}
                       onChange={e => setFormData(prev => ({ ...prev, timings: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
@@ -406,7 +418,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="email"
                       value={formData.email}
                       onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -415,13 +427,13 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                   <button
                     type="button"
                     onClick={() => setIsAddModalOpen(false)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Provision Branch
                   </button>
@@ -435,12 +447,12 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
       {/* MODAL: EDIT STORE */}
       <AnimatePresence>
         {editingStore && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+              className="w-full max-w-lg rounded-2xl bg-[#161D2C] border border-slate-700/80 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -449,7 +461,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                 </h3>
                 <button
                   onClick={() => setEditingStore(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -463,7 +475,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     required
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -475,7 +487,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       required
                       value={formData.gstin}
                       onChange={e => setFormData(prev => ({ ...prev, gstin: e.target.value.toUpperCase() }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
@@ -485,7 +497,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       required
                       value={formData.city}
                       onChange={e => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -497,7 +509,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="text"
                       value={formData.ownerName}
                       onChange={e => setFormData(prev => ({ ...prev, ownerName: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
@@ -506,7 +518,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="text"
                       value={formData.phone}
                       onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -517,7 +529,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     type="text"
                     value={formData.address}
                     onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -525,13 +537,13 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                   <button
                     type="button"
                     onClick={() => setEditingStore(null)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Save Changes
                   </button>
@@ -545,12 +557,12 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
       {/* QUICK SPECS DRAWER MODAL */}
       <AnimatePresence>
         {selectedStoreDetail && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4"
+              className="w-full max-w-md rounded-2xl bg-[#161D2C] border border-slate-700/80 shadow-2xl p-6 space-y-4"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -559,24 +571,24 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                 </h3>
                 <button
                   onClick={() => setSelectedStoreDetail(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="space-y-3 text-xs">
-                <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-1">
+                <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1">
                   <div className="text-slate-400 font-semibold">Store Tenant UID</div>
                   <div className="font-mono text-slate-200 font-bold">{selectedStoreDetail.id}</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                  <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800">
                     <span className="text-[10px] text-slate-400 block font-semibold">POS Terminals</span>
                     <span className="text-base font-black text-white">2 Active</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                  <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800">
                     <span className="text-[10px] text-slate-400 block font-semibold">Staff Assigned</span>
                     <span className="text-base font-black text-white">
                       {employees.filter(e => e.storeId === selectedStoreDetail.id).length || 2} Users
@@ -584,7 +596,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-1">
+                <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1">
                   <div className="text-slate-400 font-semibold">Physical Dispatch Address</div>
                   <div className="text-slate-200">{selectedStoreDetail.address}, {selectedStoreDetail.city}</div>
                 </div>
@@ -592,7 +604,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
 
               <button
                 onClick={() => setSelectedStoreDetail(null)}
-                className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs"
+                className="w-full py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition-colors"
               >
                 Close Specs
               </button>

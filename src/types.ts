@@ -1,6 +1,23 @@
 export type ActiveModule = 'retailer' | 'wholesaler' | 'admin';
 
-export type UserRole = 'owner' | 'manager' | 'inventory_staff' | 'wholesaler_admin' | 'platform_admin';
+// 4-Level Authority Hierarchy as defined by Ellix Connect specifications:
+// Level 1: super_admin (Owner / Creator of Ellix Connect)
+// Level 2: ellix_admin (Assigned operator / manager of Ellix Connect)
+// Level 3: client (Business / Store Owner)
+// Level 4: crew (In-store staff member / cashier)
+export type AppRole = 'super_admin' | 'ellix_admin' | 'client' | 'crew';
+
+export type UserRole =
+  | 'super_admin'
+  | 'ellix_admin'
+  | 'client'
+  | 'crew'
+  // Legacy aliases for backward compatibility
+  | 'owner'
+  | 'manager'
+  | 'inventory_staff'
+  | 'wholesaler_admin'
+  | 'platform_admin';
 
 export interface User {
   id: string;
@@ -9,6 +26,8 @@ export interface User {
   phone: string;
   role: UserRole;
   storeId?: string;
+  clientId?: string;
+  assignedStoreIds?: string[];
   wholesalerId?: string;
   avatar?: string;
   permissions: string[];
@@ -18,10 +37,14 @@ export interface User {
   passwordSynchronized?: boolean;
   isRealAuth?: boolean;
   firebaseUid?: string;
+  status?: 'active' | 'pending_approval' | 'suspended';
 }
 
 export interface Store {
   id: string;
+  clientId?: string;
+  ownerUid?: string;
+  ownerEmail?: string;
   name: string;
   ownerName: string;
   phone: string;
@@ -36,6 +59,60 @@ export interface Store {
   latitude: number;
   longitude: number;
   isOnline: boolean;
+}
+
+export interface Supplier {
+  id: string;
+  storeId?: string;
+  name: string;
+  contactPerson: string;
+  phone: string;
+  email?: string;
+  address?: string;
+  gstin?: string;
+  categories?: string[];
+  rating?: number;
+  paymentTerms?: string;
+  notes?: string;
+  createdAt?: string;
+}
+
+export interface RestockLog {
+  id: string;
+  storeId: string;
+  productId: string;
+  productName: string;
+  quantityAdded: number;
+  previousStock: number;
+  newStock: number;
+  date: string;
+  addedBy: string; // Crew member name
+  addedById: string; // Crew member ID
+  supplierId?: string;
+  supplierName?: string;
+  notes?: string;
+  crewId?: string;
+  crewName?: string;
+  quantity?: number;
+  createdAt?: string;
+}
+
+export interface BusinessApplication {
+  id: string;
+  businessName: string;
+  ownerName: string;
+  email: string;
+  phone: string;
+  city: string;
+  gstin?: string;
+  appliedAt: string;
+  status: 'pending_review' | 'approved' | 'rejected';
+  assignedAdminId?: string;
+  assignedAdminName?: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  notes?: string;
+  selectedPlanId?: string;
 }
 
 export interface Product {
@@ -59,6 +136,8 @@ export interface Product {
   description?: string;
   taxRate: number; // percentage, e.g. 18, 12, 5
   storeId: string;
+  supplierId?: string;
+  supplierName?: string;
 }
 
 export interface SupplierPerformanceMetrics {
@@ -126,12 +205,13 @@ export interface CartItem {
   discountFlat: number;
 }
 
-export type PaymentMethod = 'cash' | 'card' | 'upi' | 'split';
+export type PaymentMethod = 'cash' | 'card' | 'upi' | 'bank_transfer' | 'credit' | 'split';
 
 export interface SplitPaymentDetails {
   cashAmount: number;
   cardAmount: number;
   upiAmount: number;
+  bankAmount?: number;
 }
 
 export interface CustomerProfile {
@@ -153,11 +233,19 @@ export interface POSInvoice {
   id: string;
   invoiceNumber: string;
   storeId: string;
+  clientId?: string;
   storeName: string;
   storeGSTIN: string;
   storeAddress: string;
+  customerId?: string;
   customerName: string;
   customerPhone: string;
+  customerWhatsApp?: string;
+  sentViaWhatsApp?: boolean;
+  createdBy?: string;
+  createdById?: string;
+  cashierName?: string;
+  cashierId?: string;
   date: string;
   isGSTInvoice: boolean;
   templateId?: string;
@@ -178,10 +266,39 @@ export interface POSInvoice {
   igst: number;
   grandTotal: number;
   paymentMethod: PaymentMethod;
+  paymentStatus?: 'paid' | 'pending' | 'partially_paid';
   splitDetails?: SplitPaymentDetails;
+  referenceNumber?: string;
   upiTxnRef?: string;
   loyaltyPointsEarned: number;
   loyaltyPointsRedeemed: number;
+}
+
+export interface ClientSubscriptionRecord {
+  clientId: string;
+  status: 'active' | 'past_due' | 'grace_period' | 'blocked' | 'cancelled';
+  plan: string;
+  billingPeriod: 'monthly' | 'yearly';
+  amount: number;
+  currency: string;
+  startedAt: string;
+  renewalDate: string;
+  gracePeriodEndsAt?: string;
+  cancelledAt?: string;
+  updatedAt: string;
+}
+
+export interface SubscriptionPaymentRecord {
+  id: string;
+  clientId: string;
+  amount: number;
+  currency: string;
+  date: string;
+  status: 'paid' | 'failed' | 'refunded';
+  method: string;
+  periodStart: string;
+  periodEnd: string;
+  referenceNumber: string;
 }
 
 export interface CurrencyInfo {
@@ -345,11 +462,14 @@ export interface CustomerOrder {
 export interface Employee {
   id: string;
   storeId: string;
+  clientId?: string;
+  assignedStoreIds?: string[];
   name: string;
-  role: 'owner' | 'manager' | 'inventory_staff' | 'cashier' | string;
+  role: 'crew' | 'owner' | 'manager' | 'inventory_staff' | 'cashier' | string;
   email: string;
   phone: string;
   permissions: {
+    canApplyDiscount?: boolean;
     inventoryEdit: boolean;
     reports: boolean;
     employeeManagement: boolean;
@@ -371,6 +491,7 @@ export interface AppNotification {
   timestamp: string;
   read: boolean;
   linkModule?: ActiveModule;
+  targetRole?: string;
 }
 
 export interface AuditLog {
@@ -394,8 +515,11 @@ export interface SubscriptionPlan {
   activeStoresCount: number;
   maxStores?: number;
   maxProducts?: number;
-  status: 'active' | 'trial' | 'expired';
+  status: 'active' | 'grace_period' | 'blocked' | 'cancelled' | 'trial' | 'expired';
   renewalDate: string;
+  gracePeriodEndsAt?: string;
+  gracePeriodDays?: number;
+  monthlyCharge?: number;
 }
 
 export interface SaveFeedback {

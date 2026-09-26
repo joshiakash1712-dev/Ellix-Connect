@@ -81,7 +81,7 @@ export const AddRetailerModal: React.FC<AddRetailerModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
       <div
         id="add-retailer-modal"
-        className="relative w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-auto"
+        className="relative w-full max-w-xl glass-panel border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-auto"
       >
         {/* Modal Header */}
         <div className="p-6 border-b border-slate-800 bg-slate-950/80 flex items-center justify-between">

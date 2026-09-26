@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
-import { ActiveModule, UserRole } from '../../types';
+import { ActiveModule, UserRole, AppRole } from '../../types';
 import { NotificationCenter } from './NotificationCenter';
 import { SettingsModal } from './SettingsModal';
+import { EllixConnectLogo } from '../branding/EllixConnectLogo';
 import {
   Store as StoreIcon,
   Truck,
@@ -20,8 +21,6 @@ import {
   Smartphone,
   Mail,
   KeyRound,
-  Cloud,
-  RefreshCw,
   WifiOff,
   Globe
 } from 'lucide-react';
@@ -42,6 +41,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     setActiveModule,
     activeRole,
     setActiveRole,
+    activeStore,
+    setActiveStore,
+    stores,
+    currentUser: storeUser,
     unreadCount,
     theme,
     toggleTheme,
@@ -49,8 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     setIsSettingsModalOpen,
     isNotificationModalOpen,
     setIsNotificationModalOpen,
-    cloudSyncState,
-    forceCloudSync
+    subscription
   } = useStore();
 
   const {
@@ -62,6 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   } = useAuth();
 
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
+  const [showStoreDropdown, setShowStoreDropdown] = useState(false);
 
   // Connectivity detection using navigator.onLine API
   const [isOnline, setIsOnline] = useState<boolean>(() => {
@@ -83,34 +86,82 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
   }, []);
 
-  const modules: { id: ActiveModule; label: string; icon: React.ReactNode; badge?: string }[] = [
-    { id: 'retailer', label: 'Retailer App', icon: <StoreIcon className="w-4 h-4" /> },
-    { id: 'wholesaler', label: 'Wholesaler Portal', icon: <Truck className="w-4 h-4" /> },
-    { id: 'admin', label: 'Admin OS', icon: <ShieldAlert className="w-4 h-4" /> }
-  ];
+  const isCrew = activeRole === 'crew' || userProfile?.role === 'crew';
+  const isClientOwner = !isCrew && (activeRole === 'client' || userProfile?.role === 'client');
+  const canShowDevRoleSwitcher = Boolean((import.meta as any).env?.DEV && (!authUser || userProfile?.role === 'super_admin'));
+  const allowedStores = isCrew
+    ? stores.filter(s => (storeUser?.assignedStoreIds || [activeStore.id]).includes(s.id))
+    : stores;
 
-  const roles: { id: UserRole; label: string; desc: string }[] = [
-    { id: 'owner', label: 'Store Owner', desc: 'Full access to Multi-Store Inventory, Restock, Staff & Financials' },
-    { id: 'manager', label: 'Store Manager', desc: 'Inventory stock management & Wholesaler Restock Orders' },
-    { id: 'inventory_staff', label: 'Inventory Staff', desc: 'Stock inward/outward, batching & barcodes' },
-    { id: 'wholesaler_admin', label: 'Wholesaler Admin', desc: 'Manage catalog, quotes & retail dispatches' },
-    { id: 'platform_admin', label: 'Platform Admin', desc: 'Multi-tenant security, system controls & audit logs' }
+  // Global Subscription Status Indicator (FIX 9: Client only, never Crew)
+  const subscriptionStatusBadge = React.useMemo(() => {
+    if (!subscription || !isClientOwner) return null;
+    const status = subscription.status || 'active';
+    let daysRemaining: number | null = null;
+    if (subscription.renewalDate) {
+      try {
+        const renDate = new Date(subscription.renewalDate);
+        if (!isNaN(renDate.getTime())) {
+          const diff = Math.ceil((renDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+          daysRemaining = Math.max(0, diff);
+        }
+      } catch {
+        // fallback
+      }
+    }
+
+    if (status === 'past_due') {
+      return {
+        label: daysRemaining !== null ? `Payment Due · ${daysRemaining} days remaining` : 'Payment Due',
+        classes: 'bg-amber-500/15 text-amber-300 border-amber-500/30 hover:bg-amber-500/25',
+        dotClass: 'bg-amber-400'
+      };
+    }
+    if (status === 'grace_period') {
+      return {
+        label: daysRemaining !== null ? `Grace Period · ${daysRemaining} days remaining` : 'Grace Period',
+        classes: 'bg-amber-500/15 text-amber-300 border-amber-500/35 hover:bg-amber-500/25',
+        dotClass: 'bg-amber-400'
+      };
+    }
+    if (status === 'blocked' || status === 'cancelled') {
+      return {
+        label: status === 'cancelled' ? 'Subscription Cancelled' : 'Subscription Blocked',
+        classes: 'bg-rose-500/15 text-rose-300 border-rose-500/30 hover:bg-rose-500/25',
+        dotClass: 'bg-rose-400'
+      };
+    }
+    return {
+      label: daysRemaining !== null && daysRemaining <= 30
+        ? `Subscription · Renews in ${daysRemaining} days`
+        : 'Subscription · Active',
+      classes: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25 hover:bg-emerald-500/20',
+      dotClass: 'bg-emerald-400'
+    };
+  }, [subscription, isClientOwner]);
+
+  const roles: { id: AppRole | UserRole; label: string; desc: string; badge?: string }[] = [
+    { id: 'super_admin', label: 'Super Admin (Level 1)', desc: 'Creator & Owner: Platform Admins, Clients & System Controls', badge: 'L1' },
+    { id: 'ellix_admin', label: 'Ellix Admin (Level 2)', desc: 'Operational Admin: Client approvals & subscriptions', badge: 'L2' },
+    { id: 'client', label: 'Store Owner (Level 3)', desc: 'Store Owner: Multi-store inventory, crew & billing', badge: 'L3' },
+    { id: 'crew', label: 'Store Crew (Level 4)', desc: 'Assigned store crew: POS billing & stock lookup', badge: 'L4' },
+    { id: 'wholesaler_admin', label: 'Wholesale Partner', desc: 'B2B Catalog & Bulk Restock Orders', badge: 'B2B' }
   ];
 
   return (
     <header className="sticky top-0 z-40 glass-panel border-b border-slate-800 text-slate-100 shadow-xl w-full max-w-full overflow-x-hidden relative">
       {/* Subtle brand gradient backdrop BEHIND the glass navbar to give frosted refraction depth */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-emerald-600/10 via-teal-500/5 to-emerald-600/10 pointer-events-none" />
-      <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-        <div className="flex items-center justify-between h-16 gap-3">
+      <div className="w-full max-w-7xl mx-auto px-2.5 sm:px-4 lg:px-6">
+        <div className="flex items-center justify-between h-16 gap-2 sm:gap-3">
           
           {/* Brand Logo & Store Picker */}
-          <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 min-w-0">
             {/* Mobile Hamburger Drawer Trigger (Android Navigation Icon) */}
             <button
               id="btn-hamburger-menu"
               onClick={onOpenMobileDrawer}
-              className="md:hidden p-2 -ml-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center shrink-0"
+              className="md:hidden p-2 -ml-1 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center shrink-0"
               aria-label="Open Navigation Drawer"
               title="Open Navigation Menu"
             >
@@ -118,107 +169,106 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-white font-black text-xl tracking-wider border border-emerald-300/30 shrink-0">
-                E
+              {/* Full logo on sm and larger screens */}
+              <div className="hidden sm:flex items-center">
+                <EllixConnectLogo size="sm" alt="Ellix Connect" />
               </div>
-              <div className="shrink-0 flex items-center gap-2">
-                <span className="text-lg font-bold tracking-tight text-white flex items-center gap-1">
-                  Ellix<span className="text-emerald-400 font-extrabold">Connect</span>
+              {/* Symbol on mobile screens */}
+              <div className="sm:hidden flex items-center gap-1.5">
+                <EllixConnectLogo variant="symbol" size={26} alt="Ellix Connect" />
+                <span className="text-sm font-bold tracking-tight text-white flex items-center">
+                  Ellix<span className="text-[#2DD4A7] font-extrabold">Connect</span>
                 </span>
-
-                {/* Subtle Offline Badge */}
-                {!isOnline && (
-                  <span
-                    id="badge-navbar-offline"
-                    className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 shrink-0"
-                    title="Offline: Internet connection lost (navigator.onLine). Offline-first mode is active; local data remains safe."
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                    <WifiOff className="w-3 h-3 text-amber-400 shrink-0" />
-                    <span>Offline</span>
-                  </span>
-                )}
               </div>
+
+              {/* Subtle Offline Badge */}
+              {!isOnline && (
+                <span
+                  id="badge-navbar-offline"
+                  className="hidden xs:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 shrink-0"
+                  title="Offline: Internet connection lost (navigator.onLine). Offline-first mode is active; local data remains safe."
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+                  <WifiOff className="w-3 h-3 text-amber-400 shrink-0" />
+                  <span>Offline</span>
+                </span>
+              )}
             </div>
 
-            {onNavigateToWebsite && (
+            {/* Active Store Indicator & Switcher (FIX 3: Clear Current Store Visibility) */}
+            <div className="relative">
               <button
-                id="btn-nav-return-website"
-                type="button"
-                onClick={onNavigateToWebsite}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60 text-xs font-semibold transition-all shadow-sm"
-                title="Return to Marketing Landing Page"
+                id="btn-navbar-store-select"
+                onClick={() => setShowStoreDropdown(!showStoreDropdown)}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm max-w-[130px] xs:max-w-[165px] sm:max-w-[230px] ${
+                  isCrew
+                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-200 hover:bg-amber-500/20'
+                    : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20'
+                }`}
+                title={isCrew ? `Current Assigned Store: ${activeStore.name}` : `Current Active Store: ${activeStore.name}`}
               >
-                <Globe className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden sm:inline">Marketing Site</span>
+                <span className={`w-2 h-2 rounded-full shrink-0 ${isCrew ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
+                <StoreIcon className={`w-3.5 h-3.5 shrink-0 ${isCrew ? 'text-amber-400' : 'text-emerald-400'}`} />
+                <span className="truncate font-extrabold text-white">
+                  {activeStore.name}{activeStore.city ? ` · ${activeStore.city}` : ''}
+                </span>
+                {allowedStores.length > 1 && (
+                  <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
+                )}
               </button>
-            )}
+
+              {showStoreDropdown && (
+                <div className="absolute left-0 mt-2 w-64 max-w-[calc(100vw-24px)] rounded-xl bg-[#161D2C] border border-slate-700/80 shadow-2xl p-2 z-50">
+                  <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 px-2 py-1 flex items-center justify-between">
+                    <span>Active Store</span>
+                    {isCrew && <span className="text-amber-400 text-[9px] font-mono">Assigned Only</span>}
+                  </div>
+                  <div className="space-y-1 max-h-52 overflow-y-auto mt-1">
+                    {allowedStores.map(store => (
+                      <button
+                        key={store.id}
+                        onClick={() => {
+                          setActiveStore(store);
+                          setShowStoreDropdown(false);
+                        }}
+                        className={`w-full text-left px-2.5 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                          activeStore.id === store.id
+                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold'
+                            : 'text-slate-300 hover:bg-slate-800/80'
+                        }`}
+                      >
+                        <div className="truncate">
+                          <div className="font-semibold text-slate-200 truncate">{store.name}</div>
+                          <div className="text-[10px] text-slate-500 truncate">{store.address}</div>
+                        </div>
+                        {activeStore.id === store.id && (
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 ml-1.5" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Center Navigation Modules Switcher (Visible on extra large desktop) */}
-          <nav className="hidden xl:flex items-center gap-1.5 bg-slate-950/60 p-1 rounded-xl border border-slate-800/80">
-            {modules.map(mod => {
-              const isActive = activeModule === mod.id;
-              return (
-                <button
-                  key={mod.id}
-                  onClick={() => setActiveModule(mod.id)}
-                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all relative ${
-                    isActive
-                      ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/20'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                  }`}
-                >
-                  {mod.icon}
-                  <span>{mod.label}</span>
-                  {mod.badge && (
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                      {mod.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
+          {/* Global Subscription Status Indicator (FIX 9: Client/Store Owner only) */}
+          {subscriptionStatusBadge && (
+            <div className="hidden lg:flex items-center">
+              <button
+                type="button"
+                onClick={() => setIsSettingsModalOpen(true)}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all ${subscriptionStatusBadge.classes}`}
+                title="View & Manage Subscription Status"
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${subscriptionStatusBadge.dotClass}`} />
+                <span>{subscriptionStatusBadge.label}</span>
+              </button>
+            </div>
+          )}
 
           {/* Right Action Controls */}
           <div className="flex items-center gap-2 shrink-0">
-
-            {/* Cloud Sync Status & Quick Action Button */}
-            <button
-              id="btn-nav-cloud-sync"
-              onClick={() => forceCloudSync()}
-              disabled={cloudSyncState.status === 'syncing'}
-              className={`relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all shrink-0 active:scale-95 ${
-                cloudSyncState.status === 'syncing'
-                  ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-300 animate-pulse cursor-wait'
-                  : cloudSyncState.status === 'offline'
-                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
-                  : 'bg-slate-800/80 border-slate-700/60 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40'
-              }`}
-              title={
-                cloudSyncState.status === 'syncing'
-                  ? 'Syncing with Cloud Firestore...'
-                  : cloudSyncState.status === 'offline'
-                  ? 'Offline: Changes stored in local SQLite/IndexedDB. Tap to retry connection.'
-                  : 'Cloud Connected: Tap to manually refresh from cloud'
-              }
-            >
-              {cloudSyncState.status === 'syncing' ? (
-                <RefreshCw className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
-              ) : cloudSyncState.status === 'offline' ? (
-                <WifiOff className="w-3.5 h-3.5 text-amber-400" />
-              ) : (
-                <Cloud className="w-3.5 h-3.5 text-emerald-400" />
-              )}
-              <span className="hidden sm:inline text-[11px]">
-                {cloudSyncState.status === 'syncing'
-                  ? 'Syncing'
-                  : cloudSyncState.status === 'offline'
-                  ? 'Offline'
-                  : 'Cloud'}
-              </span>
-            </button>
 
             {/* Notification Bell */}
             <button
@@ -273,25 +323,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                     {authUser && <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />}
                   </div>
                   <div className="text-[10px] text-slate-400 leading-tight truncate mt-0.5">
-                    {authUser ? 'Verified Account' : 'Switch Role & Menu'}
+                    {authUser ? 'Verified Account' : (canShowDevRoleSwitcher ? 'Dev Role & Menu' : 'Account & Menu')}
                   </div>
                 </div>
                 <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
               </button>
 
               {showRoleDropdown && (
-                <div className="absolute right-0 mt-2 w-72 rounded-xl bg-slate-800 border border-slate-700 shadow-2xl p-2 z-50">
+                <div className="absolute right-0 mt-2 w-72 rounded-xl bg-[#161D2C] border border-slate-700/80 shadow-2xl p-2 z-50">
                   
                   {/* Authenticated User Status Bar */}
                   {authUser ? (
-                    <div className="p-2.5 mb-2 rounded-lg bg-slate-900 border border-slate-700/80">
+                    <div className="p-2.5 mb-2 rounded-lg bg-[#121826] border border-slate-700/80">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
                           <ShieldCheck className="w-3 h-3" />
                           Verified Identity
                         </span>
-                        <span className="text-[10px] font-mono text-slate-400">
-                          {authUser.email ? authUser.email.split('@')[0] : 'Phone User'}
+                        <span className="text-[10px] font-mono text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded uppercase">
+                          {activeRole.replace('_', ' ')}
                         </span>
                       </div>
                       <div className="mt-1 text-xs text-white font-semibold truncate">
@@ -331,34 +381,42 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </div>
                   )}
 
-                  <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 px-2 py-1">
-                    Select Active Role
-                  </div>
-                  <div className="space-y-1 max-h-56 overflow-y-auto">
-                    {roles.map(r => (
-                      <button
-                        key={r.id}
-                        onClick={() => {
-                          setActiveRole(r.id);
-                          if (r.id === 'wholesaler_admin') setActiveModule('wholesaler');
-                          else if (r.id === 'platform_admin') setActiveModule('admin');
-                          else setActiveModule('retailer');
-                          setShowRoleDropdown(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-all ${
-                          activeRole === r.id
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold'
-                            : 'text-slate-300 hover:bg-slate-700/50'
-                        }`}
-                      >
-                        <div>
-                          <div className="font-semibold text-slate-200">{r.label}</div>
-                          <div className="text-[10px] text-slate-400">{r.desc}</div>
-                        </div>
-                        {activeRole === r.id && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
-                      </button>
-                    ))}
-                  </div>
+                  {canShowDevRoleSwitcher && (
+                    <>
+                      <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 px-2 py-1">
+                        Select Active Role (Dev Only)
+                      </div>
+                      <div className="space-y-1 max-h-56 overflow-y-auto">
+                        {roles.map(r => (
+                          <button
+                            key={r.id}
+                            onClick={() => {
+                              setActiveRole(r.id);
+                              if (r.id === 'wholesaler_admin') {
+                                setActiveModule('wholesaler');
+                              } else if (r.id === 'super_admin' || r.id === 'ellix_admin' || r.id === 'platform_admin') {
+                                setActiveModule('admin');
+                              } else {
+                                setActiveModule('retailer');
+                              }
+                              setShowRoleDropdown(false);
+                            }}
+                            className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-all ${
+                              activeRole === r.id
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold'
+                                : 'text-slate-300 hover:bg-slate-700/50'
+                            }`}
+                          >
+                            <div>
+                              <div className="font-semibold text-slate-200">{r.label}</div>
+                              <div className="text-[10px] text-slate-400">{r.desc}</div>
+                            </div>
+                            {activeRole === r.id && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
 
                   {/* Settings and Theme in menu */}
                   <div className="mt-2 pt-2 border-t border-slate-700/80 space-y-1">

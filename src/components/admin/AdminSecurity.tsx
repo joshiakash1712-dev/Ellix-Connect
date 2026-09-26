@@ -46,6 +46,7 @@ export const AdminSecurity: React.FC = () => {
   ]);
 
   const [isKeyVisible, setIsKeyVisible] = useState<Record<string, boolean>>({});
+  const [copiedKeyId, setCopiedKeyId] = useState<string | null>(null);
   const [newKeyName, setNewKeyName] = useState('');
   const [newKeyScope, setNewKeyScope] = useState('read_write_all');
   const [isCreatingKey, setIsCreatingKey] = useState(false);
@@ -121,10 +122,8 @@ export const AdminSecurity: React.FC = () => {
   };
 
   const handleRevokeKey = (id: string, name: string) => {
-    if (window.confirm(`Revoke and deactivate API key "${name}" immediately?`)) {
-      setApiKeys(prev => prev.filter(k => k.id !== id));
-      addAuditLog('API Key Revoked', `Decommissioned key "${name}" (${id})`, 'warning');
-    }
+    setApiKeys(prev => prev.filter(k => k.id !== id));
+    addAuditLog('API Key Revoked', `Decommissioned key "${name}" (${id})`, 'warning');
   };
 
   const handlePingWebhook = (id: string) => {
@@ -162,7 +161,7 @@ export const AdminSecurity: React.FC = () => {
       </div>
 
       {/* 1. ENTERPRISE SECURITY POLICIES */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+      <div className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -173,13 +172,13 @@ export const AdminSecurity: React.FC = () => {
               Enforce strict tenant compliance across all cashier terminals and administrative sessions.
             </p>
           </div>
-          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
             SOC2 Ready
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 flex items-center justify-between">
             <div>
               <span className="font-semibold text-slate-200 block">Enforce 2FA on Admin Roles</span>
               <span className="text-[10px] text-slate-400">Mandate OTP for Owner & Manager logins</span>
@@ -188,11 +187,11 @@ export const AdminSecurity: React.FC = () => {
               type="checkbox"
               checked={secPolicies.enforce2FA}
               onChange={e => setSecPolicies(prev => ({ ...prev, enforce2FA: e.target.checked }))}
-              className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500"
+              className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 bg-[#121826] border-slate-700"
             />
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 flex items-center justify-between">
             <div>
               <span className="font-semibold text-slate-200 block">Manager PIN on Discount/Void</span>
               <span className="text-[10px] text-slate-400">Require supervisor override on POS bill edits</span>
@@ -201,11 +200,11 @@ export const AdminSecurity: React.FC = () => {
               type="checkbox"
               checked={secPolicies.managerPinOnRefund}
               onChange={e => setSecPolicies(prev => ({ ...prev, managerPinOnRefund: e.target.checked }))}
-              className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500"
+              className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 bg-[#121826] border-slate-700"
             />
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 flex items-center justify-between">
             <div>
               <span className="font-semibold text-slate-200 block">Session Inactivity Timeout</span>
               <span className="text-[10px] text-slate-400">Auto-lock idle cashier terminals</span>
@@ -213,7 +212,7 @@ export const AdminSecurity: React.FC = () => {
             <select
               value={secPolicies.sessionTimeoutMinutes}
               onChange={e => setSecPolicies(prev => ({ ...prev, sessionTimeoutMinutes: Number(e.target.value) }))}
-              className="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-slate-200 font-bold"
+              className="bg-[#121826] border border-slate-800 rounded-lg px-2.5 py-1 text-slate-200 font-bold focus:outline-none focus:border-emerald-500"
             >
               <option value={15}>15 Mins</option>
               <option value={30}>30 Mins</option>
@@ -233,7 +232,7 @@ export const AdminSecurity: React.FC = () => {
 
           <button
             onClick={handleSaveSecurityPolicies}
-            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+            className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
           >
             Save Security Policies
           </button>
@@ -244,7 +243,7 @@ export const AdminSecurity: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* API Keys */}
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+        <div className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -264,25 +263,25 @@ export const AdminSecurity: React.FC = () => {
           </div>
 
           {isCreatingKey && (
-            <form onSubmit={handleCreateAPIKey} className="p-4 rounded-xl bg-slate-800 border border-slate-700 space-y-3 text-xs">
+            <form onSubmit={handleCreateAPIKey} className="p-4 rounded-xl bg-[#161D2C] border border-slate-800 space-y-3 text-xs">
               <div>
-                <label className="text-[10px] font-semibold text-slate-400 block mb-1">Key Description / Integration Name</label>
+                <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Key Description / Integration Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Tally ERP Sync Bridge"
                   value={newKeyName}
                   onChange={e => setNewKeyName(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-semibold text-slate-400 block mb-1">Scope</label>
+                <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Scope</label>
                 <select
                   value={newKeyScope}
                   onChange={e => setNewKeyScope(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500"
                 >
                   <option value="read_write_all">Full Access (Read / Write All)</option>
                   <option value="read_only_inventory">Read Only (Inventory & Stock)</option>
@@ -293,7 +292,7 @@ export const AdminSecurity: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs"
+                className="w-full py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors"
               >
                 Generate API Secret Key
               </button>
@@ -304,22 +303,22 @@ export const AdminSecurity: React.FC = () => {
             {apiKeys.map(k => (
               <div
                 key={k.id}
-                className="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-2 text-xs"
+                className="p-3.5 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-2 text-xs"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-200">{k.name}</span>
-                  <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                  <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-lg border border-emerald-500/20">
                     {k.scope}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 bg-slate-900 px-3 py-1.5 rounded-lg font-mono text-[11px] text-slate-300 truncate">
+                  <div className="flex-1 bg-[#121826] border border-slate-800 px-3 py-1.5 rounded-lg font-mono text-[11px] text-slate-300 truncate">
                     {isKeyVisible[k.id] ? k.key : `${k.key.slice(0, 10)}••••••••••••••••`}
                   </div>
                   <button
                     onClick={() => toggleKeyVisibility(k.id)}
-                    className="p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300"
+                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
                     title={isKeyVisible[k.id] ? 'Hide Key' : 'Show Key'}
                   >
                     {isKeyVisible[k.id] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -327,16 +326,21 @@ export const AdminSecurity: React.FC = () => {
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(k.key);
-                      alert('API Key copied to clipboard!');
+                      setCopiedKeyId(k.id);
+                      setTimeout(() => setCopiedKeyId(null), 2000);
                     }}
-                    className="p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300"
-                    title="Copy Key"
+                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                    title={copiedKeyId === k.id ? 'Copied!' : 'Copy Key'}
                   >
-                    <Copy className="w-3.5 h-3.5" />
+                    {copiedKeyId === k.id ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
                   </button>
                   <button
                     onClick={() => handleRevokeKey(k.id, k.name)}
-                    className="p-1.5 rounded-lg bg-slate-700 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400"
+                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors"
                     title="Revoke Key"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -348,7 +352,7 @@ export const AdminSecurity: React.FC = () => {
         </div>
 
         {/* Webhooks Configurator */}
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+        <div className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
           <div>
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <Radio className="w-4 h-4 text-teal-400" />
@@ -363,16 +367,16 @@ export const AdminSecurity: React.FC = () => {
             {webhooks.map(wh => (
               <div
                 key={wh.id}
-                className="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-2 text-xs"
+                className="p-3.5 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-2 text-xs"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-teal-400 font-mono text-[11px]">{wh.event}</span>
-                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-lg border border-emerald-500/20">
                     {wh.status}
                   </span>
                 </div>
 
-                <div className="font-mono text-[11px] text-slate-300 truncate bg-slate-900 p-2 rounded-lg">
+                <div className="font-mono text-[11px] text-slate-300 truncate bg-[#121826] border border-slate-800 p-2 rounded-lg">
                   {wh.targetUrl}
                 </div>
 
@@ -382,7 +386,7 @@ export const AdminSecurity: React.FC = () => {
                   </span>
                   <button
                     onClick={() => handlePingWebhook(wh.id)}
-                    className="px-2.5 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold text-[11px] flex items-center gap-1"
+                    className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-[11px] flex items-center gap-1 transition-colors"
                   >
                     <Zap className="w-3 h-3 text-amber-400" />
                     <span>{pingStatus[wh.id] || 'Test Ping'}</span>
@@ -396,7 +400,7 @@ export const AdminSecurity: React.FC = () => {
       </div>
 
       {/* 3. POS HARDWARE & PERIPHERAL DRIVERS */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+      <div className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -407,19 +411,19 @@ export const AdminSecurity: React.FC = () => {
               Direct ESC/POS command configuration for receipt printers, cash drawers, customer pole displays, and barcode readers.
             </p>
           </div>
-          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
             Native Driver Emulation
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
           
-          <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-1.5">
-            <label className="text-[10px] font-semibold text-slate-400 block">Thermal Protocol</label>
+          <div className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1.5">
+            <label className="text-[11px] font-semibold text-slate-400 block">Thermal Protocol</label>
             <select
               value={hardwareConfig.printerProtocol}
               onChange={e => setHardwareConfig(prev => ({ ...prev, printerProtocol: e.target.value }))}
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold"
+              className="w-full bg-[#121826] border border-slate-800 rounded-lg px-3 py-2 text-white font-semibold focus:outline-none focus:border-emerald-500"
             >
               <option value="ESC/POS Thermal">ESC/POS (Epson / TVS / NGX)</option>
               <option value="StarPRNT">StarPRNT / TSP100</option>
@@ -428,12 +432,12 @@ export const AdminSecurity: React.FC = () => {
             </select>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-1.5">
-            <label className="text-[10px] font-semibold text-slate-400 block">Paper Roll Width</label>
+          <div className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1.5">
+            <label className="text-[11px] font-semibold text-slate-400 block">Paper Roll Width</label>
             <select
               value={hardwareConfig.paperWidth}
               onChange={e => setHardwareConfig(prev => ({ ...prev, paperWidth: e.target.value }))}
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold"
+              className="w-full bg-[#121826] border border-slate-800 rounded-lg px-3 py-2 text-white font-semibold focus:outline-none focus:border-emerald-500"
             >
               <option value="80mm">80mm (3-Inch Standard Receipt)</option>
               <option value="58mm">58mm (2-Inch Compact Receipt)</option>
@@ -441,12 +445,12 @@ export const AdminSecurity: React.FC = () => {
             </select>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-1.5">
-            <label className="text-[10px] font-semibold text-slate-400 block">Interface Port</label>
+          <div className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1.5">
+            <label className="text-[11px] font-semibold text-slate-400 block">Interface Port</label>
             <select
               value={hardwareConfig.interfaceType}
               onChange={e => setHardwareConfig(prev => ({ ...prev, interfaceType: e.target.value }))}
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold"
+              className="w-full bg-[#121826] border border-slate-800 rounded-lg px-3 py-2 text-white font-semibold focus:outline-none focus:border-emerald-500"
             >
               <option value="USB / COM Port">USB / Direct Virtual COM</option>
               <option value="Bluetooth BLE">Bluetooth BLE Wireless</option>
@@ -454,12 +458,12 @@ export const AdminSecurity: React.FC = () => {
             </select>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-1.5">
-            <label className="text-[10px] font-semibold text-slate-400 block">Cash Drawer Kick Pulse</label>
+          <div className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1.5">
+            <label className="text-[11px] font-semibold text-slate-400 block">Cash Drawer Kick Pulse</label>
             <select
               value={hardwareConfig.cashDrawerPulse ? 'yes' : 'no'}
               onChange={e => setHardwareConfig(prev => ({ ...prev, cashDrawerPulse: e.target.value === 'yes' }))}
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold"
+              className="w-full bg-[#121826] border border-slate-800 rounded-lg px-3 py-2 text-white font-semibold focus:outline-none focus:border-emerald-500"
             >
               <option value="yes">RJ11 Pulse on Bill Finalize (Pin 2 / 50ms)</option>
               <option value="no">Disabled</option>
@@ -478,7 +482,7 @@ export const AdminSecurity: React.FC = () => {
 
           <button
             onClick={handleSaveHardware}
-            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+            className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
           >
             Save Hardware Configuration
           </button>

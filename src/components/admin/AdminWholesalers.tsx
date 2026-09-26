@@ -124,9 +124,7 @@ export const AdminWholesalers: React.FC = () => {
   };
 
   const handleDelete = (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to terminate vendor partnership and remove "${name}"?`)) {
-      deleteWholesaler(id);
-    }
+    deleteWholesaler(id);
   };
 
   return (
@@ -146,7 +144,7 @@ export const AdminWholesalers: React.FC = () => {
 
         <button
           onClick={handleOpenAdd}
-          className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition-all"
+          className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>+ Onboard Supplier</span>
@@ -162,14 +160,14 @@ export const AdminWholesalers: React.FC = () => {
             placeholder="Search suppliers by name, GSTIN, representative, category, or city..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
           />
         </div>
 
         <select
           value={categoryFilter}
           onChange={e => setCategoryFilter(e.target.value)}
-          className="bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
+          className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
         >
           {categories.map(cat => (
             <option key={cat} value={cat}>
@@ -188,7 +186,7 @@ export const AdminWholesalers: React.FC = () => {
           return (
             <div
               key={ws.id}
-              className="p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between gap-4 shadow-xl"
+              className="p-5 rounded-xl bg-[#121826] border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between gap-4 shadow-lg"
             >
               <div className="space-y-3">
                 {/* Header Row */}
@@ -197,7 +195,7 @@ export const AdminWholesalers: React.FC = () => {
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <h3 className="text-sm font-bold text-white tracking-tight">{ws.name}</h3>
                       {ws.isVerified && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-extrabold flex items-center gap-1 border border-emerald-500/30">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-400 font-extrabold flex items-center gap-1 border border-emerald-500/30">
                           <CheckCircle2 className="w-2.5 h-2.5" />
                           Verified
                         </span>
@@ -226,15 +224,15 @@ export const AdminWholesalers: React.FC = () => {
 
                 {/* Scorecards */}
                 <div className="grid grid-cols-3 gap-2 text-xs text-center">
-                  <div className="p-2 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                  <div className="p-2 rounded-lg bg-[#0A0E1A] border border-slate-800">
                     <span className="text-[10px] text-slate-400 block font-semibold">Min Order</span>
                     <span className="font-bold text-slate-200">₹{ws.minOrderValue.toLocaleString('en-IN')}</span>
                   </div>
-                  <div className="p-2 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                  <div className="p-2 rounded-lg bg-[#0A0E1A] border border-slate-800">
                     <span className="text-[10px] text-slate-400 block font-semibold">Lead TAT</span>
                     <span className="font-bold text-slate-200">{ws.deliveryDays} Days</span>
                   </div>
-                  <div className="p-2 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                  <div className="p-2 rounded-lg bg-[#0A0E1A] border border-slate-800">
                     <span className="text-[10px] text-slate-400 block font-semibold">Quality Score</span>
                     <span className="font-bold text-amber-400 flex items-center justify-center gap-1">
                       <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
@@ -288,12 +286,12 @@ export const AdminWholesalers: React.FC = () => {
       {/* MODAL: ONBOARD WHOLESALER */}
       <AnimatePresence>
         {isAddModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+              className="w-full max-w-lg rounded-2xl bg-[#161D2C] border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -302,7 +300,7 @@ export const AdminWholesalers: React.FC = () => {
                 </h3>
                 <button
                   onClick={() => setIsAddModalOpen(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -310,35 +308,35 @@ export const AdminWholesalers: React.FC = () => {
 
               <form onSubmit={handleCreate} className="space-y-4 text-xs">
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-400 block mb-1">Company / Entity Name *</label>
+                  <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Company / Entity Name *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Apex FMCG Mega Distributors"
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">GSTIN Number *</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">GSTIN Number *</label>
                     <input
                       type="text"
                       required
                       placeholder="27AABCB1234F1Z1"
                       value={formData.gstin}
                       onChange={e => setFormData(prev => ({ ...prev, gstin: e.target.value.toUpperCase() }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Supply Category</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Supply Category</label>
                     <select
                       value={formData.category}
                       onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     >
                       <option value="Groceries & Staples">Groceries & Staples</option>
                       <option value="Beverages & Dairy">Beverages & Dairy</option>
@@ -351,53 +349,53 @@ export const AdminWholesalers: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Key Account Rep</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Key Account Rep</label>
                     <input
                       type="text"
                       value={formData.contactPerson}
                       onChange={e => setFormData(prev => ({ ...prev, contactPerson: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Contact Phone</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Contact Phone</label>
                     <input
                       type="text"
                       value={formData.phone}
                       onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Min Order Value (₹)</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Min Order Value (₹)</label>
                     <input
                       type="number"
                       value={formData.minOrderValue}
                       onChange={e => setFormData(prev => ({ ...prev, minOrderValue: Number(e.target.value) }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Dispatch Lead (Days)</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Dispatch Lead (Days)</label>
                     <input
                       type="number"
                       value={formData.deliveryDays}
                       onChange={e => setFormData(prev => ({ ...prev, deliveryDays: Number(e.target.value) }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-400 block mb-1">Warehouse Address & City</label>
+                  <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Warehouse Address & City</label>
                   <input
                     type="text"
                     value={formData.address}
                     onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -405,13 +403,13 @@ export const AdminWholesalers: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsAddModalOpen(false)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Onboard Partner
                   </button>
@@ -425,12 +423,12 @@ export const AdminWholesalers: React.FC = () => {
       {/* MODAL: EDIT WHOLESALER */}
       <AnimatePresence>
         {editingWholesaler && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+              className="w-full max-w-lg rounded-2xl bg-[#161D2C] border border-slate-800 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -439,7 +437,7 @@ export const AdminWholesalers: React.FC = () => {
                 </h3>
                 <button
                   onClick={() => setEditingWholesaler(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -447,55 +445,55 @@ export const AdminWholesalers: React.FC = () => {
 
               <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-400 block mb-1">Company Name</label>
+                  <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Company Name</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">GSTIN</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">GSTIN</label>
                     <input
                       type="text"
                       required
                       value={formData.gstin}
                       onChange={e => setFormData(prev => ({ ...prev, gstin: e.target.value.toUpperCase() }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Category</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Category</label>
                     <input
                       type="text"
                       value={formData.category}
                       onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Min Order (₹)</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Min Order (₹)</label>
                     <input
                       type="number"
                       value={formData.minOrderValue}
                       onChange={e => setFormData(prev => ({ ...prev, minOrderValue: Number(e.target.value) }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-400 block mb-1">Lead TAT (Days)</label>
+                    <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">Lead TAT (Days)</label>
                     <input
                       type="number"
                       value={formData.deliveryDays}
                       onChange={e => setFormData(prev => ({ ...prev, deliveryDays: Number(e.target.value) }))}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -504,13 +502,13 @@ export const AdminWholesalers: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setEditingWholesaler(null)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Save Changes
                   </button>

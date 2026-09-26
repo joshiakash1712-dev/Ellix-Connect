@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
+import { useAuth } from '../../context/AuthContext';
 import { Product } from '../../types';
 import { BarcodeGeneratorModal } from '../common/BarcodeGeneratorModal';
+import { RestockModal } from './RestockModal';
+import { InventorySkeleton } from '../common/skeletons/InventorySkeleton';
+import { StockStatusBadge } from '../common/StockStatusBadge';
 import {
   Package,
   Plus,
@@ -24,10 +28,15 @@ import {
   EyeOff,
   Download,
   FileSpreadsheet,
-  FileDown
+  FileDown,
+  AlertCircle
 } from 'lucide-react';
 
-export const InventoryManager: React.FC = () => {
+export interface InventoryManagerProps {
+  isLoading?: boolean;
+}
+
+export const InventoryManager: React.FC<InventoryManagerProps> = ({ isLoading }) => {
   const {
     products,
     wholesalers,
@@ -36,8 +45,15 @@ export const InventoryManager: React.FC = () => {
     deleteProduct,
     toggleProductSharing,
     sendRestockRequest,
-    activeStore
+    activeStore,
+    currentUser,
+    isDataLoading
   } = useStore();
+  const { userProfile, currentUser: authUser } = useAuth();
+
+  const isActuallyLoading = isLoading ?? isDataLoading;
+  const isCrew = userProfile?.role === 'crew' || currentUser?.role === 'crew';
+  const isOwnerOrAdmin = !isCrew;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -51,8 +67,10 @@ export const InventoryManager: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [barcodeTarget, setBarcodeTarget] = useState<Product | null>(null);
+  const [restockTargetProduct, setRestockTargetProduct] = useState<Product | null>(null);
 
   // Form State
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     name: '',
     category: 'Dairy & Eggs',
@@ -191,11 +209,13 @@ export const InventoryManager: React.FC = () => {
       description: ''
     });
     setEditingProduct(null);
+    setFormErrors({});
     setIsAddModalOpen(true);
   };
 
   const handleEditProduct = (prod: Product) => {
     setEditingProduct(prod);
+    setFormErrors({});
     setFormData({
       name: prod.name,
       category: prod.category,
@@ -218,33 +238,74 @@ export const InventoryManager: React.FC = () => {
     setIsAddModalOpen(true);
   };
 
+  const validateInventoryForm = () => {
+    const errs: Record<string, string> = {};
+    if (!formData.name.trim()) {
+      errs.name = 'Enter a product name.';
+    }
+    const numSelling = Number(formData.sellingPrice);
+    if (isNaN(numSelling) || numSelling <= 0) {
+      errs.sellingPrice = 'Selling price must be greater than 0.';
+    }
+    const numPurchase = Number(formData.purchasePrice);
+    if (isNaN(numPurchase) || numPurchase < 0) {
+      errs.purchasePrice = 'Purchase price cannot be negative.';
+    }
+    const numMrp = Number(formData.mrp);
+    if (isNaN(numMrp) || numMrp < 0) {
+      errs.mrp = 'MRP cannot be negative.';
+    }
+    const numStock = Number(formData.stock);
+    if (isNaN(numStock) || numStock < 0) {
+      errs.stock = 'Stock cannot be negative.';
+    }
+    const numThreshold = Number(formData.minThreshold);
+    if (isNaN(numThreshold) || numThreshold < 0) {
+      errs.minThreshold = 'Threshold cannot be negative.';
+    }
+    setFormErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateInventoryForm()) return;
     if (editingProduct) {
-      updateProduct(editingProduct.id, formData);
+      updateProduct(editingProduct.id, {
+        ...formData,
+        storeId: activeStore.id,
+        clientId: activeStore.clientId || 'client-001'
+      });
     } else {
       addProduct({
         ...formData,
-        storeId: activeStore.id
+        storeId: activeStore.id,
+        clientId: activeStore.clientId || 'client-001',
+        createdBy: userProfile?.name || currentUser?.name || authUser?.displayName || 'Store Staff',
+        createdById: authUser?.uid || currentUser?.id || 'staff'
       });
     }
     setIsAddModalOpen(false);
   };
 
+  if (isActuallyLoading) {
+    return <InventorySkeleton />;
+  }
+
   return (
     <div className="space-y-6">
       
       {/* Header & Controls Bar */}
-      <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-black text-white flex items-center gap-2">
             <Package className="w-5 h-5 text-emerald-400" />
             <span>Enterprise Inventory Engine</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono font-bold">
+            <span className="text-xs px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono font-bold tabular-nums">
               {products.length} Products
             </span>
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-400 mt-0.5">
             Warehouse location tracking, batch numbers, barcode labels & wholesaler auto-restock triggers.
           </p>
         </div>
@@ -252,7 +313,7 @@ export const InventoryManager: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           {/* CSV Export Button & Menu for Offline Retail Management */}
           <div className="relative">
-            <div className="flex items-center rounded-xl bg-slate-800 border border-slate-700/90 shadow-sm overflow-hidden">
+            <div className="flex items-center rounded-lg bg-slate-800 border border-slate-700/90 shadow-sm overflow-hidden">
               <button
                 id="btn-export-inventory-csv"
                 onClick={() => exportToCSV(false)}
@@ -261,7 +322,7 @@ export const InventoryManager: React.FC = () => {
               >
                 <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
                 <span>Export CSV</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-900 text-emerald-300 font-mono">
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#0A0E1A] text-emerald-300 font-mono tabular-nums">
                   {products.length}
                 </span>
               </button>
@@ -280,7 +341,7 @@ export const InventoryManager: React.FC = () => {
 
             {/* Dropdown Menu for Filtered vs All */}
             {showExportMenu && (
-              <div className="absolute right-0 top-full mt-1.5 w-60 rounded-xl bg-slate-900 border border-slate-700 shadow-2xl py-1.5 z-30 space-y-1">
+              <div className="absolute right-0 top-full mt-1.5 w-60 rounded-xl bg-[#161D2C] border border-slate-700 shadow-2xl py-1.5 z-30 space-y-1">
                 <button
                   onClick={() => exportToCSV(false)}
                   className="w-full text-left px-3.5 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-800 flex items-center justify-between"
@@ -289,7 +350,7 @@ export const InventoryManager: React.FC = () => {
                     <Download className="w-3.5 h-3.5 text-emerald-400" />
                     <span>All Products</span>
                   </span>
-                  <span className="text-[10px] font-mono text-slate-400">{products.length} items</span>
+                  <span className="text-[10px] font-mono text-slate-400 tabular-nums">{products.length} items</span>
                 </button>
                 <button
                   onClick={() => exportToCSV(true)}
@@ -299,7 +360,7 @@ export const InventoryManager: React.FC = () => {
                     <FileDown className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Current Filtered View</span>
                   </span>
-                  <span className="text-[10px] font-mono text-emerald-400 font-bold">{filteredProducts.length} items</span>
+                  <span className="text-[10px] font-mono text-emerald-400 font-bold tabular-nums">{filteredProducts.length} items</span>
                 </button>
               </div>
             )}
@@ -307,7 +368,7 @@ export const InventoryManager: React.FC = () => {
 
           <button
             onClick={handleOpenAddModal}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition-all hover:scale-105 shrink-0"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>Add New Product</span>
@@ -322,14 +383,14 @@ export const InventoryManager: React.FC = () => {
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             <span className="font-semibold">{exportFeedback}</span>
           </div>
-          <span className="text-[10px] font-mono text-emerald-400/80 bg-emerald-500/20 px-2 py-0.5 rounded">
+          <span className="text-[10px] font-mono text-emerald-400/80 bg-emerald-500/20 px-2 py-0.5 rounded-lg">
             UTF-8 Excel / POS Ready
           </span>
         </div>
       )}
 
       {/* Filter Toolbar */}
-      <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-3">
+      <div className="p-4 rounded-xl bg-[#121826] border border-slate-800 shadow-md flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -337,16 +398,16 @@ export const InventoryManager: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Filter by Product Name, SKU Barcode, or Brand..."
-            className="w-full bg-slate-800 border border-slate-700/80 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+            className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
           />
         </div>
 
         <div className="flex items-center gap-1.5 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           <button
             onClick={() => setStockFilter('all')}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 border ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 border ${
               stockFilter === 'all'
-                ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
+                ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
                 : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
             }`}
           >
@@ -355,9 +416,9 @@ export const InventoryManager: React.FC = () => {
 
           <button
             onClick={() => setStockFilter('low')}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 border ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 border ${
               stockFilter === 'low'
-                ? 'bg-amber-500 text-white border-amber-400 shadow-sm'
+                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
                 : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
             }`}
           >
@@ -366,7 +427,7 @@ export const InventoryManager: React.FC = () => {
 
           <button
             onClick={() => setStockFilter('out')}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 border ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 border ${
               stockFilter === 'out'
                 ? 'bg-rose-600 text-white border-rose-500 shadow-sm'
                 : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
@@ -378,7 +439,7 @@ export const InventoryManager: React.FC = () => {
           <select
             value={selectedCategory}
             onChange={e => setSelectedCategory(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-xs text-slate-200 rounded-full px-3 py-1.5 font-bold focus:outline-none focus:border-blue-500 shrink-0"
+            className="bg-slate-800 border border-slate-700 text-xs text-slate-200 rounded-lg px-3 py-1.5 font-bold focus:outline-none focus:border-emerald-500 shrink-0"
           >
             {categories.map(c => (
               <option key={c} value={c}>
@@ -391,7 +452,7 @@ export const InventoryManager: React.FC = () => {
             <button
               id="btn-export-filtered-csv-chip"
               onClick={() => exportToCSV(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition-all shrink-0"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition-all shrink-0"
               title="Export only these filtered items as CSV"
             >
               <FileDown className="w-3.5 h-3.5" />
@@ -402,7 +463,7 @@ export const InventoryManager: React.FC = () => {
       </div>
 
       {/* Inventory Display Section */}
-      <div className="p-3 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden">
+      <div className="p-3 sm:p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-xl overflow-hidden">
         
         {/* Mobile Product Card Layout (Visible on small screens) */}
         <div className="grid grid-cols-1 gap-3 md:hidden">
@@ -418,12 +479,10 @@ export const InventoryManager: React.FC = () => {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <div className="font-bold text-white text-sm flex items-center gap-2">
+                    <div className="font-bold text-white text-sm flex flex-wrap items-center gap-1.5">
                       <span>{prod.name}</span>
-                      {isLowStock && (
-                        <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[9px] font-extrabold border border-amber-500/30">
-                          LOW STOCK
-                        </span>
+                      {prod.stock <= 10 && (
+                        <StockStatusBadge stock={prod.stock} />
                       )}
                     </div>
                     <div className="text-[11px] text-slate-400 mt-0.5">
@@ -439,10 +498,13 @@ export const InventoryManager: React.FC = () => {
                 <div className="grid grid-cols-2 gap-2 text-xs bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80">
                   <div>
                     <span className="text-[10px] text-slate-500 block uppercase font-mono">Stock Level</span>
-                    <span className={`font-black ${isLowStock ? 'text-amber-400' : 'text-slate-200'}`}>
+                    <div className="font-black text-slate-200">
                       {prod.stock} {prod.unit}
-                    </span>
-                    <span className="text-[10px] text-slate-500 block">Min: {prod.minThreshold}</span>
+                    </div>
+                    <div className="mt-1">
+                      <StockStatusBadge stock={prod.stock} />
+                    </div>
+                    <span className="text-[10px] text-slate-500 block mt-0.5">Min: {prod.minThreshold}</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-500 block uppercase font-mono">Barcode & Shelf</span>
@@ -468,15 +530,18 @@ export const InventoryManager: React.FC = () => {
                   </button>
 
                   <div className="flex items-center gap-1.5">
-                    {isLowStock && (
-                      <button
-                        onClick={() => sendRestockRequest(prod.id, prod.minThreshold * 2, 'ws-101')}
-                        className="px-2.5 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-extrabold flex items-center gap-1"
-                      >
-                        <Zap className="w-3.5 h-3.5" />
-                        <span>Restock</span>
-                      </button>
-                    )}
+                    <button
+                      onClick={() => setRestockTargetProduct(prod)}
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1 transition-all ${
+                        isLowStock
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30'
+                          : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20'
+                      }`}
+                      title="Restock Product & Log Intake"
+                    >
+                      <Zap className="w-3.5 h-3.5" />
+                      <span>Restock</span>
+                    </button>
 
                     <button
                       onClick={() => setBarcodeTarget(prod)}
@@ -486,21 +551,25 @@ export const InventoryManager: React.FC = () => {
                       <QrCode className="w-4 h-4" />
                     </button>
 
-                    <button
-                      onClick={() => handleEditProduct(prod)}
-                      className="p-2 rounded-lg bg-slate-800 text-slate-300 active:scale-95"
-                      title="Edit Product"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
+                    {isOwnerOrAdmin && (
+                      <>
+                        <button
+                          onClick={() => handleEditProduct(prod)}
+                          className="p-2 rounded-lg bg-slate-800 text-slate-300 active:scale-95"
+                          title="Edit Product"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
 
-                    <button
-                      onClick={() => deleteProduct(prod.id)}
-                      className="p-2 rounded-lg bg-slate-800 text-rose-400 hover:bg-rose-500/20 active:scale-95"
-                      title="Delete Product"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                        <button
+                          onClick={() => deleteProduct(prod.id)}
+                          className="p-2 rounded-lg bg-slate-800 text-rose-400 hover:bg-rose-500/20 active:scale-95"
+                          title="Delete Product"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -529,12 +598,10 @@ export const InventoryManager: React.FC = () => {
                 return (
                   <tr key={prod.id} className="hover:bg-slate-800/40 transition-colors">
                     <td className="py-3">
-                      <div className="font-bold text-white flex items-center gap-2">
+                      <div className="font-bold text-white flex flex-wrap items-center gap-1.5">
                         <span>{prod.name}</span>
-                        {isLowStock && (
-                          <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[9px] font-extrabold border border-amber-500/30">
-                            LOW STOCK
-                          </span>
+                        {prod.stock <= 10 && (
+                          <StockStatusBadge stock={prod.stock} />
                         )}
                       </div>
                       <div className="text-[10px] text-slate-500">Batch: {prod.batchNumber || 'N/A'} | Tax: {prod.taxRate}%</div>
@@ -553,14 +620,17 @@ export const InventoryManager: React.FC = () => {
                       </div>
                     </td>
 
-                    <td className="py-3">
-                      <div className={`font-black text-sm ${isLowStock ? 'text-amber-400' : 'text-white'}`}>
-                        {prod.stock} {prod.unit}
+                    <td className="py-3 tabular-nums">
+                      <div className="flex flex-col gap-1 items-start">
+                        <div className="font-black text-sm text-white">
+                          {prod.stock} {prod.unit}
+                        </div>
+                        <StockStatusBadge stock={prod.stock} />
+                        <div className="text-[10px] text-slate-500">Min: {prod.minThreshold} {prod.unit}</div>
                       </div>
-                      <div className="text-[10px] text-slate-500">Min: {prod.minThreshold} {prod.unit}</div>
                     </td>
 
-                    <td className="py-3">
+                    <td className="py-3 tabular-nums">
                       <div className="font-bold text-slate-200">₹{prod.sellingPrice}</div>
                       <div className="text-[10px] text-slate-500">Cost: ₹{prod.purchasePrice}</div>
                     </td>
@@ -568,9 +638,9 @@ export const InventoryManager: React.FC = () => {
                     <td className="py-3">
                       <button
                         onClick={() => toggleProductSharing(prod.id)}
-                        className={`px-2 py-1 rounded text-[10px] font-bold border flex items-center gap-1 transition-colors ${
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border flex items-center gap-1 transition-colors ${
                           prod.sharedWithWholesalers
-                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                            ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
                             : 'bg-slate-800 text-slate-400 border-slate-700'
                         }`}
                         title="Click to toggle sharing stock visibility with connected Wholesalers"
@@ -580,41 +650,47 @@ export const InventoryManager: React.FC = () => {
                       </button>
                     </td>
 
-                    <td className="py-3 text-right space-x-1">
-                      {isLowStock && (
-                        <button
-                          onClick={() => sendRestockRequest(prod.id, prod.minThreshold * 2, 'ws-101')}
-                          className="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-[10px] font-extrabold inline-flex items-center gap-1 transition-colors"
-                          title="Trigger Restock Suggestion to Wholesaler"
-                        >
-                          <Zap className="w-3 h-3" />
-                          <span>Restock</span>
-                        </button>
-                      )}
+                    <td className="py-3 text-right space-x-1.5">
+                      <button
+                        onClick={() => setRestockTargetProduct(prod)}
+                        className={`px-3 py-1.5 rounded-lg text-[11px] font-bold inline-flex items-center gap-1.5 transition-colors shadow-sm ${
+                          isLowStock
+                            ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-400'
+                            : 'bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500/40'
+                        }`}
+                        title="Restock Product Inventory"
+                      >
+                        <Zap className="w-3.5 h-3.5" />
+                        <span>Restock</span>
+                      </button>
 
                       <button
                         onClick={() => setBarcodeTarget(prod)}
-                        className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300"
+                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 transition-colors"
                         title="Print / View Barcode"
                       >
                         <QrCode className="w-3.5 h-3.5" />
                       </button>
 
-                      <button
-                        onClick={() => handleEditProduct(prod)}
-                        className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300"
-                        title="Edit Product"
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
+                      {isOwnerOrAdmin && (
+                        <>
+                          <button
+                            onClick={() => handleEditProduct(prod)}
+                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 transition-colors"
+                            title="Edit Product"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
 
-                      <button
-                        onClick={() => deleteProduct(prod.id)}
-                        className="p-1.5 rounded bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400"
-                        title="Delete Product"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                          <button
+                            onClick={() => deleteProduct(prod.id)}
+                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-slate-700/80 transition-colors"
+                            title="Delete Product"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 );
@@ -626,33 +702,45 @@ export const InventoryManager: React.FC = () => {
 
       {/* Add / Edit Product Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 text-slate-100 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl my-8 animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-[#0A0E1A]/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-[#161D2C] border border-slate-700/80 text-slate-100 rounded-2xl w-full max-w-xl max-h-[88vh] flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150">
             
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+            <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-[#121826] shrink-0">
               <h3 className="text-base font-bold text-white">
                 {editingProduct ? 'Edit Product Details' : 'Add Product to Inventory'}
               </h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmitForm} className="p-6 space-y-4 text-xs">
+            <form onSubmit={handleSubmitForm} className="p-5 sm:p-6 space-y-4 text-xs overflow-y-auto flex-1">
               
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-400 font-semibold block mb-1">Product Name</label>
+                  <label className="text-slate-400 font-semibold block mb-1">Product Name *</label>
                   <input
                     type="text"
-                    required
                     value={formData.name}
-                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white"
+                    onChange={e => {
+                      setFormData({ ...formData, name: e.target.value });
+                      if (formErrors.name) setFormErrors(prev => { const n = { ...prev }; delete n.name; return n; });
+                    }}
+                    className={`w-full bg-slate-800 border rounded-lg p-2 text-white transition-colors ${
+                      formErrors.name
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {formErrors.name && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{formErrors.name}</span>
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -708,49 +796,119 @@ export const InventoryManager: React.FC = () => {
                   <label className="text-slate-400 font-semibold block mb-1">Purchase Price ₹</label>
                   <input
                     type="number"
+                    min="0"
                     value={formData.purchasePrice}
-                    onChange={e => setFormData({ ...formData, purchasePrice: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white"
+                    onChange={e => {
+                      setFormData({ ...formData, purchasePrice: Number(e.target.value) });
+                      if (formErrors.purchasePrice) setFormErrors(prev => { const n = { ...prev }; delete n.purchasePrice; return n; });
+                    }}
+                    className={`w-full bg-slate-800 border rounded-lg p-2 text-white transition-colors ${
+                      formErrors.purchasePrice
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {formErrors.purchasePrice && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{formErrors.purchasePrice}</span>
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <label className="text-slate-400 font-semibold block mb-1">Selling Price ₹</label>
+                  <label className="text-slate-400 font-semibold block mb-1">Selling Price ₹ *</label>
                   <input
                     type="number"
+                    min="0"
                     value={formData.sellingPrice}
-                    onChange={e => setFormData({ ...formData, sellingPrice: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white"
+                    onChange={e => {
+                      setFormData({ ...formData, sellingPrice: Number(e.target.value) });
+                      if (formErrors.sellingPrice) setFormErrors(prev => { const n = { ...prev }; delete n.sellingPrice; return n; });
+                    }}
+                    className={`w-full bg-slate-800 border rounded-lg p-2 text-white transition-colors ${
+                      formErrors.sellingPrice
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {formErrors.sellingPrice && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{formErrors.sellingPrice}</span>
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="text-slate-400 font-semibold block mb-1">MRP ₹</label>
                   <input
                     type="number"
+                    min="0"
                     value={formData.mrp}
-                    onChange={e => setFormData({ ...formData, mrp: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white"
+                    onChange={e => {
+                      setFormData({ ...formData, mrp: Number(e.target.value) });
+                      if (formErrors.mrp) setFormErrors(prev => { const n = { ...prev }; delete n.mrp; return n; });
+                    }}
+                    className={`w-full bg-slate-800 border rounded-lg p-2 text-white transition-colors ${
+                      formErrors.mrp
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {formErrors.mrp && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{formErrors.mrp}</span>
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-slate-400 font-semibold block mb-1">Initial Stock</label>
+                  <label className="text-slate-400 font-semibold block mb-1">Initial Stock *</label>
                   <input
                     type="number"
+                    min="0"
                     value={formData.stock}
-                    onChange={e => setFormData({ ...formData, stock: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white"
+                    onChange={e => {
+                      setFormData({ ...formData, stock: Number(e.target.value) });
+                      if (formErrors.stock) setFormErrors(prev => { const n = { ...prev }; delete n.stock; return n; });
+                    }}
+                    className={`w-full bg-slate-800 border rounded-lg p-2 text-white transition-colors ${
+                      formErrors.stock
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {formErrors.stock && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{formErrors.stock}</span>
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="text-slate-400 font-semibold block mb-1">Min Threshold</label>
                   <input
                     type="number"
+                    min="0"
                     value={formData.minThreshold}
-                    onChange={e => setFormData({ ...formData, minThreshold: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white"
+                    onChange={e => {
+                      setFormData({ ...formData, minThreshold: Number(e.target.value) });
+                      if (formErrors.minThreshold) setFormErrors(prev => { const n = { ...prev }; delete n.minThreshold; return n; });
+                    }}
+                    className={`w-full bg-slate-800 border rounded-lg p-2 text-white transition-colors ${
+                      formErrors.minThreshold
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {formErrors.minThreshold && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{formErrors.minThreshold}</span>
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="text-slate-400 font-semibold block mb-1">Barcode (EAN-13)</label>
@@ -797,7 +955,7 @@ export const InventoryManager: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold hover:scale-105 transition-all"
+                  className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold shadow-md shadow-emerald-600/20 active:scale-[0.98] transition-all"
                 >
                   {editingProduct ? 'Save Changes' : 'Create Product'}
                 </button>
@@ -813,6 +971,14 @@ export const InventoryManager: React.FC = () => {
         product={barcodeTarget}
         isOpen={!!barcodeTarget}
         onClose={() => setBarcodeTarget(null)}
+      />
+
+      {/* Real Manual Restock & Intake Audit Modal */}
+      <RestockModal
+        product={restockTargetProduct}
+        isOpen={!!restockTargetProduct}
+        onClose={() => setRestockTargetProduct(null)}
+        onSuccess={msg => setExportFeedback(msg)}
       />
 
     </div>

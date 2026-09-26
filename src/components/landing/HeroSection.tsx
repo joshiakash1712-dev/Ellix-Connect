@@ -53,8 +53,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenGetStarted, onLa
             <button
               id="btn-hero-getstarted"
               type="button"
+              data-cursor="hover"
               onClick={onOpenGetStarted}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-slate-950 hover:bg-slate-800 active:bg-black dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-base font-semibold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 group cursor-pointer"
+              className="website-btn-glow w-full sm:w-auto px-7 py-3.5 rounded-xl bg-slate-950 hover:bg-slate-800 active:bg-black dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-base font-semibold shadow-md hover:shadow-xl hover:shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 group cursor-pointer"
             >
               <span>Get Started</span>
               <ArrowRight className="w-4 h-4 text-emerald-400 dark:text-emerald-100 group-hover:translate-x-1 transition-transform" />
@@ -63,9 +64,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenGetStarted, onLa
             <a
               id="btn-hero-seehowitworks"
               href="#how-it-works"
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 active:bg-slate-100 text-slate-800 dark:text-slate-200 text-base font-semibold border border-slate-300 dark:border-slate-700 shadow-sm transition-all flex items-center justify-center gap-2"
+              data-cursor="hover"
+              className="website-btn-glow w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 active:bg-slate-100 text-slate-800 dark:text-slate-200 text-base font-semibold border border-slate-300 dark:border-slate-700 shadow-sm hover:border-emerald-500/40 hover:shadow-md transition-all flex items-center justify-center gap-2"
             >
-              <Play className="w-4 h-4 text-slate-600 dark:text-slate-400 fill-slate-600 dark:fill-slate-400" />
+              <Play className="w-4 h-4 text-slate-600 dark:text-slate-400 fill-slate-600 dark:fill-slate-400 group-hover:scale-110 transition-transform" />
               <span>See How It Works</span>
             </a>
           </div>
@@ -122,14 +124,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenGetStarted, onLa
                   <button
                     id="btn-hero-try-live-console"
                     type="button"
+                    data-cursor="hover"
                     onClick={onLaunchApp}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition-all shadow-sm active:scale-95"
+                    className="website-btn-glow flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition-all shadow-sm hover:shadow-emerald-500/30 hover:scale-[1.02] active:scale-95 cursor-pointer"
                   >
                     <span>Launch Live App</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 )}
-                <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
+                <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md border border-emerald-200/60 dark:border-emerald-800/60 transition-colors hover:border-emerald-400">
                   <Zap className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                   <span>Live Connected</span>
                 </div>
@@ -142,7 +145,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenGetStarted, onLa
               {/* Top Quick Stats Row */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 
-                <div className="bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default">
                   <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
                     <span className="text-xs font-medium">Today's Sales</span>
                     <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -151,7 +154,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenGetStarted, onLa
                   <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">+16.4% from yesterday</div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default">
                   <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
                     <span className="text-xs font-medium">Invoices Issued</span>
                     <ShoppingBag className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
@@ -160,7 +163,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenGetStarted, onLa
                   <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Avg. ₹1,127 / bill</div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default">
                   <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
                     <span className="text-xs font-medium">Inventory Health</span>
                     <Package className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
@@ -169,7 +172,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenGetStarted, onLa
                   <div className="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">2 items low on stock</div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default">
                   <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
                     <span className="text-xs font-medium">Cash in Drawer</span>
                     <CreditCard className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />

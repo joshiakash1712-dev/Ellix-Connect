@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ConfirmationResult } from 'firebase/auth';
 import { useAuth, AuthModalMode } from '../../context/AuthContext';
+import { EllixConnectLogo } from '../branding/EllixConnectLogo';
 import {
   X,
   Mail,
@@ -123,10 +124,13 @@ export const AuthModal: React.FC = () => {
       setSuccessMessage('Successfully signed in with verified Google account.');
     } catch (err: any) {
       const code = err?.code || '';
-      if (code === 'auth/popup-closed-by-user') {
-        setErrorMessage('Google Sign-In was cancelled.');
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        // User closed or dismissed the popup intentionally
+        setErrorMessage(null);
+      } else if (code === 'auth/popup-blocked') {
+        setErrorMessage('Sign-in popup was blocked by your browser. Please allow popups or open in a new tab.');
       } else {
-        setErrorMessage(err.message || 'Failed to authenticate with Google. Please try again.');
+        setErrorMessage(err?.message || 'Failed to authenticate with Google. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -312,18 +316,16 @@ export const AuthModal: React.FC = () => {
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 font-black text-xl">
-              E
-            </div>
+            <EllixConnectLogo variant="symbol" size={40} alt="Ellix Connect" />
             <div>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                Ellix Connect
+              <div className="flex items-center gap-2">
+                <EllixConnectLogo variant="text" size={24} />
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-extrabold border border-emerald-500/30 flex items-center gap-1">
                   <ShieldCheck className="w-3 h-3" />
                   Verified Auth
                 </span>
-              </h2>
-              <p className="text-xs text-slate-400">
+              </div>
+              <p className="text-xs text-slate-400 mt-1">
                 Unified Authentication • Google • Phone OTP • Email & Password
               </p>
             </div>

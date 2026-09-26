@@ -1,5 +1,6 @@
 import React from 'react';
 import { MarketingModal } from './MarketingModal';
+import { EllixConnectLogo } from '../../branding/EllixConnectLogo';
 import { ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
 
 export type LegalDocType = 'privacy' | 'terms';
@@ -22,6 +23,11 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
       maxWidth="max-w-2xl"
     >
       <div className="space-y-5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-h-[60vh] overflow-y-auto pr-1">
+        {/* Brand Logo Header */}
+        <div className="flex justify-center pb-1">
+          <EllixConnectLogo size="sm" />
+        </div>
+
         {isPrivacy ? (
           <>
             <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-900 dark:text-emerald-300 flex items-start gap-2.5">

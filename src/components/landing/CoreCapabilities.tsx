@@ -487,10 +487,10 @@ export const CoreCapabilities: React.FC = () => {
         >
           {/* Layer 1: Background 8-Card Grid */}
           <div
-            className={`grid grid-cols-4 gap-4 transition-all duration-300 ease-out ${
+            className={`grid grid-cols-4 gap-4 transition-all duration-200 ease-out will-change-transform ${
               isHovered
-                ? 'filter blur-[2px] opacity-25 scale-[0.99] pointer-events-auto'
-                : 'filter blur-0 opacity-100 scale-100'
+                ? 'opacity-20 scale-[0.99] pointer-events-auto'
+                : 'opacity-100 scale-100'
             }`}
           >
             {capabilities.map((cap, index) => {
@@ -501,8 +501,9 @@ export const CoreCapabilities: React.FC = () => {
                 <div
                   key={cap.id}
                   id={`desktop-card-${cap.id}`}
+                  data-cursor="card"
                   onMouseEnter={() => handleCardMouseEnter(cap.id, index)}
-                  className={`p-5 rounded-2xl text-left flex flex-col justify-between cursor-pointer border transition-all duration-200 ${
+                  className={`website-card-hover p-5 rounded-2xl text-left flex flex-col justify-between cursor-pointer border transition-all duration-200 ${
                     isCurrent && !isHovered
                       ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
                       : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
@@ -609,9 +610,10 @@ export const CoreCapabilities: React.FC = () => {
                         <button
                           key={c.id}
                           type="button"
+                          data-cursor="hover"
                           onMouseEnter={() => handleCardMouseEnter(c.id, idx)}
                           onClick={() => handleCardMouseEnter(c.id, idx)}
-                          className={`relative py-2 px-1.5 rounded-xl text-xs font-bold transition-all duration-150 flex items-center justify-center gap-1.5 ${
+                          className={`relative py-2 px-1.5 rounded-xl text-xs font-bold transition-all duration-150 hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${
                             isActive
                               ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500/50 shadow-sm ring-1 ring-emerald-500/20'
                               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-900/60 border border-transparent'

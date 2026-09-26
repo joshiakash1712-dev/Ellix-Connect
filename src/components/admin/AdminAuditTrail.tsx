@@ -24,6 +24,7 @@ export const AdminAuditTrail: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
+  const [isConfirmingClear, setIsConfirmingClear] = useState(false);
 
   const filteredLogs = useMemo(() => {
     return auditLogs.filter(log => {
@@ -54,9 +55,13 @@ export const AdminAuditTrail: React.FC = () => {
   };
 
   const handleClear = () => {
-    if (window.confirm('Are you sure you want to archive and clear current audit log records?')) {
-      clearAuditLogs();
+    if (!isConfirmingClear) {
+      setIsConfirmingClear(true);
+      setTimeout(() => setIsConfirmingClear(false), 3000);
+      return;
     }
+    clearAuditLogs();
+    setIsConfirmingClear(false);
   };
 
   return (
@@ -77,17 +82,22 @@ export const AdminAuditTrail: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportAuditCSV}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-colors border border-slate-700"
+            className="px-3.5 py-2 rounded-lg bg-[#161D2C] hover:bg-slate-800 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-colors border border-slate-800"
           >
             <Download className="w-3.5 h-3.5 text-slate-400" />
             <span>Export CSV</span>
           </button>
           <button
             onClick={handleClear}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 text-xs font-bold flex items-center gap-1.5 transition-colors border border-slate-700"
+            className={`px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors border ${
+              isConfirmingClear
+                ? 'bg-rose-600 hover:bg-rose-500 text-white border-rose-500'
+                : 'bg-[#161D2C] hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border-slate-800'
+            }`}
+            title={isConfirmingClear ? 'Click again to confirm archive' : 'Archive logs'}
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Archive Logs</span>
+            <span>{isConfirmingClear ? 'Confirm Archive?' : 'Archive Logs'}</span>
           </button>
         </div>
       </div>
@@ -101,14 +111,14 @@ export const AdminAuditTrail: React.FC = () => {
             placeholder="Search audit trail by event action, staff operator, or details..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
           />
         </div>
 
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
+          className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
         >
           <option value="all">All Outcomes</option>
           <option value="success">Success Events</option>
@@ -118,10 +128,10 @@ export const AdminAuditTrail: React.FC = () => {
       </div>
 
       {/* Audit Logs Table / Feed */}
-      <div className="rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden">
+      <div className="rounded-xl bg-[#121826] border border-slate-800 shadow-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-800/80 text-slate-300 text-[11px] uppercase tracking-wider font-bold border-b border-slate-800">
+            <thead className="bg-[#0A0E1A]/90 text-slate-400 text-[11px] uppercase tracking-wider font-bold border-b border-slate-800">
               <tr>
                 <th className="p-3.5">Outcome</th>
                 <th className="p-3.5">Timestamp</th>
@@ -142,7 +152,7 @@ export const AdminAuditTrail: React.FC = () => {
                 filteredLogs.map(log => (
                   <tr key={log.id} className="hover:bg-slate-800/40 transition-colors">
                     <td className="p-3.5">
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold uppercase border ${
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-extrabold uppercase border ${
                         log.status === 'success'
                           ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                           : log.status === 'warning'
@@ -170,7 +180,7 @@ export const AdminAuditTrail: React.FC = () => {
                     <td className="p-3.5 text-right whitespace-nowrap">
                       <button
                         onClick={() => setSelectedLog(log)}
-                        className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold transition-colors"
+                        className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold transition-colors"
                       >
                         Details
                       </button>
@@ -186,12 +196,12 @@ export const AdminAuditTrail: React.FC = () => {
       {/* EVENT INSPECTOR MODAL */}
       <AnimatePresence>
         {selectedLog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 space-y-4"
+              className="w-full max-w-md rounded-2xl bg-[#161D2C] border border-slate-800 shadow-2xl p-6 space-y-4"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -200,35 +210,35 @@ export const AdminAuditTrail: React.FC = () => {
                 </h3>
                 <button
                   onClick={() => setSelectedLog(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="space-y-3 text-xs">
-                <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-1">
+                <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1">
                   <div className="text-slate-400 font-semibold">Event ID</div>
                   <div className="font-mono text-emerald-400 font-bold">{selectedLog.id}</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                  <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800">
                     <span className="text-[10px] text-slate-400 block font-semibold">Operator</span>
                     <span className="font-bold text-white block truncate">{selectedLog.user}</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                  <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800">
                     <span className="text-[10px] text-slate-400 block font-semibold">Logged Timestamp</span>
                     <span className="font-mono font-bold text-white block text-[11px]">{selectedLog.timestamp}</span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-1">
+                <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1">
                   <div className="text-slate-400 font-semibold">Action Trigger</div>
                   <div className="font-bold text-white text-sm">{selectedLog.action}</div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-1">
+                <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1">
                   <div className="text-slate-400 font-semibold">Event Context & Payload</div>
                   <div className="text-slate-200 leading-relaxed">{selectedLog.details}</div>
                 </div>
@@ -236,7 +246,7 @@ export const AdminAuditTrail: React.FC = () => {
 
               <button
                 onClick={() => setSelectedLog(null)}
-                className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs"
+                className="w-full py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition-colors"
               >
                 Close Inspector
               </button>

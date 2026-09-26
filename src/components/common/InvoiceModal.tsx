@@ -125,16 +125,18 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
   const formattedPhone = cleanDigits.length === 10 ? `91${cleanDigits}` : cleanDigits;
   const pdfInvoiceUrl = `https://ellixconnect.com/invoices/pdf/${invoiceNumber}.pdf`;
 
+  const cashierName = invoice.cashierName || (invoice as any).crewName || invoice.createdBy || 'Staff Cashier';
   const whatsappMessageText = `*OFFICIAL TAX & COMMERCIAL INVOICE* 🧾
 *Store:* ${storeDisplayName}
+*Cashier / Billed by:* ${cashierName}
 --------------------------------
 *Invoice No:* #${invoiceNumber}
-*Date:* ${invoice.date}
+*Date & Time:* ${invoice.date}
 *Customer:* ${invoice.customerName}
 *Currency:* ${displayCurrency} (${SUPPORTED_CURRENCIES[displayCurrency]?.symbol || ''})
 
 *Itemized Summary:*
-${(invoice.items || []).map(it => `• ${it.productName || it.name} (${it.quantity}x) - ${formatCurrency(((it.unitPrice || it.price || 0) * it.quantity) * rateToDisplay, displayCurrency, true)}`).join('\n')}
+${(invoice.items || []).map(it => `• ${it.productName || it.name} (${it.quantity}x @ ${formatCurrency((it.unitPrice || it.price || 0) * rateToDisplay, displayCurrency, true)}) = ${formatCurrency(((it.unitPrice || it.price || 0) * it.quantity) * rateToDisplay, displayCurrency, true)}`).join('\n')}
 
 --------------------------------
 *Subtotal:* ${formatCurrency(convertedSubtotal, displayCurrency, true)}
@@ -153,7 +155,11 @@ Thank you for trading with ${storeDisplayName}!`;
   };
 
   const handleLaunchWhatsAppAPI = () => {
-    window.open(whatsappApiUrl, '_blank');
+    try {
+      window.open(whatsappApiUrl, '_blank');
+    } catch (err) {
+      console.warn('Unable to launch WhatsApp window in sandbox:', err);
+    }
     setShareNotice(`Dispatched PDF invoice link to WhatsApp (${formattedPhone})!`);
     setShowWhatsAppModal(false);
     setTimeout(() => setShareNotice(''), 4000);

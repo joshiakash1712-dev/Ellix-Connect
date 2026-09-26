@@ -22,6 +22,27 @@ function triggerDownload(blob: Blob, filename: string) {
 }
 
 /**
+ * Format a timestamp/date string into readable Indian merchant format: DD/MM/YYYY, hh:mm a
+ */
+function formatReadableDateTime(dateStr?: string): string {
+  if (!dateStr) return 'N/A';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+/**
  * Export Financial & Sales Report as CSV
  */
 export function exportFinancialCSV(
@@ -31,34 +52,33 @@ export function exportFinancialCSV(
 ) {
   const headers = [
     'Invoice Number',
-    'Date & Time',
+    'Date',
+    'Cashier',
     'Customer Name',
     'Customer Phone',
     'Payment Method',
-    'Items Count',
+    'Items',
     'Subtotal (INR)',
     'Discount (INR)',
-    'CGST (INR)',
-    'SGST (INR)',
-    'IGST (INR)',
-    'Total Tax (INR)',
-    'Grand Total (INR)'
+    'Tax (INR)',
+    'Total (INR)'
   ];
 
   const rows = invoices.map(inv => {
     const totalTax = (inv.cgst || 0) + (inv.sgst || 0) + (inv.igst || 0);
+    const cashierLabel = inv.cashierName || (inv as any).cashierId || 'Store Crew';
+    const readableDate = formatReadableDateTime(inv.date || (inv as any).createdAt);
+
     return [
       escapeCSV(inv.invoiceNumber),
-      escapeCSV(inv.date),
+      escapeCSV(readableDate),
+      escapeCSV(cashierLabel),
       escapeCSV(inv.customerName || 'Walk-in Customer'),
       escapeCSV(inv.customerPhone || 'N/A'),
-      escapeCSV(inv.paymentMethod.toUpperCase()),
-      escapeCSV(inv.items.length),
+      escapeCSV((inv.paymentMethod || 'cash').toUpperCase()),
+      escapeCSV(inv.items?.length || 0),
       escapeCSV(inv.subtotal.toFixed(2)),
       escapeCSV((inv.discountTotal || 0).toFixed(2)),
-      escapeCSV((inv.cgst || 0).toFixed(2)),
-      escapeCSV((inv.sgst || 0).toFixed(2)),
-      escapeCSV((inv.igst || 0).toFixed(2)),
       escapeCSV(totalTax.toFixed(2)),
       escapeCSV(inv.grandTotal.toFixed(2))
     ].join(',');
@@ -76,7 +96,7 @@ export function exportFinancialCSV(
     `"Owner / City:",${escapeCSV(`${store.ownerName} - ${store.city}`)}`,
     `"Report Period:",${escapeCSV(dateRangeLabel)}`,
     `"Generated At:",${escapeCSV(new Date().toLocaleString())}`,
-    `"Total Invoices:",${escapeCSV(invoices.length)}`,
+    `"Total Bills:",${escapeCSV(invoices.length)}`,
     `"Total Revenue (INR):",${escapeCSV(totalRevenue.toFixed(2))}`,
     `"Total Tax Collected (INR):",${escapeCSV(totalTax.toFixed(2))}`,
     `""`,
@@ -90,10 +110,8 @@ export function exportFinancialCSV(
     `""`,
     `""`,
     `""`,
+    `""`,
     escapeCSV(totalSubtotal.toFixed(2)),
-    `""`,
-    `""`,
-    `""`,
     `""`,
     escapeCSV(totalTax.toFixed(2)),
     escapeCSV(totalRevenue.toFixed(2))

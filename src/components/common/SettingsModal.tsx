@@ -20,9 +20,17 @@ import {
   Bot,
   ExternalLink,
   FileText,
-  CheckCircle2
+  CheckCircle2,
+  CreditCard,
+  Calendar,
+  ShieldAlert,
+  Trash2,
+  Lock,
+  AlertTriangle
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
+import { useAuth } from '../../context/AuthContext';
+import { EllixConnectLogo } from '../branding/EllixConnectLogo';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -38,16 +46,60 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
     invoices,
     customers,
     activeStore,
-    resetToDefaultData
+    resetToDefaultData,
+    subscription,
+    renewSubscription,
+    cancelSubscriptionAndDeleteData,
+    activeRole
   } = useStore();
 
-  const [activeSettingsTab, setActiveSettingsTab] = React.useState<'appearance' | 'data' | 'about'>('appearance');
+  const [activeSettingsTab, setActiveSettingsTab] = React.useState<'appearance' | 'subscription' | 'data' | 'about'>('appearance');
   const [resetConfirmOpen, setResetConfirmOpen] = React.useState(false);
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+  const [isRenewing, setIsRenewing] = React.useState(false);
+  const [showCancelDialog, setShowCancelDialog] = React.useState(false);
+  const [cancelConfirmName, setCancelConfirmName] = React.useState('');
+  const [isCancelling, setIsCancelling] = React.useState(false);
+  const [cancellationCompleted, setCancellationCompleted] = React.useState(false);
+  const [wipedStoreName, setWipedStoreName] = React.useState('');
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleRenew = async () => {
+    setIsRenewing(true);
+    try {
+      await renewSubscription();
+      showToast('Subscription renewed successfully! Next 30 days added.');
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to renew subscription.');
+    } finally {
+      setIsRenewing(false);
+    }
+  };
+
+  const handleCancelAndWipe = async () => {
+    if (cancelConfirmName.trim().toLowerCase() !== activeStore.name.trim().toLowerCase() && cancelConfirmName.trim() !== 'DELETE') {
+      showToast('Confirmation store name does not match.');
+      return;
+    }
+    const storeNameToWipe = activeStore.name;
+    setIsCancelling(true);
+    try {
+      const ok = await cancelSubscriptionAndDeleteData(cancelConfirmName);
+      if (ok) {
+        setWipedStoreName(storeNameToWipe);
+        setCancellationCompleted(true);
+      } else {
+        showToast('Cancellation failed. Please check the store name.');
+      }
+    } catch {
+      showToast('Cancellation failed.');
+    } finally {
+      setIsCancelling(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -123,6 +175,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
         >
           {[
             { id: 'appearance', label: 'Appearance & Theme', icon: <Palette className="w-3.5 h-3.5" /> },
+            { id: 'subscription', label: 'Subscription & Billing', icon: <CreditCard className="w-3.5 h-3.5" /> },
             { id: 'data', label: 'Storage & Diagnostics', icon: <Database className="w-3.5 h-3.5" /> },
             { id: 'about', label: 'About System', icon: <Info className="w-3.5 h-3.5" /> }
           ].map(tab => (
@@ -356,6 +409,219 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
           )}
 
           {/* ------------------------------------------------ */}
+          {/* TAB: SUBSCRIPTION & BILLING                      */}
+          {/* ------------------------------------------------ */}
+          {activeSettingsTab === 'subscription' && (
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                  Tenant Subscription & Cloud Billing
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400">
+                  Manage your Ellix Connect monthly SaaS subscription, renewal schedules, and tenant data safety.
+                </p>
+              </div>
+
+              {/* Status Alert Banner */}
+              {subscription.status === 'grace_period' && (
+                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="text-xs">
+                    <div className="font-bold text-amber-300">Renewal Overdue — Grace Period Active</div>
+                    <div className="text-slate-300 mt-0.5">
+                      Your monthly subscription payment was due on {subscription.renewalDate}. Please renew immediately to avoid suspension of store operations.
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {subscription.status === 'blocked' && (
+                <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-start gap-3">
+                  <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+                  <div className="text-xs">
+                    <div className="font-bold text-rose-300">Account Blocked — Renewal Required</div>
+                    <div className="text-slate-300 mt-0.5">
+                      The 7-day grace period has expired. Platform POS, inventory adjustments, and reports are locked until the subscription is renewed.
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Plan Card */}
+              <div
+                className={`p-4 rounded-xl border ${
+                  theme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-[#121826] border-slate-800'
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/60">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-500">Current Plan</span>
+                    <h4 className="text-base font-extrabold text-white">Ellix Connect — Growth Tier</h4>
+                    <p className="text-xs text-slate-400 mt-0.5">Full POS, inventory sync, multi-store & crew access</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border uppercase tracking-wider ${
+                        subscription.status === 'active'
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                          : subscription.status === 'past_due' || subscription.status === 'grace_period'
+                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                          : subscription.status === 'blocked' || subscription.status === 'cancelled'
+                          ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                          : 'bg-slate-800 text-slate-400 border-slate-700'
+                      }`}
+                    >
+                      {subscription.status === 'active' ? (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      ) : subscription.status === 'past_due' || subscription.status === 'grace_period' ? (
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      ) : (
+                        <ShieldAlert className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                      )}
+                      <span>
+                        {subscription.status === 'past_due'
+                          ? 'Payment Due'
+                          : subscription.status.replace('_', ' ')}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3 border-b border-slate-800/60 text-xs tabular-nums">
+                  <div>
+                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Monthly Fee</span>
+                    <span className="text-white font-extrabold text-sm">₹{subscription.priceMonthly || 1499}</span>
+                    <span className="text-[10px] text-slate-400 block">/ month</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Renewal Date</span>
+                    <span className="text-white font-bold">{subscription.renewalDate || 'Next 30 Days'}</span>
+                    <span className="text-[10px] text-slate-400 block">Auto-recurring</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Client ID</span>
+                    <span className="text-white font-mono font-bold truncate block">{activeStore.clientId || 'client-001'}</span>
+                    <span className="text-[10px] text-slate-400 block">Tenant Root</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Active Store</span>
+                    <span className="text-white font-bold truncate block">{activeStore.name}</span>
+                    <span className="text-[10px] text-emerald-400 block">{activeStore.city || 'India'}</span>
+                  </div>
+                </div>
+
+                <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="text-xs text-slate-400 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Includes 24/7 cloud sync, automatic off-peak backups & GST invoicing</span>
+                  </div>
+                  <button
+                    onClick={handleRenew}
+                    disabled={isRenewing}
+                    className="w-full sm:w-auto px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>{isRenewing ? 'Processing Payment...' : `Renew for 30 Days (₹${subscription.priceMonthly || 1499})`}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Cancellation Completed Final Message */}
+              {cancellationCompleted ? (
+                <div className="p-6 rounded-2xl border border-rose-500/40 bg-rose-950/40 text-center space-y-4 animate-in fade-in duration-200">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/40 flex items-center justify-center">
+                    <Trash2 className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-black text-white">Subscription Cancelled & Data Wiped</h4>
+                    <p className="text-xs text-rose-200/90 mt-1 max-w-md mx-auto leading-relaxed">
+                      Your subscription for <strong className="text-white">{wipedStoreName}</strong> has been cancelled. All associated inventory records, POS transactions, Khata accounts, and customer logs have been permanently erased from the database.
+                    </p>
+                  </div>
+                  <div className="pt-2">
+                    <button
+                      onClick={() => {
+                        setCancellationCompleted(false);
+                        setShowCancelDialog(false);
+                        onClose();
+                        window.location.href = '/';
+                      }}
+                      className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs shadow-lg transition-all"
+                    >
+                      Return to Home / Sign In
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Danger Zone: Immediate Data Wipe on Cancellation */
+                <div className="p-5 rounded-2xl border border-rose-500/30 bg-rose-500/5 space-y-3.5">
+                  <div className="flex items-center gap-2">
+                    <ShieldAlert className="w-4 h-4 text-rose-400" />
+                    <h4 className="text-xs font-black uppercase tracking-wider text-rose-400">
+                      Danger Zone · Subscription Cancellation & Data Deletion
+                    </h4>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Cancelling your subscription will immediately and permanently erase all cloud and local records for <strong>{activeStore.name}</strong>. This action is irreversible.
+                  </p>
+
+                  <div className="text-[11px] text-rose-300/80 bg-rose-950/30 p-3 rounded-xl border border-rose-500/20 space-y-1">
+                    <div className="font-semibold text-rose-200">Permanent data loss includes:</div>
+                    <ul className="list-disc list-inside space-y-0.5 text-[10.5px]">
+                      <li>All POS sales bills and formal invoices</li>
+                      <li>Products catalog, inventory levels, and barcode records</li>
+                      <li>Khata (Store Credit) ledgers and customer balances</li>
+                      <li>Supplier lists and restocking history</li>
+                    </ul>
+                  </div>
+
+                  {!showCancelDialog ? (
+                    <button
+                      onClick={() => setShowCancelDialog(true)}
+                      className="px-3.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/60 border border-rose-500/40 text-rose-300 font-bold text-xs flex items-center gap-1.5 transition-all"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Initiate Cancellation Flow</span>
+                    </button>
+                  ) : (
+                    <div className="p-4 rounded-xl bg-slate-950 border border-rose-500/50 space-y-3">
+                      <div className="text-xs text-slate-300 font-medium">
+                        To permanently destroy all business data, type the store name: <strong className="text-white select-all">{activeStore.name}</strong>
+                      </div>
+                      <input
+                        type="text"
+                        value={cancelConfirmName}
+                        onChange={(e) => setCancelConfirmName(e.target.value)}
+                        placeholder={`Type "${activeStore.name}" or "DELETE"`}
+                        className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+                      />
+                      <div className="flex items-center gap-2 pt-1">
+                        <button
+                          onClick={handleCancelAndWipe}
+                          disabled={isCancelling || (!cancelConfirmName.trim())}
+                          className="flex-1 py-2 px-3 rounded-lg bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-rose-600/20"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>{isCancelling ? 'Deleting Business Data...' : 'Confirm & Permanently Wipe Store Data'}</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowCancelDialog(false);
+                            setCancelConfirmName('');
+                          }}
+                          className="py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ------------------------------------------------ */}
           {/* TAB 2: STORAGE & DIAGNOSTICS                     */}
           {/* ------------------------------------------------ */}
           {activeSettingsTab === 'data' && (
@@ -474,9 +740,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                   theme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'
                 }`}
               >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-emerald-400 flex items-center justify-center text-white font-black text-xl shadow-md">
-                  E
-                </div>
+                <EllixConnectLogo variant="symbol" size={40} alt="Ellix Connect" />
                 <div>
                   <h4 className="text-sm font-extrabold">Ellix Connect Business OS</h4>
                   <p className="text-xs text-slate-500">Version 2.4.0 • Enterprise Edition</p>

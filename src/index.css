@@ -3,52 +3,157 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ------------------------------------------------------------- */
-/* BRAND COLOR TOKENS & SYSTEM THEME VARIABLES                   */
+/* BRAND COLOR TOKENS & SYSTEM THEME VARIABLES (PHASE 3B)        */
 /* ------------------------------------------------------------- */
 :root {
+  /* Brand Palette */
   --color-brand-primary: #059669;        /* emerald-600 */
   --color-brand-primary-light: #10b981;  /* emerald-500 */
   --color-brand-accent: #14b8a6;         /* teal-500 */
   --color-brand-highlight: #34d399;      /* emerald-400 */
-  --color-brand-dark: #0f172a;           /* slate-900 */
-  --color-brand-surface-dark: #1e293b;   /* slate-800 */
-  --color-brand-bg-light: #fafafa;       /* page bg light */
-  --color-brand-bg-dark: #020617;        /* page bg dark / slate-950 */
+  --color-brand-dark: #0A0E1A;           /* Level 0: Primary background */
+  --color-brand-surface-dark: #121826;   /* Level 1: Main surface */
+  --color-brand-bg-light: #F8FAFC;       /* Light mode Level 0 */
+  --color-brand-bg-dark: #0A0E1A;        /* Dark mode Level 0 */
   --gradient-brand: linear-gradient(135deg, #059669 0%, #14b8a6 50%, #34d399 100%);
+
+  /* Surface Hierarchy Tokens (Dark Default) */
+  --ellix-bg-level-0: #0A0E1A;           /* Application background */
+  --ellix-surface-level-1: #121826;      /* Standard card / panel / table surface */
+  --ellix-surface-level-2: #161D2C;      /* Elevated card / dropdown / modal surface */
+  --ellix-surface-level-3: rgba(10, 14, 26, 0.82); /* Special overlay / dialog backdrop */
+
+  /* Border Tokens */
+  --ellix-border-subtle: rgba(148, 163, 184, 0.14);
+  --ellix-border-default: rgba(148, 163, 184, 0.22);
+  --ellix-border-strong: rgba(16, 185, 129, 0.35);
+
+  /* Text Hierarchy Tokens */
+  --ellix-text-primary: #F8FAFC;
+  --ellix-text-secondary: #94A3B8;
+  --ellix-text-muted: #64748B;
+
+  /* Semantic Status Tokens */
+  --ellix-status-success: #10B981;
+  --ellix-status-warning: #F59E0B;
+  --ellix-status-danger: #F43F5E;
+
+  /* Border Radius Scale */
+  --ellix-radius-sm: 0.5rem;             /* 8px  - rounded-lg (controls, buttons, inputs, badges) */
+  --ellix-radius-md: 0.75rem;            /* 12px - rounded-xl (cards, panels, tables) */
+  --ellix-radius-lg: 1rem;               /* 16px - rounded-2xl (dialogs, prominent containers) */
+
+  /* Elevation Shadows */
+  --ellix-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.22);
+  --ellix-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.32);
+  --ellix-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.48);
 }
 
-.dark {
+.dark,
+html.dark {
   --color-brand-text-accent: #34d399;
+  --ellix-bg-level-0: #0A0E1A;
+  --ellix-surface-level-1: #121826;
+  --ellix-surface-level-2: #161D2C;
+  --ellix-border-subtle: rgba(148, 163, 184, 0.14);
+  --ellix-border-default: rgba(148, 163, 184, 0.22);
+  --ellix-text-primary: #F8FAFC;
+  --ellix-text-secondary: #94A3B8;
+  --ellix-text-muted: #64748B;
+}
+
+html.light {
+  --ellix-bg-level-0: #F8FAFC;
+  --ellix-surface-level-1: #FFFFFF;
+  --ellix-surface-level-2: #F1F5F9;
+  --ellix-border-subtle: rgba(15, 23, 42, 0.09);
+  --ellix-border-default: rgba(15, 23, 42, 0.16);
+  --ellix-text-primary: #0F172A;
+  --ellix-text-secondary: #475569;
+  --ellix-text-muted: #64748B;
 }
 
 /* ------------------------------------------------------------- */
-/* GLASSMORPHISM DESIGN TOKEN (ELLIX CONNECT FROSTED GLASS)      */
+/* SURFACE HIERARCHY & GLASSMORPHISM DESIGN TOKens               */
 /* ------------------------------------------------------------- */
+.ellix-bg-0 {
+  background-color: var(--ellix-bg-level-0);
+}
+
+.ellix-surface-1 {
+  background-color: var(--ellix-surface-level-1);
+  border: 1px solid var(--ellix-border-subtle);
+  box-shadow: var(--ellix-shadow-sm);
+}
+
+.ellix-surface-2 {
+  background-color: var(--ellix-surface-level-2);
+  border: 1px solid var(--ellix-border-default);
+  box-shadow: var(--ellix-shadow-md);
+}
+
 .glass-panel {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: #121826;
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.26);
 }
 
 .dark .glass-panel,
 html.dark .glass-panel {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: rgba(18, 24, 38, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
 }
 
-/* Interactive hover enhancement for clickable glass cards & buttons */
+html.light .glass-panel {
+  background-color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+
+/* Interactive hover enhancement for clickable cards & buttons */
 .glass-panel-interactive {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .glass-panel-interactive:hover {
   border-color: rgba(16, 185, 129, 0.35);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2), 0 0 20px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24), 0 0 16px rgba(16, 185, 129, 0.1);
+}
+
+/* ------------------------------------------------------------- */
+/* ICON, FOCUS, & NUMERIC TYPOGRAPHY NORMALIZATION               */
+/* ------------------------------------------------------------- */
+svg.lucide {
+  stroke-width: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(16, 185, 129, 0.65);
+  outline-offset: 2px;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.font-mono,
+table td,
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ------------------------------------------------------------- */
@@ -80,6 +185,16 @@ html, body {
 /* Base transitions for smooth theme switching */
 html {
   transition: background-color 0.25s ease, color 0.25s ease;
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 html.dark {
@@ -89,5 +204,70 @@ html.dark {
 html.light {
   color-scheme: light;
 }
+
+/* ------------------------------------------------------------- */
+/* WEBSITE-ONLY CURSOR & HOVER STYLES (ISOLATED FROM APPLICATION)*/
+/* ------------------------------------------------------------- */
+.website-root {
+  /* Scope root marker for landing website only */
+}
+
+/* Optimize rendering for offscreen sections on website only */
+.website-root section:not(:first-of-type) {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 750px;
+}
+
+/* Website Interactive Card Hover Transitions with GPU Compositing */
+.website-root .website-card-hover {
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.website-root .website-card-hover:hover {
+  transform: translateY(-3px) translateZ(0);
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 16px 32px -8px rgba(16, 185, 129, 0.12), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+}
+
+.dark .website-root .website-card-hover:hover {
+  box-shadow: 0 20px 40px -10px rgba(16, 185, 129, 0.16), 0 0 20px rgba(16, 185, 129, 0.08);
+}
+
+/* Website Primary Action Button Glow & Micro-Lift */
+.website-root .website-btn-glow {
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background-color 0.18s ease;
+}
+
+.website-root .website-btn-glow:hover {
+  transform: translateY(-1.5px) translateZ(0);
+  box-shadow: 0 10px 24px -4px rgba(16, 185, 129, 0.35);
+}
+
+.website-root .website-btn-glow:active {
+  transform: translateY(0.5px) translateZ(0);
+}
+
+/* Website Interactive Tab & Nav Hover Glow */
+.website-root .website-nav-hover {
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.website-root .website-nav-hover:hover {
+  color: #10b981;
+}
+
+/* Skeleton Screens Shimmer Effect */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 
 

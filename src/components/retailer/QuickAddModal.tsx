@@ -56,6 +56,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
 
   const [activeTab, setActiveTab] = useState<'product' | 'sale'>(defaultTab);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // ----------------------------------------------------
   // Product Form State
@@ -89,6 +90,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
     if (isOpen) {
       setActiveTab(defaultTab);
       setSuccessMessage(null);
+      setErrors({});
       // Auto-generate a dummy barcode if empty
       if (!barcode) {
         setBarcode(`890${Math.floor(100000000 + Math.random() * 900000000)}`);
@@ -99,6 +101,9 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
   // When selected product changes in Quick Sale tab, auto update unit price
   const handleProductChange = (prodId: string) => {
     setSelectedProductId(prodId);
+    if (errors.selectedProductId) {
+      setErrors(prev => { const n = { ...prev }; delete n.selectedProductId; return n; });
+    }
     const prod = products.find(p => p.id === prodId);
     if (prod) {
       setSaleUnitPrice(prod.sellingPrice.toString());
@@ -122,10 +127,58 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
     setBarcode(`890${Math.floor(100000000 + Math.random() * 900000000)}`);
   };
 
+  const validateProductForm = () => {
+    const errs: Record<string, string> = {};
+    if (!productName.trim()) {
+      errs.productName = 'Enter a product name.';
+    }
+    const numSelling = parseFloat(sellingPrice);
+    if (isNaN(numSelling) || numSelling <= 0) {
+      errs.sellingPrice = 'Selling price must be greater than 0.';
+    }
+    const numStock = parseInt(stock, 10);
+    if (isNaN(numStock) || numStock < 0) {
+      errs.stock = 'Stock cannot be negative.';
+    }
+    const numMrp = parseFloat(mrp);
+    if (isNaN(numMrp) || numMrp < 0) {
+      errs.mrp = 'MRP cannot be negative.';
+    }
+    const numPurchase = parseFloat(purchasePrice);
+    if (isNaN(numPurchase) || numPurchase < 0) {
+      errs.purchasePrice = 'Cost price cannot be negative.';
+    }
+    const numThreshold = parseInt(minThreshold, 10);
+    if (isNaN(numThreshold) || numThreshold < 0) {
+      errs.minThreshold = 'Threshold cannot be negative.';
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const validateQuickSaleForm = () => {
+    const errs: Record<string, string> = {};
+    if (!selectedProductId) {
+      errs.selectedProductId = 'Please select a product.';
+    }
+    const prod = products.find(p => p.id === selectedProductId);
+    if (saleQuantity <= 0) {
+      errs.saleQuantity = 'Quantity must be at least 1.';
+    } else if (prod && saleQuantity > prod.stock) {
+      errs.saleQuantity = `Quantity exceeds stock (${prod.stock} available).`;
+    }
+    const price = parseFloat(saleUnitPrice);
+    if (isNaN(price) || price <= 0) {
+      errs.saleUnitPrice = 'Selling price must be greater than 0.';
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   // Handle Add Product Submit
   const handleAddProductSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!productName.trim()) return;
+    if (!validateProductForm()) return;
 
     const numSelling = parseFloat(sellingPrice) || 0;
     const numMrp = parseFloat(mrp) || numSelling;
@@ -153,6 +206,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
 
     addProduct(newProduct);
     setSuccessMessage(`Product "${productName}" successfully added with ${numStock} ${unit} in stock!`);
+    setErrors({});
 
     // Reset fields for next fast entry
     setProductName('');
@@ -169,6 +223,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
   // Handle Quick Sale Submit
   const handleQuickSaleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateQuickSaleForm()) return;
     const product = products.find(p => p.id === selectedProductId);
     if (!product) return;
 
@@ -234,7 +289,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
   return (
     <div
       id="quick-add-modal-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#0A0E1A]/80 backdrop-blur-md animate-in fade-in duration-200"
     >
       <motion.div
         id="quick-add-modal-content"
@@ -242,21 +297,21 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.94, y: 15 }}
         transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-        className="w-full max-w-lg rounded-2xl glass-panel shadow-2xl overflow-hidden flex flex-col max-h-[92vh] relative"
+        className="w-full max-w-lg rounded-2xl bg-[#161D2C] border border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] relative"
       >
-        {/* Subtle brand gradient backdrop BEHIND the glass modal */}
+        {/* Subtle brand gradient backdrop BEHIND the modal */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-600/15 via-slate-900/60 to-teal-600/15 pointer-events-none" />
 
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+        <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-[#121826]">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-500/20">
+            <div className="p-2 rounded-lg bg-gradient-to-tr from-emerald-600 to-teal-500 text-white shadow-md shadow-emerald-500/20">
               <Zap className="w-5 h-5" />
             </div>
             <div>
               <h2 className="text-base font-extrabold text-white tracking-tight flex items-center gap-2">
                 <span>Quick Action Terminal</span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   Rapid POS
                 </span>
               </h2>
@@ -267,7 +322,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
           <button
             id="quick-add-close-btn"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
             title="Close modal"
           >
             <X className="w-5 h-5" />
@@ -275,8 +330,8 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
         </div>
 
         {/* Tab Selector */}
-        <div className="p-2.5 bg-slate-950 border-b border-slate-800">
-          <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800">
+        <div className="p-2.5 bg-[#0A0E1A]/60 border-b border-slate-800">
+          <div className="grid grid-cols-2 gap-1.5 p-1 rounded-lg bg-[#0A0E1A] border border-slate-800">
             <button
               id="tab-btn-quick-product"
               type="button"
@@ -344,13 +399,25 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                 <input
                   id="quick-product-name-input"
                   type="text"
-                  required
                   autoFocus
                   value={productName}
-                  onChange={e => setProductName(e.target.value)}
+                  onChange={e => {
+                    setProductName(e.target.value);
+                    if (errors.productName) setErrors(prev => { const n = { ...prev }; delete n.productName; return n; });
+                  }}
                   placeholder="e.g. Organic Almond Milk, Premium Atta 5kg"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                  className={`w-full bg-[#0A0E1A] border rounded-lg px-3.5 py-2.5 text-white text-xs placeholder-slate-500 focus:outline-none transition-colors ${
+                    errors.productName
+                      ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                      : 'border-slate-700 focus:border-emerald-500'
+                  }`}
                 />
+                {errors.productName && (
+                  <p className="text-[11px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.productName}</span>
+                  </p>
+                )}
               </div>
 
               {/* Category & Brand */}
@@ -364,7 +431,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     id="quick-product-category-select"
                     value={category}
                     onChange={e => setCategory(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
                   >
                     {CATEGORIES.map(cat => (
                       <option key={cat} value={cat}>
@@ -382,7 +449,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     value={brand}
                     onChange={e => setBrand(e.target.value)}
                     placeholder="e.g. Tata, Amul, Nestle"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700 rounded-lg px-3.5 py-2.5 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
@@ -399,11 +466,23 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     type="number"
                     min="0"
                     step="any"
-                    required
                     value={sellingPrice}
-                    onChange={e => setSellingPrice(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs font-bold focus:outline-none focus:border-emerald-500"
+                    onChange={e => {
+                      setSellingPrice(e.target.value);
+                      if (errors.sellingPrice) setErrors(prev => { const n = { ...prev }; delete n.sellingPrice; return n; });
+                    }}
+                    className={`w-full bg-[#0A0E1A] border rounded-lg px-3 py-2.5 text-white text-xs font-bold focus:outline-none transition-colors ${
+                      errors.sellingPrice
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {errors.sellingPrice && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.sellingPrice}</span>
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -414,9 +493,22 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     min="0"
                     step="any"
                     value={mrp}
-                    onChange={e => setMrp(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    onChange={e => {
+                      setMrp(e.target.value);
+                      if (errors.mrp) setErrors(prev => { const n = { ...prev }; delete n.mrp; return n; });
+                    }}
+                    className={`w-full bg-[#0A0E1A] border rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none transition-colors ${
+                      errors.mrp
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {errors.mrp && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.mrp}</span>
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -427,9 +519,22 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     min="0"
                     step="any"
                     value={purchasePrice}
-                    onChange={e => setPurchasePrice(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    onChange={e => {
+                      setPurchasePrice(e.target.value);
+                      if (errors.purchasePrice) setErrors(prev => { const n = { ...prev }; delete n.purchasePrice; return n; });
+                    }}
+                    className={`w-full bg-[#0A0E1A] border rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none transition-colors ${
+                      errors.purchasePrice
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {errors.purchasePrice && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.purchasePrice}</span>
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -441,11 +546,23 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     id="quick-product-stock-input"
                     type="number"
                     min="0"
-                    required
                     value={stock}
-                    onChange={e => setStock(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs font-bold focus:outline-none focus:border-emerald-500"
+                    onChange={e => {
+                      setStock(e.target.value);
+                      if (errors.stock) setErrors(prev => { const n = { ...prev }; delete n.stock; return n; });
+                    }}
+                    className={`w-full bg-[#0A0E1A] border rounded-lg px-3 py-2.5 text-white text-xs font-bold focus:outline-none transition-colors ${
+                      errors.stock
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {errors.stock && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.stock}</span>
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -454,7 +571,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     id="quick-product-unit-select"
                     value={unit}
                     onChange={e => setUnit(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
                   >
                     {UNITS.map(u => (
                       <option key={u} value={u}>
@@ -469,11 +586,24 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                   <input
                     id="quick-product-min-input"
                     type="number"
-                    min="1"
+                    min="0"
                     value={minThreshold}
-                    onChange={e => setMinThreshold(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    onChange={e => {
+                      setMinThreshold(e.target.value);
+                      if (errors.minThreshold) setErrors(prev => { const n = { ...prev }; delete n.minThreshold; return n; });
+                    }}
+                    className={`w-full bg-[#0A0E1A] border rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none transition-colors ${
+                      errors.minThreshold
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {errors.minThreshold && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.minThreshold}</span>
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -498,7 +628,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     type="text"
                     value={barcode}
                     onChange={e => setBarcode(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs font-mono focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700 rounded-lg px-3.5 py-2.5 text-white text-xs font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -508,7 +638,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     id="quick-product-tax-select"
                     value={taxRate}
                     onChange={e => setTaxRate(parseInt(e.target.value, 10))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
                   >
                     <option value={0}>0% (Tax Exempt)</option>
                     <option value={5}>5% (Essential Goods)</option>
@@ -525,14 +655,14 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                   id="quick-product-cancel-btn"
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   id="quick-product-submit-btn"
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all active:scale-95"
+                  className="px-5 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-md shadow-emerald-600/30 flex items-center gap-2 transition-all active:scale-[0.98]"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Product to Catalog</span>
@@ -554,7 +684,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     <span>Select Product *</span>
                   </span>
                   {selectedProduct && (
-                    <span className="text-[10px] text-emerald-400 font-semibold">
+                    <span className="text-[10px] text-emerald-400 font-semibold tabular-nums">
                       Stock: {selectedProduct.stock} {selectedProduct.unit}
                     </span>
                   )}
@@ -563,7 +693,11 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                   id="quick-sale-product-select"
                   value={selectedProductId}
                   onChange={e => handleProductChange(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
+                  className={`w-full bg-[#0A0E1A] border rounded-lg px-3.5 py-2.5 text-white text-xs focus:outline-none transition-colors ${
+                    errors.selectedProductId
+                      ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                      : 'border-slate-700 focus:border-emerald-500'
+                  }`}
                 >
                   {products.map(p => (
                     <option key={p.id} value={p.id}>
@@ -571,6 +705,12 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     </option>
                   ))}
                 </select>
+                {errors.selectedProductId && (
+                  <p className="text-[11px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.selectedProductId}</span>
+                  </p>
+                )}
               </div>
 
               {/* Quantity & Unit Price */}
@@ -580,8 +720,11 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setSaleQuantity(prev => Math.max(1, prev - 1))}
-                      className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 flex items-center justify-center active:scale-95"
+                      onClick={() => {
+                        setSaleQuantity(prev => Math.max(1, prev - 1));
+                        if (errors.saleQuantity) setErrors(prev => { const n = { ...prev }; delete n.saleQuantity; return n; });
+                      }}
+                      className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 flex items-center justify-center active:scale-95"
                     >
                       -
                     </button>
@@ -590,17 +733,33 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                       type="number"
                       min="1"
                       value={saleQuantity}
-                      onChange={e => setSaleQuantity(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                      className="flex-1 text-center bg-slate-800 border border-slate-700 rounded-xl py-2 text-white text-xs font-bold focus:outline-none focus:border-emerald-500"
+                      onChange={e => {
+                        setSaleQuantity(Math.max(1, parseInt(e.target.value, 10) || 1));
+                        if (errors.saleQuantity) setErrors(prev => { const n = { ...prev }; delete n.saleQuantity; return n; });
+                      }}
+                      className={`flex-1 text-center bg-[#0A0E1A] border rounded-lg py-2 text-white text-xs font-bold focus:outline-none transition-colors ${
+                        errors.saleQuantity
+                          ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                          : 'border-slate-700 focus:border-emerald-500'
+                      }`}
                     />
                     <button
                       type="button"
-                      onClick={() => setSaleQuantity(prev => prev + 1)}
-                      className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 flex items-center justify-center active:scale-95"
+                      onClick={() => {
+                        setSaleQuantity(prev => prev + 1);
+                        if (errors.saleQuantity) setErrors(prev => { const n = { ...prev }; delete n.saleQuantity; return n; });
+                      }}
+                      className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 flex items-center justify-center active:scale-95"
                     >
                       +
                     </button>
                   </div>
+                  {errors.saleQuantity && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.saleQuantity}</span>
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -614,9 +773,22 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     step="any"
                     min="0"
                     value={saleUnitPrice}
-                    onChange={e => setSaleUnitPrice(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-white text-xs font-bold focus:outline-none focus:border-emerald-500"
+                    onChange={e => {
+                      setSaleUnitPrice(e.target.value);
+                      if (errors.saleUnitPrice) setErrors(prev => { const n = { ...prev }; delete n.saleUnitPrice; return n; });
+                    }}
+                    className={`w-full bg-[#0A0E1A] border rounded-lg px-3.5 py-2 text-white text-xs font-bold focus:outline-none transition-colors ${
+                      errors.saleUnitPrice
+                        ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                        : 'border-slate-700 focus:border-emerald-500'
+                    }`}
                   />
+                  {errors.saleUnitPrice && (
+                    <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.saleUnitPrice}</span>
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -633,7 +805,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     value={customerPhone}
                     onChange={e => handlePhoneChange(e.target.value)}
                     placeholder="+91 98765 43210"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700 rounded-lg px-3.5 py-2.5 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -648,7 +820,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                     value={customerName}
                     onChange={e => setCustomerName(e.target.value)}
                     placeholder="Walk-in Customer"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700 rounded-lg px-3.5 py-2.5 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
@@ -667,10 +839,10 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                       key={m.id}
                       type="button"
                       onClick={() => setPaymentMethod(m.id as PaymentMethod)}
-                      className={`py-2 px-2.5 rounded-xl text-xs font-bold border transition-all text-center ${
+                      className={`py-2 px-2.5 rounded-lg text-xs font-bold border transition-all text-center ${
                         paymentMethod === m.id
                           ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-sm'
-                          : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-white'
+                          : 'bg-[#0A0E1A] border-slate-700 text-slate-400 hover:text-white'
                       }`}
                     >
                       {m.label}
@@ -680,7 +852,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
               </div>
 
               {/* Calculation Breakdown Card */}
-              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5 text-xs">
+              <div className="p-3.5 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1.5 text-xs tabular-nums">
                 <div className="flex items-center justify-between text-slate-400">
                   <span>Subtotal ({saleQuantity} item{saleQuantity > 1 ? 's' : ''})</span>
                   <span>₹{currentSaleSubtotal.toLocaleString()}</span>
@@ -701,14 +873,14 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                   id="quick-sale-cancel-btn"
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   id="quick-sale-submit-btn"
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all active:scale-95"
+                  className="px-5 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-md shadow-emerald-600/30 flex items-center gap-2 transition-all active:scale-[0.98]"
                 >
                   <span>Complete & Log Sale</span>
                   <ArrowRight className="w-4 h-4" />

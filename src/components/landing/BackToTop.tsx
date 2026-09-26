@@ -6,16 +6,23 @@ export const BackToTop: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    let rafId: number | null = null;
+
     const handleScroll = () => {
-      if (window.scrollY > 320) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      if (rafId !== null) return;
+
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const shouldShow = window.scrollY > 320;
+        setIsVisible((prev) => (prev !== shouldShow ? shouldShow : prev));
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const scrollToTop = () => {
@@ -32,12 +39,14 @@ export const BackToTop: React.FC = () => {
           id="btn-back-to-top"
           type="button"
           aria-label="Scroll back to top"
+          title="Scroll back to top"
           onClick={scrollToTop}
           initial={{ opacity: 0, scale: 0.8, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 12 }}
           transition={{ duration: 0.2 }}
-          className="fixed bottom-6 right-6 z-40 p-3 rounded-full glass-panel glass-panel-interactive text-white shadow-xl hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all flex items-center justify-center group cursor-pointer"
+          className="website-btn-glow fixed bottom-6 right-6 z-40 p-3 rounded-full glass-panel glass-panel-interactive text-white shadow-xl hover:shadow-2xl hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all flex items-center justify-center group cursor-pointer"
+          data-cursor="hover"
         >
           <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
         </motion.button>

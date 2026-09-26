@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../../context/StoreContext';
+import { StockStatusBadge } from '../common/StockStatusBadge';
+import { Skeleton } from '../common/skeletons/SkeletonBase';
 import {
   BarChart3,
   Download,
@@ -24,7 +26,9 @@ import {
   CreditCard,
   Wallet,
   QrCode,
-  Tag
+  Tag,
+  Store as StoreIcon,
+  Loader2
 } from 'lucide-react';
 import {
   BarChart,
@@ -48,11 +52,19 @@ import {
 } from '../../utils/exportUtils';
 import { GrowthGraphs } from './GrowthGraphs';
 
-export const ReportsAnalytics: React.FC = () => {
-  const { invoices, products, activeStore, addAuditLog, addNotification } = useStore();
+export type ReportDateFilter = 'today' | 'yesterday' | '7days' | 'this_week' | 'this_month' | 'last_month' | 'all' | 'custom';
+
+export interface ReportsAnalyticsProps {
+  onNavigateToPOS?: () => void;
+}
+
+export const ReportsAnalytics: React.FC<ReportsAnalyticsProps> = ({ onNavigateToPOS }) => {
+  const { invoices, products, activeStore, addAuditLog, addNotification, isDataLoading, setActiveModule } = useStore();
 
   const [activeTab, setActiveTab] = useState<'sales' | 'growth' | 'gst' | 'profit' | 'inventory'>('sales');
-  const [selectedPeriod, setSelectedPeriod] = useState<'all' | 'month' | 'week' | 'today'>('all');
+  const [selectedPeriod, setSelectedPeriod] = useState<ReportDateFilter>('all');
+  const [customStartDate, setCustomStartDate] = useState<string>('');
+  const [customEndDate, setCustomEndDate] = useState<string>('');
   const [inventoryCategoryFilter, setInventoryCategoryFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [exportNotice, setExportNotice] = useState<string | null>(null);
@@ -74,26 +86,70 @@ export const ReportsAnalytics: React.FC = () => {
     return ['All', ...Array.from(set)];
   }, [products]);
 
+  // Calculate clean date boundaries for the selected filter
+  const { dateRangeText, rangeStart, rangeEnd } = useMemo(() => {
+    const now = new Date();
+    const formatShort = (d: Date) =>
+      d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    let start: Date;
+    let end: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+    switch (selectedPeriod) {
+      case 'today': {
+        start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        return { dateRangeText: `Today · ${formatShort(start)}`, rangeStart: start, rangeEnd: end };
+      }
+      case 'yesterday': {
+        const y = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        start = new Date(y.getFullYear(), y.getMonth(), y.getDate(), 0, 0, 0);
+        end = new Date(y.getFullYear(), y.getMonth(), y.getDate(), 23, 59, 59, 999);
+        return { dateRangeText: `Yesterday · ${formatShort(start)}`, rangeStart: start, rangeEnd: end };
+      }
+      case '7days': {
+        start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        start.setHours(0, 0, 0, 0);
+        return { dateRangeText: `${formatShort(start)} – ${formatShort(end)}`, rangeStart: start, rangeEnd: end };
+      }
+      case 'this_week': {
+        const day = now.getDay();
+        const diffToMonday = (day === 0 ? -6 : 1) - day;
+        start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffToMonday, 0, 0, 0);
+        return { dateRangeText: `${formatShort(start)} – ${formatShort(end)}`, rangeStart: start, rangeEnd: end };
+      }
+      case 'this_month': {
+        start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
+        return { dateRangeText: `${formatShort(start)} – ${formatShort(end)}`, rangeStart: start, rangeEnd: end };
+      }
+      case 'last_month': {
+        start = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0);
+        end = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+        return { dateRangeText: `${formatShort(start)} – ${formatShort(end)}`, rangeStart: start, rangeEnd: end };
+      }
+      case 'custom': {
+        if (customStartDate && customEndDate) {
+          start = new Date(customStartDate + 'T00:00:00');
+          end = new Date(customEndDate + 'T23:59:59');
+          return { dateRangeText: `${formatShort(start)} – ${formatShort(end)}`, rangeStart: start, rangeEnd: end };
+        }
+        return { dateRangeText: 'Custom Date Range', rangeStart: null, rangeEnd: null };
+      }
+      case 'all':
+      default:
+        return { dateRangeText: 'All Recorded History', rangeStart: null, rangeEnd: null };
+    }
+  }, [selectedPeriod, customStartDate, customEndDate]);
+
   // Filtered invoices based on period
   const filteredInvoices = useMemo(() => {
-    if (selectedPeriod === 'all') return invoices;
+    if (!rangeStart || !rangeEnd) return invoices;
 
-    const now = new Date();
     return invoices.filter(inv => {
       const invDate = new Date(inv.date);
-      if (selectedPeriod === 'today') {
-        return invDate.toDateString() === now.toDateString();
-      }
-      if (selectedPeriod === 'week') {
-        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        return invDate >= weekAgo;
-      }
-      if (selectedPeriod === 'month') {
-        return invDate.getMonth() === now.getMonth() && invDate.getFullYear() === now.getFullYear();
-      }
-      return true;
+      if (isNaN(invDate.getTime())) return true;
+      return invDate >= rangeStart && invDate <= rangeEnd;
     });
-  }, [invoices, selectedPeriod]);
+  }, [invoices, rangeStart, rangeEnd]);
 
   // Core Financial Aggregations
   const totalSalesRevenue = useMemo(() => {
@@ -181,7 +237,14 @@ export const ReportsAnalytics: React.FC = () => {
 
   // Payment methods chart data
   const paymentMethodData = useMemo(() => {
-    const counts: Record<string, number> = { cash: 0, card: 0, upi: 0, split: 0 };
+    const counts: Record<string, number> = {
+      cash: 0,
+      card: 0,
+      upi: 0,
+      bank_transfer: 0,
+      credit: 0,
+      split: 0
+    };
     filteredInvoices.forEach(inv => {
       counts[inv.paymentMethod] = (counts[inv.paymentMethod] || 0) + inv.grandTotal;
     });
@@ -190,11 +253,13 @@ export const ReportsAnalytics: React.FC = () => {
       cash: '#10b981',
       upi: '#6366f1',
       card: '#3b82f6',
+      bank_transfer: '#8b5cf6',
+      credit: '#f43f5e',
       split: '#f59e0b'
     };
 
     return Object.entries(counts).map(([name, value]) => ({
-      name: name.toUpperCase(),
+      name: name.replace('_', ' ').toUpperCase(),
       value: Math.round(value),
       color: colors[name] || '#94a3b8'
     }));
@@ -338,14 +403,49 @@ export const ReportsAnalytics: React.FC = () => {
     setTimeout(() => setExportNotice(null), 4000);
   };
 
+  if (isDataLoading) {
+    return (
+      <div className="space-y-6" aria-busy="true" aria-label="Loading Store Reports">
+        {/* Active Store Loading Banner */}
+        <div className="p-3 sm:p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+              <StoreIcon className="w-4 h-4" />
+            </div>
+            <div className="truncate">
+              <div className="font-extrabold text-white flex items-center gap-2 truncate">
+                <span className="truncate">{activeStore?.name || 'Active Store'}</span>
+                <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+                  Reports Active Outlet
+                </span>
+              </div>
+              <div className="text-[11px] text-slate-400 truncate">Loading financial registers, GST reports and sales analytics...</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-mono font-semibold shrink-0">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <span className="hidden sm:inline">Loading reports...</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map(i => (
+            <Skeleton key={i} className="h-28 w-full rounded-xl" />
+          ))}
+        </div>
+        <Skeleton className="h-80 w-full rounded-xl" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       
       {/* Top Banner & Multi-Format Export Command Center */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+      <div className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+            <span className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
               <BarChart3 className="w-5 h-5" />
             </span>
             <h2 className="text-xl font-black text-white tracking-tight">
@@ -360,7 +460,7 @@ export const ReportsAnalytics: React.FC = () => {
         {/* Global Export Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
           {/* Quick PDF Dropdown / Button */}
-          <div className="flex items-center rounded-xl bg-slate-800 border border-slate-700/80 p-1">
+          <div className="flex items-center rounded-lg bg-slate-800 border border-slate-700/80 p-1">
             <button
               id="export-financial-pdf-btn"
               onClick={handleQuickExportFinancialPDF}
@@ -383,7 +483,7 @@ export const ReportsAnalytics: React.FC = () => {
           </div>
 
           {/* Quick CSV Dropdown / Button */}
-          <div className="flex items-center rounded-xl bg-slate-800 border border-slate-700/80 p-1">
+          <div className="flex items-center rounded-lg bg-slate-800 border border-slate-700/80 p-1">
             <button
               id="export-financial-csv-btn"
               onClick={handleQuickExportFinancialCSV}
@@ -409,7 +509,7 @@ export const ReportsAnalytics: React.FC = () => {
           <button
             id="open-custom-export-studio-btn"
             onClick={() => setIsExportModalOpen(true)}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition-all shrink-0"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all shrink-0 active:scale-[0.98]"
           >
             <Download className="w-4 h-4" />
             <span>Export Studio</span>
@@ -429,7 +529,7 @@ export const ReportsAnalytics: React.FC = () => {
       )}
 
       {/* Period Filter & Navigation Tabs */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-900/90 p-2 rounded-2xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#121826] p-2 rounded-xl border border-slate-800 shadow-lg">
         
         {/* Sub-module View Tabs */}
         <div className="flex flex-wrap sm:flex-nowrap gap-1.5 flex-1">
@@ -447,7 +547,7 @@ export const ReportsAnalytics: React.FC = () => {
                 key={tab.id}
                 id={`report-tab-${tab.id}`}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex-1 min-w-[120px] py-2.5 px-3 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-all ${
+                className={`flex-1 min-w-[120px] py-2.5 px-3 text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition-all ${
                   isActive
                     ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
@@ -461,36 +561,68 @@ export const ReportsAnalytics: React.FC = () => {
         </div>
 
         {/* Date Period Filter Pills */}
-        <div className="flex items-center gap-1 bg-slate-950/60 p-1 rounded-xl border border-slate-800 shrink-0">
-          {[
-            { id: 'all', label: 'All Time' },
-            { id: 'month', label: 'This Month' },
-            { id: 'week', label: 'Last 7 Days' },
-            { id: 'today', label: 'Today' }
-          ].map(p => (
-            <button
-              key={p.id}
-              onClick={() => setSelectedPeriod(p.id as any)}
-              className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-colors ${
-                selectedPeriod === p.id
-                  ? 'bg-slate-800 text-emerald-400 font-bold border border-slate-700'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
+        <div className="flex flex-col gap-2 shrink-0">
+          <div className="flex items-center gap-1 bg-[#0A0E1A] p-1 rounded-lg border border-slate-800 shrink-0 overflow-x-auto">
+            {[
+              { id: 'today', label: 'Today' },
+              { id: 'yesterday', label: 'Yesterday' },
+              { id: '7days', label: 'Last 7 Days' },
+              { id: 'this_week', label: 'This Week' },
+              { id: 'this_month', label: 'This Month' },
+              { id: 'last_month', label: 'Last Month' },
+              { id: 'all', label: 'All Time' },
+              { id: 'custom', label: 'Custom' }
+            ].map(p => (
+              <button
+                key={p.id}
+                onClick={() => setSelectedPeriod(p.id as any)}
+                className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                  selectedPeriod === p.id
+                    ? 'bg-slate-800 text-emerald-400 font-bold border border-slate-700'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Selected Date Boundaries Display & Custom Inputs */}
+          <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
+            <div className="flex items-center gap-1.5 text-slate-300 font-medium">
+              <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Showing: <strong className="text-white">{dateRangeText}</strong></span>
+            </div>
+
+            {selectedPeriod === 'custom' && (
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={customStartDate}
+                  onChange={e => setCustomStartDate(e.target.value)}
+                  className="px-2 py-1 rounded-lg bg-[#0A0E1A] border border-slate-800 text-xs text-white focus:outline-none focus:border-emerald-500"
+                />
+                <span className="text-slate-500">to</span>
+                <input
+                  type="date"
+                  value={customEndDate}
+                  onChange={e => setCustomEndDate(e.target.value)}
+                  className="px-2 py-1 rounded-lg bg-[#0A0E1A] border border-slate-800 text-xs text-white focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* High-Level Executive KPI Strip */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 tabular-nums">
         
-        {/* Total Billed Revenue */}
-        <div className="p-4 rounded-xl glass-panel glass-panel-interactive shadow-xl space-y-1 relative overflow-hidden group transition-all">
+        {/* Total Billed Sales */}
+        <div className="p-4 rounded-xl glass-panel glass-panel-interactive shadow-lg space-y-1 relative overflow-hidden group transition-all">
           <div className="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none -z-10" />
           <div className="flex items-center justify-between text-slate-300 text-xs font-semibold">
-            <span>Gross Billed Revenue</span>
+            <span>Total Billed Sales</span>
             <DollarSign className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="text-2xl font-black text-white">
@@ -498,12 +630,12 @@ export const ReportsAnalytics: React.FC = () => {
           </div>
           <div className="text-[11px] text-emerald-400 font-medium flex items-center gap-1">
             <TrendingUp className="w-3 h-3" />
-            <span>{filteredInvoices.length} invoices billed ({selectedPeriod})</span>
+            <span>{filteredInvoices.length} bills in selected range</span>
           </div>
         </div>
 
         {/* GST Tax Collected */}
-        <div className="p-4 rounded-xl glass-panel glass-panel-interactive shadow-xl space-y-1 relative overflow-hidden group transition-all">
+        <div className="p-4 rounded-xl glass-panel glass-panel-interactive shadow-lg space-y-1 relative overflow-hidden group transition-all">
           <div className="absolute -top-10 -right-10 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl pointer-events-none -z-10" />
           <div className="flex items-center justify-between text-slate-300 text-xs font-semibold">
             <span>Total GST Collected</span>
@@ -517,11 +649,11 @@ export const ReportsAnalytics: React.FC = () => {
           </div>
         </div>
 
-        {/* Estimated Gross Profit */}
-        <div className="p-4 rounded-xl glass-panel glass-panel-interactive shadow-xl space-y-1 relative overflow-hidden group transition-all">
+        {/* Estimated Profit */}
+        <div className="p-4 rounded-xl glass-panel glass-panel-interactive shadow-lg space-y-1 relative overflow-hidden group transition-all">
           <div className="absolute -top-10 -right-10 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none -z-10" />
           <div className="flex items-center justify-between text-slate-300 text-xs font-semibold">
-            <span>Estimated Gross Profit</span>
+            <span>Estimated Profit</span>
             <ArrowUpRight className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-2xl font-black text-amber-400">
@@ -532,11 +664,11 @@ export const ReportsAnalytics: React.FC = () => {
           </div>
         </div>
 
-        {/* Inventory Cost Valuation */}
-        <div className="p-4 rounded-xl glass-panel glass-panel-interactive shadow-xl space-y-1 relative overflow-hidden group transition-all">
+        {/* Product Cost Basis */}
+        <div className="p-4 rounded-xl glass-panel glass-panel-interactive shadow-lg space-y-1 relative overflow-hidden group transition-all">
           <div className="absolute -top-10 -right-10 w-24 h-24 bg-blue-500/10 rounded-full blur-xl pointer-events-none -z-10" />
           <div className="flex items-center justify-between text-slate-300 text-xs font-semibold">
-            <span>Inventory Cost Basis</span>
+            <span>Product Cost Basis</span>
             <Package className="w-4 h-4 text-blue-400" />
           </div>
           <div className="text-2xl font-black text-blue-400">
@@ -557,7 +689,7 @@ export const ReportsAnalytics: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             {/* Payment Channel Breakdown */}
-            <div className="lg:col-span-6 p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+            <div className="lg:col-span-6 p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -583,7 +715,7 @@ export const ReportsAnalytics: React.FC = () => {
                     <XAxis dataKey="name" stroke="#64748b" fontSize={11} tickLine={false} />
                     <YAxis stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `₹${v/1000}k`} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
+                      contentStyle={{ backgroundColor: '#121826', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
                       formatter={(val: any) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Billed Volume']}
                     />
                     <Bar dataKey="value" fill="#10b981" radius={[8, 8, 0, 0]} />
@@ -593,7 +725,7 @@ export const ReportsAnalytics: React.FC = () => {
             </div>
 
             {/* Inventory Category Value Share */}
-            <div className="lg:col-span-6 p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4 flex flex-col justify-between">
+            <div className="lg:col-span-6 p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4 flex flex-col justify-between">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -629,14 +761,14 @@ export const ReportsAnalytics: React.FC = () => {
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
+                      contentStyle={{ backgroundColor: '#121826', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
                       formatter={(val: any) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Stock Valuation']}
                     />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-slate-800">
+              <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-slate-800 tabular-nums">
                 {categoryDistribution.slice(0, 4).map((cat, i) => (
                   <div key={i} className="flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
@@ -649,7 +781,7 @@ export const ReportsAnalytics: React.FC = () => {
           </div>
 
           {/* Detailed Billed Invoices Table */}
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+          <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -680,7 +812,7 @@ export const ReportsAnalytics: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-300">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
+                  <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[11px] tracking-wider">
                     <th className="pb-3">Invoice #</th>
                     <th className="pb-3">Date & Time</th>
                     <th className="pb-3">Customer</th>
@@ -691,7 +823,7 @@ export const ReportsAnalytics: React.FC = () => {
                     <th className="pb-3 text-right">Grand Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-slate-800/60 tabular-nums">
                   {filteredInvoices.map((inv) => {
                     const totalTax = (inv.cgst || 0) + (inv.sgst || 0) + (inv.igst || 0);
                     return (
@@ -703,7 +835,7 @@ export const ReportsAnalytics: React.FC = () => {
                           {inv.customerPhone && <span className="block text-[10px] text-slate-500">{inv.customerPhone}</span>}
                         </td>
                         <td className="py-3">
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-slate-800 text-slate-300 border border-slate-700">
+                          <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-slate-800 text-slate-300 border border-slate-700">
                             {inv.paymentMethod}
                           </span>
                         </td>
@@ -716,6 +848,31 @@ export const ReportsAnalytics: React.FC = () => {
                       </tr>
                     );
                   })}
+                  {filteredInvoices.length === 0 && (
+                    <tr>
+                      <td colSpan={8} className="py-12 text-center">
+                        <div className="max-w-xs mx-auto space-y-3">
+                          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/20">
+                            <Receipt className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-bold text-white">No sales yet</div>
+                            <div className="text-xs text-slate-400 mt-1">
+                              Your first bill will appear here after a completed sale.
+                            </div>
+                          </div>
+                          {onNavigateToPOS && (
+                            <button
+                              onClick={onNavigateToPOS}
+                              className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md active:scale-95"
+                            >
+                              Open POS
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -734,7 +891,7 @@ export const ReportsAnalytics: React.FC = () => {
         <div className="space-y-6">
           
           {/* Header Action & Summary info */}
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-emerald-400" />
@@ -748,14 +905,14 @@ export const ReportsAnalytics: React.FC = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleQuickExportFinancialCSV}
-                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
               >
                 <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
                 <span>Export GSTR-1 CSV</span>
               </button>
               <button
                 onClick={handleQuickExportFinancialPDF}
-                className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition-colors"
               >
                 <Download className="w-4 h-4" />
                 <span>Download GSTR-1 PDF</span>
@@ -764,14 +921,14 @@ export const ReportsAnalytics: React.FC = () => {
           </div>
 
           {/* GST Slabs Table */}
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+          <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
             <h4 className="text-xs uppercase font-bold text-slate-400 tracking-wider">
               Output Tax Liability Breakdown by Slab
             </h4>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-300">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
+                  <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[11px] tracking-wider">
                     <th className="pb-3">GST Tax Rate Slab</th>
                     <th className="pb-3">Taxable Turnover (₹)</th>
                     <th className="pb-3">CGST (₹)</th>
@@ -780,7 +937,7 @@ export const ReportsAnalytics: React.FC = () => {
                     <th className="pb-3 text-right">Total Tax Liability (₹)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono">
+                <tbody className="divide-y divide-slate-800/60 font-mono tabular-nums">
                   {gstSlabReport.map((row, idx) => (
                     <tr key={idx} className="hover:bg-slate-800/30">
                       <td className="py-3 font-bold text-white font-sans">{row.taxRate}</td>
@@ -791,7 +948,7 @@ export const ReportsAnalytics: React.FC = () => {
                       <td className="py-3 text-right font-bold text-emerald-400">₹{row.totalTax.toLocaleString('en-IN')}</td>
                     </tr>
                   ))}
-                  <tr className="bg-slate-950/60 font-bold text-white border-t-2 border-slate-700">
+                  <tr className="bg-[#0A0E1A]/60 font-bold text-white border-t-2 border-slate-700">
                     <td className="py-3.5 font-sans">TOTAL SUMMARY</td>
                     <td className="py-3.5">₹{totalSubtotal.toLocaleString('en-IN')}</td>
                     <td className="py-3.5">₹{Math.round(totalTaxCollected / 2).toLocaleString('en-IN')}</td>
@@ -805,7 +962,7 @@ export const ReportsAnalytics: React.FC = () => {
           </div>
 
           {/* Tax Slabs Chart */}
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+          <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
             <h4 className="text-xs uppercase font-bold text-slate-400 tracking-wider">
               Taxable Value Distribution vs Tax Liability
             </h4>
@@ -816,7 +973,7 @@ export const ReportsAnalytics: React.FC = () => {
                   <XAxis dataKey="taxRate" stroke="#64748b" fontSize={11} tickLine={false} />
                   <YAxis stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `₹${v/1000}k`} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
+                    contentStyle={{ backgroundColor: '#121826', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
                     formatter={(val: any) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Value']}
                   />
                   <Legend />
@@ -834,7 +991,7 @@ export const ReportsAnalytics: React.FC = () => {
       {activeTab === 'profit' && (
         <div className="space-y-6">
           
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-amber-400" />
@@ -848,14 +1005,14 @@ export const ReportsAnalytics: React.FC = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleQuickExportFinancialCSV}
-                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
               >
                 <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
                 <span>Export P&L CSV</span>
               </button>
               <button
                 onClick={handleQuickExportFinancialPDF}
-                className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition-colors"
               >
                 <Download className="w-4 h-4" />
                 <span>Download P&L PDF</span>
@@ -864,24 +1021,24 @@ export const ReportsAnalytics: React.FC = () => {
           </div>
 
           {/* P&L Financial Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 tabular-nums">
+            <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-2">
               <span className="text-xs font-bold uppercase text-slate-400">1. Gross Revenue</span>
               <div className="text-2xl font-black text-white">₹{totalSubtotal.toLocaleString('en-IN')}</div>
               <p className="text-[11px] text-slate-400">Total net billed sales before GST additions</p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-2">
+            <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-2">
               <span className="text-xs font-bold uppercase text-slate-400">2. Cost of Goods Sold (COGS)</span>
               <div className="text-2xl font-black text-rose-400">₹{Math.round(estimatedCOGS).toLocaleString('en-IN')}</div>
               <p className="text-[11px] text-slate-400">Wholesale cost basis for inventory sold</p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-2">
+            <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-2">
               <span className="text-xs font-bold uppercase text-slate-400">3. Net Gross Profit</span>
               <div className="text-2xl font-black text-emerald-400">₹{Math.round(grossProfit).toLocaleString('en-IN')}</div>
               <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
-                <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
+                <span className="px-2 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                   {grossMarginPercentage}% Gross Margin
                 </span>
               </div>
@@ -889,11 +1046,11 @@ export const ReportsAnalytics: React.FC = () => {
           </div>
 
           {/* P&L Ledger Breakdown */}
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+          <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
             <h4 className="text-xs uppercase font-bold text-slate-400 tracking-wider">
               Income & Expense Statement Ledger
             </h4>
-            <div className="divide-y divide-slate-800/80 text-xs">
+            <div className="divide-y divide-slate-800/80 text-xs tabular-nums">
               <div className="py-3 flex items-center justify-between text-slate-300">
                 <span className="font-semibold text-white">Gross Billed Merchandise Sales</span>
                 <span className="font-mono font-bold text-white">₹{totalSalesRevenue.toLocaleString('en-IN')}</span>
@@ -906,7 +1063,7 @@ export const ReportsAnalytics: React.FC = () => {
                 <span>Less: GST Output Liability (Collected for Govt)</span>
                 <span className="font-mono text-slate-400">- ₹{totalTaxCollected.toLocaleString('en-IN')}</span>
               </div>
-              <div className="py-3 flex items-center justify-between text-slate-300 font-semibold bg-slate-950/40 px-2 rounded-lg">
+              <div className="py-3 flex items-center justify-between text-slate-300 font-semibold bg-[#0A0E1A]/40 px-2 rounded-lg">
                 <span className="text-slate-200">Net Operational Revenue</span>
                 <span className="font-mono text-white">₹{totalSubtotal.toLocaleString('en-IN')}</span>
               </div>
@@ -929,13 +1086,13 @@ export const ReportsAnalytics: React.FC = () => {
         <div className="space-y-6">
           
           {/* Inventory Valuation Header & Filter Controls */}
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <Package className="w-5 h-5 text-blue-400" />
                 <span>Inventory Valuation & Stock Health Ledger</span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-400 tabular-nums">
                 Total Cost Valuation: <span className="font-bold text-white">₹{Math.round(totalCostValuation).toLocaleString('en-IN')}</span> • Potential Retail Realization: <span className="font-bold text-emerald-400">₹{Math.round(totalRetailValuation).toLocaleString('en-IN')}</span>
               </p>
             </div>
@@ -944,7 +1101,7 @@ export const ReportsAnalytics: React.FC = () => {
               <button
                 id="export-inventory-val-csv-btn"
                 onClick={handleQuickExportInventoryCSV}
-                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
               >
                 <FileSpreadsheet className="w-4 h-4 text-blue-400" />
                 <span>Export Stock CSV</span>
@@ -952,7 +1109,7 @@ export const ReportsAnalytics: React.FC = () => {
               <button
                 id="export-inventory-val-pdf-btn"
                 onClick={handleQuickExportInventoryPDF}
-                className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-600/20 flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md shadow-blue-600/20 flex items-center gap-1.5 transition-colors"
               >
                 <Download className="w-4 h-4" />
                 <span>Export Stock PDF</span>
@@ -961,7 +1118,7 @@ export const ReportsAnalytics: React.FC = () => {
           </div>
 
           {/* Search & Filter Bar */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-900 p-3 rounded-2xl border border-slate-800">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#121826] p-3 rounded-xl border border-slate-800 shadow-lg">
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -969,7 +1126,7 @@ export const ReportsAnalytics: React.FC = () => {
                 placeholder="Search products by name, brand, SKU or barcode..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+                className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#0A0E1A] border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
               />
             </div>
 
@@ -979,7 +1136,7 @@ export const ReportsAnalytics: React.FC = () => {
               <select
                 value={inventoryCategoryFilter}
                 onChange={e => setInventoryCategoryFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-blue-500 font-semibold"
+                className="px-3 py-2 rounded-lg bg-[#0A0E1A] border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-blue-500 font-semibold"
               >
                 {categories.map(c => (
                   <option key={c} value={c}>{c === 'All' ? 'All Categories' : c}</option>
@@ -1017,7 +1174,7 @@ export const ReportsAnalytics: React.FC = () => {
           )}
 
           {/* Inventory Valuation Ledger Table */}
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+          <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="text-xs uppercase font-bold text-slate-400 tracking-wider">
                 Product Valuation & Unit Stock Ledger ({filteredProducts.length} Items)
@@ -1030,7 +1187,7 @@ export const ReportsAnalytics: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-300">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
+                  <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[11px] tracking-wider">
                     <th className="pb-3">Product / SKU</th>
                     <th className="pb-3">Category</th>
                     <th className="pb-3">Stock Units</th>
@@ -1041,12 +1198,10 @@ export const ReportsAnalytics: React.FC = () => {
                     <th className="pb-3 text-right">Stock Health</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono">
+                <tbody className="divide-y divide-slate-800/60 font-mono tabular-nums">
                   {filteredProducts.map(p => {
                     const costVal = p.purchasePrice * p.stock;
                     const retailVal = p.sellingPrice * p.stock;
-                    const isLow = p.stock <= p.minThreshold;
-                    const isOut = p.stock <= 0;
 
                     return (
                       <tr key={p.id} className="hover:bg-slate-800/30 font-sans">
@@ -1069,19 +1224,7 @@ export const ReportsAnalytics: React.FC = () => {
                           ₹{Math.round(retailVal).toLocaleString('en-IN')}
                         </td>
                         <td className="py-3 text-right font-sans">
-                          {isOut ? (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                              Out of Stock
-                            </span>
-                          ) : isLow ? (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                              Low Stock ({p.stock}/{p.minThreshold})
-                            </span>
-                          ) : (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                              Optimal
-                            </span>
-                          )}
+                          <StockStatusBadge stock={p.stock} size="sm" />
                         </td>
                       </tr>
                     );
@@ -1098,13 +1241,13 @@ export const ReportsAnalytics: React.FC = () => {
       {/* CUSTOM EXPORT STUDIO DIALOG MODAL */}
       {/* ========================================================================= */}
       {isExportModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-xl rounded-2xl bg-slate-900 border border-slate-800 p-6 shadow-2xl space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#0A0E1A]/80 backdrop-blur-md">
+          <div className="relative w-full max-w-xl rounded-2xl bg-[#161D2C] border border-slate-800 p-5 sm:p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
             
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-800">
               <div className="flex items-center gap-2.5">
-                <span className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                <span className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
                   <Download className="w-5 h-5" />
                 </span>
                 <div>
@@ -1130,7 +1273,7 @@ export const ReportsAnalytics: React.FC = () => {
               {/* 1. Report Scope Selection */}
               <div className="space-y-1.5">
                 <label className="font-bold text-slate-300 block">1. Select Report Dataset</label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[
                     { id: 'financial', label: 'Financial & POS Sales', desc: 'Itemized receipts & revenues' },
                     { id: 'gst', label: 'GST GSTR-1 Ledger', desc: 'Slab-wise tax liability breakdown' },
@@ -1144,7 +1287,7 @@ export const ReportsAnalytics: React.FC = () => {
                       className={`p-3 rounded-xl text-left border transition-all ${
                         exportModalScope === scope.id
                           ? 'bg-emerald-500/15 border-emerald-500/50 text-white shadow-sm'
-                          : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                          : 'bg-[#0A0E1A]/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
                       }`}
                     >
                       <div className="font-bold text-xs flex items-center justify-between">
@@ -1160,14 +1303,14 @@ export const ReportsAnalytics: React.FC = () => {
               {/* 2. File Format Selection */}
               <div className="space-y-1.5">
                 <label className="font-bold text-slate-300 block">2. Output File Format</label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setExportModalFormat('pdf')}
                     className={`p-3 rounded-xl border flex items-center gap-3 transition-all ${
                       exportModalFormat === 'pdf'
                         ? 'bg-emerald-500/15 border-emerald-500/50 text-white'
-                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
+                        : 'bg-[#0A0E1A]/60 border-slate-800 text-slate-400 hover:border-slate-700'
                     }`}
                   >
                     <FileText className={`w-5 h-5 ${exportModalFormat === 'pdf' ? 'text-emerald-400' : 'text-slate-500'}`} />
@@ -1183,7 +1326,7 @@ export const ReportsAnalytics: React.FC = () => {
                     className={`p-3 rounded-xl border flex items-center gap-3 transition-all ${
                       exportModalFormat === 'csv'
                         ? 'bg-emerald-500/15 border-emerald-500/50 text-white'
-                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
+                        : 'bg-[#0A0E1A]/60 border-slate-800 text-slate-400 hover:border-slate-700'
                     }`}
                   >
                     <FileSpreadsheet className={`w-5 h-5 ${exportModalFormat === 'csv' ? 'text-emerald-400' : 'text-slate-500'}`} />
@@ -1196,13 +1339,13 @@ export const ReportsAnalytics: React.FC = () => {
               </div>
 
               {/* 3. Scope Filters (Date or Category) */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="font-bold text-slate-400 text-[11px]">Time Range</label>
                   <select
                     value={exportModalPeriod}
                     onChange={e => setExportModalPeriod(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[#0A0E1A] border border-slate-800 text-xs text-white focus:outline-none focus:border-emerald-500"
                   >
                     <option value="All Time">All Time Records</option>
                     <option value="Current Month">Current Month (August 2026)</option>
@@ -1216,7 +1359,7 @@ export const ReportsAnalytics: React.FC = () => {
                   <select
                     value={exportModalCategory}
                     onChange={e => setExportModalCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[#0A0E1A] border border-slate-800 text-xs text-white focus:outline-none focus:border-emerald-500"
                   >
                     <option value="All Categories">All Categories</option>
                     {categories.filter(c => c !== 'All').map(cat => (
@@ -1227,7 +1370,7 @@ export const ReportsAnalytics: React.FC = () => {
               </div>
 
               {/* Target File Summary Card */}
-              <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs">
+              <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800 flex items-center justify-between text-xs tabular-nums">
                 <div className="space-y-0.5">
                   <span className="text-[10px] uppercase font-bold text-slate-400">Store / Outlet</span>
                   <div className="font-bold text-white">{activeStore.name} ({activeStore.gstin})</div>
@@ -1247,7 +1390,7 @@ export const ReportsAnalytics: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsExportModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-colors"
+                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-colors"
               >
                 Cancel
               </button>
@@ -1257,7 +1400,7 @@ export const ReportsAnalytics: React.FC = () => {
                 type="button"
                 disabled={isExporting}
                 onClick={handleExecuteModalExport}
-                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition-all"
+                className="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-extrabold text-xs shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all active:scale-[0.98]"
               >
                 {isExporting ? (
                   <>

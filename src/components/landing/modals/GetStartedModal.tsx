@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MarketingModal } from './MarketingModal';
+import { EllixConnectLogo } from '../../branding/EllixConnectLogo';
 import { Store, CheckCircle2, ArrowRight, Sparkles, Building2, MapPin, Phone, Mail } from 'lucide-react';
 
 interface GetStartedModalProps {
@@ -60,6 +61,11 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({
         </div>
       ) : (
         <div className="space-y-5">
+          {/* Brand Logo Header */}
+          <div className="flex justify-center pb-1">
+            <EllixConnectLogo size="sm" />
+          </div>
+
           {/* Informational Hero Banner */}
           <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
             <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">

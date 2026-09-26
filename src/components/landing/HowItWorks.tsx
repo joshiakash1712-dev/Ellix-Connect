@@ -184,11 +184,12 @@ export const HowItWorks: React.FC = () => {
                 <button
                   key={step.id}
                   type="button"
+                  data-cursor="hover"
                   onClick={() => setActiveStepIndex(idx)}
-                  className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                  className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                     isSelected
                       ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-200 hover:scale-[1.02]'
                   }`}
                 >
                   <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono ${
@@ -214,11 +215,12 @@ export const HowItWorks: React.FC = () => {
               <div
                 key={step.number}
                 id={`how-step-${step.number}`}
+                data-cursor="card"
                 onClick={() => setActiveStepIndex(idx)}
-                className={`p-7 rounded-2xl border transition-all flex flex-col justify-between cursor-pointer ${
+                className={`website-card-hover p-7 rounded-2xl border transition-all flex flex-col justify-between cursor-pointer ${
                   isCurrent
                     ? 'bg-white dark:bg-slate-900 border-emerald-500 dark:border-emerald-500/80 ring-2 ring-emerald-500/20 shadow-xl'
-                    : 'bg-white/70 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md'
+                    : 'bg-white/70 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:shadow-md'
                 }`}
               >
                 <div>

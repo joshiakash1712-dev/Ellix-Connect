@@ -258,11 +258,12 @@ export const ConnectedWorkflow: React.FC = () => {
                   key={step.stepNumber}
                   id={`workflow-step-${idx}`}
                   type="button"
+                  data-cursor="hover"
                   onClick={() => setActiveStepIndex(idx)}
-                  className={`relative p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                  className={`website-card-hover relative p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                     isCurrent
                       ? 'bg-slate-900 dark:bg-emerald-950/80 border-slate-900 dark:border-emerald-500 text-white shadow-lg ring-2 ring-emerald-500/40 transform -translate-y-1'
-                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm'
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 hover:border-emerald-500/40 hover:shadow-sm'
                   }`}
                 >
                   <div>

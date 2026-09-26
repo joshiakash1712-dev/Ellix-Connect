@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { CustomerProfile, InvoiceTemplate } from '../../types';
+import { Skeleton } from '../common/skeletons/SkeletonBase';
 import {
   Users,
   Plus,
@@ -22,7 +23,9 @@ import {
   ArrowRight,
   ShieldAlert,
   FileCheck,
-  Check
+  Check,
+  Store as StoreIcon,
+  Loader2
 } from 'lucide-react';
 
 export const CustomerCRM: React.FC = () => {
@@ -33,12 +36,16 @@ export const CustomerCRM: React.FC = () => {
     invoices,
     invoiceTemplates,
     batchAssignInvoiceTemplate,
-    updateCustomerSegment
+    updateCustomerSegment,
+    isDataLoading,
+    activeStore
   } = useStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [tierFilter, setTierFilter] = useState<'all' | 'vip' | 'b2b' | 'credit' | 'loyalty'>('all');
-  const [selectedCust, setSelectedCust] = useState<CustomerProfile | null>(customers[0] || null);
+  const [selectedCustId, setSelectedCustId] = useState<string | null>(customers[0]?.id || null);
+  const selectedCust = customers.find(c => c.id === selectedCustId) || customers[0] || null;
+  const setSelectedCust = (cust: CustomerProfile | null) => setSelectedCustId(cust ? cust.id : null);
 
   // Multi-selection state for Batch Operations
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([]);
@@ -56,6 +63,7 @@ export const CustomerCRM: React.FC = () => {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [segment, setSegment] = useState<'VIP / Corporate' | 'Wholesale Buyers' | 'Regular Retail' | 'B2B Clients'>('Regular Retail');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Filter customers by search + tier preset
   const filteredCustomers = customers.filter(c => {
@@ -93,15 +101,33 @@ export const CustomerCRM: React.FC = () => {
     }
   };
 
+  const validateCustomer = () => {
+    const errs: Record<string, string> = {};
+    if (!name.trim()) {
+      errs.name = 'Enter customer name.';
+    }
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (!phone.trim()) {
+      errs.phone = 'Enter customer phone number.';
+    } else if (cleanPhone.length < 10) {
+      errs.phone = 'Enter a valid 10-digit mobile number.';
+    }
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      errs.email = 'Enter a valid email address.';
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleCreateCustomer = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return;
+    if (!validateCustomer()) return;
     const defaultTpl = invoiceTemplates.find(t => t.targetSegment === segment) || invoiceTemplates[0];
     const created = addCustomer({
-      name,
-      phone,
-      email,
-      address,
+      name: name.trim(),
+      phone: phone.trim(),
+      email: email.trim(),
+      address: address.trim(),
       creditBalance: 0,
       loyaltyPoints: 100,
       phoneVerified: true,
@@ -115,6 +141,7 @@ export const CustomerCRM: React.FC = () => {
     setPhone('');
     setEmail('');
     setAddress('');
+    setErrors({});
   };
 
   const handleCreditPaymentSubmit = (e: React.FormEvent) => {
@@ -173,20 +200,63 @@ export const CustomerCRM: React.FC = () => {
     return invoiceTemplates.find(t => t.id === tplId);
   };
 
+  if (isDataLoading) {
+    return (
+      <div className="space-y-6" aria-busy="true" aria-label="Loading CRM Profiles">
+        {/* Active Store Loading Banner */}
+        <div className="p-3 sm:p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+              <StoreIcon className="w-4 h-4" />
+            </div>
+            <div className="truncate">
+              <div className="font-extrabold text-white flex items-center gap-2 truncate">
+                <span className="truncate">{activeStore?.name || 'Active Store'}</span>
+                <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+                  CRM Active Store
+                </span>
+              </div>
+              <div className="text-[11px] text-slate-400 truncate">Loading customer accounts, Khata ledgers and loyalty balances...</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-mono font-semibold shrink-0">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <span className="hidden sm:inline">Loading customers...</span>
+          </div>
+        </div>
+
+        {/* Skeleton content */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="lg:col-span-5 space-y-3">
+            <Skeleton className="h-11 w-full rounded-xl" />
+            <div className="space-y-2">
+              {[1, 2, 3, 4, 5].map(i => (
+                <Skeleton key={i} className="h-20 w-full rounded-xl" />
+              ))}
+            </div>
+          </div>
+          <div className="lg:col-span-7">
+            <Skeleton className="h-96 w-full rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       
       {/* Module Header & High-Level Actions */}
-      <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-black text-white flex items-center gap-2">
             <Users className="w-5 h-5 text-emerald-400" />
             <span>Customer CRM & Batch Template Assignment</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono font-bold">
+            <span className="text-xs px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono font-bold tabular-nums">
               {customers.length} Profiles
             </span>
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-400 mt-0.5">
             Segment customer groups based on purchase tier and batch assign custom invoice branding templates.
           </p>
         </div>
@@ -194,7 +264,7 @@ export const CustomerCRM: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleAutoGroupSmartAssign}
-            className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 text-xs font-bold shadow-md flex items-center gap-1.5 transition-all hover:scale-105"
+            className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 text-xs font-bold shadow-sm flex items-center gap-1.5 transition-all active:scale-95"
             title="Automatically group customers by purchase volume tier and assign matching invoice designs"
           >
             <Sparkles className="w-4 h-4 text-emerald-400" />
@@ -203,7 +273,7 @@ export const CustomerCRM: React.FC = () => {
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition-all hover:scale-105 shrink-0"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all active:scale-95 shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>New Customer Profile</span>
@@ -212,7 +282,7 @@ export const CustomerCRM: React.FC = () => {
       </div>
 
       {/* Quick Tier Preset Filter Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none tabular-nums">
         <span className="text-[11px] font-bold text-slate-500 shrink-0 uppercase tracking-wider flex items-center gap-1">
           <SlidersHorizontal className="w-3.5 h-3.5" />
           <span>Tier Filter:</span>
@@ -227,14 +297,14 @@ export const CustomerCRM: React.FC = () => {
           <button
             key={filter.id}
             onClick={() => setTierFilter(filter.id as any)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all border flex items-center gap-1.5 ${
               tierFilter === filter.id
                 ? 'bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-500/20'
-                : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800'
+                : 'bg-[#121826] text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800'
             }`}
           >
             <span>{filter.label}</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${
               tierFilter === filter.id ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
             }`}>
               {filter.count}
@@ -245,17 +315,17 @@ export const CustomerCRM: React.FC = () => {
 
       {/* Floating / Sticky Batch Action Bar when items selected */}
       {selectedCustomerIds.length > 0 && (
-        <div className="p-4 rounded-2xl glass-panel relative shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in slide-in-from-top-2 duration-200 overflow-hidden">
+        <div className="p-4 rounded-xl glass-panel relative shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in slide-in-from-top-2 duration-200 overflow-hidden">
           {/* Subtle brand refraction backdrop */}
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-emerald-600/15 via-teal-600/10 to-emerald-600/15 pointer-events-none" />
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-extrabold text-sm">
+            <div className="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-extrabold text-sm tabular-nums">
               {selectedCustomerIds.length}
             </div>
             <div>
               <div className="text-xs font-bold text-white flex items-center gap-2">
                 <span>Batch Selection Active</span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-extrabold uppercase">
+                <span className="text-[10px] px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-extrabold uppercase tabular-nums">
                   {selectedCustomerIds.length} Customer(s)
                 </span>
               </div>
@@ -271,7 +341,7 @@ export const CustomerCRM: React.FC = () => {
                 setTargetTemplateId(invoiceTemplates[0]?.id || '');
                 setIsBatchModalOpen(true);
               }}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold shadow-lg shadow-emerald-500/25 flex items-center gap-2 transition-all hover:scale-105"
+              className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold shadow-lg shadow-emerald-500/25 flex items-center gap-2 transition-all active:scale-95"
             >
               <Palette className="w-4 h-4" />
               <span>Assign Invoice Template</span>
@@ -279,7 +349,7 @@ export const CustomerCRM: React.FC = () => {
 
             <button
               onClick={() => setSelectedCustomerIds([])}
-              className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white text-xs font-bold transition-colors"
+              className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white text-xs font-bold transition-colors"
             >
               Clear Selection
             </button>
@@ -287,11 +357,11 @@ export const CustomerCRM: React.FC = () => {
         </div>
       )}
 
-      {/* Main Grid: Directory Directory + Details Ledger */}
+      {/* Main Grid: Directory + Details Ledger */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left Column: Customer Directory with Checkboxes */}
-        <div className="lg:col-span-5 p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-3">
+        <div className="lg:col-span-5 p-4 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-3">
           
           <div className="flex items-center justify-between gap-2">
             <div className="relative flex-1">
@@ -301,13 +371,13 @@ export const CustomerCRM: React.FC = () => {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search name, phone, tier..."
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
               />
             </div>
 
             <button
               onClick={handleSelectAllFiltered}
-              className="px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-bold border border-slate-700 shrink-0 flex items-center gap-1"
+              className="px-2.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-bold border border-slate-700 shrink-0 flex items-center gap-1"
               title="Select all visible filtered profiles"
             >
               {filteredCustomers.length > 0 && filteredCustomers.every(c => selectedCustomerIds.includes(c.id)) ? (
@@ -321,8 +391,16 @@ export const CustomerCRM: React.FC = () => {
 
           <div className="space-y-2 max-h-[520px] overflow-y-auto pr-1">
             {filteredCustomers.length === 0 ? (
-              <div className="py-8 text-center text-xs text-slate-500">
-                No customer profiles matching search/tier criteria.
+              <div className="py-12 px-4 text-center text-xs text-slate-400 space-y-2.5 bg-[#0A0E1A]/60 rounded-xl border border-slate-800">
+                <Users className="w-9 h-9 text-slate-600 mx-auto" />
+                <div className="font-bold text-white text-sm">
+                  {searchQuery ? 'No matching customers found' : 'No customers added yet'}
+                </div>
+                <p className="text-slate-400 max-w-xs mx-auto">
+                  {searchQuery
+                    ? 'Try searching with a different name, phone number, or segment.'
+                    : 'Customer profiles are automatically saved when generating bills at the POS, or you can track customer Khata (Store Credit) balances.'}
+                </p>
               </div>
             ) : (
               filteredCustomers.map(cust => {
@@ -334,10 +412,10 @@ export const CustomerCRM: React.FC = () => {
                   <div
                     key={cust.id}
                     onClick={() => setSelectedCust(cust)}
-                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 tabular-nums ${
                       isActive
-                        ? 'bg-slate-800/95 border-emerald-500 ring-1 ring-emerald-500/30 shadow-lg'
-                        : 'bg-slate-800/40 border-slate-800 hover:bg-slate-800/70'
+                        ? 'bg-[#161D2C] border-emerald-500 ring-1 ring-emerald-500/30 shadow-md'
+                        : 'bg-[#0A0E1A]/70 border-slate-800 hover:bg-[#161D2C]/80 hover:border-slate-700'
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
@@ -365,7 +443,7 @@ export const CustomerCRM: React.FC = () => {
                         <div className="text-[10px] text-slate-400 flex items-center gap-2 mt-0.5">
                           <span>{cust.phone}</span>
                           <span className="text-slate-600">•</span>
-                          <span className="px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 font-semibold border border-slate-700/80">
+                          <span className="px-1.5 py-0.2 rounded-md bg-slate-800 text-slate-300 font-semibold border border-slate-700/80">
                             {cust.segment || 'Regular Retail'}
                           </span>
                         </div>
@@ -396,7 +474,7 @@ export const CustomerCRM: React.FC = () => {
         </div>
 
         {/* Right Column: Active Customer Profile & Template Customizer */}
-        <div className="lg:col-span-7 p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-5">
+        <div className="lg:col-span-7 p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-5 tabular-nums">
           {selectedCust ? (
             <>
               {/* Profile Top Summary */}
@@ -404,7 +482,7 @@ export const CustomerCRM: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="text-base font-extrabold text-white">{selectedCust.name}</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                    <span className="text-[10px] px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
                       {selectedCust.segment || 'VERIFIED CUSTOMER'}
                     </span>
                   </div>
@@ -423,7 +501,7 @@ export const CustomerCRM: React.FC = () => {
                       setCreditPayAmount(selectedCust.creditBalance);
                       setIsPayCreditOpen(true);
                     }}
-                    className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 text-white text-xs font-bold shadow-lg shadow-amber-600/20 flex items-center gap-1.5 transition-all hover:scale-105"
+                    className="px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold shadow-md shadow-amber-500/20 flex items-center gap-1.5 transition-all active:scale-95"
                   >
                     <DollarSign className="w-3.5 h-3.5" />
                     <span>Clear Credit Payment</span>
@@ -432,7 +510,7 @@ export const CustomerCRM: React.FC = () => {
               </div>
 
               {/* Individual Invoice Template Assignment Control */}
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Palette className="w-4 h-4 text-emerald-400" />
@@ -453,7 +531,7 @@ export const CustomerCRM: React.FC = () => {
                     <select
                       value={selectedCust.segment || 'Regular Retail'}
                       onChange={e => updateCustomerSegment(selectedCust.id, e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"
+                      className="w-full bg-[#121826] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"
                     >
                       <option value="VIP / Corporate">VIP / Corporate</option>
                       <option value="Wholesale Buyers">Wholesale Buyers</option>
@@ -469,7 +547,7 @@ export const CustomerCRM: React.FC = () => {
                     <select
                       value={selectedCust.assignedTemplateId || ''}
                       onChange={e => batchAssignInvoiceTemplate([selectedCust.id], e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"
+                      className="w-full bg-[#121826] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"
                     >
                       {invoiceTemplates.map(tpl => (
                         <option key={tpl.id} value={tpl.id}>
@@ -485,7 +563,7 @@ export const CustomerCRM: React.FC = () => {
                   const tpl = getTemplateById(selectedCust.assignedTemplateId) || invoiceTemplates[0];
                   if (!tpl) return null;
                   return (
-                    <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
+                    <div className="p-3 rounded-lg bg-[#121826] border border-slate-800 flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2">
                         <span
                           className="w-3 h-3 rounded-full inline-block border border-slate-600"
@@ -504,21 +582,21 @@ export const CustomerCRM: React.FC = () => {
 
               {/* Stats Grid */}
               <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/80">
+                <div className="p-3 rounded-xl bg-[#0A0E1A]/80 border border-slate-800">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Outstanding Credit</span>
                   <span className={`text-base font-black ${selectedCust.creditBalance > 0 ? 'text-amber-400' : 'text-slate-200'}`}>
                     ₹{selectedCust.creditBalance}
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/80">
+                <div className="p-3 rounded-xl bg-[#0A0E1A]/80 border border-slate-800">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Loyalty Points</span>
                   <span className="text-base font-black text-emerald-400">
                     {selectedCust.loyaltyPoints} Pts
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/80">
+                <div className="p-3 rounded-xl bg-[#0A0E1A]/80 border border-slate-800">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Lifetime Spent</span>
                   <span className="text-base font-black text-white">
                     ₹{selectedCust.totalPurchases.toLocaleString()}
@@ -534,7 +612,7 @@ export const CustomerCRM: React.FC = () => {
                 </h4>
 
                 {selectedCustInvoices.length === 0 ? (
-                  <div className="text-xs text-slate-500 py-6 text-center bg-slate-950/60 rounded-xl border border-slate-800">
+                  <div className="text-xs text-slate-500 py-6 text-center bg-[#0A0E1A]/80 rounded-xl border border-slate-800">
                     No transactions logged for this customer.
                   </div>
                 ) : (
@@ -542,7 +620,7 @@ export const CustomerCRM: React.FC = () => {
                     {selectedCustInvoices.map(inv => (
                       <div
                         key={inv.id}
-                        className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 flex items-center justify-between text-xs"
+                        className="p-3 rounded-xl bg-[#0A0E1A]/80 border border-slate-800 flex items-center justify-between text-xs"
                       >
                         <div>
                           <div className="font-bold text-white font-mono">{inv.invoiceNumber}</div>
@@ -560,8 +638,14 @@ export const CustomerCRM: React.FC = () => {
               </div>
             </>
           ) : (
-            <div className="text-center py-16 text-slate-500">
-              Select a customer profile from the left directory to view full profile & invoice customizer.
+            <div className="text-center py-20 px-6 text-slate-400 space-y-3">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/20">
+                <Users className="w-6 h-6" />
+              </div>
+              <h4 className="text-sm font-bold text-white">Customer & Khata (Store Credit) Details</h4>
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                Select any customer from the directory to review their purchase history, Khata outstanding balance, and assigned invoice template.
+              </p>
             </div>
           )}
         </div>
@@ -570,27 +654,25 @@ export const CustomerCRM: React.FC = () => {
 
       {/* Batch Invoice Template Assignment Modal */}
       {isBatchModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 flex items-center justify-center p-4">
-          <div className="glass-panel text-slate-100 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl my-auto animate-in zoom-in-95 duration-150 relative">
-            {/* Subtle brand gradient backdrop BEHIND the glass modal */}
-            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-600/15 via-slate-900/60 to-teal-600/15 pointer-events-none" />
+        <div className="fixed inset-0 z-50 bg-[#0A0E1A]/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-[#161D2C] border border-slate-700/80 text-slate-100 rounded-2xl w-full max-w-lg max-h-[88vh] flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150">
             
             {/* Modal Header */}
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900">
+            <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-[#121826] shrink-0">
               <div className="flex items-center gap-2">
                 <Palette className="w-5 h-5 text-emerald-400" />
                 <h3 className="text-base font-bold text-white">Batch Assign Invoice Template</h3>
               </div>
               <button
                 onClick={() => setIsBatchModalOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Body */}
-            <div className="p-6 space-y-4 text-xs">
+            <div className="p-5 sm:p-6 space-y-4 text-xs overflow-y-auto flex-1">
               
               <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 space-y-1">
                 <div className="font-bold flex items-center gap-1.5">
@@ -607,13 +689,13 @@ export const CustomerCRM: React.FC = () => {
                 <label className="text-[11px] font-semibold text-slate-400 block mb-1.5">
                   Selected Customer Profiles ({selectedCustomerIds.length}):
                 </label>
-                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-2 bg-slate-950 rounded-xl border border-slate-800">
+                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-2 bg-[#0A0E1A] rounded-xl border border-slate-800">
                   {selectedCustomerIds.map(id => {
                     const cust = customers.find(c => c.id === id);
                     return (
                       <span
                         key={id}
-                        className="px-2 py-1 rounded bg-slate-800 text-slate-200 text-[10px] font-bold border border-slate-700 flex items-center gap-1"
+                        className="px-2 py-1 rounded-lg bg-slate-800 text-slate-200 text-[10px] font-bold border border-slate-700 flex items-center gap-1"
                       >
                         <span>{cust?.name || id}</span>
                         <span className="text-[9px] text-slate-400">({cust?.segment || 'Retail'})</span>
@@ -637,8 +719,8 @@ export const CustomerCRM: React.FC = () => {
                         onClick={() => setTargetTemplateId(tpl.id)}
                         className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
                           isChoice
-                            ? 'bg-slate-800 border-emerald-500 ring-1 ring-emerald-500/40'
-                            : 'bg-slate-950/60 border-slate-800 hover:bg-slate-800/50'
+                            ? 'bg-[#121826] border-emerald-500 ring-1 ring-emerald-500/40'
+                            : 'bg-[#0A0E1A]/80 border-slate-800 hover:bg-[#121826]/80'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
@@ -668,17 +750,17 @@ export const CustomerCRM: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-slate-800 bg-slate-900 flex items-center justify-end gap-2">
+            <div className="p-4 border-t border-slate-800 bg-[#121826] flex items-center justify-end gap-2 shrink-0">
               <button
                 onClick={() => setIsBatchModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors"
+                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleExecuteBatchAssign}
                 disabled={!targetTemplateId}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition-all hover:scale-105 disabled:opacity-50"
+                className="px-5 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50"
               >
                 <Check className="w-4 h-4" />
                 <span>Confirm Batch Assignment</span>
@@ -691,43 +773,65 @@ export const CustomerCRM: React.FC = () => {
 
       {/* New Customer Profile Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 flex items-center justify-center p-4">
-          <div className="glass-panel text-slate-100 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150 relative">
-            {/* Subtle brand gradient backdrop BEHIND the glass modal */}
-            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-600/15 via-slate-900/60 to-teal-600/15 pointer-events-none" />
-            <div className="p-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/50">
+        <div className="fixed inset-0 z-50 bg-[#0A0E1A]/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-[#161D2C] border border-slate-700/80 text-slate-100 rounded-2xl w-full max-w-md max-h-[88vh] flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150">
+            <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-[#121826] shrink-0">
               <h3 className="text-base font-bold text-white">New Customer Profile</h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateCustomer} className="p-6 space-y-3 text-xs">
+            <form onSubmit={handleCreateCustomer} className="p-5 sm:p-6 space-y-3 text-xs overflow-y-auto flex-1">
               <div>
                 <label className="text-slate-400 font-semibold block mb-1">Full Name *</label>
                 <input
                   type="text"
-                  required
                   value={name}
-                  onChange={e => setName(e.target.value)}
+                  onChange={e => {
+                    setName(e.target.value);
+                    if (errors.name) setErrors(prev => { const n = { ...prev }; delete n.name; return n; });
+                  }}
                   placeholder="e.g. Rahul Deshmukh"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white"
+                  className={`w-full bg-[#0A0E1A] border rounded-lg p-2.5 text-white transition-colors ${
+                    errors.name
+                      ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                      : 'border-slate-700/80 focus:border-emerald-500'
+                  }`}
                 />
+                {errors.name && (
+                  <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.name}</span>
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="text-slate-400 font-semibold block mb-1">Phone Number (+91) *</label>
                 <input
                   type="text"
-                  required
                   value={phone}
-                  onChange={e => setPhone(e.target.value)}
+                  onChange={e => {
+                    setPhone(e.target.value);
+                    if (errors.phone) setErrors(prev => { const n = { ...prev }; delete n.phone; return n; });
+                  }}
                   placeholder="+91 98211 22334"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white"
+                  className={`w-full bg-[#0A0E1A] border rounded-lg p-2.5 text-white transition-colors ${
+                    errors.phone
+                      ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                      : 'border-slate-700/80 focus:border-emerald-500'
+                  }`}
                 />
+                {errors.phone && (
+                  <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.phone}</span>
+                  </p>
+                )}
               </div>
 
               <div>
@@ -735,7 +839,7 @@ export const CustomerCRM: React.FC = () => {
                 <select
                   value={segment}
                   onChange={e => setSegment(e.target.value as any)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white"
+                  className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg p-2.5 text-white"
                 >
                   <option value="Regular Retail">Regular Retail</option>
                   <option value="VIP / Corporate">VIP / Corporate</option>
@@ -749,9 +853,23 @@ export const CustomerCRM: React.FC = () => {
                 <input
                   type="email"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white"
+                  onChange={e => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors(prev => { const n = { ...prev }; delete n.email; return n; });
+                  }}
+                  placeholder="e.g. rahul@example.com"
+                  className={`w-full bg-[#0A0E1A] border rounded-lg p-2.5 text-white transition-colors ${
+                    errors.email
+                      ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
+                      : 'border-slate-700/80 focus:border-emerald-500'
+                  }`}
                 />
+                {errors.email && (
+                  <p className="text-[10px] text-rose-400 mt-1 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.email}</span>
+                  </p>
+                )}
               </div>
 
               <div>
@@ -759,13 +877,13 @@ export const CustomerCRM: React.FC = () => {
                 <textarea
                   value={address}
                   onChange={e => setAddress(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white h-16"
+                  className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg p-2.5 text-white h-16"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg transition-colors"
+                className="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors active:scale-[0.99]"
               >
                 Create Profile & Issue Welcome Points
               </button>
@@ -776,18 +894,16 @@ export const CustomerCRM: React.FC = () => {
 
       {/* Pay Credit Modal */}
       {isPayCreditOpen && selectedCust && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 flex items-center justify-center p-4">
-          <div className="glass-panel text-slate-100 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
-            {/* Subtle brand gradient backdrop BEHIND the glass modal */}
-            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-600/15 via-slate-900/60 to-teal-600/15 pointer-events-none" />
-            <div className="p-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/50">
+        <div className="fixed inset-0 z-50 bg-[#0A0E1A]/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-[#161D2C] border border-slate-700/80 text-slate-100 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150">
+            <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-[#121826]">
               <h3 className="text-sm font-bold text-white">Receive Credit Payment</h3>
-              <button onClick={() => setIsPayCreditOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsPayCreditOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreditPaymentSubmit} className="p-6 space-y-4 text-xs">
+            <form onSubmit={handleCreditPaymentSubmit} className="p-5 sm:p-6 space-y-4 text-xs tabular-nums">
               <div>
                 <span className="text-slate-400">Current Credit Outstanding:</span>
                 <div className="text-lg font-black text-amber-400">₹{selectedCust.creditBalance}</div>
@@ -800,13 +916,13 @@ export const CustomerCRM: React.FC = () => {
                   required
                   value={creditPayAmount}
                   onChange={e => setCreditPayAmount(Number(e.target.value))}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white font-bold text-sm"
+                  className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg p-2.5 text-white font-bold text-sm focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs"
+                className="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors active:scale-[0.99]"
               >
                 Confirm Receipt & Update Credit Ledger
               </button>

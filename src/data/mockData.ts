@@ -1,6 +1,9 @@
 import {
   Store,
   Product,
+  Supplier,
+  RestockLog,
+  BusinessApplication,
   Wholesaler,
   WholesalerProduct,
   RetailerWholesalerConnection,
@@ -18,7 +21,9 @@ import {
 export const mockStores: Store[] = [
   {
     id: 'store-1',
-    name: 'Ellix Mart - Downtown Flagship',
+    clientId: 'client-001',
+    ownerUid: 'usr-client-01',
+    name: 'Ellix Mart - Downtown Flagship (Store A)',
     ownerName: 'Vikram Malhotra',
     phone: '+91 98765 43210',
     email: 'downtown@ellixmart.com',
@@ -35,8 +40,10 @@ export const mockStores: Store[] = [
   },
   {
     id: 'store-2',
-    name: 'Ellix Express - Westside',
-    ownerName: 'Ananya Sharma',
+    clientId: 'client-001',
+    ownerUid: 'usr-client-01',
+    name: 'Ellix Express - Westside (Store B)',
+    ownerName: 'Vikram Malhotra',
     phone: '+91 98123 45678',
     email: 'westside@ellixmart.com',
     address: '108 Hill Road, Bandra West',
@@ -48,6 +55,25 @@ export const mockStores: Store[] = [
     image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800',
     latitude: 19.06,
     longitude: 72.83,
+    isOnline: true
+  },
+  {
+    id: 'store-3',
+    clientId: 'client-001',
+    ownerUid: 'usr-client-01',
+    name: 'Ellix Hyper - Phoenix Mall (Store C)',
+    ownerName: 'Vikram Malhotra',
+    phone: '+91 98333 77889',
+    email: 'phoenix@ellixmart.com',
+    address: 'L2 Phoenix Palladium, Lower Parel',
+    city: 'Mumbai',
+    gstin: '27CCCCC2222C3Z7',
+    rating: 4.9,
+    reviewCount: 512,
+    timings: '10:00 AM - 11:00 PM',
+    image: 'https://images.unsplash.com/photo-1580913428706-c311e67898b3?auto=format&fit=crop&q=80&w=800',
+    latitude: 18.995,
+    longitude: 72.825,
     isOnline: true
   }
 ];
@@ -549,15 +575,143 @@ export const mockCustomerOrders: CustomerOrder[] = [
   }
 ];
 
+export const mockSuppliers: Supplier[] = [
+  {
+    id: 'sup-1',
+    storeId: 'store-1',
+    name: 'Maharashtra Agro & Dairy Ltd',
+    contactPerson: 'Sunil Patil',
+    phone: '+91 98200 11223',
+    email: 'agro.orders@mahaagro.in',
+    address: 'APMC Market Yard, Vashi, Navi Mumbai',
+    gstin: '27AABCM8821K1Z4',
+    categories: ['Dairy & Eggs', 'Grains & Pulses'],
+    rating: 4.8,
+    createdAt: '2026-01-10'
+  },
+  {
+    id: 'sup-2',
+    storeId: 'store-1',
+    name: 'Hindustan Fast Consumer Goods',
+    contactPerson: 'Rajesh Agarwal',
+    phone: '+91 98300 44556',
+    email: 'b2b@hfcg-distributors.com',
+    address: 'Warehouse Complex #4, Bhiwandi',
+    gstin: '27AABCH1092Q1Z9',
+    categories: ['Snacks & Beverages', 'Instant Food'],
+    rating: 4.6,
+    createdAt: '2026-02-15'
+  },
+  {
+    id: 'sup-3',
+    storeId: 'store-2',
+    name: 'Bandra Organic Farms Co.',
+    contactPerson: 'Priya Hegde',
+    phone: '+91 98400 77889',
+    email: 'priya@bandraorganic.com',
+    address: 'Linking Road, Bandra West, Mumbai',
+    gstin: '27AAECB4491J1ZT',
+    categories: ['Dairy & Eggs', 'Organic Staples'],
+    rating: 4.9,
+    createdAt: '2026-03-01'
+  }
+];
+
+export const mockRestockLogs: RestockLog[] = [
+  {
+    id: 'rst-log-01',
+    storeId: 'store-1',
+    productId: 'prod-101',
+    productName: 'Organic Whole Milk 1L',
+    quantityAdded: 50,
+    previousStock: 10,
+    newStock: 60,
+    date: '2026-08-04 10:30',
+    addedBy: 'Rahul Sharma',
+    addedById: 'emp-3',
+    supplierId: 'sup-1',
+    supplierName: 'Maharashtra Agro & Dairy Ltd',
+    notes: 'Morning fresh milk delivery verified and stocked'
+  },
+  {
+    id: 'rst-log-02',
+    storeId: 'store-1',
+    productId: 'prod-102',
+    productName: 'Premium Basmati Rice 5kg',
+    quantityAdded: 25,
+    previousStock: 8,
+    newStock: 33,
+    date: '2026-08-05 14:15',
+    addedBy: 'Rahul Sharma',
+    addedById: 'emp-3',
+    supplierId: 'sup-1',
+    supplierName: 'Maharashtra Agro & Dairy Ltd',
+    notes: 'Bulk sack restock received'
+  }
+];
+
+export const mockBusinessApplications: BusinessApplication[] = [
+  {
+    id: 'app-001',
+    businessName: 'Apex Electronics & Hardware',
+    ownerName: 'Manish Chawla',
+    email: 'manish@apexelectronics.in',
+    phone: '+91 98760 12345',
+    city: 'Pune',
+    gstin: '27AABCA9912K1Z8',
+    appliedAt: '2026-08-05 09:20',
+    status: 'pending_review',
+    assignedAdminId: 'admin-01',
+    assignedAdminName: 'Siddharth Admin',
+    selectedPlanId: 'plan-enterprise',
+    notes: 'Storefront with 2 branches in Shivaji Nagar, Pune.'
+  },
+  {
+    id: 'app-002',
+    businessName: 'Royal Sweets & Bakery',
+    ownerName: 'Deepak Purohit',
+    email: 'deepak@royalsweets.com',
+    phone: '+91 98111 55667',
+    city: 'Ahmedabad',
+    gstin: '24AAACD4421M1ZX',
+    appliedAt: '2026-08-05 11:45',
+    status: 'pending_review',
+    assignedAdminId: 'admin-01',
+    assignedAdminName: 'Siddharth Admin',
+    selectedPlanId: 'plan-growth',
+    notes: 'Requires dual billing counter for festive season peak.'
+  },
+  {
+    id: 'app-003',
+    businessName: 'Heritage Textiles & Apparels',
+    ownerName: 'Sunita Mehra',
+    email: 'sunita@heritagetextiles.in',
+    phone: '+91 98222 88990',
+    city: 'Jaipur',
+    gstin: '08AABCH7712N1ZY',
+    appliedAt: '2026-08-04 16:10',
+    status: 'approved',
+    assignedAdminId: 'admin-01',
+    assignedAdminName: 'Siddharth Admin',
+    reviewedAt: '2026-08-05 08:30',
+    reviewedBy: 'Siddharth Admin',
+    selectedPlanId: 'plan-growth',
+    notes: 'Approved after verification of GSTIN and trade license.'
+  }
+];
+
 export const mockEmployees: Employee[] = [
   {
     id: 'emp-1',
     storeId: 'store-1',
+    clientId: 'client-001',
+    assignedStoreIds: ['store-1', 'store-2', 'store-3'],
     name: 'Vikram Malhotra',
     role: 'owner',
-    email: 'vikram@ellixmart.com',
+    email: 'client@ellixconnect.com',
     phone: '+91 98765 43210',
     permissions: {
+      canApplyDiscount: true,
       inventoryEdit: true,
       reports: true,
       employeeManagement: true,
@@ -568,11 +722,14 @@ export const mockEmployees: Employee[] = [
   {
     id: 'emp-2',
     storeId: 'store-1',
+    clientId: 'client-001',
+    assignedStoreIds: ['store-1', 'store-2'],
     name: 'Siddharth Rao',
     role: 'manager',
     email: 'siddharth@ellixmart.com',
     phone: '+91 98111 22233',
     permissions: {
+      canApplyDiscount: true,
       inventoryEdit: true,
       reports: true,
       employeeManagement: false,
@@ -583,30 +740,36 @@ export const mockEmployees: Employee[] = [
   {
     id: 'emp-3',
     storeId: 'store-1',
-    name: 'Kavita Vernekar',
-    role: 'inventory_staff',
-    email: 'kavita@ellixmart.com',
+    clientId: 'client-001',
+    assignedStoreIds: ['store-1', 'store-2'],
+    name: 'Rahul Sharma',
+    role: 'crew',
+    email: 'crew@ellixconnect.com',
     phone: '+91 98222 33344',
     permissions: {
+      canApplyDiscount: false, // Strict Rule: Crew cannot apply or approve discounts
       inventoryEdit: true,
       reports: false,
       employeeManagement: false,
-      restockOrders: false
+      restockOrders: true
     },
     status: 'active'
   },
   {
     id: 'emp-4',
-    storeId: 'store-1',
+    storeId: 'store-2',
+    clientId: 'client-001',
+    assignedStoreIds: ['store-2'],
     name: 'Ramesh Patel',
-    role: 'inventory_staff',
+    role: 'crew',
     email: 'ramesh@ellixmart.com',
     phone: '+91 98333 44455',
     permissions: {
+      canApplyDiscount: false, // Strict Rule: Crew cannot apply or approve discounts
       inventoryEdit: true,
       reports: false,
       employeeManagement: false,
-      restockOrders: false
+      restockOrders: true
     },
     status: 'active'
   }
@@ -616,7 +779,7 @@ export const mockNotifications: AppNotification[] = [
   {
     id: 'notif-1',
     title: 'Low Stock Alert: Basmati Rice',
-    message: 'Stock dropped to 8 units (Threshold: 12). Restock suggestion sent to Metro Mega Distribution.',
+    message: 'Stock dropped to 8 units (Threshold: 12). Restock needed.',
     category: 'low_stock',
     timestamp: '10 mins ago',
     read: false,
@@ -625,7 +788,7 @@ export const mockNotifications: AppNotification[] = [
   {
     id: 'notif-2',
     title: 'New Quotation Received',
-    message: 'Metro Mega Distribution prepared quotation for 20x Basmati Rice @ ₹390/unit.',
+    message: 'Maharashtra Agro & Dairy prepared quotation for 20x Basmati Rice @ ₹390/unit.',
     category: 'restock',
     timestamp: '25 mins ago',
     read: false,
@@ -687,13 +850,18 @@ export const mockAuditLogs: AuditLog[] = [
 export const mockSubscriptions: SubscriptionPlan[] = [
   {
     id: 'plan-enterprise',
-    name: 'Ellix Suite - Enterprise Growth',
-    priceMonthly: 3999,
-    priceYearly: 39990,
-    modulesIncluded: ['Billing POS', 'Unlimited Inventory', 'Wholesaler Direct Sync', 'Customer Storefront', 'Advanced Analytics', 'Gemini AI Insights'],
-    activeStoresCount: 2,
+    name: 'Ellix Suite - Multi-Store Growth',
+    tier: 'enterprise',
+    priceMonthly: 2999,
+    priceYearly: 29990,
+    monthlyCharge: 2999,
+    modulesIncluded: ['Multi-Store Isolation', 'Billing POS', 'Inventory Management', 'Supplier Management', 'Sales Reports', 'Crew Access Control'],
+    activeStoresCount: 3,
+    maxStores: 5,
+    maxProducts: 10000,
     status: 'active',
-    renewalDate: '2027-01-01'
+    renewalDate: '2026-10-01',
+    gracePeriodDays: 7
   }
 ];
 
