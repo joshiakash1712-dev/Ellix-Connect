@@ -13,8 +13,9 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onOpenGetStarted }) => {
         {/* Container with High-Contrast Slate Canvas */}
         <div className="relative rounded-3xl bg-slate-950 text-white p-8 sm:p-12 lg:p-16 overflow-hidden shadow-2xl border border-slate-900 dark:border-slate-800">
           
-          {/* Subtle Background Structural Grid */}
+          {/* Subtle Background Structural Grid & Ambient Emerald Glow */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#334155_1px,transparent_1px),linear-gradient(to_bottom,#334155_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
+          <div className="hero-ambient-orb absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[260px] rounded-full bg-emerald-500/15 blur-3xl pointer-events-none" />
 
           <div className="relative max-w-3xl mx-auto text-center space-y-6">
             
@@ -34,17 +35,20 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onOpenGetStarted }) => {
               Join progressive store owners, supermarkets, and wholesalers who have retired complicated legacy systems for a calm, connected business platform.
             </p>
 
-            {/* Static CTA Button */}
+            {/* Primary CTA Button with Magnetic Desktop Interaction */}
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 id="btn-final-cta-getstarted"
                 type="button"
                 data-cursor="hover"
+                data-magnetic="true"
                 onClick={onOpenGetStarted}
-                className="website-btn-glow w-full sm:w-auto px-8 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-base font-bold shadow-lg hover:shadow-xl hover:shadow-emerald-500/25 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                className="website-btn-glow w-full sm:w-auto px-8 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-base font-bold shadow-lg hover:shadow-xl hover:shadow-emerald-500/25 flex items-center justify-center gap-2 group cursor-pointer"
               >
-                <span>Get Started</span>
-                <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
+                <span data-magnetic-inner className="flex items-center gap-2">
+                  <span>Get Started</span>
+                  <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform duration-150" />
+                </span>
               </button>
             </div>
 

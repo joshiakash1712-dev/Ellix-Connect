@@ -155,7 +155,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
     <nav
       id="native-android-bottom-navigation"
       aria-label="Mobile Bottom Navigation"
-      className="fixed bottom-0 left-0 right-0 z-40 glass-panel border-t border-slate-800 md:hidden h-16 px-1 shadow-2xl flex items-center justify-around select-none safe-area-bottom overflow-hidden"
+      className="fixed bottom-0 left-0 right-0 z-40 glass-panel border-t border-slate-800 md:hidden min-h-[68px] px-1.5 py-1 shadow-2xl flex items-center justify-around select-none safe-area-bottom overflow-hidden"
     >
       {/* Subtle brand backdrop behind the glass mobile bar */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-emerald-600/10 via-slate-900/60 to-teal-600/10 pointer-events-none" />
@@ -178,13 +178,13 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
                 onSelectView(tab.id);
               }
             }}
-            className="flex-1 h-full min-h-[48px] flex flex-col items-center justify-center py-1 transition-all active:scale-95 group focus:outline-none"
+            className="flex-1 h-full min-w-[48px] min-h-[48px] p-1.5 flex flex-col items-center justify-center transition-all active:scale-95 group focus:outline-none touch-manipulation"
             aria-current={isActive ? 'page' : undefined}
             title={tab.label}
           >
-            {/* Material 3 Active Indicator Pill */}
+            {/* Material 3 Active Indicator Pill with enlarged touch target padding */}
             <div
-              className={`relative flex items-center justify-center px-3 sm:px-4 py-1 rounded-full transition-all duration-200 ${
+              className={`relative min-w-[48px] min-h-[32px] flex items-center justify-center px-3.5 sm:px-4 py-1.5 rounded-full transition-all duration-200 ${
                 isActive
                   ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/35 shadow-sm shadow-emerald-500/10 scale-105'
                   : 'text-slate-400 group-hover:text-slate-200'
@@ -208,7 +208,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
             {/* Tab Label - Short, robust and unclipped on 360px+ screens */}
             <span
-              className={`text-[10px] mt-0.5 tracking-tight truncate max-w-[64px] text-center transition-colors ${
+              className={`text-[10px] mt-0.5 tracking-tight truncate max-w-[68px] text-center transition-colors ${
                 isActive ? 'font-bold text-emerald-400' : 'font-medium text-slate-400 group-hover:text-slate-300'
               }`}
             >

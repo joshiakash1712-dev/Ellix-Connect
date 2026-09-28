@@ -5,13 +5,15 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import { initializeApp, getApps } from 'firebase-admin/app';
-import { getFirestore, Firestore, CollectionReference } from 'firebase-admin/firestore';
-import { getAuth, Auth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
+import type { Firestore, CollectionReference } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
+import type { Auth } from 'firebase-admin/auth';
 
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json({
   verify: (req: any, _res, buf) => {
@@ -26,15 +28,17 @@ let adminDb: Firestore | null = null;
 let adminAuth: Auth | null = null;
 
 try {
-  const projectId = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || 'ai-studio-ellixconnect-badaa1a3-33f3-40fb-a0e7-a5f5c05ebc53';
-  if (!getApps().length) {
-    initializeApp({
-      projectId
-    });
-  }
-  adminDb = getFirestore();
-  adminAuth = getAuth();
-  console.log(`Firebase Admin SDK initialized successfully for project ${projectId}`);
+  const projectId = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || 'nice-unity-1mbw7';
+  const firestoreDatabaseId =
+    process.env.FIRESTORE_DATABASE_ID || 'ai-studio-ellixconnect-badaa1a3-33f3-40fb-a0e7-a5f5c05ebc53';
+  const adminApp = getApps().length
+    ? getApps()[0]
+    : initializeApp({
+        projectId
+      });
+  adminDb = getFirestore(adminApp, firestoreDatabaseId);
+  adminAuth = getAuth(adminApp);
+  console.log(`Firebase Admin SDK initialized successfully for project ${projectId} (db: ${firestoreDatabaseId})`);
 } catch (e: any) {
   console.warn('Firebase Admin SDK initialization notice:', e?.message || e);
 }
@@ -973,9 +977,13 @@ app.use(express.static(path.resolve(process.cwd(), 'public'), {
 async function startServer() {
   const distPath = path.resolve(process.cwd(), 'dist');
   const hasDist = fs.existsSync(path.join(distPath, 'index.html'));
-  const isCjsBundle = typeof __filename !== 'undefined' && (__filename.endsWith('.cjs') || __filename.includes('dist'));
-  const isExplicitDev = process.env.NODE_ENV === 'development';
-  const isProduction = process.env.NODE_ENV === 'production' || isCjsBundle || (hasDist && !isExplicitDev);
+  const lifecycle = process.env.npm_lifecycle_event;
+  const isExplicitDev = process.env.NODE_ENV === 'development' || lifecycle === 'dev';
+  const isProduction =
+    process.env.NODE_ENV === 'production' ||
+    Boolean(process.env.K_SERVICE) ||
+    lifecycle === 'start' ||
+    (hasDist && !isExplicitDev);
 
   // Fallback 404 handler for unmatched API routes (must be mounted before SPA catch-all)
   app.use('/api', (req, res) => {

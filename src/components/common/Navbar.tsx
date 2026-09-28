@@ -37,6 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigateToWebsite
 }) => {
   const {
+    isDemoMode,
     activeModule,
     setActiveModule,
     activeRole,
@@ -56,12 +57,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   } = useStore();
 
   const {
-    currentUser: authUser,
-    userProfile,
+    currentUser: rawAuthUser,
+    userProfile: rawUserProfile,
     openAuthModal,
     setIsSyncHubOpen,
     logout
   } = useAuth();
+
+  const authUser = isDemoMode ? null : rawAuthUser;
+  const userProfile = isDemoMode ? null : rawUserProfile;
 
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [showStoreDropdown, setShowStoreDropdown] = useState(false);
@@ -88,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const isCrew = activeRole === 'crew' || userProfile?.role === 'crew';
   const isClientOwner = !isCrew && (activeRole === 'client' || userProfile?.role === 'client');
-  const canShowDevRoleSwitcher = Boolean((import.meta as any).env?.DEV && (!authUser || userProfile?.role === 'super_admin'));
+  const canShowDevRoleSwitcher = Boolean(isDemoMode || ((import.meta as any).env?.DEV && (!authUser || userProfile?.role === 'super_admin')));
   const allowedStores = isCrew
     ? stores.filter(s => (storeUser?.assignedStoreIds || [activeStore.id]).includes(s.id))
     : stores;
@@ -285,17 +289,31 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
-            {/* Sign In Button (Unauthenticated state) */}
-            {!authUser && (
-              <button
-                id="btn-nav-sign-in"
-                onClick={() => openAuthModal('login')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 shrink-0"
-                title="Sign In with Google, Phone OTP or Email"
-              >
-                <LogIn className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Sign In</span>
-              </button>
+            {/* Exit Demo Button (in Demo Mode) or Sign In Button (Unauthenticated real app state) */}
+            {isDemoMode ? (
+              onNavigateToWebsite && (
+                <button
+                  id="btn-nav-exit-demo"
+                  onClick={onNavigateToWebsite}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all shadow-md shadow-rose-600/25 border border-rose-400/30 shrink-0"
+                  title="Exit App Demo and return to Website"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Exit Demo</span>
+                </button>
+              )
+            ) : (
+              !authUser && (
+                <button
+                  id="btn-nav-sign-in"
+                  onClick={() => openAuthModal('login')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 shrink-0"
+                  title="Sign In with Google, Phone OTP or Email"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Sign In</span>
+                </button>
+              )
             )}
 
             {/* Role Switcher & Profile Dropdown */}
@@ -314,16 +332,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="w-7 h-7 rounded-md bg-emerald-600/30 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-xs shrink-0">
                     {authUser?.displayName
                       ? authUser.displayName.slice(0, 2).toUpperCase()
-                      : activeRole.slice(0, 2).toUpperCase()}
+                      : isDemoMode && storeUser?.name
+                        ? storeUser.name.slice(0, 2).toUpperCase()
+                        : activeRole.slice(0, 2).toUpperCase()}
                   </div>
                 )}
                 <div className="hidden sm:block text-left max-w-[100px] md:max-w-[130px]">
                   <div className="text-xs font-semibold capitalize text-slate-200 leading-none flex items-center gap-1 truncate">
-                    <span className="truncate">{authUser?.displayName || activeRole.replace('_', ' ')}</span>
+                    <span className="truncate">
+                      {authUser?.displayName || (isDemoMode ? storeUser?.name : activeRole.replace('_', ' '))}
+                    </span>
                     {authUser && <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />}
                   </div>
                   <div className="text-[10px] text-slate-400 leading-tight truncate mt-0.5">
-                    {authUser ? 'Verified Account' : (canShowDevRoleSwitcher ? 'Dev Role & Menu' : 'Account & Menu')}
+                    {authUser ? 'Verified Account' : isDemoMode ? 'Demo Workspace' : (canShowDevRoleSwitcher ? 'Dev Role & Menu' : 'Account & Menu')}
                   </div>
                 </div>
                 <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
@@ -363,6 +385,35 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <span>Security & Linked Credentials</span>
                       </button>
                     </div>
+                  ) : isDemoMode ? (
+                    <div className="p-2.5 mb-2 rounded-lg bg-[#121826] border border-emerald-500/30">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                          Interactive App Demo
+                        </span>
+                        <span className="text-[10px] font-mono text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded uppercase">
+                          Sample Data
+                        </span>
+                      </div>
+                      <div className="mt-1 text-xs text-white font-semibold truncate">
+                        {storeUser?.name || 'Vikram Malhotra (Demo)'}
+                      </div>
+                      <div className="text-[11px] text-slate-400 truncate">
+                        No login required · Isolated demo data
+                      </div>
+                      {onNavigateToWebsite && (
+                        <button
+                          onClick={() => {
+                            setShowRoleDropdown(false);
+                            onNavigateToWebsite();
+                          }}
+                          className="w-full mt-2 py-1.5 px-2 rounded bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors shadow"
+                        >
+                          <LogOut className="w-3.5 h-3.5" />
+                          <span>Exit Demo</span>
+                        </button>
+                      )}
+                    </div>
                   ) : (
                     <div className="p-2.5 mb-2 rounded-lg bg-slate-900/80 border border-slate-700/60">
                       <div className="text-xs font-semibold text-slate-300 mb-1">
@@ -384,7 +435,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   {canShowDevRoleSwitcher && (
                     <>
                       <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 px-2 py-1">
-                        Select Active Role (Dev Only)
+                        {isDemoMode ? 'Switch Demo Role Perspective' : 'Select Active Role (Dev Only)'}
                       </div>
                       <div className="space-y-1 max-h-56 overflow-y-auto">
                         {roles.map(r => (

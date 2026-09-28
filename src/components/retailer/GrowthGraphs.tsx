@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../../context/StoreContext';
+import { ScrollChartReveal } from '../common/ScrollChartReveal';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -430,8 +431,8 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
               </div>
             </div>
 
-            {/* Recharts Area / Composed Chart Canvas */}
-            <div className="h-72 w-full pt-2">
+            {/* Recharts Area / Composed Chart Canvas — Scroll-Triggered Reveal (Section 17) */}
+            <ScrollChartReveal className="h-72 w-full pt-2" triggerKey={`rev-${period}`}>
               <ResponsiveContainer width="100%" height="100%">
                 {period === 'yoy' ? (
                   <BarChart data={revenueGrowthData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
@@ -446,9 +447,9 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
                       ]}
                     />
                     <Legend />
-                    <Bar dataKey="previousYear" fill="#475569" radius={[4, 4, 0, 0]} name="2025 Revenue" />
-                    <Bar dataKey="currentYear" fill="#10b981" radius={[4, 4, 0, 0]} name="2026 Revenue" />
-                    <Bar dataKey="profit" fill="#14b8a6" radius={[4, 4, 0, 0]} name="Gross Profit" />
+                    <Bar dataKey="previousYear" fill="#475569" radius={[4, 4, 0, 0]} name="2025 Revenue" isAnimationActive={false} />
+                    <Bar dataKey="currentYear" fill="#10b981" radius={[4, 4, 0, 0]} name="2026 Revenue" isAnimationActive={false} />
+                    <Bar dataKey="profit" fill="#14b8a6" radius={[4, 4, 0, 0]} name="Gross Profit" isAnimationActive={false} />
                   </BarChart>
                 ) : (
                   <AreaChart data={revenueGrowthData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
@@ -472,13 +473,13 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
                         name === 'revenue' ? 'Gross Revenue' : name === 'profit' ? 'Gross Profit' : 'Target SLA'
                       ]}
                     />
-                    <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2.5} fill="url(#revenueGrad)" name="Revenue" />
-                    <Area type="monotone" dataKey="profit" stroke="#14b8a6" strokeWidth={2} fill="url(#profitGrad)" name="Profit" />
-                    <Line type="monotone" dataKey="target" stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Target" />
+                    <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2.5} fill="url(#revenueGrad)" name="Revenue" isAnimationActive={false} />
+                    <Area type="monotone" dataKey="profit" stroke="#14b8a6" strokeWidth={2} fill="url(#profitGrad)" name="Profit" isAnimationActive={false} />
+                    <Line type="monotone" dataKey="target" stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Target" isAnimationActive={false} />
                   </AreaChart>
                 )}
               </ResponsiveContainer>
-            </div>
+            </ScrollChartReveal>
 
             {/* Quick Micro-Table */}
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 pt-2 border-t border-slate-800 text-center">
@@ -527,7 +528,7 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
               </div>
             </div>
 
-            <div className="h-72 w-full pt-2">
+            <ScrollChartReveal className="h-72 w-full pt-2" triggerKey={`cust-${period}`}>
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={customerGrowthData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
@@ -537,12 +538,12 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
                   <Tooltip
                     contentStyle={{ backgroundColor: '#090d16', borderColor: '#334155', borderRadius: '14px', fontSize: '12px' }}
                   />
-                  <Bar yAxisId="left" dataKey="newCustomers" fill="#3b82f6" radius={[4, 4, 0, 0]} name="New Signups" />
-                  <Bar yAxisId="left" dataKey="repeatOrders" fill="#6366f1" radius={[4, 4, 0, 0]} name="Repeat Orders" />
-                  <Line yAxisId="right" type="monotone" dataKey="retentionRate" stroke="#10b981" strokeWidth={2.5} name="Retention Rate (%)" />
+                  <Bar yAxisId="left" dataKey="newCustomers" fill="#3b82f6" radius={[4, 4, 0, 0]} name="New Signups" isAnimationActive={false} />
+                  <Bar yAxisId="left" dataKey="repeatOrders" fill="#6366f1" radius={[4, 4, 0, 0]} name="Repeat Orders" isAnimationActive={false} />
+                  <Line yAxisId="right" type="monotone" dataKey="retentionRate" stroke="#10b981" strokeWidth={2.5} name="Retention Rate (%)" isAnimationActive={false} />
                 </ComposedChart>
               </ResponsiveContainer>
-            </div>
+            </ScrollChartReveal>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-800 text-xs">
               <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 flex justify-between items-center">
@@ -591,7 +592,7 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
               </div>
             </div>
 
-            <div className="h-72 w-full pt-2">
+            <ScrollChartReveal className="h-72 w-full pt-2" triggerKey={`aov-${period}`}>
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={aovGrowthData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
@@ -605,12 +606,12 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
                       name
                     ]}
                   />
-                  <Bar yAxisId="left" dataKey="aov" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="AOV" />
-                  <Line yAxisId="left" type="monotone" dataKey="targetAOV" stroke="#f59e0b" strokeWidth={2} strokeDasharray="3 3" name="Target AOV" />
-                  <Line yAxisId="right" type="monotone" dataKey="basketUnits" stroke="#14b8a6" strokeWidth={2.5} name="Units Per Basket" />
+                  <Bar yAxisId="left" dataKey="aov" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="AOV" isAnimationActive={false} />
+                  <Line yAxisId="left" type="monotone" dataKey="targetAOV" stroke="#f59e0b" strokeWidth={2} strokeDasharray="3 3" name="Target AOV" isAnimationActive={false} />
+                  <Line yAxisId="right" type="monotone" dataKey="basketUnits" stroke="#14b8a6" strokeWidth={2.5} name="Units Per Basket" isAnimationActive={false} />
                 </ComposedChart>
               </ResponsiveContainer>
-            </div>
+            </ScrollChartReveal>
           </div>
         )}
 
@@ -629,7 +630,11 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
               </div>
             </div>
 
-            <div className="h-72 w-full pt-2">
+            <ScrollChartReveal
+              className="h-72 w-full pt-2"
+              triggerKey={`cat-${period}`}
+              barDirection="vertical"
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={categoryGrowthData} layout="vertical" margin={{ top: 10, right: 20, left: 40, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
@@ -640,11 +645,11 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
                     formatter={(val: any, name: any) => [`${val}%`, name === 'revenueGrowth' ? 'Revenue Growth' : 'Volume Growth']}
                   />
                   <Legend />
-                  <Bar dataKey="revenueGrowth" fill="#10b981" radius={[0, 4, 4, 0]} name="Revenue Growth (%)" />
-                  <Bar dataKey="volumeGrowth" fill="#3b82f6" radius={[0, 4, 4, 0]} name="Volume Growth (%)" />
+                  <Bar dataKey="revenueGrowth" fill="#10b981" radius={[0, 4, 4, 0]} name="Revenue Growth (%)" isAnimationActive={false} />
+                  <Bar dataKey="volumeGrowth" fill="#3b82f6" radius={[0, 4, 4, 0]} name="Volume Growth (%)" isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
-            </div>
+            </ScrollChartReveal>
           </div>
         )}
 
@@ -663,7 +668,7 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
               </div>
             </div>
 
-            <div className="h-72 w-full pt-2">
+            <ScrollChartReveal className="h-72 w-full pt-2" triggerKey={`outlet-${period}`}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={multiStoreGrowthData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
@@ -677,12 +682,12 @@ export const GrowthGraphs: React.FC<GrowthGraphsProps> = ({
                     ]}
                   />
                   <Legend />
-                  <Line type="monotone" dataKey="store1" stroke="#10b981" strokeWidth={2.5} name="Connaught Place Store" />
-                  <Line type="monotone" dataKey="store2" stroke="#3b82f6" strokeWidth={2} name="South Extension Store" />
-                  <Line type="monotone" dataKey="store3" stroke="#f59e0b" strokeWidth={2} name="Indiranagar Store" />
+                  <Line type="monotone" dataKey="store1" stroke="#10b981" strokeWidth={2.5} name="Connaught Place Store" isAnimationActive={false} />
+                  <Line type="monotone" dataKey="store2" stroke="#3b82f6" strokeWidth={2} name="South Extension Store" isAnimationActive={false} />
+                  <Line type="monotone" dataKey="store3" stroke="#f59e0b" strokeWidth={2} name="Indiranagar Store" isAnimationActive={false} />
                 </LineChart>
               </ResponsiveContainer>
-            </div>
+            </ScrollChartReveal>
           </div>
         )}
 

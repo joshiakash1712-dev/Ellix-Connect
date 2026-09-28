@@ -47,6 +47,14 @@
   --ellix-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.22);
   --ellix-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.32);
   --ellix-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.48);
+
+  /* Motion & Transition Tokens */
+  --ellix-transition-duration: 0.3s;
+  --ellix-transition-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ellix-motion-fast: 150ms;
+  --ellix-motion-medium: 320ms;
+  --ellix-motion-slow: 700ms;
+  --ellix-motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dark,
@@ -118,7 +126,10 @@ html.light .glass-panel {
 
 /* Interactive hover enhancement for clickable cards & buttons */
 .glass-panel-interactive {
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  transition:
+    transform var(--ellix-transition-duration) var(--ellix-transition-ease),
+    box-shadow var(--ellix-transition-duration) var(--ellix-transition-ease),
+    border-color var(--ellix-transition-duration) var(--ellix-transition-ease);
 }
 
 .glass-panel-interactive:hover {
@@ -168,14 +179,14 @@ html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
   overflow-x: hidden !important;
   position: relative;
 }
 
 #root {
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
   min-height: 100vh;
   overflow-x: hidden !important;
   display: flex;
@@ -186,6 +197,7 @@ html, body {
 html {
   transition: background-color 0.25s ease, color 0.25s ease;
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -212,54 +224,322 @@ html.light {
   /* Scope root marker for landing website only */
 }
 
-/* Optimize rendering for offscreen sections on website only */
-.website-root section:not(:first-of-type) {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 750px;
+/* Website Interactive Card Hover Transitions (Section 10 & 11) */
+.website-root .website-card-hover {
+  position: relative;
+  transition:
+    transform var(--ellix-motion-medium) var(--ellix-motion-ease),
+    box-shadow var(--ellix-motion-medium) var(--ellix-motion-ease),
+    border-color var(--ellix-motion-medium) var(--ellix-motion-ease),
+    background-color var(--ellix-motion-medium) var(--ellix-motion-ease);
 }
 
-/* Website Interactive Card Hover Transitions with GPU Compositing */
-.website-root .website-card-hover {
-  will-change: transform, box-shadow;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.24s ease, border-color 0.24s ease;
+.website-root .website-card-hover:hover,
+.website-root .website-card-hover:focus-visible {
+  will-change: transform;
+}
+
+.website-root .website-card-hover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--ellix-motion-medium) var(--ellix-motion-ease);
+  background: radial-gradient(
+    360px circle at var(--card-mouse-x, 50%) var(--card-mouse-y, 0%),
+    rgba(16, 185, 129, 0.07),
+    transparent 70%
+  );
+  z-index: 0;
+}
+
+.dark .website-root .website-card-hover::before {
+  background: radial-gradient(
+    360px circle at var(--card-mouse-x, 50%) var(--card-mouse-y, 0%),
+    rgba(16, 185, 129, 0.11),
+    transparent 70%
+  );
+}
+
+.website-root .website-card-hover > * {
+  position: relative;
+  z-index: 1;
 }
 
 .website-root .website-card-hover:hover {
-  transform: translateY(-3px) translateZ(0);
-  border-color: rgba(16, 185, 129, 0.45);
-  box-shadow: 0 16px 32px -8px rgba(16, 185, 129, 0.12), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+  border-color: rgba(16, 185, 129, 0.48);
+  box-shadow: 0 14px 30px -8px rgba(16, 185, 129, 0.14), 0 6px 16px -4px rgba(15, 23, 42, 0.06);
+}
+
+.website-root .website-card-hover:hover::before {
+  opacity: 1;
 }
 
 .dark .website-root .website-card-hover:hover {
-  box-shadow: 0 20px 40px -10px rgba(16, 185, 129, 0.16), 0 0 20px rgba(16, 185, 129, 0.08);
+  border-color: rgba(52, 211, 153, 0.45);
+  box-shadow: 0 18px 36px -10px rgba(16, 185, 129, 0.18), 0 0 22px rgba(16, 185, 129, 0.08);
 }
 
-/* Website Primary Action Button Glow & Micro-Lift */
+/* Feature Card Internal Icon & Supporting Content Micro-Interactions (Section 10 & 11) */
+.website-root .website-card-hover svg.lucide {
+  transition: transform var(--ellix-motion-medium) var(--ellix-motion-ease), color var(--ellix-motion-fast) var(--ellix-motion-ease), filter var(--ellix-motion-fast) var(--ellix-motion-ease);
+}
+
+.website-root .website-card-hover:hover .w-10.h-10 svg.lucide,
+.website-root .website-card-hover:hover .w-11.h-11 svg.lucide {
+  transform: translateY(-2.5px) scale(1.06);
+  filter: drop-shadow(0 2px 6px rgba(16, 185, 129, 0.28));
+}
+
+.website-root .website-card-hover:hover .w-10.h-10,
+.website-root .website-card-hover:hover .w-11.h-11 {
+  border-color: rgba(16, 185, 129, 0.45);
+  transition: border-color var(--ellix-motion-medium) var(--ellix-motion-ease), background-color var(--ellix-motion-medium) var(--ellix-motion-ease);
+}
+
+.website-root .website-card-hover h3 {
+  transition: transform var(--ellix-motion-medium) var(--ellix-motion-ease), color var(--ellix-motion-fast) var(--ellix-motion-ease);
+}
+
+.website-root .website-card-hover:hover h3 {
+  transform: translateX(1.5px);
+}
+
+/* Website Primary Action Button Glow, Micro-Lift, Press & Magnetic Physics (Section 6 & 7) */
 .website-root .website-btn-glow {
-  will-change: transform, box-shadow;
-  transform: translateZ(0);
+  transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0);
   backface-visibility: hidden;
-  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background-color 0.18s ease;
+  transition:
+    transform 160ms var(--ellix-motion-ease),
+    box-shadow 200ms var(--ellix-motion-ease),
+    background-color 160ms var(--ellix-motion-ease),
+    border-color 160ms var(--ellix-motion-ease),
+    filter 160ms var(--ellix-motion-ease);
+}
+
+.website-root .website-btn-glow:hover,
+.website-root .website-btn-glow:focus-visible {
+  will-change: transform;
+}
+
+.website-root .website-btn-glow > * {
+  transition: transform 160ms var(--ellix-motion-ease);
+  transform: translate3d(var(--mag-inner-x, 0px), var(--mag-inner-y, 0px), 0);
 }
 
 .website-root .website-btn-glow:hover {
-  transform: translateY(-1.5px) translateZ(0);
-  box-shadow: 0 10px 24px -4px rgba(16, 185, 129, 0.35);
+  transform: translate3d(var(--mag-x, 0px), calc(var(--mag-y, 0px) - 1.5px), 0);
+  filter: brightness(1.05);
+  box-shadow: 0 10px 24px -4px rgba(16, 185, 129, 0.32), 0 0 14px rgba(16, 185, 129, 0.16);
 }
 
 .website-root .website-btn-glow:active {
-  transform: translateY(0.5px) translateZ(0);
+  transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0) scale(0.978);
+  filter: brightness(0.98);
+  transition-duration: 100ms;
 }
 
-/* Website Interactive Tab & Nav Hover Glow */
+/* Website Interactive Tab & Nav Hover Glow with 0 -> 100% Emerald Indicator (Section 8) */
 .website-root .website-nav-hover {
-  transition: color 0.18s ease, transform 0.18s ease;
+  position: relative;
+  transition: color 160ms var(--ellix-motion-ease), background-color 180ms var(--ellix-motion-ease);
+}
+
+.website-root .website-nav-hover::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 14px;
+  right: 14px;
+  height: 1.5px;
+  border-radius: 9999px;
+  background-color: #10b981;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 240ms var(--ellix-motion-ease), opacity 180ms var(--ellix-motion-ease);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .website-root .website-nav-hover:hover {
   color: #10b981;
+}
+
+.website-root .website-nav-hover:hover::after {
+  transform: scaleX(1);
+  opacity: 0.75;
+}
+
+/* ScrollTrigger Active Section Ambient Accent */
+.website-root main > section {
+  transition: border-color 0.45s var(--ellix-motion-ease), background-color 0.3s ease;
+}
+
+.website-root main > section.ellix-section-inview {
+  border-color: rgba(16, 185, 129, 0.22);
+}
+
+/* Subtle Hero & Workflow Ambient Animations */
+@keyframes ellixAmbientDrift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(14px, -10px, 0) scale(1.04);
+  }
+}
+
+@keyframes ellixSignalTrace {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.ellix-ambient-drift {
+  animation: ellixAmbientDrift 14s ease-in-out infinite;
+}
+
+.ellix-signal-trace {
+  animation: ellixSignalTrace 3.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ellix-ambient-drift,
+  .ellix-signal-trace {
+    animation: none !important;
+  }
+  .website-root .website-card-hover:hover,
+  .website-root .website-btn-glow:hover {
+    transform: none !important;
+  }
+}
+
+/* ------------------------------------------------------------- */
+/* SECTION 17: SCROLL-TRIGGERED CHART REVEAL ANIMATIONS          */
+/* Bars grow from bottom to top; lines draw from left to right   */
+/* ------------------------------------------------------------- */
+.scroll-chart-reveal .recharts-bar-rectangle path,
+.scroll-chart-reveal .recharts-bar-rectangle rect {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(0);
+  opacity: 0;
+  will-change: transform, opacity;
+  transition:
+    transform 680ms var(--ellix-motion-ease),
+    opacity 320ms var(--ellix-motion-ease);
+}
+
+.scroll-chart-reveal[data-bar-direction="horizontal"] .recharts-bar-rectangle path,
+.scroll-chart-reveal[data-bar-direction="horizontal"] .recharts-bar-rectangle rect {
+  transform-origin: left bottom;
+  transform: scaleX(0) scaleY(0.4);
+}
+
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle path,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle rect {
+  transform: scaleY(1) scaleX(1);
+  opacity: 1;
+}
+
+/* Subtle left-to-right stagger across bar columns */
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(1) path,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(1) rect { transition-delay: 0ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(2) path,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(2) rect { transition-delay: 45ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(3) path,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(3) rect { transition-delay: 90ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(4) path,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(4) rect { transition-delay: 135ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(5) path,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(5) rect { transition-delay: 180ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(6) path,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(6) rect { transition-delay: 225ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(7) path,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(7) rect { transition-delay: 270ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(8) path,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(8) rect { transition-delay: 315ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(n+9) path,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-bar-rectangle:nth-child(n+9) rect { transition-delay: 360ms; }
+
+/* Lines & Area Curves Draw Smoothly from Left to Right */
+.scroll-chart-reveal .recharts-line,
+.scroll-chart-reveal .recharts-area {
+  clip-path: inset(0 100% 0 0);
+  opacity: 0.25;
+  will-change: clip-path, opacity;
+  transition:
+    clip-path 840ms var(--ellix-motion-ease) 60ms,
+    opacity 420ms var(--ellix-motion-ease) 60ms;
+}
+
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-line,
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-area {
+  clip-path: inset(0 0% 0 0);
+  opacity: 1;
+}
+
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-line:nth-of-type(2),
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-area:nth-of-type(2) {
+  transition-delay: 130ms;
+}
+
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-line:nth-of-type(3),
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-area:nth-of-type(3) {
+  transition-delay: 200ms;
+}
+
+/* Pie & Donut Segments Smooth Reveal */
+.scroll-chart-reveal .recharts-pie-sector path {
+  transform-box: fill-box;
+  transform-origin: center center;
+  transform: scale(0.84);
+  opacity: 0;
+  will-change: transform, opacity;
+  transition:
+    transform 640ms var(--ellix-motion-ease),
+    opacity 360ms var(--ellix-motion-ease);
+}
+
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-pie-sector path {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-pie-sector:nth-child(1) path { transition-delay: 0ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-pie-sector:nth-child(2) path { transition-delay: 55ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-pie-sector:nth-child(3) path { transition-delay: 110ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-pie-sector:nth-child(4) path { transition-delay: 165ms; }
+.scroll-chart-reveal[data-chart-revealed="true"] .recharts-pie-sector:nth-child(n+5) path { transition-delay: 220ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-chart-reveal .recharts-bar-rectangle path,
+  .scroll-chart-reveal .recharts-bar-rectangle rect,
+  .scroll-chart-reveal .recharts-pie-sector path {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+  .scroll-chart-reveal .recharts-line,
+  .scroll-chart-reveal .recharts-area {
+    clip-path: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
 }
 
 /* Skeleton Screens Shimmer Effect */

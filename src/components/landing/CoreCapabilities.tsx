@@ -1,4 +1,4 @@
-import React, { useState, useRef, useId } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Receipt,
   Boxes,
@@ -408,6 +408,13 @@ export const CoreCapabilities: React.FC = () => {
   const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+    };
+  }, []);
+
   const activeCap = capabilities.find((c) => c.id === activeId) || capabilities[0];
   const ActiveIcon = activeCap.icon;
 
@@ -481,13 +488,13 @@ export const CoreCapabilities: React.FC = () => {
         {/* DESKTOP EXPERIENCE (lg: screens and wider): MORPHING WORKSPACE */}
         {/* ============================================================ */}
         <div
-          className="hidden lg:block relative min-h-[580px]"
+          className="hidden lg:grid lg:grid-cols-1 items-stretch relative box-border"
           onMouseEnter={handleSectionMouseEnter}
           onMouseLeave={handleSectionMouseLeave}
         >
           {/* Layer 1: Background 8-Card Grid */}
           <div
-            className={`grid grid-cols-4 gap-4 transition-all duration-200 ease-out will-change-transform ${
+            className={`col-start-1 row-start-1 w-full h-full grid grid-cols-4 gap-4 min-h-[580px] items-stretch transition-all duration-200 ease-out will-change-transform ${
               isHovered
                 ? 'opacity-20 scale-[0.99] pointer-events-auto'
                 : 'opacity-100 scale-100'
@@ -512,10 +519,16 @@ export const CoreCapabilities: React.FC = () => {
                   <div>
                     {/* Top Bar: Icon + Badge */}
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-colors">
-                        <Icon className="w-5 h-5" />
+                      <div
+                        data-icon-box
+                        className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200"
+                      >
+                        <Icon className="w-5 h-5 transition-transform duration-200" />
                       </div>
-                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60">
+                      <span
+                        data-card-badge
+                        className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
+                      >
                         {cap.badge}
                       </span>
                     </div>
@@ -535,7 +548,10 @@ export const CoreCapabilities: React.FC = () => {
                   </div>
 
                   {/* Checklist highlights */}
-                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-1 text-[11px] text-slate-500 dark:text-slate-400">
+                  <div
+                    data-card-support
+                    className="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-1 text-[11px] text-slate-500 dark:text-slate-400 transition-transform duration-200"
+                  >
                     {cap.checklist.slice(0, 2).map((item, idx) => (
                       <div key={idx} className="flex items-center gap-1.5 truncate">
                         <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
@@ -558,7 +574,7 @@ export const CoreCapabilities: React.FC = () => {
                     ? { opacity: 0 }
                     : {
                         opacity: 0,
-                        scale: 0.96,
+                        scale: 0.97,
                         transformOrigin: getOrigin(originIndex)
                       }
                 }
@@ -576,15 +592,15 @@ export const CoreCapabilities: React.FC = () => {
                     ? { opacity: 0 }
                     : {
                         opacity: 0,
-                        scale: 0.96,
+                        scale: 0.97,
                         transformOrigin: getOrigin(originIndex)
                       }
                 }
                 transition={{
-                  duration: 0.24,
+                  duration: 0.32,
                   ease: [0.16, 1, 0.3, 1]
                 }}
-                className="absolute inset-0 z-20 p-6 sm:p-8 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 flex flex-col justify-between"
+                className="col-start-1 row-start-1 z-20 w-full h-full min-h-[580px] box-border overflow-hidden p-6 sm:p-8 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 flex flex-col justify-between gap-5"
               >
                 {/* Top Interactive Capability Switcher Ribbon */}
                 <div>
@@ -726,8 +742,8 @@ export const CoreCapabilities: React.FC = () => {
         {/* ============================================================ */}
         {/* MOBILE & TABLET EXPERIENCE (< lg screens): CLEAN & ACCESSIBLE */}
         {/* ============================================================ */}
-        <div className="block lg:hidden space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="block lg:hidden space-y-4">
+          <div className="flex sm:grid sm:grid-cols-2 gap-3 overflow-x-auto no-scrollbar pb-2 snap-x snap-mandatory">
             {capabilities.map((cap) => {
               const Icon = cap.icon;
               const isSelected = cap.id === activeId;
@@ -739,36 +755,36 @@ export const CoreCapabilities: React.FC = () => {
                   type="button"
                   onClick={() => setActiveId(cap.id)}
                   aria-pressed={isSelected}
-                  className={`p-5 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
+                  className={`snap-start shrink-0 w-[250px] sm:w-auto p-4 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
                     isSelected
                       ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/40 shadow-md text-slate-900 dark:text-white'
                       : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white'
                   }`}
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                    <div className="flex items-center justify-between mb-2.5">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                         isSelected ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                       }`}>
-                        <Icon className="w-5 h-5" />
+                        <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
                         {cap.badge}
                       </span>
                     </div>
 
-                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">
+                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-0.5">
                       {cap.category}
                     </div>
-                    <h3 className="text-base font-bold mb-1.5">
+                    <h3 className="text-sm sm:text-base font-bold mb-1">
                       {cap.title}
                     </h3>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
                       {cap.description}
                     </p>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                     <span>{isSelected ? 'Viewing details ↓' : 'Tap to preview'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
@@ -778,7 +794,7 @@ export const CoreCapabilities: React.FC = () => {
           </div>
 
           {/* Mobile Detail Panel */}
-          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
+          <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
               <ActiveIcon className="w-3.5 h-3.5" />
               <span>{activeCap.category}</span>

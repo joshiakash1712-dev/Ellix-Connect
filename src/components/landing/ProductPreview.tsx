@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   LayoutDashboard,
   Receipt,
@@ -8,19 +8,17 @@ import {
   Search,
   ScanLine,
   CheckCircle2,
-  TrendingUp,
   CreditCard,
   QrCode,
   DollarSign,
-  Clock,
   ArrowUpRight,
   AlertTriangle,
   FileSpreadsheet,
-  Info,
   Sparkles,
-  HelpCircle
+  ArrowRight,
+  MousePointer2
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 
 type PreviewTab = 'dashboard' | 'billing' | 'inventory' | 'customers' | 'reports';
 
@@ -30,6 +28,90 @@ interface Hotspot {
   badge: string;
   description: string;
 }
+
+interface WorkspaceModule {
+  id: PreviewTab;
+  title: string;
+  shortLabel: string;
+  category: string;
+  badge: string;
+  description: string;
+  icon: React.ElementType;
+  highlights: string[];
+}
+
+const workspaceModules: WorkspaceModule[] = [
+  {
+    id: 'dashboard',
+    title: 'Executive Dashboard',
+    shortLabel: 'Dashboard',
+    category: 'Live Store Command',
+    badge: '₹48,920 Today',
+    description: 'Monitor real-time counter revenue, net profit margins, completed invoices, and priority low-stock alerts from a single screen.',
+    icon: LayoutDashboard,
+    highlights: [
+      'Real-time revenue & 25.4% net margin tracking',
+      'Live completed invoice feed across counters',
+      'Priority low-stock reorder alerts & PO drafts'
+    ]
+  },
+  {
+    id: 'billing',
+    title: 'POS & Checkout',
+    shortLabel: 'POS & Billing',
+    category: 'High-Speed Counter',
+    badge: '< 0.2s Scan [F2]',
+    description: 'Scan barcodes in sub-seconds, filter quick-select SKUs by category, generate exact-amount UPI QR codes, and print 80mm bills.',
+    icon: Receipt,
+    highlights: [
+      'Sub-0.2s barcode scanner & [F2] hotkey search',
+      'Dynamic exact-amount NPCI UPI QR checkout',
+      'Instant 80mm thermal & WhatsApp GST receipts'
+    ]
+  },
+  {
+    id: 'inventory',
+    title: 'Inventory Management',
+    shortLabel: 'Inventory',
+    category: 'Stock & Batch Control',
+    badge: '1,240 Active SKUs',
+    description: 'Track 1,240+ SKUs with real-time stock health badges, purchase cost vs selling price margins, and automated restock drafts.',
+    icon: Boxes,
+    highlights: [
+      'Instant multi-counter stock deduction on sale',
+      'Batch FEFO & 30-day expiry audit monitoring',
+      'Automated vendor purchase order drafts'
+    ]
+  },
+  {
+    id: 'customers',
+    title: 'Khata (Customer Credit)',
+    shortLabel: 'Khata & CRM',
+    category: 'Digital Trust Ledger',
+    badge: '240 Accounts',
+    description: 'Manage customer purchase history, loyalty points, pending Khata credit balances, and one-tap WhatsApp payment links.',
+    icon: Users,
+    highlights: [
+      'Tamper-proof digital customer credit ledger',
+      '1-tap WhatsApp UPI repayment reminder links',
+      'Automated VIP loyalty points on every bill'
+    ]
+  },
+  {
+    id: 'reports',
+    title: 'Analytics & Reports',
+    shortLabel: 'Reports & GST',
+    category: 'Statutory & P&L',
+    badge: 'GSTR-1 & 3B Ready',
+    description: 'Review monthly turnover, net gross profit, slab-wise CGST/SGST tax liability tables, and payment tender breakdowns.',
+    icon: BarChart3,
+    highlights: [
+      'Slab-wise 5%, 12%, and 18% GST liability split',
+      '100% reconciled UPI, Cash & Card tender channels',
+      'One-click Excel & Tally accounting CSV export'
+    ]
+  }
+];
 
 const tabHotspots: Record<PreviewTab, Hotspot[]> = {
   dashboard: [
@@ -137,16 +219,110 @@ const tabHotspots: Record<PreviewTab, Hotspot[]> = {
 export const ProductPreview: React.FC = () => {
   const [activeTab, setActiveTab] = useState<PreviewTab>('dashboard');
   const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(null);
-  const [showHotspots, setShowHotspots] = useState<boolean>(true);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [originIndex, setOriginIndex] = useState<number>(0);
+
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+    };
+  }, []);
 
   const currentHotspots = tabHotspots[activeTab];
+  const activeModule = workspaceModules.find((m) => m.id === activeTab) || workspaceModules[0];
+
+  // Spatial transform-origin mapped to the 3-top + 2-bottom workspace card composition
+  const getOrigin = (index: number) => {
+    switch (index) {
+      case 0:
+        return '16.6% 25%';
+      case 1:
+        return '50.0% 25%';
+      case 2:
+        return '83.3% 25%';
+      case 3:
+        return '25.0% 75%';
+      case 4:
+        return '75.0% 75%';
+      default:
+        return '50.0% 50%';
+    }
+  };
+
+  const handleCardMouseEnter = (tabId: PreviewTab, index: number) => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current);
+      leaveTimeoutRef.current = null;
+    }
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      if (activeTab !== tabId) {
+        setSelectedHotspot(null);
+      }
+      setActiveTab(tabId);
+      setOriginIndex(index);
+      setIsHovered(true);
+    }, 50);
+  };
+
+  const handleSectionMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    leaveTimeoutRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 160);
+  };
+
+  const handleSectionMouseEnter = () => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current);
+      leaveTimeoutRef.current = null;
+    }
+  };
+
+  const handleCardKeyDown = (e: React.KeyboardEvent, tabId: PreviewTab, index: number) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setActiveTab(tabId);
+      setSelectedHotspot(null);
+      setOriginIndex(index);
+      setIsHovered(true);
+    } else if (e.key === 'Escape' && isHovered) {
+      e.preventDefault();
+      setIsHovered(false);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      const nextIdx = (index + 1) % workspaceModules.length;
+      setActiveTab(workspaceModules[nextIdx].id);
+      setSelectedHotspot(null);
+      setOriginIndex(nextIdx);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const prevIdx = (index - 1 + workspaceModules.length) % workspaceModules.length;
+      setActiveTab(workspaceModules[prevIdx].id);
+      setSelectedHotspot(null);
+      setOriginIndex(prevIdx);
+    }
+  };
 
   return (
-    <section id="product" className="py-20 md:py-28 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors">
+    <section
+      id="product"
+      className="py-20 md:py-28 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors relative overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <div className="max-w-3xl mb-12 lg:mb-16">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
             Interactive Showcase
           </div>
@@ -154,186 +330,375 @@ export const ProductPreview: React.FC = () => {
             See Ellix Connect in action.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-            Explore realistic mockups of the platform's core workspaces. Switch tabs below and click feature hotspots to explore key UI capabilities.
+            Explore realistic mockups of the platform&apos;s core retail workspaces.
+            <span className="hidden lg:inline text-emerald-600 dark:text-emerald-400 font-semibold ml-1">
+              Hover over any workspace card below to launch its live interactive OS simulator in-place.
+            </span>
           </p>
         </div>
 
-        {/* Tab Selector Buttons */}
-        <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mb-6">
-          <button
-            type="button"
-            data-cursor="hover"
-            onClick={() => {
-              setActiveTab('dashboard');
-              setSelectedHotspot(null);
-            }}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95 ${
-              activeTab === 'dashboard'
-                ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+        {/* ============================================================ */}
+        {/* DESKTOP ENTRY-POINT CARDS (STATE 1) & MORPHING TRIGGER       */}
+        {/* ============================================================ */}
+        <div
+          className="relative lg:grid lg:grid-cols-1 lg:items-stretch box-border"
+          onMouseEnter={handleSectionMouseEnter}
+          onMouseLeave={handleSectionMouseLeave}
+        >
+          {/* Desktop Layer 1: 5 Entry-Point Workspace Cards (3 Top + 2 Bottom) */}
+          <div
+            className={`hidden lg:block lg:col-start-1 lg:row-start-1 w-full h-full space-y-6 min-h-[640px] transition-all duration-200 ease-out will-change-transform ${
+              isHovered
+                ? 'opacity-20 scale-[0.99] pointer-events-auto'
+                : 'opacity-100 scale-100'
             }`}
           >
-            <LayoutDashboard className="w-4 h-4 text-emerald-400" />
-            <span>Dashboard</span>
-          </button>
+            {/* Top 3 Workspace Cards */}
+            <div className="grid grid-cols-3 gap-6">
+              {workspaceModules.slice(0, 3).map((mod, index) => {
+                const Icon = mod.icon;
+                const isCurrent = activeTab === mod.id;
 
-          <button
-            type="button"
-            data-cursor="hover"
-            onClick={() => {
-              setActiveTab('billing');
-              setSelectedHotspot(null);
-            }}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95 ${
-              activeTab === 'billing'
-                ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Receipt className="w-4 h-4 text-emerald-400" />
-            <span>POS & Checkout</span>
-          </button>
+                return (
+                  <div
+                    key={mod.id}
+                    id={`preview-card-${mod.id}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={isCurrent}
+                    data-cursor="card"
+                    onMouseEnter={() => handleCardMouseEnter(mod.id, index)}
+                    onClick={() => handleCardMouseEnter(mod.id, index)}
+                    onKeyDown={(e) => handleCardKeyDown(e, mod.id, index)}
+                    className={`website-card-hover p-6 rounded-2xl text-left flex flex-col justify-between cursor-pointer border transition-all duration-200 ${
+                      isCurrent && !isHovered
+                        ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          data-icon-box
+                          className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200"
+                        >
+                          <Icon className="w-5 h-5 transition-transform duration-200" />
+                        </div>
+                        <span
+                          data-card-badge
+                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
+                        >
+                          {mod.badge}
+                        </span>
+                      </div>
 
-          <button
-            type="button"
-            data-cursor="hover"
-            onClick={() => {
-              setActiveTab('inventory');
-              setSelectedHotspot(null);
-            }}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95 ${
-              activeTab === 'inventory'
-                ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Boxes className="w-4 h-4 text-emerald-400" />
-            <span>Inventory Management</span>
-          </button>
+                      <div className="text-[10px] font-bold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-1">
+                        {mod.category}
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">
+                        {mod.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                        {mod.description}
+                      </p>
+                    </div>
 
-          <button
-            type="button"
-            data-cursor="hover"
-            onClick={() => {
-              setActiveTab('customers');
-              setSelectedHotspot(null);
-            }}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95 ${
-              activeTab === 'customers'
-                ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Users className="w-4 h-4 text-emerald-400" />
-            <span>Khata (Customer Credit)</span>
-          </button>
+                    <div
+                      data-card-support
+                      className="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-1.5 text-[11px] text-slate-500 dark:text-slate-400 transition-transform duration-200"
+                    >
+                      {mod.highlights.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-1.5 truncate">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <span className="truncate">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
 
-          <button
-            type="button"
-            data-cursor="hover"
-            onClick={() => {
-              setActiveTab('reports');
-              setSelectedHotspot(null);
-            }}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95 ${
-              activeTab === 'reports'
-                ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4 text-emerald-400" />
-            <span>Analytics & Reports</span>
-          </button>
-        </div>
+            {/* Bottom 2 Workspace Cards */}
+            <div className="grid grid-cols-2 gap-6">
+              {workspaceModules.slice(3, 5).map((mod, offset) => {
+                const index = offset + 3;
+                const Icon = mod.icon;
+                const isCurrent = activeTab === mod.id;
 
-        {/* Hotspots Quick Explorer Bar */}
-        <div className="max-w-4xl mx-auto mb-6 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Interactive UI Hotspots:</span>
-            </span>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {currentHotspots.map((hotspot, idx) => (
+                return (
+                  <div
+                    key={mod.id}
+                    id={`preview-card-${mod.id}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={isCurrent}
+                    data-cursor="card"
+                    onMouseEnter={() => handleCardMouseEnter(mod.id, index)}
+                    onClick={() => handleCardMouseEnter(mod.id, index)}
+                    onKeyDown={(e) => handleCardKeyDown(e, mod.id, index)}
+                    className={`website-card-hover p-6 rounded-2xl text-left flex flex-row justify-between gap-6 cursor-pointer border transition-all duration-200 ${
+                      isCurrent && !isHovered
+                        ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                    }`}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          data-icon-box
+                          className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200"
+                        >
+                          <Icon className="w-5 h-5 transition-transform duration-200" />
+                        </div>
+                        <span
+                          data-card-badge
+                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
+                        >
+                          {mod.badge}
+                        </span>
+                      </div>
+
+                      <div className="text-[10px] font-bold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-1">
+                        {mod.category}
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">
+                        {mod.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        {mod.description}
+                      </p>
+                    </div>
+
+                    <div
+                      data-card-support
+                      className="w-64 pl-6 border-l border-slate-100 dark:border-slate-800/80 flex flex-col justify-center space-y-2 text-[11px] text-slate-500 dark:text-slate-400 transition-transform duration-200"
+                    >
+                      {mod.highlights.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Mobile & Tablet (< lg) Compact Tap-to-Select Card Strip */}
+          <div className="flex sm:grid sm:grid-cols-3 gap-3 overflow-x-auto no-scrollbar pb-2 lg:hidden mb-4 snap-x snap-mandatory">
+            {workspaceModules.map((mod, index) => {
+              const Icon = mod.icon;
+              const isSelected = activeTab === mod.id;
+
+              return (
                 <button
-                  key={hotspot.id}
+                  key={mod.id}
+                  id={`mobile-preview-card-${mod.id}`}
                   type="button"
-                  onClick={() => setSelectedHotspot(selectedHotspot?.id === hotspot.id ? null : hotspot)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
-                    selectedHotspot?.id === hotspot.id
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500'
+                  onClick={() => {
+                    setActiveTab(mod.id);
+                    setSelectedHotspot(null);
+                    setOriginIndex(index);
+                  }}
+                  aria-pressed={isSelected}
+                  className={`snap-start shrink-0 w-[250px] sm:w-auto p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
+                    isSelected
+                      ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/40 shadow-md text-slate-900 dark:text-white'
+                      : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white'
                   }`}
                 >
-                  <span className="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white flex items-center justify-center text-[10px] font-bold">
-                    {idx + 1}
-                  </span>
-                  <span>{hotspot.title}</span>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div
+                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center ${
+                          isSelected
+                            ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </div>
+                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400">
+                        {mod.badge}
+                      </span>
+                    </div>
+
+                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-0.5">
+                      {mod.category}
+                    </div>
+                    <h3 className="text-sm sm:text-base font-bold mb-1">
+                      {mod.title}
+                    </h3>
+                    <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
+                      {mod.description}
+                    </p>
+                  </div>
+
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span>{isSelected ? 'Active below ↓' : 'Tap to preview'}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </div>
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-            Click any hotspot to inspect UI details
-          </div>
-        </div>
-
-        {/* Hotspot Highlight Card (If active) */}
-        {selectedHotspot && (
-          <div className="max-w-4xl mx-auto mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-950 dark:text-emerald-100 flex items-start justify-between gap-4 animate-in fade-in">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
-                  {selectedHotspot.badge}
+          {/* ============================================================ */}
+          {/* LAYER 2: MORPHING INTERACTIVE OS WORKSPACE                   */}
+          {/* ============================================================ */}
+          <div
+            style={{ transformOrigin: getOrigin(originIndex) }}
+            className={`lg:col-start-1 lg:row-start-1 w-full h-full box-border overflow-hidden rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 p-3.5 sm:p-6 transition-all duration-200 ease-out ${
+              isHovered
+                ? 'lg:z-20 lg:opacity-100 lg:scale-100 lg:pointer-events-auto'
+                : 'lg:z-10 lg:opacity-0 lg:scale-[0.96] lg:pointer-events-none'
+            }`}
+          >
+            {/* Top Interactive Workspace Dock & Header */}
+            <div className="flex items-center justify-between gap-2 pb-3 mb-3.5 sm:mb-4 border-b border-slate-200/80 dark:border-slate-800/80">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 truncate">
+                  Ellix Connect Interactive OS Workspace
                 </span>
-                <h4 className="text-sm font-bold">{selectedHotspot.title}</h4>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-mono font-bold border border-emerald-300/60 dark:border-emerald-800/60 shrink-0">
+                  {activeModule.badge}
+                </span>
               </div>
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                {selectedHotspot.description}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setSelectedHotspot(null)}
-              className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 hover:underline shrink-0"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
-
-        {/* Mockup Display Canvas */}
-        <div className="rounded-2xl border border-slate-300/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden transition-all">
-          
-          {/* Browser / Shell Header */}
-          <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700/80 px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600" />
-              <div className="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600" />
-              <div className="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600" />
-              <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-2 hidden sm:block" />
-              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 font-mono hidden sm:inline">
-                Ellix Connect OS · Active Workspace: {activeTab.toUpperCase()}
-              </span>
+              <div className="hidden lg:flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                <MousePointer2 className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Hover any module pill or click a UI hotspot</span>
+              </div>
             </div>
 
-            <div className="text-xs font-medium text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-3 py-1 rounded border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span>Demo Store · Realistic Retail Data</span>
+            {/* 5-Module Switcher Dock */}
+            <div className="flex sm:grid sm:grid-cols-5 gap-1.5 mb-4 p-1.5 rounded-2xl bg-slate-100/90 dark:bg-slate-950/90 border border-slate-200/90 dark:border-slate-800/80 shadow-inner overflow-x-auto no-scrollbar">
+              {workspaceModules.map((mod, idx) => {
+                const ModIcon = mod.icon;
+                const isActive = activeTab === mod.id;
+                return (
+                  <button
+                    key={mod.id}
+                    type="button"
+                    data-cursor="hover"
+                    aria-pressed={isActive}
+                    onMouseEnter={() => {
+                      if (activeTab !== mod.id) {
+                        setSelectedHotspot(null);
+                      }
+                      setActiveTab(mod.id);
+                      setOriginIndex(idx);
+                    }}
+                    onClick={() => {
+                      setActiveTab(mod.id);
+                      setSelectedHotspot(null);
+                      setOriginIndex(idx);
+                    }}
+                    className={`shrink-0 sm:shrink relative py-2 px-3 sm:px-2.5 rounded-xl text-xs font-bold transition-all duration-150 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${
+                      isActive
+                        ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500/50 shadow-sm ring-1 ring-emerald-500/20'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-900/60 border border-transparent'
+                    }`}
+                  >
+                    <ModIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-emerald-500' : 'text-slate-400'}`} />
+                    <span className="truncate">{mod.shortLabel}</span>
+                  </button>
+                );
+              })}
             </div>
-          </div>
 
-          {/* Tab Screen Content with AnimatePresence */}
-          <div className="p-4 sm:p-6 lg:p-8 bg-slate-50/50 dark:bg-slate-950/50 min-h-[480px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.18 }}
-              >
+            {/* Hotspots Quick Explorer Bar */}
+            <div className="mb-4 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>Interactive UI Hotspots:</span>
+                </span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {currentHotspots.map((hotspot, idx) => (
+                    <button
+                      key={hotspot.id}
+                      type="button"
+                      data-cursor="hover"
+                      onClick={() => setSelectedHotspot(selectedHotspot?.id === hotspot.id ? null : hotspot)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+                        selectedHotspot?.id === hotspot.id
+                          ? 'bg-emerald-600 text-white shadow-sm'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500'
+                      }`}
+                    >
+                      <span className="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white flex items-center justify-center text-[10px] font-bold">
+                        {idx + 1}
+                      </span>
+                      <span>{hotspot.title}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                Click any hotspot to inspect UI details
+              </div>
+            </div>
+
+            {/* Hotspot Highlight Card (If active) */}
+            {selectedHotspot && (
+              <div className="mb-4 p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-950 dark:text-emerald-100 flex items-start justify-between gap-4 animate-in fade-in">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
+                      {selectedHotspot.badge}
+                    </span>
+                    <h4 className="text-sm font-bold">{selectedHotspot.title}</h4>
+                  </div>
+                  <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                    {selectedHotspot.description}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedHotspot(null)}
+                  className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 hover:underline shrink-0 cursor-pointer"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+
+            {/* Mockup Display Canvas */}
+            <div className="rounded-2xl border border-slate-300/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden transition-all">
+              
+              {/* Browser / Shell Header */}
+              <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700/80 px-4 py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600" />
+                  <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-2 hidden sm:block" />
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 font-mono hidden sm:inline">
+                    Ellix Connect OS · Active Workspace: {activeTab.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="text-xs font-medium text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-3 py-1 rounded border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span>Demo Store · Realistic Retail Data</span>
+                </div>
+              </div>
+
+              {/* Tab Screen Content with AnimatePresence */}
+              <div className="p-4 sm:p-5 bg-slate-50/50 dark:bg-slate-950/50">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 6 }}
+                    animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                    exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                    transition={{ duration: 0.18 }}
+                  >
             
             {/* 1. DASHBOARD TAB */}
             {activeTab === 'dashboard' && (
@@ -342,25 +707,89 @@ export const ProductPreview: React.FC = () => {
                 {/* Metric Cards Row */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Today's Revenue</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Today's Revenue</span>
+                      <svg className="w-14 h-5 overflow-visible shrink-0" viewBox="0 0 56 20">
+                        <motion.path
+                          d="M 2 16 L 11 13 L 20 14 L 29 9 L 38 10 L 47 5 L 54 3"
+                          fill="none"
+                          stroke="#10b981"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          initial={prefersReducedMotion ? false : { pathLength: 0, opacity: 0.25 }}
+                          whileInView={{ pathLength: 1, opacity: 1 }}
+                          viewport={{ once: true, amount: 0.3 }}
+                          transition={{ duration: 0.78, ease: [0.16, 1, 0.3, 1] }}
+                        />
+                      </svg>
+                    </div>
                     <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹48,920</div>
                     <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">↑ 14.8% vs last Tuesday</div>
                   </div>
 
                   <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Estimated Profit</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Estimated Profit</span>
+                      <svg className="w-14 h-5 overflow-visible shrink-0" viewBox="0 0 56 20">
+                        <motion.path
+                          d="M 2 15 L 11 14 L 20 11 L 29 12 L 38 8 L 47 6 L 54 4"
+                          fill="none"
+                          stroke="#14b8a6"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          initial={prefersReducedMotion ? false : { pathLength: 0, opacity: 0.25 }}
+                          whileInView={{ pathLength: 1, opacity: 1 }}
+                          viewport={{ once: true, amount: 0.3 }}
+                          transition={{ duration: 0.78, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+                        />
+                      </svg>
+                    </div>
                     <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹12,450</div>
                     <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">25.4% Net Margin</div>
                   </div>
 
                   <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Total Invoices</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Total Invoices</span>
+                      <svg className="w-14 h-5 overflow-visible shrink-0" viewBox="0 0 56 20">
+                        <motion.path
+                          d="M 2 16 L 11 15 L 20 12 L 29 10 L 38 9 L 47 6 L 54 5"
+                          fill="none"
+                          stroke="#3b82f6"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          initial={prefersReducedMotion ? false : { pathLength: 0, opacity: 0.25 }}
+                          whileInView={{ pathLength: 1, opacity: 1 }}
+                          viewport={{ once: true, amount: 0.3 }}
+                          transition={{ duration: 0.78, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+                        />
+                      </svg>
+                    </div>
                     <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">42 Bills</div>
                     <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Zero pending bills</div>
                   </div>
 
                   <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Pending Khata Credit</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Pending Khata Credit</span>
+                      <svg className="w-14 h-5 overflow-visible shrink-0" viewBox="0 0 56 20">
+                        <motion.path
+                          d="M 2 13 L 11 11 L 20 12 L 29 9 L 38 10 L 47 7 L 54 6"
+                          fill="none"
+                          stroke="#6366f1"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          initial={prefersReducedMotion ? false : { pathLength: 0, opacity: 0.25 }}
+                          whileInView={{ pathLength: 1, opacity: 1 }}
+                          viewport={{ once: true, amount: 0.3 }}
+                          transition={{ duration: 0.78, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                        />
+                      </svg>
+                    </div>
                     <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹6,800</div>
                     <div className="text-[11px] text-blue-600 dark:text-blue-400 font-medium mt-1">4 regular customers</div>
                   </div>
@@ -930,7 +1359,13 @@ export const ProductPreview: React.FC = () => {
                             <span>64% (₹6,03,424)</span>
                           </div>
                           <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-emerald-500 rounded-full w-[64%]" />
+                            <motion.div
+                              className="h-full bg-emerald-500 rounded-full w-[64%] origin-left"
+                              initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                              whileInView={{ scaleX: 1 }}
+                              viewport={{ once: true, amount: 0.3 }}
+                              transition={{ duration: 0.68, ease: [0.16, 1, 0.3, 1] }}
+                            />
                           </div>
                         </div>
 
@@ -940,7 +1375,13 @@ export const ProductPreview: React.FC = () => {
                             <span>26% (₹2,45,141)</span>
                           </div>
                           <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-slate-800 dark:bg-slate-400 rounded-full w-[26%]" />
+                            <motion.div
+                              className="h-full bg-slate-800 dark:bg-slate-400 rounded-full w-[26%] origin-left"
+                              initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                              whileInView={{ scaleX: 1 }}
+                              viewport={{ once: true, amount: 0.3 }}
+                              transition={{ duration: 0.68, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+                            />
                           </div>
                         </div>
 
@@ -950,7 +1391,50 @@ export const ProductPreview: React.FC = () => {
                             <span>10% (₹94,285)</span>
                           </div>
                           <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-blue-500 rounded-full w-[10%]" />
+                            <motion.div
+                              className="h-full bg-blue-500 rounded-full w-[10%] origin-left"
+                              initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                              whileInView={{ scaleX: 1 }}
+                              viewport={{ once: true, amount: 0.3 }}
+                              transition={{ duration: 0.68, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Weekly Daily Volume Mini Bar Chart — Bottom-to-Top Reveal */}
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                          <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mb-2">
+                            <span>7-Day Daily Settlement Velocity</span>
+                            <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">+18.2% WoW</span>
+                          </div>
+                          <div className="grid grid-cols-7 gap-2 items-end h-12 pt-1">
+                            {[
+                              { day: 'Mon', h: '52%' },
+                              { day: 'Tue', h: '64%' },
+                              { day: 'Wed', h: '58%' },
+                              { day: 'Thu', h: '74%' },
+                              { day: 'Fri', h: '86%' },
+                              { day: 'Sat', h: '94%' },
+                              { day: 'Sun', h: '100%' },
+                            ].map((bar, idx) => (
+                              <div key={bar.day} className="flex flex-col items-center gap-1 h-full justify-end">
+                                <div className="w-full h-8 bg-slate-100 dark:bg-slate-800/70 rounded-t flex items-end overflow-hidden">
+                                  <motion.div
+                                    style={{ height: bar.h }}
+                                    className="w-full bg-emerald-500/85 dark:bg-emerald-500 rounded-t origin-bottom"
+                                    initial={prefersReducedMotion ? false : { scaleY: 0, opacity: 0 }}
+                                    whileInView={{ scaleY: 1, opacity: 1 }}
+                                    viewport={{ once: true, amount: 0.3 }}
+                                    transition={{
+                                      duration: 0.65,
+                                      delay: idx * 0.045,
+                                      ease: [0.16, 1, 0.3, 1],
+                                    }}
+                                  />
+                                </div>
+                                <span className="text-[9px] text-slate-400 font-mono">{bar.day}</span>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -970,14 +1454,14 @@ export const ProductPreview: React.FC = () => {
               </div>
             )}
 
-              </motion.div>
-            </AnimatePresence>
-
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
-
         </div>
-
       </div>
     </section>
   );
 };
+

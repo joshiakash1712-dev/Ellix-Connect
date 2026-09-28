@@ -195,9 +195,9 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onOpenContact }) => {
                     </span>
 
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                         isOpen
-                          ? 'rotate-180 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white'
+                          ? 'rotate-180 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                       }`}
                     >
@@ -212,7 +212,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onOpenContact }) => {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                       >
                         <div className="px-5 sm:px-6 pb-5 pt-1 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-700/60">
                           {item.answer}

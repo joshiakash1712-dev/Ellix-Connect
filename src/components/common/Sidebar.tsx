@@ -70,6 +70,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onNavigateToWebsite
 }) => {
   const {
+    isDemoMode,
     activeModule,
     setActiveModule,
     activeStore,
@@ -85,11 +86,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   } = useStore();
 
   const {
-    currentUser: authUser,
-    userProfile,
+    currentUser: rawAuthUser,
+    userProfile: rawUserProfile,
     openAuthModal,
     setIsSyncHubOpen
   } = useAuth();
+
+  const authUser = isDemoMode ? null : rawAuthUser;
+  const userProfile = isDemoMode ? null : rawUserProfile;
 
   const [showStorePickerInDrawer, setShowStorePickerInDrawer] = React.useState(false);
 
@@ -178,7 +182,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <button
                     key={mod.id}
                     onClick={() => setActiveModule(mod.id)}
-                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all ${
+                    className={`min-h-[48px] min-w-[48px] flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-lg text-[11px] font-bold transition-all ${
                       isActive
                         ? 'bg-emerald-600 text-white shadow-sm'
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
@@ -204,7 +208,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   key={item.id}
                   id={`nav-desktop-${item.id}`}
                   onClick={() => onSelectView(item.id)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={`w-full min-h-[48px] flex items-center justify-between px-3.5 py-3 rounded-lg text-xs font-semibold transition-all ${
                     isActive
                       ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20 font-bold'
                       : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
@@ -239,7 +243,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               id="btn-sidebar-actions-required"
               onClick={() => onSelectView('inventory')}
-              className="w-full p-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/30 hover:border-amber-500/50 text-left transition-all group flex items-center justify-between"
+              className="w-full min-h-[48px] p-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/30 hover:border-amber-500/50 text-left transition-all group flex items-center justify-between"
               title="View items requiring replenishment"
             >
               <div className="flex items-center gap-2.5 min-w-0">
@@ -266,7 +270,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 id="btn-sidebar-sync-hub"
                 onClick={() => setIsSyncHubOpen(true)}
-                className="w-full p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-emerald-500/30 hover:border-emerald-500/50 text-left transition-all group shadow-sm"
+                className="w-full min-h-[48px] p-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-emerald-500/30 hover:border-emerald-500/50 text-left transition-all group shadow-sm"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
@@ -284,11 +288,35 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span>{authUser.email || authUser.phoneNumber}</span>
                 </div>
               </button>
+            ) : isDemoMode ? (
+              <div className="p-2.5 rounded-xl bg-[#161D2C] border border-emerald-500/30 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                    App Demo Mode
+                  </span>
+                  <span className="text-[9px] font-mono text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded uppercase">
+                    Sample Data
+                  </span>
+                </div>
+                <div className="text-xs font-semibold text-white truncate">
+                  {storeUser?.name || 'Vikram Malhotra'}
+                </div>
+                {onNavigateToWebsite && (
+                  <button
+                    id="btn-sidebar-exit-demo"
+                    onClick={onNavigateToWebsite}
+                    className="w-full min-h-[48px] py-2.5 px-3.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-rose-600/20"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Exit Demo</span>
+                  </button>
+                )}
+              </div>
             ) : (
               <button
                 id="btn-sidebar-sign-in"
                 onClick={() => openAuthModal('login')}
-                className="w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-600/20"
+                className="w-full min-h-[48px] py-2.5 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-600/20"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 <span>Sign In</span>
@@ -297,12 +325,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* Marketing Website Return Button */}
-          {onNavigateToWebsite && (
+          {onNavigateToWebsite && !isDemoMode && (
             <div className="mb-2">
               <button
                 id="btn-sidebar-website"
                 onClick={onNavigateToWebsite}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-900/40 hover:bg-slate-800/60 border border-slate-800 hover:border-slate-700 transition-all"
+                className="w-full min-h-[48px] flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-900/40 hover:bg-slate-800/60 border border-slate-800 hover:border-slate-700 transition-all"
                 title="Return to Marketing Website"
               >
                 <div className="flex items-center gap-2">
@@ -319,7 +347,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               id="btn-sidebar-settings"
               onClick={() => setIsSettingsModalOpen(true)}
-              className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/80 hover:border-slate-700/80 transition-all active:scale-[0.98]"
+              className="w-full min-h-[48px] flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/80 hover:border-slate-700/80 transition-all active:scale-[0.98]"
               title="Open System Settings & Theme"
             >
               <div className="flex items-center gap-2.5">
@@ -388,7 +416,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <button
                     id="btn-close-drawer"
                     onClick={onCloseMobileDrawer}
-                    className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 active:scale-95 transition-all"
+                    className="min-w-[48px] min-h-[48px] p-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center"
                     aria-label="Close navigation drawer"
                   >
                     <X className="w-5 h-5" />
@@ -414,17 +442,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <div>
                       <button
                         onClick={() => setShowStorePickerInDrawer(!showStorePickerInDrawer)}
-                        className="w-full mt-1 py-1.5 px-2.5 rounded-lg bg-[#121826] hover:bg-slate-800 text-slate-300 text-[11px] font-semibold flex items-center justify-between border border-slate-700/60"
+                        className="w-full min-h-[48px] mt-1 py-2.5 px-3 rounded-lg bg-[#121826] hover:bg-slate-800 text-slate-300 text-[11px] font-semibold flex items-center justify-between border border-slate-700/60"
                       >
                         <span className="flex items-center gap-1.5">
-                          <Building2 className="w-3 h-3 text-emerald-400" />
+                          <Building2 className="w-3.5 h-3.5 text-emerald-400" />
                           <span>Switch Active Store</span>
                         </span>
-                        <ChevronRight className={`w-3.5 h-3.5 transition-transform ${showStorePickerInDrawer ? 'rotate-90' : ''}`} />
+                        <ChevronRight className={`w-4 h-4 transition-transform ${showStorePickerInDrawer ? 'rotate-90' : ''}`} />
                       </button>
 
                       {showStorePickerInDrawer && (
-                        <div className="mt-2 space-y-1 pt-1 border-t border-slate-700/40">
+                        <div className="mt-2 space-y-1.5 pt-1 border-t border-slate-700/40">
                           {allowedStores.map(st => (
                             <button
                               key={st.id}
@@ -432,14 +460,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 setActiveStore(st);
                                 setShowStorePickerInDrawer(false);
                               }}
-                              className={`w-full text-left p-2 rounded-lg text-[11px] flex items-center justify-between transition-colors ${
+                              className={`w-full min-h-[48px] text-left px-3 py-2.5 rounded-lg text-[11px] flex items-center justify-between transition-colors ${
                                 activeStore.id === st.id
                                   ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30'
                                   : 'text-slate-300 hover:bg-slate-700/40'
                               }`}
                             >
                               <span className="truncate">{st.name}</span>
-                              {activeStore.id === st.id && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                              {activeStore.id === st.id && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
                             </button>
                           ))}
                         </div>
@@ -464,7 +492,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           onClick={() => {
                             setActiveModule(mod.id);
                           }}
-                          className={`flex items-center justify-center gap-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
+                          className={`min-h-[48px] min-w-[48px] flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-lg text-[11px] font-bold transition-all ${
                             activeModule === mod.id
                               ? 'bg-emerald-600 text-white shadow-md'
                               : 'text-slate-400 hover:text-slate-200'
@@ -479,7 +507,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 )}
 
                 {/* Main Drawer Links */}
-                <div className="space-y-1 pt-2">
+                <div className="space-y-1.5 pt-2">
                   <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-1">
                     {activeModule.toUpperCase()} VIEWS
                   </div>
@@ -494,14 +522,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           onSelectView(item.id);
                           onCloseMobileDrawer();
                         }}
-                        className={`w-full flex items-center justify-between px-3 py-3 rounded-xl text-xs font-semibold transition-all ${
+                        className={`w-full min-h-[48px] flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-semibold transition-all ${
                           isActive
                             ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-md shadow-emerald-500/20'
                             : 'text-slate-300 hover:bg-slate-800/80 active:bg-slate-800'
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`p-1.5 rounded-lg ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}`}>
+                          <div className={`p-2 rounded-lg ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}`}>
                             {item.icon}
                           </div>
                           <span className="text-xs">{item.label}</span>
@@ -523,7 +551,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
               {/* Drawer Bottom Utility & Info */}
               <div className="p-4 border-t border-slate-800 bg-slate-950/60 space-y-3">
-                {/* Mobile Drawer Marketing Website Return Button */}
+                {/* Mobile Drawer Marketing Website / Exit Demo Return Button */}
                 {onNavigateToWebsite && (
                   <button
                     id="btn-drawer-website"
@@ -531,13 +559,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       onCloseMobileDrawer();
                       onNavigateToWebsite();
                     }}
-                    className="w-full py-2.5 px-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-semibold text-slate-200 hover:text-white flex items-center justify-between active:scale-[0.98] transition-all shadow-sm"
+                    className={`w-full min-h-[48px] py-3 px-3.5 rounded-xl border text-xs font-semibold flex items-center justify-between active:scale-[0.98] transition-all shadow-sm ${
+                      isDemoMode
+                        ? 'bg-rose-600 hover:bg-rose-500 border-rose-500 text-white font-bold'
+                        : 'bg-slate-900/90 border-slate-800 text-slate-200 hover:text-white'
+                    }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <Globe className="w-4 h-4 text-emerald-400" />
-                      <span>Marketing Website</span>
+                      {isDemoMode ? (
+                        <LogOut className="w-4 h-4 text-white" />
+                      ) : (
+                        <Globe className="w-4 h-4 text-emerald-400" />
+                      )}
+                      <span>{isDemoMode ? 'Exit Demo' : 'Marketing Website'}</span>
                     </div>
-                    <span className="text-[10px] text-emerald-400 font-semibold">Exit App &rarr;</span>
+                    <span className={`text-[10px] font-semibold ${isDemoMode ? 'text-rose-100' : 'text-emerald-400'}`}>
+                      {isDemoMode ? 'Back to Website →' : 'Exit App →'}
+                    </span>
                   </button>
                 )}
 
@@ -548,7 +586,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     onCloseMobileDrawer();
                     setIsSettingsModalOpen(true);
                   }}
-                  className="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-200 hover:text-white flex items-center justify-between active:scale-[0.98] transition-all shadow-sm"
+                  className="w-full min-h-[48px] py-3 px-3.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-200 hover:text-white flex items-center justify-between active:scale-[0.98] transition-all shadow-sm"
                 >
                   <div className="flex items-center gap-2.5">
                     <Settings className="w-4 h-4 text-emerald-400" />

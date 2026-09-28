@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ConfirmationResult } from 'firebase/auth';
 import { useAuth, AuthModalMode } from '../../context/AuthContext';
 import { EllixConnectLogo } from '../branding/EllixConnectLogo';
+import { LEGAL_CONFIG, recordConsentAudit } from '../../config/legal.config';
 import {
   X,
   Mail,
@@ -55,6 +56,7 @@ export const AuthModal: React.FC = () => {
 
   // UI helpers
   const [showPassword, setShowPassword] = useState(false);
+  const [acceptedLegalTerms, setAcceptedLegalTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -178,10 +180,19 @@ export const AuthModal: React.FC = () => {
       setErrorMessage('Passwords do not match. Please ensure both passwords match.');
       return;
     }
+    if (!acceptedLegalTerms) {
+      setErrorMessage('Please accept the Terms of Service and Privacy Policy to create an account.');
+      return;
+    }
     setLoading(true);
     setErrorMessage(null);
     try {
       await registerWithEmail(email, password, displayName, 'retailer');
+      recordConsentAudit({
+        context: 'registration',
+        subjectIdentifier: email.trim(),
+        purposeSummary: 'Merchant account creation and authentication consent (DPDPA 2023)',
+      });
       setSuccessMessage('Account registered successfully. A verification link has been sent to your email.');
     } catch (err: any) {
       const code = err?.code || '';
@@ -781,10 +792,49 @@ export const AuthModal: React.FC = () => {
                 </span>
               </div>
 
+              <label className="flex items-start gap-2.5 pt-1 text-[11px] text-slate-400 cursor-pointer">
+                <input
+                  id="checkbox-register-legal-consent"
+                  type="checkbox"
+                  required
+                  checked={acceptedLegalTerms}
+                  onChange={(e) => setAcceptedLegalTerms(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded accent-emerald-500 shrink-0"
+                />
+                <span className="leading-relaxed">
+                  I agree to the {LEGAL_CONFIG.brandName}{' '}
+                  <a
+                    href="/terms-of-service"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      closeAuthModal();
+                      window.history.pushState({}, '', '/terms-of-service');
+                      window.dispatchEvent(new PopStateEvent('popstate'));
+                    }}
+                    className="text-emerald-400 font-semibold hover:underline"
+                  >
+                    Terms of Service
+                  </a>{' '}
+                  and consent to personal data processing under the{' '}
+                  <a
+                    href="/privacy-policy"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      closeAuthModal();
+                      window.history.pushState({}, '', '/privacy-policy');
+                      window.dispatchEvent(new PopStateEvent('popstate'));
+                    }}
+                    className="text-emerald-400 font-semibold hover:underline"
+                  >
+                    Privacy Policy
+                  </a>.
+                </span>
+              </label>
+
               <button
                 id="btn-submit-register"
                 type="submit"
-                disabled={loading}
+                disabled={loading || !acceptedLegalTerms}
                 className="w-full mt-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] disabled:opacity-50"
               >
                 {loading ? (

@@ -19,6 +19,13 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { GUIDE_CHAPTERS } from './guide/guideData';
+
+export interface GuidebookPreviewProps {
+  onOpenInteractiveGuide?: (step?: number) => void;
+  guideProgressStep?: number;
+  guideCompleted?: boolean;
+}
 
 interface GuideItem {
   id: string;
@@ -146,7 +153,11 @@ const guides: GuideItem[] = [
   }
 ];
 
-export const GuidebookPreview: React.FC = () => {
+export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
+  onOpenInteractiveGuide,
+  guideProgressStep = 0,
+  guideCompleted = false,
+}) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeGuideModal, setActiveGuideModal] = useState<GuideItem | null>(null);
@@ -171,17 +182,107 @@ export const GuidebookPreview: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-12">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
-            Ellix Guidebook
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
+              Ellix Guidebook
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-950 dark:text-white tracking-tight">
+              Learn Ellix Connect, step by step.
+            </h2>
+            <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+              We believe business software should be intuitive. Launch the 12-step interactive platform tour or search topics below to view quick documentation walkthroughs.
+            </p>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-950 dark:text-white tracking-tight">
-            Learn Ellix Connect, step by step.
-          </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-            We believe business software should be intuitive. Search topics below or select any guide to view the full interactive walkthrough.
-          </p>
+
+          {onOpenInteractiveGuide && (
+            <div className="shrink-0">
+              <button
+                id="btn-guidebook-start-interactive-tour"
+                type="button"
+                data-cursor="hover"
+                data-magnetic="cta"
+                onClick={() =>
+                  onOpenInteractiveGuide(
+                    guideProgressStep > 0 && !guideCompleted ? guideProgressStep : undefined
+                  )
+                }
+                className="website-btn-glow px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center gap-2 cursor-pointer group"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>
+                  {guideCompleted
+                    ? 'Review 12-Step Interactive Guide →'
+                    : guideProgressStep > 0
+                    ? `Resume Interactive Guide (Step ${String(guideProgressStep).padStart(2, '0')} of 12) →`
+                    : 'Start the 12-Step Interactive Guide →'}
+                </span>
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* 12-Chapter Interactive Journey Quick-Jump Strip */}
+        {onOpenInteractiveGuide && (
+          <div className="mb-10 p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/40 dark:from-emerald-950/25 dark:via-slate-900 dark:to-teal-950/20 border border-emerald-200/80 dark:border-emerald-800/60 shadow-2xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
+                  Interactive First-Time User Guide • 12 Connected Chapters
+                </span>
+              </div>
+              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                Select any chapter to jump directly into its interactive simulation
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+              {GUIDE_CHAPTERS.map((ch) => {
+                const isCurrent = guideProgressStep === ch.stepNumber && !guideCompleted;
+                const isDone = guideCompleted || (guideProgressStep > ch.stepNumber);
+                return (
+                  <button
+                    key={ch.stepNumber}
+                    type="button"
+                    data-cursor="hover"
+                    onClick={() => onOpenInteractiveGuide(ch.stepNumber)}
+                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between group ${
+                      isCurrent
+                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                        : isDone
+                        ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-300/70 dark:border-emerald-800/60 text-slate-900 dark:text-white hover:border-emerald-500'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:border-emerald-500/60'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <span
+                        className={`text-[10px] font-mono font-bold ${
+                          isCurrent
+                            ? 'text-emerald-100'
+                            : 'text-emerald-600 dark:text-emerald-400'
+                        }`}
+                      >
+                        STEP {ch.code}
+                      </span>
+                      {isDone && !isCurrent && (
+                        <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                      )}
+                    </div>
+                    <div
+                      className={`text-xs font-bold leading-snug line-clamp-1 ${
+                        isCurrent
+                          ? 'text-white'
+                          : 'text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+                      }`}
+                    >
+                      {ch.shortTitle}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Filter & Search Bar */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
@@ -240,8 +341,11 @@ export const GuidebookPreview: React.FC = () => {
                   <div>
                     {/* Top Bar: Icon + Read Time */}
                     <div className="flex items-center justify-between mb-5">
-                      <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white flex items-center justify-center group-hover:bg-slate-900 dark:group-hover:bg-slate-800 group-hover:text-emerald-400 transition-colors">
-                        <Icon className="w-4 h-4" />
+                      <div
+                        data-icon-box
+                        className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white flex items-center justify-center group-hover:bg-slate-900 dark:group-hover:bg-slate-800 group-hover:text-emerald-400 transition-all duration-200"
+                      >
+                        <Icon className="w-4 h-4 transition-transform duration-200" />
                       </div>
                       <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1">
                         <Clock className="w-3 h-3 text-slate-400" />
@@ -264,7 +368,7 @@ export const GuidebookPreview: React.FC = () => {
                   </div>
 
                   {/* Key Topics Covered */}
-                  <div>
+                  <div data-card-support className="transition-transform duration-200">
                     <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-1.5 mb-4">
                       <div className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
                         Key Topics Covered:
@@ -279,7 +383,7 @@ export const GuidebookPreview: React.FC = () => {
 
                     <div className="pt-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1 group-hover:underline">
                       <span>Read full documentation</span>
-                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />
                     </div>
                   </div>
                 </div>
@@ -305,8 +409,15 @@ export const GuidebookPreview: React.FC = () => {
           </div>
           <button
             type="button"
-            onClick={() => setActiveGuideModal(guides[0])}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors shrink-0"
+            data-cursor="hover"
+            onClick={() => {
+              if (onOpenInteractiveGuide) {
+                onOpenInteractiveGuide();
+              } else {
+                setActiveGuideModal(guides[0]);
+              }
+            }}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:bg-slate-800 dark:hover:bg-slate-100 hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-150 shrink-0 cursor-pointer"
           >
             <span>Explore Onboarding Hub</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -316,84 +427,94 @@ export const GuidebookPreview: React.FC = () => {
       </div>
 
       {/* Guide Preview Modal (Requirement #9) */}
-      {activeGuideModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150"
-          onClick={() => setActiveGuideModal(null)}
-        >
-          <div
-            className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {activeGuideModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm"
+            onClick={() => setActiveGuideModal(null)}
           >
-            {/* Header */}
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded">
-                    {activeGuideModal.category}
-                  </span>
-                  <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {activeGuideModal.readTime}
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold text-slate-950 dark:text-white">
-                  {activeGuideModal.title}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveGuideModal(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-6 text-xs text-slate-600 dark:text-slate-300">
-              <p className="text-sm text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
-                {activeGuideModal.docContent.overview}
-              </p>
-
-              <div className="space-y-4">
-                <div className="font-bold text-xs uppercase tracking-wider text-slate-400">Implementation Steps</div>
-                {activeGuideModal.docContent.steps.map((step, idx) => (
-                  <div key={idx} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
-                    <div className="font-bold text-slate-900 dark:text-white text-sm">
-                      {step.title}
-                    </div>
-                    <div className="leading-relaxed">
-                      {step.detail}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Pro Tip Box */}
-              <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 flex items-start gap-2.5">
-                <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between">
                 <div>
-                  <span className="font-bold">Pro Tip: </span>
-                  <span>{activeGuideModal.docContent.proTip}</span>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded">
+                      {activeGuideModal.category}
+                    </span>
+                    <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {activeGuideModal.readTime}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-950 dark:text-white">
+                    {activeGuideModal.title}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveGuideModal(null)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 overflow-y-auto space-y-6 text-xs text-slate-600 dark:text-slate-300">
+                <p className="text-sm text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
+                  {activeGuideModal.docContent.overview}
+                </p>
+
+                <div className="space-y-4">
+                  <div className="font-bold text-xs uppercase tracking-wider text-slate-400">Implementation Steps</div>
+                  {activeGuideModal.docContent.steps.map((step, idx) => (
+                    <div key={idx} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+                      <div className="font-bold text-slate-900 dark:text-white text-sm">
+                        {step.title}
+                      </div>
+                      <div className="leading-relaxed">
+                        {step.detail}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pro Tip Box */}
+                <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 flex items-start gap-2.5">
+                  <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold">Pro Tip: </span>
+                    <span>{activeGuideModal.docContent.proTip}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
-              <span className="text-xs text-slate-500">Ellix Connect Official Documentation</span>
-              <button
-                type="button"
-                onClick={() => setActiveGuideModal(null)}
-                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors"
-              >
-                Close Walkthrough
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              {/* Footer */}
+              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+                <span className="text-xs text-slate-500">Ellix Connect Official Documentation</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveGuideModal(null)}
+                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Close Walkthrough
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

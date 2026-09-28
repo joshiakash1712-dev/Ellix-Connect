@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import React, { useState, useMemo, useRef } from 'react';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -26,11 +26,14 @@ import {
   Calendar,
   Check,
   ShieldCheck,
-  Building2
+  Building2,
+  Users
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { DashboardSkeleton } from '../common/skeletons/DashboardSkeleton';
 import { StockStatusBadge } from '../common/StockStatusBadge';
+import { EmeraldDataRipple } from './EmeraldDataRipple';
+import { ScrollChartReveal } from '../common/ScrollChartReveal';
 
 export interface RetailerDashboardProps {
   onNavigateToInventory: () => void;
@@ -42,34 +45,77 @@ export interface RetailerDashboardProps {
   isLoading?: boolean;
 }
 
-// Crisp SVG Sparkline Component
+// Crisp SVG Sparkline Component — Scroll-Triggered Left-to-Right Line Draw (Section 17)
 const Sparkline: React.FC<{ points: number[]; color?: string }> = ({
   points,
   color = '#10b981'
 }) => {
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const isInView = useInView(svgRef, { once: true, amount: 0.3 });
+  const prefersReducedMotion = useReducedMotion();
+
   const min = Math.min(...points);
   const max = Math.max(...points);
   const range = max - min || 1;
   const width = 68;
   const height = 24;
 
-  const pathData = points
-    .map((val, idx) => {
-      const x = (idx / (points.length - 1)) * width;
-      const y = height - ((val - min) / range) * (height - 6) - 3;
-      return `${idx === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
-    })
+  const coords = points.map((val, idx) => {
+    const x = (idx / (points.length - 1)) * width;
+    const y = height - ((val - min) / range) * (height - 6) - 3;
+    return { x: Number(x.toFixed(1)), y: Number(y.toFixed(1)) };
+  });
+
+  const pathData = coords
+    .map((pt, idx) => `${idx === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`)
     .join(' ');
 
+  const lastPt = coords[coords.length - 1] || { x: width, y: height / 2 };
+
   return (
-    <svg className="w-16 h-6 overflow-visible shrink-0" viewBox={`0 0 ${width} ${height}`}>
-      <path
+    <svg
+      ref={svgRef}
+      className="w-16 h-6 overflow-visible shrink-0"
+      viewBox={`0 0 ${width} ${height}`}
+    >
+      <motion.path
         d={pathData}
         fill="none"
         stroke={color}
         strokeWidth="2.2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        initial={prefersReducedMotion ? false : { pathLength: 0, opacity: 0.25 }}
+        animate={
+          prefersReducedMotion
+            ? { pathLength: 1, opacity: 1 }
+            : isInView
+            ? { pathLength: 1, opacity: 1 }
+            : { pathLength: 0, opacity: 0.25 }
+        }
+        transition={{
+          duration: 0.78,
+          ease: [0.16, 1, 0.3, 1]
+        }}
+      />
+      <motion.circle
+        cx={lastPt.x}
+        cy={lastPt.y}
+        r="2.4"
+        fill={color}
+        initial={prefersReducedMotion ? false : { scale: 0, opacity: 0 }}
+        animate={
+          prefersReducedMotion
+            ? { scale: 1, opacity: 1 }
+            : isInView
+            ? { scale: 1, opacity: 1 }
+            : { scale: 0, opacity: 0 }
+        }
+        transition={{
+          delay: 0.62,
+          duration: 0.28,
+          ease: [0.16, 1, 0.3, 1]
+        }}
       />
     </svg>
   );
@@ -85,6 +131,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
   isLoading
 }) => {
   const {
+    isDemoMode,
     activeStore,
     products,
     invoices,
@@ -94,7 +141,8 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
     customers,
     employees
   } = useStore();
-  const { currentUser: authUser } = useAuth();
+  const { currentUser: rawAuthUser } = useAuth();
+  const authUser = isDemoMode ? null : rawAuthUser;
 
   const isActuallyLoading = isLoading ?? isDataLoading;
 
@@ -544,6 +592,31 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
       </div>
 
       {/* ========================================================================= */}
+      {/* SECTION 2C: EMERALD DATA RIPPLE (PRODUCT -> BILL -> STOCK PIPELINE)       */}
+      {/* ========================================================================= */}
+      <EmeraldDataRipple
+        totalSkus={products.length}
+        billCount={billCount}
+        todaySales={todaySales}
+        totalItemsSold={totalItemsSold}
+        healthySkusCount={healthyProducts.length}
+        lowStockCount={lowStockProducts.length}
+        latestInvoiceNumber={validInvoices[0]?.invoiceNumber || '#INV-1042'}
+        latestCustomerName={validInvoices[0]?.customerName || 'Walk-in Customer'}
+        latestItemName={
+          validInvoices[0]?.items?.[0]?.name ||
+          topSellingItems[0]?.name ||
+          products[0]?.name ||
+          'Basmati Rice 5kg'
+        }
+        latestItemQty={validInvoices[0]?.items?.[0]?.quantity || 2}
+        latestBillAmount={validInvoices[0]?.grandTotal || avgBillValue || 880}
+        onNavigateToPOS={onNavigateToPOS}
+        onNavigateToInventory={onNavigateToInventory}
+        onNavigateToReports={onNavigateToReports}
+      />
+
+      {/* ========================================================================= */}
       {/* SECTION 3: INVENTORY ACTION CENTER & TODAY'S SALES OVERVIEW               */}
       {/* ========================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full min-w-0 items-start">
@@ -688,8 +761,8 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
             <p className="text-[11px] text-slate-400">Intraday hourly sales distribution</p>
           </div>
 
-          {/* Bar Chart Container */}
-          <div className="h-44 w-full min-w-0 pt-2">
+          {/* Bar Chart Container — Scroll-Triggered Bottom-to-Top Bar Growth (Section 17) */}
+          <ScrollChartReveal className="h-44 w-full min-w-0 pt-2" triggerKey={validInvoices.length}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={hourlySalesData} margin={{ top: 10, right: 10, left: -24, bottom: 0 }}>
                 <XAxis
@@ -716,10 +789,10 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
                   }}
                   formatter={(val: number) => [`₹${val.toLocaleString()}`, 'Sales']}
                 />
-                <Bar dataKey="sales" fill="#10b981" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="sales" fill="#10b981" radius={[4, 4, 0, 0]} isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </ScrollChartReveal>
 
           {/* Bottom Metric Strip */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800 tabular-nums">
@@ -1055,34 +1128,40 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
               </button>
             </div>
 
-            {/* Crisp SVG Donut Ring */}
+            {/* Crisp SVG Donut Ring — Scroll-Triggered Arc Reveal */}
             <div className="flex items-center justify-center py-2">
               <div className="relative w-28 h-28 flex items-center justify-center">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                   {/* Background Track */}
                   <circle cx="50" cy="50" r="38" fill="none" stroke="#1e293b" strokeWidth="10" />
                   {/* Healthy Segment */}
-                  <circle
+                  <motion.circle
                     cx="50"
                     cy="50"
                     r="38"
                     fill="none"
                     stroke="#10b981"
                     strokeWidth="10"
-                    strokeDasharray={`${healthyDash} ${circumference}`}
+                    initial={{ strokeDasharray: `0 ${circumference}` }}
+                    whileInView={{ strokeDasharray: `${healthyDash} ${circumference}` }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     strokeDashoffset="0"
                     strokeLinecap="round"
                   />
                   {/* Low Stock Segment */}
                   {lowStockProducts.length > 0 && (
-                    <circle
+                    <motion.circle
                       cx="50"
                       cy="50"
                       r="38"
                       fill="none"
                       stroke="#f59e0b"
                       strokeWidth="10"
-                      strokeDasharray={`${lowStockDash} ${circumference}`}
+                      initial={{ strokeDasharray: `0 ${circumference}` }}
+                      whileInView={{ strokeDasharray: `${lowStockDash} ${circumference}` }}
+                      viewport={{ once: true, amount: 0.3 }}
+                      transition={{ duration: 0.75, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
                       strokeDashoffset={-healthyDash}
                       strokeLinecap="round"
                     />

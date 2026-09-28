@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Tag,
   ScanLine,
@@ -311,10 +311,46 @@ export const ConnectedWorkflow: React.FC = () => {
   const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [originIndex, setOriginIndex] = useState<number>(0);
+  const [isInViewport, setIsInViewport] = useState<boolean>(false);
 
+  const sectionRef = useRef<HTMLElement | null>(null);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+    };
+  }, []);
+
+  // Detect when the Connected Workflow section enters the viewport (Section 12)
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInViewport(entry.isIntersecting);
+      },
+      { threshold: 0.22 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Smoothly advance the emerald data-flow signal through steps 01 -> 07 while in viewport & not hovered
+  useEffect(() => {
+    if (prefersReducedMotion || !isInViewport || isHovered) return;
+
+    const interval = setInterval(() => {
+      setActiveStepIndex((prev) => (prev + 1) % steps.length);
+    }, 1550);
+
+    return () => clearInterval(interval);
+  }, [prefersReducedMotion, isInViewport, isHovered]);
 
   const currentStep = steps[activeStepIndex] || steps[0];
   const CurrentIcon = currentStep.icon;
@@ -325,6 +361,9 @@ export const ConnectedWorkflow: React.FC = () => {
     const x = origins[index] || '50.0%';
     return `${x} 35%`;
   };
+
+  // Signal progress percentage across the 7 steps (centered on active step column)
+  const signalProgressPct = ((activeStepIndex + 0.5) / steps.length) * 100;
 
   const handleCardMouseEnter = (index: number) => {
     if (leaveTimeoutRef.current) {
@@ -385,12 +424,13 @@ export const ConnectedWorkflow: React.FC = () => {
   return (
     <section
       id="workflow"
+      ref={sectionRef}
       className="py-20 md:py-28 bg-slate-50/70 dark:bg-slate-950/80 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors relative overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-12 lg:mb-16">
+        <div className="max-w-3xl mb-10 lg:mb-12">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
             Connected Workflow
           </div>
@@ -398,7 +438,7 @@ export const ConnectedWorkflow: React.FC = () => {
             One business action. Everything stays connected.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-            In traditional setups, billing doesn't talk to inventory or paper Khata. In Ellix Connect, a single sale ripples through all 7 operational steps automatically.
+            In traditional setups, billing doesn&apos;t talk to inventory or paper Khata. In Ellix Connect, a single sale ripples through all 7 operational steps automatically.
             <span className="hidden lg:inline text-emerald-600 dark:text-emerald-400 font-semibold ml-1">
               Hover over any workflow step below to inspect its live data ripple in-place.
             </span>
@@ -406,16 +446,73 @@ export const ConnectedWorkflow: React.FC = () => {
         </div>
 
         {/* ============================================================ */}
+        {/* CONNECTED DATA-FLOW SIGNAL TRACK (Section 12 & 13)           */}
+        {/* ============================================================ */}
+        <div className="hidden lg:block mb-5">
+          <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400 mb-2 px-1">
+            <span className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span>ONE ACTION → CONNECTED CONSEQUENCES → BUSINESS INSIGHT</span>
+            </span>
+            <span>
+              Active Signal: <strong className="text-slate-900 dark:text-white">{currentStep.shortLabel}</strong> ({ currentStep.badge })
+            </span>
+          </div>
+
+          {/* 7-Node Connected Signal Conduit */}
+          <div className="relative h-2 rounded-full bg-slate-200/90 dark:bg-slate-800/90 overflow-visible">
+            {/* Illuminated Connected Path up to Active Step */}
+            <motion.div
+              className="absolute top-0 left-0 bottom-0 rounded-full bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.55)]"
+              animate={{ width: `${signalProgressPct}%` }}
+              transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
+            />
+            {/* Traveling Emerald Signal Pulse Head */}
+            <motion.div
+              className="absolute top-1/2 -translate-y-1/2 -ml-2 w-4 h-4 rounded-full bg-emerald-400/30 dark:bg-emerald-400/40 flex items-center justify-center pointer-events-none"
+              animate={{ left: `${signalProgressPct}%` }}
+              transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.95)]" />
+            </motion.div>
+
+            {/* 7 Step Anchor Dots */}
+            <div className="absolute inset-0 grid grid-cols-7 pointer-events-none">
+              {steps.map((s, idx) => {
+                const isReached = idx <= activeStepIndex;
+                const isCurrentNode = idx === activeStepIndex;
+                return (
+                  <div key={s.id} className="flex items-center justify-center">
+                    <span
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        isCurrentNode
+                          ? 'bg-white ring-2 ring-emerald-500 scale-125'
+                          : isReached
+                          ? 'bg-emerald-300 dark:bg-emerald-400'
+                          : 'bg-slate-300 dark:bg-slate-700'
+                      }`}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ============================================================ */}
         {/* DESKTOP EXPERIENCE (lg: screens and wider): MORPHING WORKSPACE */}
         {/* ============================================================ */}
         <div
-          className="hidden lg:block relative min-h-[540px] mb-12"
+          className="hidden lg:grid lg:grid-cols-1 items-stretch relative mb-12 box-border"
           onMouseEnter={handleSectionMouseEnter}
           onMouseLeave={handleSectionMouseLeave}
         >
           {/* Layer 1: Background 7-Step Entry-Point Card Grid */}
           <div
-            className={`grid grid-cols-7 gap-3.5 min-h-[540px] items-stretch transition-all duration-200 ease-out will-change-transform ${
+            className={`col-start-1 row-start-1 w-full h-full grid grid-cols-7 gap-3.5 min-h-[560px] items-stretch transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
               isHovered
                 ? 'opacity-20 scale-[0.99] pointer-events-auto'
                 : 'opacity-100 scale-100'
@@ -425,6 +522,7 @@ export const ConnectedWorkflow: React.FC = () => {
               const Icon = step.icon;
               const isLast = idx === steps.length - 1;
               const isCurrent = activeStepIndex === idx;
+              const isConnectedPath = idx <= activeStepIndex;
 
               return (
                 <div
@@ -437,20 +535,24 @@ export const ConnectedWorkflow: React.FC = () => {
                   onMouseEnter={() => handleCardMouseEnter(idx)}
                   onClick={() => handleCardMouseEnter(idx)}
                   onKeyDown={(e) => handleStepKeyDown(e, idx)}
-                  className={`website-card-hover p-4 rounded-2xl text-left flex flex-col justify-between cursor-pointer border transition-all duration-200 ${
+                  className={`website-card-hover p-4 rounded-2xl text-left flex flex-col justify-between cursor-pointer border transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] min-w-0 box-border ${
                     isCurrent && !isHovered
-                      ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
-                      : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                      ? 'bg-white dark:bg-slate-900 border-emerald-500/80 ring-2 ring-emerald-500/25 shadow-[0_12px_28px_-6px_rgba(16,185,129,0.2)] -translate-y-1 text-slate-900 dark:text-white'
+                      : isConnectedPath && !isHovered
+                      ? 'bg-white dark:bg-slate-900/95 border-emerald-500/30 dark:border-emerald-500/25 text-slate-900 dark:text-white'
+                      : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white opacity-90 hover:opacity-100'
                   }`}
                 >
                   <div>
                     {/* Top Bar: Step Number Badge + Flow Connector Arrow */}
                     <div className="flex items-center justify-between mb-4">
                       <span
-                        className={`text-xs font-mono font-bold px-2 py-0.5 rounded-md border ${
+                        className={`text-xs font-mono font-bold px-2 py-0.5 rounded-md border transition-colors duration-300 ${
                           isCurrent && !isHovered
-                            ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60'
+                            ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/40'
+                            : isConnectedPath && !isHovered
+                            ? 'bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60'
                         }`}
                       >
                         Step {step.stepNumber}
@@ -458,17 +560,31 @@ export const ConnectedWorkflow: React.FC = () => {
 
                       {!isLast ? (
                         <ArrowRight
-                          className={`w-3.5 h-3.5 transition-colors ${
-                            isCurrent ? 'text-emerald-500 dark:text-emerald-400' : 'text-slate-300 dark:text-slate-600'
+                          className={`w-3.5 h-3.5 transition-all duration-300 ${
+                            isCurrent
+                              ? 'text-emerald-500 dark:text-emerald-400 translate-x-0.5'
+                              : isConnectedPath
+                              ? 'text-emerald-500/60 dark:text-emerald-400/60'
+                              : 'text-slate-300 dark:text-slate-600'
                           }`}
                         />
                       ) : (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+                        <CheckCircle2
+                          className={`w-3.5 h-3.5 transition-transform duration-300 ${
+                            isCurrent ? 'text-emerald-500 dark:text-emerald-400 scale-110' : 'text-emerald-500/70 dark:text-emerald-400/70'
+                          }`}
+                        />
                       )}
                     </div>
 
-                    {/* Icon Container */}
-                    <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 transition-colors">
+                    {/* Icon Container — Brief Activation Glow & Pulse when Signal Reaches Step */}
+                    <div
+                      className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-4 transition-all duration-300 ${
+                        isCurrent && !isHovered
+                          ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-500/50 text-emerald-600 dark:text-emerald-300 shadow-[0_0_14px_rgba(16,185,129,0.25)] scale-105'
+                          : 'bg-slate-50 dark:bg-slate-800 border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400'
+                      }`}
+                    >
                       <Icon className="w-5 h-5" />
                     </div>
 
@@ -492,8 +608,11 @@ export const ConnectedWorkflow: React.FC = () => {
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60">
                         {step.badge}
                       </span>
-                      <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
-                        Live Sync
+                      <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                        {isCurrent && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                        )}
+                        <span>Live Sync</span>
                       </span>
                     </div>
                     <div className="space-y-1 text-[11px] text-slate-500 dark:text-slate-400">
@@ -544,34 +663,35 @@ export const ConnectedWorkflow: React.FC = () => {
                       }
                 }
                 transition={{
-                  duration: 0.24,
+                  duration: 0.28,
                   ease: [0.16, 1, 0.3, 1]
                 }}
-                className="absolute inset-0 z-20 p-6 sm:p-8 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 flex flex-col justify-between"
+                className="col-start-1 row-start-1 z-20 w-full h-full min-h-[560px] box-border overflow-hidden p-6 lg:p-7 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 flex flex-col justify-between gap-5"
               >
                 {/* Top Interactive Workflow Switcher Ribbon */}
-                <div>
-                  <div className="flex items-center justify-between gap-2 pb-4 mb-5 border-b border-slate-200/80 dark:border-slate-800/80">
-                    <div className="flex items-center gap-2.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200">
+                <div className="w-full min-w-0">
+                  <div className="flex items-center justify-between gap-2 pb-3.5 mb-4 border-b border-slate-200/80 dark:border-slate-800/80">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 truncate">
                         Connected Workflow Live Workspace
                       </span>
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-mono font-bold border border-emerald-300/60 dark:border-emerald-800/60">
+                      <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-mono font-bold border border-emerald-300/60 dark:border-emerald-800/60 shrink-0">
                         Step {currentStep.stepNumber} of 07
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                      <MousePointer2 className="w-3.5 h-3.5 text-emerald-500" />
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 shrink-0">
+                      <MousePointer2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                       <span>Hover any step pill to trace the live data ripple</span>
                     </div>
                   </div>
 
-                  {/* 7 Connected Workflow Step Dock Pills */}
-                  <div className="grid grid-cols-7 gap-1.5 mb-6 p-1.5 rounded-2xl bg-slate-100/90 dark:bg-slate-950/90 border border-slate-200/90 dark:border-slate-800/80 shadow-inner">
+                  {/* 7 Connected Workflow Step Dock Pills with Connected Path Highlight (Section 13) */}
+                  <div className="grid grid-cols-7 gap-1.5 p-1.5 rounded-2xl bg-slate-100/90 dark:bg-slate-950/90 border border-slate-200/90 dark:border-slate-800/80 shadow-inner box-border relative">
                     {steps.map((s, idx) => {
                       const StepIcon = s.icon;
                       const isActive = idx === activeStepIndex;
+                      const isConnected = idx < activeStepIndex;
                       return (
                         <button
                           key={s.stepNumber}
@@ -586,66 +706,87 @@ export const ConnectedWorkflow: React.FC = () => {
                             setActiveStepIndex(idx);
                             setOriginIndex(idx);
                           }}
-                          className={`relative py-2 px-1.5 rounded-xl text-xs font-bold transition-all duration-150 hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${
+                          className={`relative py-2 px-1.5 rounded-xl text-xs font-bold transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer min-w-0 ${
                             isActive
-                              ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500/50 shadow-sm ring-1 ring-emerald-500/20'
-                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-900/60 border border-transparent'
+                              ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500/60 shadow-sm ring-2 ring-emerald-500/20'
+                              : isConnected
+                              ? 'bg-emerald-50/60 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 opacity-95'
+                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-900/60 border border-transparent opacity-75 hover:opacity-100'
                           }`}
                         >
-                          <StepIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-emerald-500' : 'text-slate-400'}`} />
+                          <StepIcon
+                            className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
+                              isActive
+                                ? 'text-emerald-500 scale-110'
+                                : isConnected
+                                ? 'text-emerald-500/80'
+                                : 'text-slate-400'
+                            }`}
+                          />
                           <span className="truncate text-[11px]">{s.shortLabel}</span>
                         </button>
                       );
                     })}
                   </div>
+                  {/* Traveling Emerald Signal Path toward active step */}
+                  <div className="mt-2 px-3">
+                    <div className="relative h-1 w-full rounded-full bg-slate-200/80 dark:bg-slate-800 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-emerald-500/40 via-emerald-500 to-emerald-400 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                        style={{ width: `${((activeStepIndex + 0.5) / steps.length) * 100}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                {/* Workspace Content: Two-Column Fluid Morphing State */}
-                <div className="flex-1 flex flex-col lg:flex-row items-start justify-between gap-8">
-                  {/* Left: Step Explanation, Checklist & Sequential Controls */}
+                {/* Workspace Content: Two-Column Fluid Morphing State Aligned to Container Boundaries */}
+                <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch min-w-0">
+                  {/* Left: Step Explanation, Checklist & Bottom Metric Cards */}
                   <motion.div
                     key={`workflow-left-${currentStep.id}`}
                     initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: -10 }}
                     animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="w-full lg:w-[48%] space-y-3.5"
+                    className="lg:col-span-6 flex flex-col justify-between gap-3.5 min-w-0"
                   >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-300/60 dark:border-emerald-800/60">
-                      <CurrentIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                      <span>
-                        Step {currentStep.stepNumber} · {currentStep.subtitle}
-                      </span>
+                    <div className="space-y-3 min-w-0">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-300/60 dark:border-emerald-800/60">
+                        <CurrentIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <span>
+                          Step {currentStep.stepNumber} · {currentStep.subtitle}
+                        </span>
+                      </div>
+
+                      <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight leading-tight">
+                        {currentStep.demoHeadline}
+                      </h3>
+
+                      <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+                        {currentStep.demoExplanation}
+                      </p>
+
+                      {/* Automated Operations Checklist */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 space-y-1.5 box-border">
+                        <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+                          Automated Pipeline Actions:
+                        </div>
+                        <div className="grid grid-cols-1 gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-200">
+                          {currentStep.checklist.map((point, idx) => (
+                            <div key={idx} className="flex items-center gap-2 min-w-0">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                              <span className="truncate sm:whitespace-normal">{point}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
 
-                    <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight">
-                      {currentStep.demoHeadline}
-                    </h3>
-
-                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                      {currentStep.demoExplanation}
-                    </p>
-
-                    {/* Automated Operations Checklist */}
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 space-y-1.5">
-                      <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-                        Automated Pipeline Actions:
-                      </div>
-                      <div className="grid grid-cols-1 gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-200">
-                        {currentStep.checklist.map((point, idx) => (
-                          <div key={idx} className="flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                            <span>{point}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Step Metric Badges */}
-                    <div className="grid grid-cols-3 gap-2.5 pt-0.5">
+                    {/* Step Metric Badges — Contained Inside Main Frame & Bottom-Aligned */}
+                    <div className="grid grid-cols-3 gap-2.5 pt-1 mt-auto min-w-0">
                       {currentStep.metrics.map((item, idx) => (
                         <div
                           key={idx}
-                          className="p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 shadow-xs"
+                          className="p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 shadow-xs min-w-0 box-border"
                         >
                           <div className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-bold truncate">
                             {item.label}
@@ -664,36 +805,38 @@ export const ConnectedWorkflow: React.FC = () => {
                     initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: 10 }}
                     animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="w-full lg:w-[52%] flex flex-col justify-between space-y-3.5"
+                    className="lg:col-span-6 flex flex-col min-w-0"
                   >
-                    <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-lg space-y-3.5">
-                      <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-                        <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                          <span className="text-xs font-bold text-slate-900 dark:text-white font-mono">
-                            Live Data Ripple Demonstration
+                    <div className="flex-1 p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between gap-3.5 min-w-0 box-border">
+                      <div className="space-y-3.5 min-w-0">
+                        <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                            <span className="text-xs font-bold text-slate-900 dark:text-white font-mono truncate">
+                              Live Data Ripple Demonstration
+                            </span>
+                          </div>
+                          <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">
+                            All 7 Steps Synced
                           </span>
                         </div>
-                        <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
-                          All 7 Steps Synced
-                        </span>
-                      </div>
 
-                      <div>
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                          {currentStep.title} · System Output
-                        </h4>
-                        {currentStep.demoSnippet}
-                      </div>
+                        <div className="min-w-0">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                            {currentStep.title} · System Output
+                          </h4>
+                          {currentStep.demoSnippet}
+                        </div>
 
-                      {/* System Activity Telemetry Strip */}
-                      <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs font-mono text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                        <span className="truncate">{currentStep.systemActivity}</span>
+                        {/* System Activity Telemetry Strip */}
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs font-mono text-slate-700 dark:text-slate-300 flex items-center gap-2 min-w-0 box-border">
+                          <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          <span className="truncate">{currentStep.systemActivity}</span>
+                        </div>
                       </div>
 
                       {/* Bottom Sequential Stepper Controls */}
-                      <div className="pt-2 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/80">
+                      <div className="pt-3 mt-auto flex items-center justify-between gap-2 border-t border-slate-100 dark:border-slate-800/80">
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
@@ -722,7 +865,7 @@ export const ConnectedWorkflow: React.FC = () => {
                             Next Step →
                           </button>
                         </div>
-                        <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                        <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold shrink-0">
                           Zero latency cloud sync
                         </span>
                       </div>
@@ -737,8 +880,8 @@ export const ConnectedWorkflow: React.FC = () => {
         {/* ============================================================ */}
         {/* MOBILE & TABLET EXPERIENCE (< lg screens): CLEAN & ACCESSIBLE */}
         {/* ============================================================ */}
-        <div className="block lg:hidden space-y-6 mb-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
+        <div className="block lg:hidden space-y-4 mb-10">
+          <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-4 gap-3 overflow-x-auto no-scrollbar pb-2 snap-x snap-mandatory">
             {steps.map((step, idx) => {
               const Icon = step.icon;
               const isSelected = activeStepIndex === idx;
@@ -750,40 +893,40 @@ export const ConnectedWorkflow: React.FC = () => {
                   type="button"
                   onClick={() => setActiveStepIndex(idx)}
                   aria-pressed={isSelected}
-                  className={`p-5 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
+                  className={`snap-start shrink-0 w-[235px] sm:w-auto p-4 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
                     isSelected
                       ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/40 shadow-md text-slate-900 dark:text-white'
                       : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white'
                   }`}
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-2.5">
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                           isSelected
                             ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
                       >
-                        <Icon className="w-5 h-5" />
+                        <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
                       <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
                         Step {step.stepNumber}
                       </span>
                     </div>
 
-                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">
+                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-0.5">
                       {step.subtitle}
                     </div>
-                    <h3 className="text-base font-bold mb-1.5">
+                    <h3 className="text-sm sm:text-base font-bold mb-1">
                       {step.title}
                     </h3>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
                       {step.actionDetail}
                     </p>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                     <span>{isSelected ? 'Viewing step details ↓' : 'Tap to preview'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
@@ -793,7 +936,7 @@ export const ConnectedWorkflow: React.FC = () => {
           </div>
 
           {/* Mobile Step Detail Workspace */}
-          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
+          <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
                 <CurrentIcon className="w-3.5 h-3.5" />
@@ -860,7 +1003,7 @@ export const ConnectedWorkflow: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
           
           {/* The Old Way */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-rose-200/80 dark:border-rose-950/80 shadow-sm">
+          <div data-cursor="card" className="website-card-hover p-6 rounded-2xl bg-white dark:bg-slate-900 border border-rose-200/80 dark:border-rose-950/80 shadow-sm">
             <div className="flex items-center gap-2 text-rose-700 dark:text-rose-400 text-xs font-bold uppercase tracking-wider mb-3">
               <AlertCircle className="w-4 h-4" />
               <span>The Fragmented Legacy Approach</span>
@@ -889,7 +1032,7 @@ export const ConnectedWorkflow: React.FC = () => {
           </div>
 
           {/* The Ellix Connect Way */}
-          <div className="p-6 rounded-2xl bg-emerald-50/40 dark:bg-emerald-950/30 border border-emerald-300/80 dark:border-emerald-800/80 shadow-sm">
+          <div data-cursor="card" className="website-card-hover p-6 rounded-2xl bg-emerald-50/40 dark:bg-emerald-950/30 border border-emerald-300/80 dark:border-emerald-800/80 shadow-sm">
             <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider mb-3">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>The Connected Ellix Approach</span>

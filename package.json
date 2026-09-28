@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development tsx server.ts",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
-    "start": "NODE_ENV=production node dist/server.cjs",
+    "dev": "tsx server.ts",
+    "build": "vite build",
+    "start": "node server.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"
@@ -20,6 +20,7 @@
     "express": "^4.21.2",
     "firebase": "^12.19.0",
     "firebase-admin": "^14.4.0",
+    "gsap": "^3.15.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
     "lucide-react": "^0.546.0",

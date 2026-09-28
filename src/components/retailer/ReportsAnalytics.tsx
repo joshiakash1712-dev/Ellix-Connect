@@ -28,7 +28,8 @@ import {
   QrCode,
   Tag,
   Store as StoreIcon,
-  Loader2
+  Loader2,
+  Receipt
 } from 'lucide-react';
 import {
   BarChart,
@@ -51,6 +52,7 @@ import {
   exportExecutiveAuditPDF
 } from '../../utils/exportUtils';
 import { GrowthGraphs } from './GrowthGraphs';
+import { ScrollChartReveal } from '../common/ScrollChartReveal';
 
 export type ReportDateFilter = 'today' | 'yesterday' | '7days' | 'this_week' | 'this_month' | 'last_month' | 'all' | 'custom';
 
@@ -708,7 +710,10 @@ export const ReportsAnalytics: React.FC<ReportsAnalyticsProps> = ({ onNavigateTo
                 </button>
               </div>
 
-              <div className="h-60 w-full">
+              <ScrollChartReveal
+                className="h-60 w-full"
+                triggerKey={`sales-payment-${selectedPeriod}`}
+              >
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={paymentMethodData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.4} />
@@ -718,10 +723,10 @@ export const ReportsAnalytics: React.FC<ReportsAnalyticsProps> = ({ onNavigateTo
                       contentStyle={{ backgroundColor: '#121826', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
                       formatter={(val: any) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Billed Volume']}
                     />
-                    <Bar dataKey="value" fill="#10b981" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="value" fill="#10b981" radius={[8, 8, 0, 0]} isAnimationActive={false} />
                   </BarChart>
                 </ResponsiveContainer>
-              </div>
+              </ScrollChartReveal>
             </div>
 
             {/* Inventory Category Value Share */}
@@ -744,7 +749,10 @@ export const ReportsAnalytics: React.FC<ReportsAnalyticsProps> = ({ onNavigateTo
                 </button>
               </div>
 
-              <div className="h-48 w-full flex items-center justify-center">
+              <ScrollChartReveal
+                className="h-48 w-full flex items-center justify-center"
+                triggerKey={`sales-category-${selectedPeriod}`}
+              >
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -755,6 +763,7 @@ export const ReportsAnalytics: React.FC<ReportsAnalyticsProps> = ({ onNavigateTo
                       outerRadius={75}
                       paddingAngle={4}
                       dataKey="value"
+                      isAnimationActive={false}
                     >
                       {categoryDistribution.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -766,7 +775,7 @@ export const ReportsAnalytics: React.FC<ReportsAnalyticsProps> = ({ onNavigateTo
                     />
                   </PieChart>
                 </ResponsiveContainer>
-              </div>
+              </ScrollChartReveal>
 
               <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-slate-800 tabular-nums">
                 {categoryDistribution.slice(0, 4).map((cat, i) => (
@@ -966,7 +975,10 @@ export const ReportsAnalytics: React.FC<ReportsAnalyticsProps> = ({ onNavigateTo
             <h4 className="text-xs uppercase font-bold text-slate-400 tracking-wider">
               Taxable Value Distribution vs Tax Liability
             </h4>
-            <div className="h-64 w-full">
+            <ScrollChartReveal
+              className="h-64 w-full"
+              triggerKey={`gst-slabs-${selectedPeriod}`}
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={gstSlabReport}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
@@ -977,11 +989,11 @@ export const ReportsAnalytics: React.FC<ReportsAnalyticsProps> = ({ onNavigateTo
                     formatter={(val: any) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Value']}
                   />
                   <Legend />
-                  <Bar dataKey="taxable" name="Taxable Value (₹)" fill="#3b82f6" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="totalTax" name="Total GST (₹)" fill="#10b981" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="taxable" name="Taxable Value (₹)" fill="#3b82f6" radius={[6, 6, 0, 0]} isAnimationActive={false} />
+                  <Bar dataKey="totalTax" name="Total GST (₹)" fill="#10b981" radius={[6, 6, 0, 0]} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
-            </div>
+            </ScrollChartReveal>
           </div>
 
         </div>

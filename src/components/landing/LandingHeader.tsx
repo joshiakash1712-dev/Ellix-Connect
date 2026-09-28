@@ -22,12 +22,18 @@ interface LandingHeaderProps {
   onOpenSignIn?: () => void;
   onOpenGetStarted?: () => void;
   onOpenAppPreview?: () => void;
+  onOpenGuide?: () => void;
+  guideProgressStep?: number;
+  guideCompleted?: boolean;
 }
 
 export const LandingHeader: React.FC<LandingHeaderProps> = ({
   onOpenSignIn,
   onOpenGetStarted,
-  onOpenAppPreview
+  onOpenAppPreview,
+  onOpenGuide,
+  guideProgressStep,
+  guideCompleted,
 }) => {
   const { currentUser, userProfile } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,6 +43,22 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
   // Handle scroll detection with requestAnimationFrame & layout caching for 60/120fps smoothness
   useEffect(() => {
     let rafId: number | null = null;
+    let sectionBounds: Array<{ id: string; top: number; height: number }> = [];
+
+    const measureSections = () => {
+      sectionBounds = [];
+      for (let i = 0; i < navItems.length; i++) {
+        const item = navItems[i];
+        const element = document.getElementById(item.id);
+        if (element) {
+          sectionBounds.push({
+            id: item.id,
+            top: element.offsetTop,
+            height: element.offsetHeight,
+          });
+        }
+      }
+    };
 
     const handleScroll = () => {
       if (rafId !== null) return;
@@ -49,40 +71,49 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
         const nextScrolled = currentScrollY > 20;
         setIsScrolled((prev) => (prev !== nextScrolled ? nextScrolled : prev));
 
-        // 2. Detect active section based on scroll offset
+        // 2. Detect active section based on cached scroll offsets
         if (currentScrollY < 180) {
           setActiveSection((prev) => (prev !== '' ? '' : prev));
           return;
         }
 
+        if (sectionBounds.length === 0) {
+          measureSections();
+        }
+
         const scrollPosition = currentScrollY + 140;
-        for (let i = navItems.length - 1; i >= 0; i--) {
-          const item = navItems[i];
-          const element = document.getElementById(item.id);
-          if (element) {
-            const top = element.offsetTop;
-            const height = element.offsetHeight;
-            if (scrollPosition >= top && scrollPosition < top + height) {
-              setActiveSection((prev) => (prev !== item.id ? item.id : prev));
-              return;
-            }
+        let matchedSection = '';
+        for (let i = sectionBounds.length - 1; i >= 0; i--) {
+          const bound = sectionBounds[i];
+          if (scrollPosition >= bound.top && scrollPosition < bound.top + bound.height) {
+            matchedSection = bound.id;
+            break;
           }
         }
+        setActiveSection((prev) => (prev !== matchedSection ? matchedSection : prev));
       });
     };
 
+    measureSections();
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', measureSections, { passive: true });
     handleScroll();
     return () => {
       if (rafId !== null) cancelAnimationFrame(rafId);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', measureSections);
     };
   }, []);
 
   // Smooth scroll handler with header offset
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string, itemId?: string) => {
     e.preventDefault();
     setMobileMenuOpen(false);
+
+    if (itemId === 'guide' && onOpenGuide) {
+      onOpenGuide();
+      return;
+    }
 
     const targetId = href.replace('#', '');
     const element = document.getElementById(targetId);
@@ -104,15 +135,22 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-200 border-b glass-panel relative ${
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border-b relative ${
         isScrolled
-          ? 'shadow-md border-slate-200/90 dark:border-slate-800'
-          : 'border-transparent'
+          ? 'bg-white/95 dark:bg-slate-950/92 backdrop-blur-xl shadow-md border-slate-200/90 dark:border-slate-800/90'
+          : 'bg-white/80 dark:bg-slate-950/75 backdrop-blur-md border-transparent'
       }`}
     >
       {/* Subtle brand gradient backdrop BEHIND the glass header for frosted refraction */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-emerald-600/10 via-teal-500/5 to-emerald-600/10 pointer-events-none" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between transition-[height] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isScrolled ? 'h-14 sm:h-[4.25rem]' : 'h-16 sm:h-20'
+        }`}
+      >
         
         {/* Brand Logo & Tagline */}
         <a
@@ -141,19 +179,29 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
         <nav className="hidden md:flex items-center gap-1 sm:gap-2 text-sm font-medium">
           {navItems.map((item) => {
             const isActive = activeSection === item.id;
+            const isGuide = item.id === 'guide';
             return (
               <a
                 key={item.id}
                 href={item.href}
                 data-cursor="hover"
-                onClick={(e) => scrollToSection(e, item.href)}
-                className={`website-nav-hover relative px-4 py-2 rounded-lg transition-all ${
+                onClick={(e) => scrollToSection(e, item.href, item.id)}
+                className={`website-nav-hover relative px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
                   isActive
                     ? 'text-emerald-700 dark:text-emerald-400 font-semibold bg-emerald-50/80 dark:bg-emerald-950/40'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60'
                 }`}
               >
                 <span>{item.name}</span>
+                {isGuide && (
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                    {guideCompleted
+                      ? '✓'
+                      : guideProgressStep && guideProgressStep > 0
+                      ? `${guideProgressStep}/12`
+                      : 'Tour'}
+                  </span>
+                )}
                 {isActive && (
                   <motion.div
                     layoutId="activeNavIndicator"
@@ -221,7 +269,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
                   type="button"
                   data-cursor="hover"
                   onClick={onOpenSignIn}
-                  className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  className="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-[1.5px] active:scale-[0.98] cursor-pointer"
                 >
                   Sign In
                 </button>
@@ -233,10 +281,10 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
                     data-cursor="hover"
                     onClick={onOpenAppPreview}
                     className="website-btn-glow px-3 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-300 dark:border-emerald-800/80 rounded-lg transition-all hover:border-emerald-500 hover:shadow-sm cursor-pointer flex items-center gap-1"
-                    title="Explore live business management app & cloud database"
+                    title="Explore interactive application demo on the website"
                   >
                     <LayoutDashboard className="w-3.5 h-3.5" />
-                    <span>Live App</span>
+                    <span>App Demo</span>
                   </button>
                 )}
 
@@ -245,7 +293,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
                   type="button"
                   data-cursor="hover"
                   onClick={onOpenGetStarted}
-                  className="website-btn-glow px-5 py-2.5 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 active:bg-slate-950 rounded-lg shadow-sm hover:shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2 group cursor-pointer"
+                  className="website-btn-glow px-5 py-2.5 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 active:bg-slate-950 rounded-lg shadow-sm hover:shadow-emerald-500/20 transition-all flex items-center gap-2 group cursor-pointer"
                 >
                   <span>Get Started</span>
                   <ArrowRight className="w-4 h-4 text-emerald-400 dark:text-emerald-100 group-hover:translate-x-0.5 transition-transform" />
@@ -266,7 +314,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
           </button>
         </div>
 
-      </div>
+      </motion.div>
 
       {/* Mobile Drawer / Collapsible Menu */}
       <AnimatePresence>
@@ -281,18 +329,30 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
             <div className="flex flex-col space-y-1 text-sm font-semibold">
               {navItems.map((item) => {
                 const isActive = activeSection === item.id;
+                const isGuide = item.id === 'guide';
                 return (
                   <a
                     key={item.id}
                     href={item.href}
-                    onClick={(e) => scrollToSection(e, item.href)}
+                    onClick={(e) => scrollToSection(e, item.href, item.id)}
                     className={`px-3 py-2.5 rounded-xl transition-colors flex items-center justify-between ${
                       isActive
                         ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-bold'
                         : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
                     }`}
                   >
-                    <span>{item.name}</span>
+                    <span className="flex items-center gap-2">
+                      <span>{item.name}</span>
+                      {isGuide && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                          {guideCompleted
+                            ? 'Completed ✓'
+                            : guideProgressStep && guideProgressStep > 0
+                            ? `Step ${guideProgressStep}/12`
+                            : '12-Step Tour'}
+                        </span>
+                      )}
+                    </span>
                     {isActive && (
                       <span className="w-2 h-2 rounded-full bg-emerald-500" />
                     )}

@@ -43,11 +43,12 @@ import {
   mockInvoiceTemplates
 } from '../data/mockData';
 import { useAuth } from './AuthContext';
-import { syncManager, getOfflineQueue } from '../lib/firestoreSync';
+import { syncManager as rawSyncManager, getOfflineQueue } from '../lib/firestoreSync';
 import { doc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { db as firestoreDb } from '../lib/firebase';
 
 interface StoreContextType {
+  isDemoMode?: boolean;
   activeModule: ActiveModule;
   setActiveModule: (module: ActiveModule) => void;
   activeRole: UserRole;
@@ -147,13 +148,35 @@ interface StoreContextType {
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
-export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const isFirestoreAvailable = Boolean(firestoreDb);
-  // Load from local storage or fallback to mock data
+export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: boolean }> = ({
+  children,
+  isDemoMode = false,
+}) => {
+  const isFirestoreAvailable = Boolean(firestoreDb) && !isDemoMode;
+  const syncManager = React.useMemo<typeof rawSyncManager>(() => {
+    if (!isDemoMode) return rawSyncManager;
+    return new Proxy(rawSyncManager, {
+      get(_target, prop) {
+        if (prop === 'getDatabaseId') return () => 'demo-sandbox';
+        if (prop === 'subscribeToStore') {
+          return (_storeId: string, callbacks: any) => {
+            if (callbacks?.onInitialDataLoaded) {
+              setTimeout(() => callbacks.onInitialDataLoaded(), 40);
+            }
+            return () => {};
+          };
+        }
+        return () => Promise.resolve();
+      },
+    });
+  }, [isDemoMode]);
+
+  // Load from local storage (when not in demo mode) or fallback to mock data
   const [activeModule, setActiveModule] = useState<ActiveModule>('retailer');
   const [activeRoleState, setActiveRoleState] = useState<UserRole>('client');
 
   const [stores, setStores] = useState<Store[]>(() => {
+    if (isDemoMode) return mockStores;
     const saved = localStorage.getItem('ellix_stores');
     return saved ? JSON.parse(saved) : mockStores;
   });
@@ -161,11 +184,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const hydratedStoreIdRef = React.useRef<string>((stores[0] || mockStores[0]).id);
 
   const loadStoreScopedCache = <T,>(baseKey: string, storeId: string, fallback: T[]): T[] => {
-    try {
-      const scoped = localStorage.getItem(`${baseKey}_${storeId}`);
-      if (scoped) return JSON.parse(scoped);
-    } catch {
-      // ignore parse error
+    if (!isDemoMode) {
+      try {
+        const scoped = localStorage.getItem(`${baseKey}_${storeId}`);
+        if (scoped) return JSON.parse(scoped);
+      } catch {
+        // ignore parse error
+      }
     }
     return fallback.filter((item: any) => !item?.storeId || item.storeId === storeId);
   };
@@ -180,6 +205,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [wholesalerProducts] = useState<WholesalerProduct[]>(mockWholesalerProducts);
 
   const [connections, setConnections] = useState<RetailerWholesalerConnection[]>(() => {
+    if (isDemoMode) return mockConnections;
     const saved = localStorage.getItem(`ellix_connections_${activeStore.id}`);
     return saved ? JSON.parse(saved) : mockConnections;
   });
@@ -205,6 +231,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 
   const [notifications, setNotifications] = useState<AppNotification[]>(() => {
+    if (isDemoMode) return mockNotifications;
     const saved = localStorage.getItem(`ellix_notifications_${activeStore.id}`);
     return saved ? JSON.parse(saved) : mockNotifications;
   });
@@ -214,6 +241,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 
   const [invoiceTemplates, setInvoiceTemplates] = useState<InvoiceTemplate[]>(() => {
+    if (isDemoMode) return mockInvoiceTemplates;
     const saved = localStorage.getItem(`ellix_invoice_templates_${activeStore.id}`);
     return saved ? JSON.parse(saved) : mockInvoiceTemplates;
   });
@@ -227,12 +255,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 
   const [businessApplications, setBusinessApplications] = useState<BusinessApplication[]>(() => {
+    if (isDemoMode) return mockBusinessApplications;
     const saved = localStorage.getItem('ellix_business_applications');
     return saved ? JSON.parse(saved) : mockBusinessApplications;
   });
 
   const activeClientId = activeStore.clientId || 'client-001';
   const [subscription, setSubscription] = useState<SubscriptionPlan>(() => {
+    if (isDemoMode) return mockSubscriptions[0];
     const saved = localStorage.getItem(`ellix_subscription_${activeClientId}`);
     return saved ? JSON.parse(saved) : mockSubscriptions[0];
   });
@@ -286,81 +316,122 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [theme]);
 
-  // Sync store-scoped state to local storage only when hydratedStoreIdRef matches activeStore.id
-  useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_products_${activeStore.id}`, JSON.stringify(products));
-  }, [products, activeStore.id]);
+  // Sync store-scoped state to local storage using non-blocking deferred writes (with synchronous flush on read/unload)
+  const pendingStorageWritesRef = React.useRef<Map<string, any>>(new Map());
+  const storageTimerRef = React.useRef<number | null>(null);
+
+  const flushPendingStorageWrites = React.useCallback(() => {
+    if (storageTimerRef.current !== null) {
+      window.clearTimeout(storageTimerRef.current);
+      storageTimerRef.current = null;
+    }
+    if (pendingStorageWritesRef.current.size === 0) return;
+    pendingStorageWritesRef.current.forEach((val, key) => {
+      try {
+        localStorage.setItem(key, JSON.stringify(val));
+      } catch {
+        // ignore quota errors
+      }
+    });
+    pendingStorageWritesRef.current.clear();
+  }, []);
+
+  const scheduleStorageWrite = React.useCallback((key: string, value: any) => {
+    pendingStorageWritesRef.current.set(key, value);
+    if (storageTimerRef.current !== null) return;
+    storageTimerRef.current = window.setTimeout(() => {
+      storageTimerRef.current = null;
+      flushPendingStorageWrites();
+    }, 120);
+  }, [flushPendingStorageWrites]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_connections_${activeStore.id}`, JSON.stringify(connections));
-  }, [connections, activeStore.id]);
+    if (isDemoMode) return;
+    window.addEventListener('beforeunload', flushPendingStorageWrites);
+    return () => {
+      window.removeEventListener('beforeunload', flushPendingStorageWrites);
+      flushPendingStorageWrites();
+    };
+  }, [isDemoMode, flushPendingStorageWrites]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_customers_${activeStore.id}`, JSON.stringify(customers));
-  }, [customers, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_products_${activeStore.id}`, products);
+  }, [isDemoMode, products, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_invoices_${activeStore.id}`, JSON.stringify(invoices));
-  }, [invoices, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_connections_${activeStore.id}`, connections);
+  }, [isDemoMode, connections, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_restock_orders_${activeStore.id}`, JSON.stringify(restockOrders));
-  }, [restockOrders, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_customers_${activeStore.id}`, customers);
+  }, [isDemoMode, customers, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_customer_orders_${activeStore.id}`, JSON.stringify(customerOrders));
-  }, [customerOrders, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_invoices_${activeStore.id}`, invoices);
+  }, [isDemoMode, invoices, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_employees_${activeStore.id}`, JSON.stringify(employees));
-  }, [employees, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_restock_orders_${activeStore.id}`, restockOrders);
+  }, [isDemoMode, restockOrders, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_notifications_${activeStore.id}`, JSON.stringify(notifications));
-  }, [notifications, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_customer_orders_${activeStore.id}`, customerOrders);
+  }, [isDemoMode, customerOrders, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_audit_logs_${activeStore.id}`, JSON.stringify(auditLogs));
-  }, [auditLogs, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_employees_${activeStore.id}`, employees);
+  }, [isDemoMode, employees, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_wholesalers_${activeStore.id}`, JSON.stringify(wholesalers));
-  }, [wholesalers, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_notifications_${activeStore.id}`, notifications);
+  }, [isDemoMode, notifications, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_invoice_templates_${activeStore.id}`, JSON.stringify(invoiceTemplates));
-  }, [invoiceTemplates, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_audit_logs_${activeStore.id}`, auditLogs);
+  }, [isDemoMode, auditLogs, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_suppliers_${activeStore.id}`, JSON.stringify(suppliers));
-  }, [suppliers, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_wholesalers_${activeStore.id}`, wholesalers);
+  }, [isDemoMode, wholesalers, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    if (hydratedStoreIdRef.current !== activeStore.id) return;
-    localStorage.setItem(`ellix_restock_logs_${activeStore.id}`, JSON.stringify(restockLogs));
-  }, [restockLogs, activeStore.id]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_invoice_templates_${activeStore.id}`, invoiceTemplates);
+  }, [isDemoMode, invoiceTemplates, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    localStorage.setItem('ellix_business_applications', JSON.stringify(businessApplications));
-  }, [businessApplications]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_suppliers_${activeStore.id}`, suppliers);
+  }, [isDemoMode, suppliers, activeStore.id, scheduleStorageWrite]);
 
   useEffect(() => {
-    localStorage.setItem(`ellix_subscription_${activeClientId}`, JSON.stringify(subscription));
-  }, [subscription, activeClientId]);
+    if (isDemoMode || hydratedStoreIdRef.current !== activeStore.id) return;
+    scheduleStorageWrite(`ellix_restock_logs_${activeStore.id}`, restockLogs);
+  }, [isDemoMode, restockLogs, activeStore.id, scheduleStorageWrite]);
 
-  const { currentUser: authUser, userProfile } = useAuth();
+  useEffect(() => {
+    if (isDemoMode) return;
+    scheduleStorageWrite('ellix_business_applications', businessApplications);
+  }, [isDemoMode, businessApplications, scheduleStorageWrite]);
+
+  useEffect(() => {
+    if (isDemoMode) return;
+    scheduleStorageWrite(`ellix_subscription_${activeClientId}`, subscription);
+  }, [isDemoMode, subscription, activeClientId, scheduleStorageWrite]);
+
+  const { currentUser: rawAuthUser, userProfile: rawUserProfile } = useAuth();
+  const authUser = isDemoMode ? null : rawAuthUser;
+  const userProfile = isDemoMode ? null : rawUserProfile;
 
   // Map userProfile.role to canonical UserRole
   const mapProfileRoleToUserRole = (pRole: string): UserRole => {
@@ -373,11 +444,15 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Authoritative activeRole: In production or for authenticated non-super-admin users,
   // activeRole is strictly bound to the authenticated user's profile role.
-  const activeRole: UserRole = (authUser && userProfile?.role && (!(import.meta as any).env?.DEV || userProfile.role !== 'super_admin'))
+  const activeRole: UserRole = (!isDemoMode && authUser && userProfile?.role && (!(import.meta as any).env?.DEV || userProfile.role !== 'super_admin'))
     ? mapProfileRoleToUserRole(userProfile.role)
     : activeRoleState;
 
   const setActiveRole = (requestedRole: UserRole) => {
+    if (isDemoMode) {
+      setActiveRoleState(requestedRole);
+      return;
+    }
     // Disallow manual role switching in production or for non-super-admin authenticated users
     if (!(import.meta as any).env?.DEV) {
       if (userProfile?.role) {
@@ -1145,7 +1220,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
     const updated = [...wholesalers, newWs];
     setWholesalers(updated);
-    localStorage.setItem(`ellix_wholesalers_${activeStore.id}`, JSON.stringify(updated));
+    if (!isDemoMode) {
+      localStorage.setItem(`ellix_wholesalers_${activeStore.id}`, JSON.stringify(updated));
+    }
     syncManager.syncWholesaler(activeStore.id, newWs);
     addAuditLog('Wholesaler Partner Onboarded', `Added B2B Supplier: ${newWs.name} (${newWs.gstin})`);
     addNotification({
@@ -1167,14 +1244,18 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return w;
     });
     setWholesalers(updated);
-    localStorage.setItem(`ellix_wholesalers_${activeStore.id}`, JSON.stringify(updated));
+    if (!isDemoMode) {
+      localStorage.setItem(`ellix_wholesalers_${activeStore.id}`, JSON.stringify(updated));
+    }
     addAuditLog('Wholesaler Profile Updated', `Updated supplier ID ${id}`);
   };
 
   const deleteWholesaler = (id: string) => {
     const updated = wholesalers.filter(w => w.id !== id);
     setWholesalers(updated);
-    localStorage.setItem(`ellix_wholesalers_${activeStore.id}`, JSON.stringify(updated));
+    if (!isDemoMode) {
+      localStorage.setItem(`ellix_wholesalers_${activeStore.id}`, JSON.stringify(updated));
+    }
     syncManager.deleteWholesaler(activeStore.id, id);
     addAuditLog('Wholesaler Agreement Terminated', `Removed supplier partner ID ${id}`, 'warning');
   };
@@ -1327,7 +1408,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setStores(prev => {
       if (prev.some(s => s.id === storeId)) return prev;
       const updated = [...prev, newStore];
-      localStorage.setItem('ellix_stores', JSON.stringify(updated));
+      if (!isDemoMode) {
+        localStorage.setItem('ellix_stores', JSON.stringify(updated));
+      }
       return updated;
     });
 
@@ -1619,7 +1702,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
     const updated = [...stores, newStore];
     setStores(updated);
-    localStorage.setItem('ellix_stores', JSON.stringify(updated));
+    if (!isDemoMode) {
+      localStorage.setItem('ellix_stores', JSON.stringify(updated));
+    }
     syncManager.syncStore(newStore);
     addAuditLog('Store Outlet Provisioned', `Added new branch: ${newStore.name} (${newStore.city})`);
     addNotification({
@@ -1640,7 +1725,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return st;
     });
     setStores(updated);
-    localStorage.setItem('ellix_stores', JSON.stringify(updated));
+    if (!isDemoMode) {
+      localStorage.setItem('ellix_stores', JSON.stringify(updated));
+    }
     if (activeStore.id === id) {
       setActiveStore(prev => ({ ...prev, ...updates }));
     }
@@ -1651,7 +1738,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (stores.length <= 1) return;
     const updated = stores.filter(st => st.id !== id);
     setStores(updated);
-    localStorage.setItem('ellix_stores', JSON.stringify(updated));
+    if (!isDemoMode) {
+      localStorage.setItem('ellix_stores', JSON.stringify(updated));
+    }
     if (activeStore.id === id) {
       setActiveStore(updated[0]);
     }
@@ -1662,7 +1751,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const updateSubscription = (updates: Partial<SubscriptionPlan>) => {
     setSubscription(prev => {
       const next = { ...prev, ...updates };
-      localStorage.setItem(`ellix_subscription_${activeClientId}`, JSON.stringify(next));
+      if (!isDemoMode) {
+        localStorage.setItem(`ellix_subscription_${activeClientId}`, JSON.stringify(next));
+      }
       return next;
     });
     addAuditLog('SaaS Subscription Modified', `Plan updated to ${updates.name || subscription.name}`);
@@ -1676,7 +1767,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const clearAuditLogs = () => {
     setAuditLogs([]);
-    localStorage.removeItem(`ellix_audit_logs_${activeStore.id}`);
+    if (!isDemoMode) {
+      localStorage.removeItem(`ellix_audit_logs_${activeStore.id}`);
+    }
     addNotification({
       title: 'Audit Logs Archived',
       message: 'System audit logs cleared and archived.',
@@ -1686,7 +1779,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const resetToDefaultData = () => {
-    localStorage.clear();
+    if (!isDemoMode) {
+      localStorage.clear();
+    }
     setStores(mockStores);
     setActiveStore(mockStores[0]);
     setProducts(mockProducts);
@@ -1766,6 +1861,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <StoreContext.Provider
       value={{
+        isDemoMode,
         activeModule,
         setActiveModule,
         activeRole,

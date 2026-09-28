@@ -7,6 +7,8 @@ export const WebsiteCursor: React.FC = () => {
   const [isFinePointer, setIsFinePointer] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [cursorMode, setCursorMode] = useState<CursorMode>('default');
+  const isVisibleRef = useRef(false);
+  const cursorModeRef = useRef<CursorMode>('default');
 
   // Exact mouse coordinates
   const mouseX = useMotionValue(-100);
@@ -32,54 +34,57 @@ export const WebsiteCursor: React.FC = () => {
       return () => mediaQuery.removeEventListener('change', handleMediaChange);
     }
 
+    const updateCursorMode = (nextMode: CursorMode) => {
+      if (cursorModeRef.current !== nextMode) {
+        cursorModeRef.current = nextMode;
+        setCursorMode(nextMode);
+      }
+    };
+
+    const resolveCursorMode = (target: HTMLElement | null): CursorMode => {
+      if (!target) return 'default';
+      if (target.closest('[data-cursor="hover"]')) return 'hover';
+      if (target.closest('[data-cursor="card"], .website-interactive-card, [data-spotlight="card"]')) return 'card';
+      if (target.closest('button, a, input, select, textarea, [role="button"], label, summary')) return 'hover';
+      return 'default';
+    };
+
     // High-performance coordinate tracker: zero DOM queries, pure MotionValue update
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
 
-      if (!isVisible) {
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true;
         setIsVisible(true);
       }
     };
 
     // Hover state inspector: only runs on element boundary transitions (mouseover), not on every pixel
     const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (!target) {
-        setCursorMode('default');
-        return;
-      }
-
-      if (target.closest('button, a, input, select, textarea, [role="button"], [data-cursor="hover"], label, summary')) {
-        setCursorMode('hover');
-      } else if (target.closest('[data-cursor="card"], .website-interactive-card, [data-spotlight="card"]')) {
-        setCursorMode('card');
-      } else {
-        setCursorMode('default');
-      }
+      updateCursorMode(resolveCursorMode(e.target as HTMLElement | null));
     };
 
     const handleMouseDown = () => {
-      setCursorMode('clicking');
+      updateCursorMode('clicking');
     };
 
     const handleMouseUp = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (target?.closest('button, a, input, select, textarea, [role="button"], [data-cursor="hover"], label, summary')) {
-        setCursorMode('hover');
-      } else if (target?.closest('[data-cursor="card"], .website-interactive-card')) {
-        setCursorMode('card');
-      } else {
-        setCursorMode('default');
-      }
+      updateCursorMode(resolveCursorMode(e.target as HTMLElement | null));
     };
 
     const handleMouseLeave = () => {
-      setIsVisible(false);
+      if (isVisibleRef.current) {
+        isVisibleRef.current = false;
+        setIsVisible(false);
+      }
     };
 
     const handleMouseEnter = () => {
-      setIsVisible(true);
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true;
+        setIsVisible(true);
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -98,7 +103,7 @@ export const WebsiteCursor: React.FC = () => {
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
     };
-  }, [isVisible, mouseX, mouseY]);
+  }, [mouseX, mouseY]);
 
   if (!isFinePointer) {
     return null;
@@ -114,13 +119,13 @@ export const WebsiteCursor: React.FC = () => {
   if (cursorMode === 'hover') {
     auraSize = 58;
     auraBorder = 'border-emerald-400 dark:border-emerald-300';
-    auraBg = 'bg-emerald-400/15 dark:bg-emerald-400/20 backdrop-blur-[1px]';
+    auraBg = 'bg-emerald-400/15 dark:bg-emerald-400/20';
     auraShadow = 'shadow-[0_0_24px_rgba(52,211,153,0.35)]';
     auraScale = 1.05;
   } else if (cursorMode === 'card') {
     auraSize = 68;
     auraBorder = 'border-teal-400/60 dark:border-emerald-400/60';
-    auraBg = 'bg-emerald-500/8 dark:bg-emerald-400/12 backdrop-blur-[0.5px]';
+    auraBg = 'bg-emerald-500/8 dark:bg-emerald-400/12';
     auraShadow = 'shadow-[0_0_28px_rgba(20,184,166,0.25)]';
     auraScale = 1.02;
   } else if (cursorMode === 'clicking') {
@@ -157,7 +162,7 @@ export const WebsiteCursor: React.FC = () => {
         style={{
           x: smoothX,
           y: smoothY,
-          willChange: 'transform, width, height',
+          willChange: 'transform',
           transform: 'translateZ(0)',
           width: auraSize,
           height: auraSize,

@@ -255,9 +255,12 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
   };
 
   return (
-    <div id="customer-support-chatbot-container" className="fixed bottom-22 md:bottom-24 right-4 md:right-6 z-50 flex flex-col items-end pointer-events-none">
+    <div
+      id="customer-support-chatbot-container"
+      className="fixed bottom-3.5 sm:bottom-6 right-3.5 sm:right-6 z-50 flex flex-col items-end pointer-events-none max-w-[calc(100vw-1.75rem)] box-border"
+    >
       
-      {/* Floating Prompt Bubble on Initial Visit */}
+      {/* Floating Prompt Bubble on Initial Visit (Desktop/Tablet only to prevent mobile screen clutter) */}
       <AnimatePresence>
         {!isOpen && hasPromptedGreeting && (
           <motion.div
@@ -265,7 +268,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.25 }}
-            className="mb-2.5 max-w-xs bg-slate-900/95 backdrop-blur-md border border-emerald-500/40 rounded-2xl p-3 shadow-2xl pointer-events-auto flex items-start gap-2.5 text-slate-200"
+            className="hidden sm:flex mb-2.5 max-w-xs bg-slate-900/95 backdrop-blur-md border border-emerald-500/40 rounded-2xl p-3 shadow-2xl pointer-events-auto items-start gap-2.5 text-slate-200"
           >
             <div className="w-7 h-7 rounded-xl bg-slate-900 border border-emerald-500/40 flex items-center justify-center shrink-0 p-0.5 shadow-sm">
               <EllixConnectLogo variant="symbol" size={20} alt="Ellix Connect" />
@@ -306,12 +309,13 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
               opacity: 1,
               y: 0,
               scale: 1,
-              height: isMinimized ? 'auto' : '560px'
             }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className={`w-[calc(100vw-2rem)] sm:w-[420px] max-w-md bg-slate-950/98 backdrop-blur-xl border border-slate-800/90 rounded-3xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto mb-3 transition-all ${
-              isMinimized ? 'h-auto' : 'h-[80vh] sm:h-[560px]'
+            className={`w-[calc(100vw-1.75rem)] sm:w-[400px] max-w-md bg-slate-950/98 backdrop-blur-xl border border-slate-800/90 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto mb-2.5 sm:mb-3 transition-all ${
+              isMinimized
+                ? 'h-auto'
+                : 'h-[calc(100dvh-5.5rem)] max-h-[520px] sm:h-[540px] sm:max-h-[calc(100dvh-6.5rem)]'
             }`}
           >
             {/* Header */}
@@ -524,7 +528,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
           setIsMinimized(false);
           setHasPromptedGreeting(false);
         }}
-        className={`pointer-events-auto h-12 sm:h-13 px-4 rounded-2xl flex items-center gap-2.5 shadow-2xl transition-all border ${
+        className={`pointer-events-auto h-12 sm:h-13 px-4 rounded-2xl flex items-center gap-2.5 shadow-2xl transition-colors duration-200 border shrink-0 whitespace-nowrap box-border ${
           isOpen
             ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border-slate-700'
             : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border-emerald-400/40 shadow-emerald-900/40'

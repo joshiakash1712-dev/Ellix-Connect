@@ -1,7 +1,8 @@
 import React from 'react';
 import { MarketingModal } from './MarketingModal';
 import { EllixConnectLogo } from '../../branding/EllixConnectLogo';
-import { ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, FileText } from 'lucide-react';
+import { LEGAL_CONFIG } from '../../../config/legal.config';
 
 export type LegalDocType = 'privacy' | 'terms';
 
@@ -19,7 +20,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
       isOpen={isOpen}
       onClose={onClose}
       title={isPrivacy ? 'Privacy Policy' : 'Terms of Service'}
-      subtitle={`Last updated: September 2026 · Ellix Connect Platform`}
+      subtitle={`Effective: ${LEGAL_CONFIG.effectiveDate} · Version ${isPrivacy ? LEGAL_CONFIG.privacyPolicyVersion : LEGAL_CONFIG.termsVersion} · ${LEGAL_CONFIG.brandName}`}
       maxWidth="max-w-2xl"
     >
       <div className="space-y-5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-h-[60vh] overflow-y-auto pr-1">
