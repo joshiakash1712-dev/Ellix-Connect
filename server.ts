@@ -28,9 +28,25 @@ let adminDb: Firestore | null = null;
 let adminAuth: Auth | null = null;
 
 try {
-  const projectId = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || 'nice-unity-1mbw7';
+  let appletConfig: { projectId?: string; firestoreDatabaseId?: string } = {};
+  try {
+    const cfgPath = path.resolve(process.cwd(), 'firebase-applet-config.json');
+    if (fs.existsSync(cfgPath)) {
+      appletConfig = JSON.parse(fs.readFileSync(cfgPath, 'utf-8'));
+    }
+  } catch {
+    // ignore config read error
+  }
+  const projectId =
+    process.env.FIREBASE_PROJECT_ID ||
+    appletConfig.projectId ||
+    process.env.GOOGLE_CLOUD_PROJECT ||
+    process.env.GCLOUD_PROJECT ||
+    'nice-unity-1mbw7';
   const firestoreDatabaseId =
-    process.env.FIRESTORE_DATABASE_ID || 'ai-studio-ellixconnect-badaa1a3-33f3-40fb-a0e7-a5f5c05ebc53';
+    process.env.FIRESTORE_DATABASE_ID ||
+    appletConfig.firestoreDatabaseId ||
+    'ai-studio-ellixconnect-badaa1a3-33f3-40fb-a0e7-a5f5c05ebc53';
   const adminApp = getApps().length
     ? getApps()[0]
     : initializeApp({
@@ -121,70 +137,59 @@ app.get(['/api/about', '/api/metadata', '/.well-known/ai-plugin.json'], (_req, r
   res.setHeader('Cache-Control', 'public, max-age=3600');
   res.status(200).json({
     schema_version: 'v1',
-    name_for_human: 'Ellix Connect Android',
-    name_for_model: 'ellix_connect_retail_os',
-    description_for_human: 'Business management, without the complexity. Modern retail POS, billing, inventory, khata, and business insights.',
-    description_for_model: 'Ellix Connect is an offline-first enterprise retail Point of Sale (POS) and inventory operating system for retailers, wholesalers, and supermarkets. It provides sub-second barcode billing, batch inventory tracking, digital customer khata ledgers, dynamic UPI QR payments, end-of-day GST filing summaries, and centralized role-based access control.',
+    name_for_human: 'Ellix Connect',
+    name_for_model: 'ellix_connect',
+    url: 'https://ellix-connect.ai.studio/',
+    description_for_human: 'Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.',
+    description_for_model: 'Ellix Connect is a web-based business management platform for local retailers, supermarkets, and wholesalers in India (excluding restaurants). It unifies billing and GST invoice generation, inventory and stock management, customer ledger (Khata) tracking, multi-tender payment recording, transaction history, and business insights.',
     auth: {
       type: 'none'
     },
     api: {
       type: 'openapi',
-      url: '/api/about',
+      url: 'https://ellix-connect.ai.studio/api/about',
       is_user_authenticated: false
     },
-    version: '2.4.0',
-    platform: ['Android', 'Web', 'Windows'],
-    industry: 'Retail, Wholesale, Supermarkets, Kirana, Boutiques, Electronics',
+    platform: ['Web'],
+    industry: 'Retail stores, supermarkets, and wholesalers in India (excluding restaurants)',
     features: [
       {
         id: 'billing',
-        name: 'Sub-Second Barcode Billing',
-        description: 'Instant barcode scanning (<0.25s latency), thermal receipt printing (ESC/POS 80mm/58mm), automatic GST calculation, and PDF receipts.'
+        name: 'Billing and GST invoice generation',
+        description: 'Counter billing with itemized CGST/SGST/IGST tax breakdowns based on merchant-configured product rates and printable/downloadable invoice templates.'
       },
       {
         id: 'inventory',
-        name: 'Real-Time Batch Inventory',
-        description: 'Multi-batch tracking with expiry dates, minimum stock alerts, automatic barcode generator, and stock adjustment audit trails.'
+        name: 'Inventory and stock management',
+        description: 'Product catalog management with SKUs, barcodes, real-time stock updates on sales, and low-stock threshold alerts.'
       },
       {
         id: 'khata',
-        name: 'Digital Khata & Customer CRM',
-        description: 'Customer credit ledger with credit limit enforcement, automatic WhatsApp balance reminders with dynamic UPI links, and loyalty rewards.'
+        name: 'Customer ledger (Khata) and relationship management',
+        description: 'Customer profiles, purchase histories, outstanding credit balance tracking, and WhatsApp payment reminder links.'
       },
       {
         id: 'payments',
-        name: 'Dynamic UPI & Multi-Tender Checkout',
-        description: 'Dynamic UPI QR codes per invoice, card and cash reconciliation, and split-tender payment settlements.'
+        name: 'Payments and multi-tender recording',
+        description: 'Support for Cash, Card, Credit (Khata), and direct merchant UPI QR codes using the store’s configured UPI VPA.'
       },
       {
-        id: 'cashier_shift',
-        name: 'Shift Management & Audit Logs',
-        description: 'Cashier shift handover logs, opening/closing cash tally, return credit notes, and tamper-evident audit trails.'
-      },
-      {
-        id: 'reports',
-        name: 'Statutory GST Tax Reports',
-        description: 'Automated end-of-day sales, category gross margin analytics, and export-ready GSTR-1 and GSTR-3B tax schedules.'
+        id: 'transactions',
+        name: 'Transaction history and day-end tracking',
+        description: 'Searchable invoice and transaction records with payment status filtering and day-end sales summaries.'
       },
       {
         id: 'insights',
-        name: 'AI Retail Velocity & Dead Stock Analytics',
-        description: 'Automated sales velocity rankings, dead stock detection (>30 days zero sales), customer retention metrics, and peak-hour traffic trends.'
-      },
-      {
-        id: 'rbac',
-        name: 'Role-Based Access Control',
-        description: 'Centralized admin authorization hierarchy protecting financial margins, stock adjustments, and staff privilege management.'
+        name: 'Business insights and sales analytics',
+        description: 'Sales performance summaries, inventory valuation views, and CSV/PDF data exports.'
       }
     ],
     specifications: {
-      offline_capability: 'Full offline local caching with automated Google Cloud Firestore sync upon reconnect',
-      hardware_compatibility: 'ESC/POS thermal printers (USB/Bluetooth 80mm/58mm), 1D/2D barcode scanners, cash drawers',
-      tax_compliance: 'Indian GST (CGST, SGST, IGST, HSN/SAC codes, E-Way bills)',
-      llm_documentation_url: '/llms.txt',
-      full_reference_url: '/llms-full.txt',
-      sitemap_url: '/sitemap.xml'
+      offline_capability: 'Browser local storage cache for offline billing continuity with Google Cloud Firestore synchronization',
+      tax_invoicing_scope: 'Generates GST-formatted invoices and tax summary sheets from merchant inputs; merchants remain responsible for statutory filings',
+      llm_documentation_url: 'https://ellix-connect.ai.studio/llms.txt',
+      full_reference_url: 'https://ellix-connect.ai.studio/llms-full.txt',
+      sitemap_url: 'https://ellix-connect.ai.studio/sitemap.xml'
     }
   });
 });
@@ -752,9 +757,10 @@ app.post('/api/admin/tenant/purge', async (req, res) => {
 
     // Helper: Recursively batch delete all documents in a subcollection
     async function deleteSubcollection(collectionRef: CollectionReference) {
+      if (!adminDb) return;
       const snapshot = await collectionRef.limit(200).get();
       if (snapshot.empty) return;
-      const batch = adminDb!.batch();
+      const batch = adminDb.batch();
       snapshot.docs.forEach(doc => batch.delete(doc.ref));
       await batch.commit();
       if (snapshot.size >= 200) {
@@ -976,21 +982,22 @@ app.use(express.static(path.resolve(process.cwd(), 'public'), {
 
 async function startServer() {
   const distPath = path.resolve(process.cwd(), 'dist');
-  const hasDist = fs.existsSync(path.join(distPath, 'index.html'));
+  const indexPath = path.join(distPath, 'index.html');
+  const hasDist = fs.existsSync(indexPath);
   const lifecycle = process.env.npm_lifecycle_event;
   const isExplicitDev = process.env.NODE_ENV === 'development' || lifecycle === 'dev';
   const isProduction =
-    process.env.NODE_ENV === 'production' ||
-    Boolean(process.env.K_SERVICE) ||
-    lifecycle === 'start' ||
-    (hasDist && !isExplicitDev);
+    !isExplicitDev &&
+    (process.env.NODE_ENV === 'production' ||
+      Boolean(process.env.K_SERVICE) ||
+      lifecycle === 'start');
 
   // Fallback 404 handler for unmatched API routes (must be mounted before SPA catch-all)
   app.use('/api', (req, res) => {
     res.status(404).json({ error: 'API endpoint not found', path: req.originalUrl });
   });
 
-  if (!isProduction) {
+  if (!isProduction || !hasDist) {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -998,24 +1005,37 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    // Serve static pre-compiled files without aggressive caching
-    app.use(express.static(distPath, {
-      setHeaders: (res) => {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '0');
-      }
-    }));
+    // Serve immutable content-hashed Vite bundles with long-term caching for fast loads
+    app.use(
+      '/assets',
+      express.static(path.join(distPath, 'assets'), {
+        immutable: true,
+        maxAge: '1y',
+        setHeaders: (res) => {
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+      })
+    );
+
+    // Serve other pre-compiled static files with balanced caching, keeping index.html uncached
+    app.use(
+      express.static(distPath, {
+        index: false,
+        maxAge: '1h',
+        setHeaders: (res, filePath) => {
+          if (filePath.endsWith('index.html')) {
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          } else {
+            res.setHeader('Cache-Control', 'public, max-age=3600');
+          }
+        }
+      })
+    );
 
     // SPA fallback: Serve index.html for all non-static page requests
     app.get('*', (_req, res) => {
-      const indexPath = path.join(distPath, 'index.html');
-      if (fs.existsSync(indexPath)) {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.sendFile(indexPath);
-      } else {
-        res.status(200).send('<!DOCTYPE html><html><head><title>Ellix Connect</title></head><body><div id="root"></div></body></html>');
-      }
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.sendFile(indexPath);
     });
   }
 

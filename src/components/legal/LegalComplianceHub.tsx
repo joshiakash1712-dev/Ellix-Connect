@@ -408,14 +408,16 @@ export const LegalComplianceHub: React.FC<LegalComplianceHubProps> = ({
 
                 <section className="space-y-3">
                   <h2 className="text-lg font-bold text-slate-950 dark:text-white">
-                    4. Third-Party Infrastructure &amp; Service Providers
+                    4. Data Residency, Storage &amp; Third-Party Infrastructure
                   </h2>
                   <p>
-                    We rely on trusted infrastructure providers to run the application:
+                    We rely on Google Cloud / Firebase infrastructure and your local browser to store and process workspace data:
                   </p>
                   <ul className="list-disc pl-5 space-y-1.5">
-                    <li><strong>Google Firebase (Authentication &amp; Cloud Firestore):</strong> Used for user authentication, session management, and encrypted cloud database synchronization.</li>
-                    <li><strong>Google Generative AI (Website Support Assistant):</strong> When you voluntarily interact with the website support chatbot, your chat question is processed to generate product support responses. Do not submit sensitive personal, banking, or confidential customer data in public support chat prompts.</li>
+                    <li><strong>Google Cloud Firestore &amp; Firebase Authentication:</strong> Structured store records (profiles, product catalogs, GST invoices, customer Khata ledgers, and staff roles) are stored in Google Cloud Firestore, and login credentials are managed by Firebase Authentication on Google&apos;s cloud infrastructure. The exact Firestore database region is governed by the platform&apos;s cloud project configuration; we do not claim India-only or single-country cloud data residency.</li>
+                    <li><strong>Local Browser &amp; Device Storage:</strong> Active POS catalog cache, unsynchronized offline counter transactions, UI preferences, and downloaded CSV/PDF/JSON exports are stored locally on your own shop computer, tablet, or mobile device.</li>
+                    <li><strong>Application Server &amp; Feature-Specific External APIs:</strong> Server-side API routes run on our hosted Node.js / Express application server on Google Cloud infrastructure. When you voluntarily interact with the website support chatbot, your chat prompt is processed via Google Generative AI (Gemini API) when configured—do not submit sensitive personal, banking, or confidential customer data in support chat prompts. Where paid SaaS subscription checkout is configured, subscription order metadata is processed via Razorpay&apos;s payment API.</li>
+                    <li><strong>Regional Data Residency Options:</strong> {LEGAL_CONFIG.brandName} does not currently offer customer-selectable regional data residency options (such as choosing between India, EU, or US regions per merchant account).</li>
                   </ul>
                 </section>
 
@@ -923,17 +925,17 @@ export const LegalComplianceHub: React.FC<LegalComplianceHubProps> = ({
                       <span>1. Encryption in Transit &amp; at Rest</span>
                     </div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      All communication between your browser/Android device and {LEGAL_CONFIG.brandName} cloud services is encrypted over HTTPS (TLS 1.2/1.3). Cloud records hosted on Google Cloud Firestore are encrypted at rest using AES-256.
+                      Data in transit between your browser and {LEGAL_CONFIG.brandName} services is protected over encrypted HTTPS/TLS connections. Cloud records stored in Google Cloud Firestore and Firebase Authentication are protected at rest by Google Cloud&apos;s default provider-level infrastructure encryption. Offline POS cache and workspace preferences stored locally in your browser are not encrypted by the application.
                     </p>
                   </div>
 
                   <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="font-bold text-slate-950 dark:text-white flex items-center gap-2">
                       <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                      <span>2. Role-Based Access Control (RBAC)</span>
+                      <span>2. Role-Based Access Control (RBAC) &amp; Store Isolation</span>
                     </div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      Workspace permissions are strictly partitioned across Super Admin, Retailer/Client Owner, Store Crew/Cashier, and Wholesaler roles. Database security rules verify user identity and ownership before reading or writing records.
+                      Access is governed by authenticated Firebase identity and a 4-level role hierarchy: Level 1 Super Admin, Level 2 {LEGAL_CONFIG.brandName} Admin, Level 3 Client / Business Owner, and Level 4 Store Crew. Cloud Firestore security rules and backend Bearer token checks enforce store-level tenant isolation, restrict Crew members to their assigned store and their own generated invoices (without discount or price-editing privileges), and restrict platform administration to authorized admin accounts.
                     </p>
                   </div>
 
@@ -950,13 +952,197 @@ export const LegalComplianceHub: React.FC<LegalComplianceHubProps> = ({
                   <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="font-bold text-slate-950 dark:text-white flex items-center gap-2">
                       <AlertCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                      <span>4. Incident Response &amp; Vulnerability Reporting</span>
+                      <span>4. Vulnerability Disclosure &amp; Incident Reporting</span>
                     </div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      We maintain security logging and incident response procedures designed to address personal data breaches and cyber incidents in alignment with applicable Indian regulations (including CERT-In and DPDPA notification requirements where applicable).
+                      We encourage responsible reporting of potential security vulnerabilities. While {LEGAL_CONFIG.brandName} does not currently operate a paid bug bounty program, security issues can be reported through our Grievance Redressal form (under the &ldquo;Security Vulnerability or Incident Report&rdquo; category) or our Contact Support channel. Please do not access another store&apos;s data or disrupt service availability when reporting.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => onSelectSlug('grievance-redressal')}
+                      className="pt-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1"
+                    >
+                      <span>Report a Security Issue →</span>
+                    </button>
+                  </div>
+                  <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-2">
+                    <div className="font-bold text-slate-950 dark:text-white flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      <span>5. Data Residency, Processing Locations &amp; Regional Options</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      Structured store records are stored in Google Cloud Firestore, user sign-in accounts are managed by Google Firebase Authentication, and server-side API endpoints run on our hosted Node.js / Express backend on Google Cloud infrastructure. Offline POS cache, UI preferences, and downloaded CSV/PDF/JSON exports remain on your local device. Optional website support chat prompts are processed via Google&apos;s Gemini API (when configured), and subscription checkout orders use Razorpay&apos;s API (when configured). {LEGAL_CONFIG.brandName} does not currently provide customer-selectable regional data residency options, and we do not claim that cloud-stored data resides exclusively within India or a single country.
+                    </p>
+                  </div>
+
+                  <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-2">
+                    <div className="font-bold text-slate-950 dark:text-white flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      <span>6. Public Security Incident History</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      No security incidents have been publicly disclosed by {LEGAL_CONFIG.brandName} to date, and there are currently no historical breach notices, public security advisories, or CVE disclosures recorded in our public security history. If a security incident requiring customer notification or public disclosure occurs in the future, its date, affected scope, and resolution summary will be documented here and on the main website&apos;s Incident History log without exposing sensitive customer or technical data.
                     </p>
                   </div>
                 </div>
+
+                {/* 7. Dedicated Penetration Testing Section (Mirroring SecurityComplianceSection.tsx) */}
+                <section
+                  id="penetration-testing-legal"
+                  aria-labelledby="penetration-testing-legal-heading"
+                  className="pt-6 border-t border-slate-200 dark:border-slate-800 space-y-5"
+                >
+                  <div className="space-y-2">
+                    <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
+                      <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider">
+                        07 · Independent Security Assessments &amp; Audit Reports
+                      </span>
+                      <span aria-hidden="true">·</span>
+                      <span>Third-Party Penetration Testing Status</span>
+                    </div>
+                    <h2
+                      id="penetration-testing-legal-heading"
+                      className="text-xl sm:text-2xl font-extrabold text-slate-950 dark:text-white tracking-tight"
+                    >
+                      Penetration Testing
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {LEGAL_CONFIG.brandName} has not completed or publicly disclosed an independent third-party penetration test or external application security audit to date. We state this clearly so business owners can distinguish between our internal engineering controls and formal external security assessments.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* Card 1: Third-Party Penetration Testing Status */}
+                    <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 flex flex-col justify-between gap-4">
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
+                            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                              01 · Third-Party Assessment Status
+                            </span>
+                            <span aria-hidden="true">·</span>
+                            <span>Most Recent External Test Date: None Documented</span>
+                          </div>
+                          <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <h3 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white leading-snug">
+                            No third-party penetration test completed or disclosed to date
+                          </h3>
+                          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            {LEGAL_CONFIG.brandName} has not completed or publicly disclosed a third-party penetration test to date. No external testing organization, assessment date, vulnerability remediation retest, or external audit report is currently on record for the application.
+                          </p>
+                        </div>
+
+                        <div className="pt-1 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+                          <div className="font-bold text-slate-900 dark:text-white text-[11px] uppercase tracking-wider font-mono">
+                            Verified assessment particulars:
+                          </div>
+                          <ul className="space-y-2">
+                            <li className="flex items-start gap-2">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                              <span>
+                                <strong className="text-slate-900 dark:text-white">External Testing Firm &amp; Assessment Date:</strong> None documented. We do not list unverified auditor names, test dates, or assessment scopes.
+                              </span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                              <span>
+                                <strong className="text-slate-900 dark:text-white">Internal Checks vs. Independent Penetration Testing:</strong> Internal development reviews, static TypeScript checks, and Cloud Firestore security rule configurations are part of maintaining the codebase, but they are not represented as an independent third-party penetration test.
+                              </span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                              <span>
+                                <strong className="text-slate-900 dark:text-white">Cloud Provider Infrastructure Distinction:</strong> Hosting database and authentication services on Google Cloud and Firebase does not mean Google Cloud has penetration-tested or audited the {LEGAL_CONFIG.brandName} application code or business logic.
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
+                        <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                          Important security note
+                        </div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                          The absence of a published penetration-test record is a factual disclosure of current assessment status and does not constitute a claim that the application is free of vulnerabilities.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Card 2: Penetration Test Report Availability & Future Updates */}
+                    <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 flex flex-col justify-between gap-4">
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
+                            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                              02 · Report Availability &amp; Inquiries
+                            </span>
+                            <span aria-hidden="true">·</span>
+                            <span>Status: No External Report Available</span>
+                          </div>
+                          <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <h3 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white leading-snug">
+                            Availability of third-party security audit or penetration-test reports
+                          </h3>
+                          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Because no third-party penetration test has been completed to date, <strong className="text-slate-900 dark:text-white">no independent penetration-test report or external audit summary is currently available for download or customer request</strong>.
+                          </p>
+                        </div>
+
+                        <div className="pt-1 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+                          <div className="font-bold text-slate-900 dark:text-white text-[11px] uppercase tracking-wider font-mono">
+                            How report availability and inquiries are handled:
+                          </div>
+                          <ul className="space-y-2">
+                            <li className="flex items-start gap-2">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                              <span>
+                                <strong className="text-slate-900 dark:text-white">No Unverified Report-Request Portal:</strong> We do not provide a synthetic &ldquo;Request Penetration Test Report&rdquo; button because no third-party assessment report currently exists.
+                              </span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                              <span>
+                                <strong className="text-slate-900 dark:text-white">When a Third-Party Assessment Is Completed:</strong> Once an independent security assessment is commissioned and completed, this section will be updated with the testing organization, assessment date, high-level scope, remediation status, and instructions for requesting the summary report.
+                              </span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                              <span>
+                                <strong className="text-slate-900 dark:text-white">Architecture &amp; Security Questions:</strong> If your business has questions about our current technical controls or future security assessment plans, you can reach out through our existing Contact Support channel.
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 dark:border-slate-700/80">
+                        <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                          Current Report Status: <strong className="text-slate-900 dark:text-white">Not Currently Available</strong>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (onOpenContactModal) {
+                              onOpenContactModal();
+                            } else {
+                              onSelectSlug('support');
+                            }
+                          }}
+                          className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 transition-colors inline-flex items-center gap-1.5"
+                        >
+                          <span>Ask About Security Assessments</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
 
                 <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400">
                   <strong>Transparency Note:</strong> {LEGAL_CONFIG.brandName} implements industry-standard technical and organizational safeguards. We do not claim government certification, government approval, or absolute immunity from cyber threats, and we encourage merchants to maintain strong passwords and verified recovery credentials.

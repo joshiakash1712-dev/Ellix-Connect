@@ -38,26 +38,43 @@ export const AiMetadataModal: React.FC<AiMetadataModalProps> = ({ isOpen, onClos
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "WebApplication",
-          "name": "Ellix Connect Android",
-          "applicationCategory": "BusinessApplication",
-          "operatingSystem": "Android, Web, Windows",
-          "description": "Business management, without the complexity. The modern retail platform for billing, inventory, customers, payments, and business insights.",
-          "softwareVersion": "2.4.0",
-          "featureList": [
-            "Sub-second barcode scanning and instant thermal printing",
-            "Real-time batch inventory tracking and low-stock threshold alerts",
-            "Digital Khata customer credit ledger with WhatsApp payment reminders",
-            "Dynamic UPI QR payments and cashier shift reconciliation",
-            "Automated Day-End GST and Tax schedule reports (GSTR-1, GSTR-3B)",
-            "AI-powered sales velocity rankings and dead stock analytics",
-            "Centralized Role-Based Access Control (RBAC) with Firestore cloud sync"
-          ]
+          "@type": "Organization",
+          "@id": "https://ellix-connect.ai.studio/#organization",
+          "name": "Ellix Connect",
+          "url": "https://ellix-connect.ai.studio/",
+          "logo": "https://ellix-connect.ai.studio/logo.svg",
+          "image": "https://ellix-connect.ai.studio/og-image.png",
+          "description": "A modern business management platform for local retailers and small businesses."
         },
         {
-          "@type": "Organization",
+          "@type": "WebSite",
+          "@id": "https://ellix-connect.ai.studio/#website",
+          "url": "https://ellix-connect.ai.studio/",
           "name": "Ellix Connect",
-          "url": "https://ellixconnect.com"
+          "description": "Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.",
+          "publisher": {
+            "@id": "https://ellix-connect.ai.studio/#organization"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://ellix-connect.ai.studio/#software",
+          "name": "Ellix Connect",
+          "url": "https://ellix-connect.ai.studio/",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "description": "Business management, without the complexity. A modern business management platform for local retailers and small businesses (excluding restaurants) that unifies billing, inventory, customers, payments, transactions, and business insights.",
+          "featureList": [
+            "Billing and GST invoice generation",
+            "Inventory and stock management",
+            "Customer ledger (Khata) and relationship management",
+            "Payments and multi-tender recording",
+            "Transaction history and day-end tracking",
+            "Business insights and sales analytics"
+          ],
+          "publisher": {
+            "@id": "https://ellix-connect.ai.studio/#organization"
+          }
         }
       ]
     },
@@ -65,23 +82,20 @@ export const AiMetadataModal: React.FC<AiMetadataModalProps> = ({ isOpen, onClos
     2
   );
 
-  const llmsTxtContent = `# Ellix Connect Android
+  const llmsTxtContent = `# Ellix Connect
 
-> The modern retail and business operating platform for sub-second billing, real-time inventory control, digital khata customer credit, unified payments, and actionable business insights.
+> Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.
 
 ## Project Summary
-Ellix Connect is an enterprise-grade retail POS and inventory management OS engineered for retailers, wholesalers, supermarkets, and distribution merchants.
+Ellix Connect is a modern web-based business management platform designed for local retailers, supermarkets, and wholesalers in India (excluding restaurants).
 
 ## Core Capabilities & Modules
-- Billing & Invoices (<0.25s barcode latency, ESC/POS 80mm thermal printing, GST)
-- Inventory Control (Real-time batch tracking, low-stock threshold alerts)
-- Catalog & Products (Multi-tier retail/wholesale pricing, bulk CSV import)
-- Digital Khata CRM (Credit limits, auto WhatsApp payment balance reminders)
-- Payments & Multi-Tender (Dynamic UPI QR, split-tender settlement)
-- Cashier Shift Audit (Cash handover logs, opening/closing cash tally)
-- Statutory Tax Reports (End-of-day P&L, GSTR-1 & GSTR-3B export)
-- AI Business Insights (Sales velocity ranking, dead-stock detection)
-- Enterprise RBAC (Admin, Wholesaler, Store Manager, Cashier)`;
+- Billing & GST Invoice Generation (Itemized CGST/SGST/IGST breakdowns, printable/downloadable invoices)
+- Inventory & Stock Management (SKUs, barcodes, automatic stock updates, low-stock threshold alerts)
+- Customer Ledger (Khata) & Relationship Management (Customer profiles, credit tracking, WhatsApp reminders)
+- Payments & Multi-Tender Recording (Cash, Card, Khata credit, direct merchant UPI QR codes)
+- Transaction History & Day-End Tracking (Searchable invoices, payment filtering, day-end sales summaries)
+- Business Insights & Sales Analytics (Revenue trends, product performance, CSV/PDF exports)`;
 
   return (
     <div
@@ -194,10 +208,10 @@ Ellix Connect is an enterprise-grade retail POS and inventory management OS engi
                   </div>
                   <div>
                     <div className="font-semibold text-xs text-slate-900 dark:text-slate-100">
-                      Non-Blank Metadata Enforced
+                      Production Metadata & OpenGraph
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      Full application title, 160-char descriptions, keywords, author, and OpenGraph tags configured.
+                      Verified title, meta description, canonical URL, OpenGraph, and Twitter/X card metadata configured.
                     </p>
                   </div>
                 </div>
@@ -208,10 +222,10 @@ Ellix Connect is an enterprise-grade retail POS and inventory management OS engi
                   </div>
                   <div>
                     <div className="font-semibold text-xs text-slate-900 dark:text-slate-100">
-                      AI Crawler Allow-List in robots.txt
+                      Search & Crawler Indexing Rules
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      GPTBot, ClaudeBot, PerplexityBot, Google-Extended, and Applebot explicitly granted read access.
+                      Public website and legal routes allowed in <code className="font-mono">robots.txt</code> and <code className="font-mono">sitemap.xml</code>; internal app routes excluded.
                     </p>
                   </div>
                 </div>
@@ -225,7 +239,7 @@ Ellix Connect is an enterprise-grade retail POS and inventory management OS engi
                       llms.txt & llms-full.txt Ready
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      Standardized Markdown specification describing modules, architecture, and specifications.
+                      Standardized Markdown specification describing modules, architecture, and public routes.
                     </p>
                   </div>
                 </div>
@@ -239,7 +253,7 @@ Ellix Connect is an enterprise-grade retail POS and inventory management OS engi
                       Live JSON API Endpoint
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      <code className="text-emerald-600 dark:text-emerald-400">/api/about</code> returns real-time structured application data.
+                      <code className="text-emerald-600 dark:text-emerald-400">/api/about</code> returns structured application and route metadata.
                     </p>
                   </div>
                 </div>
@@ -252,35 +266,33 @@ Ellix Connect is an enterprise-grade retail POS and inventory management OS engi
                     Live Data Seen by AI Models & Search Engines
                   </span>
                   <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-                    <Globe className="w-3.5 h-3.5" /> High AI Quality Score
+                    <Globe className="w-3.5 h-3.5" /> Verified Production Spec
                   </span>
                 </div>
 
                 <div className="space-y-2 text-xs divide-y divide-slate-100 dark:divide-slate-800">
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                     <span className="font-medium text-slate-500 dark:text-slate-400">App Name:</span>
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">Ellix Connect Android</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">Ellix Connect</span>
+                  </div>
+                  <div className="pt-2 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+                    <span className="font-medium text-slate-500 dark:text-slate-400">Canonical Origin:</span>
+                    <span className="font-mono text-slate-900 dark:text-slate-100">https://ellix-connect.ai.studio/</span>
                   </div>
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                     <span className="font-medium text-slate-500 dark:text-slate-400">Primary Category:</span>
-                    <span className="text-slate-900 dark:text-slate-100">Point of Sale (POS) & Retail Business OS</span>
+                    <span className="text-slate-900 dark:text-slate-100">BusinessApplication (Web)</span>
                   </div>
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                     <span className="font-medium text-slate-500 dark:text-slate-400">Core Capabilities:</span>
                     <span className="text-slate-900 dark:text-slate-100 text-right">
-                      Billing, Inventory, Khata CRM, UPI Payments, GST Tax Reports, AI Velocity Insights
+                      Billing, Inventory, Customers (Khata), Payments, Transactions, Insights
                     </span>
                   </div>
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
-                    <span className="font-medium text-slate-500 dark:text-slate-400">Offline Architecture:</span>
+                    <span className="font-medium text-slate-500 dark:text-slate-400">Storage Architecture:</span>
                     <span className="text-slate-900 dark:text-slate-100 text-right">
-                      Offline-first local caching + Google Cloud Firestore background sync
-                    </span>
-                  </div>
-                  <div className="pt-2 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
-                    <span className="font-medium text-slate-500 dark:text-slate-400">Hardware Integration:</span>
-                    <span className="text-slate-900 dark:text-slate-100 text-right">
-                      ESC/POS 80mm/58mm thermal printers, 1D/2D barcode scanners, cash drawers
+                      Browser local storage cache + Google Cloud Firestore synchronization
                     </span>
                   </div>
                 </div>

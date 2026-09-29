@@ -580,6 +580,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
     setWholesalers(loadStoreScopedCache('ellix_wholesalers', activeStore.id, mockWholesalers));
     hydratedStoreIdRef.current = activeStore.id;
 
+    if (!authUser || isDemoMode) {
+      setIsDataLoading(false);
+      return;
+    }
+
     const unsub = syncManager.subscribeToStore(
       activeStore.id,
       {
@@ -640,12 +645,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
     );
 
     return () => unsub();
-  }, [activeStore.id, userProfile?.uid, userProfile?.role]);
+  }, [activeStore.id, authUser, isDemoMode, userProfile?.uid, userProfile?.role]);
 
   // Real-Time Client Subscription State Sync (Firestore Authoritative)
   useEffect(() => {
     const clientId = activeStore.clientId || 'client-001';
-    if (!isFirestoreAvailable || !firestoreDb) return;
+    if (!isFirestoreAvailable || !firestoreDb || !authUser) return;
 
     try {
       const subDocRef = doc(firestoreDb, 'clients', clientId, 'subscription', 'current');

@@ -49,10 +49,10 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
 
             <section className="space-y-2">
               <h4 className="font-bold text-slate-900 dark:text-white text-sm">
-                2. Data Storage & Security
+                2. Data Storage, Residency &amp; Security
               </h4>
               <p>
-                All data is encrypted in transit using TLS 1.3 and encrypted at rest using AES-256. Offline counter transactions cached locally on your device are verified and synchronized securely with our cloud infrastructure as soon as internet connectivity is available.
+                Data in transit between your device and Ellix Connect services is protected using encrypted HTTPS/TLS connections, and cloud records stored in Google Cloud Firestore and Firebase Authentication are protected at rest by Google Cloud’s infrastructure-level encryption. Cloud storage and processing occur on Google Cloud infrastructure under the platform’s project configuration (without customer-selectable regional residency options or an India-only storage guarantee), while offline counter transactions, preferences, and downloaded CSV/PDF exports remain on your local device.
               </p>
             </section>
 

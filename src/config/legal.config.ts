@@ -110,46 +110,65 @@ export type LegalPageSlug =
   | "grievance-redressal"
   | "support";
 
-export const LEGAL_PAGE_ROUTES: Record<LegalPageSlug, { path: string; title: string; shortLabel: string }> = {
+export const LEGAL_PAGE_ROUTES: Record<
+  LegalPageSlug,
+  { path: string; title: string; shortLabel: string; description: string }
+> = {
   "privacy-policy": {
     path: "/privacy-policy",
     title: "Privacy Policy",
     shortLabel: "Privacy Policy",
+    description:
+      "Read the Ellix Connect Privacy Policy covering personal and business data collection, Cloud Firestore storage, local browser caching, and India DPDPA 2023 disclosures.",
   },
   "terms-of-service": {
     path: "/terms-of-service",
     title: "Terms of Service",
     shortLabel: "Terms of Service",
+    description:
+      "Review the Ellix Connect Terms of Service governing retail billing, GST invoice formatting, direct UPI QR settlement, and merchant responsibilities.",
   },
   "cancellation-refund-policy": {
     path: "/cancellation-refund-policy",
     title: "Cancellation & Refund Policy",
     shortLabel: "Cancellation & Refund Policy",
+    description:
+      "Understand Ellix Connect subscription cancellation terms, data export retention windows, and refund eligibility for retail merchants.",
   },
   "cookie-policy": {
     path: "/cookie-policy",
     title: "Cookie & Local Storage Policy",
     shortLabel: "Cookie Policy",
+    description:
+      "Learn how Ellix Connect uses essential cookies and browser local storage for authentication, offline POS continuity, and user preference controls.",
   },
   "data-privacy-rights": {
     path: "/data-privacy-rights",
     title: "Data & Privacy Rights (Data Principal Center)",
     shortLabel: "Data & Privacy Rights",
+    description:
+      "Submit and track Data Principal requests for data access summaries, correction, erasure, consent withdrawal, or nominee registration under India DPDPA 2023.",
   },
   "security": {
     path: "/security",
     title: "Security & Data Protection Practices",
     shortLabel: "Security",
+    description:
+      "Explore Ellix Connect security practices, HTTPS/TLS transport encryption, Google Cloud Firestore storage, role-based access control, and transparent compliance disclosures.",
   },
   "grievance-redressal": {
     path: "/grievance-redressal",
     title: "Grievance Redressal Mechanism",
     shortLabel: "Grievance Redressal",
+    description:
+      "Submit formal privacy, billing, or account grievances and review acknowledgment and resolution timelines under Indian Information Technology rules.",
   },
   "support": {
     path: "/support",
     title: "Help, Support & Contact Center",
     shortLabel: "Help / Support",
+    description:
+      "Get help with Ellix Connect retail billing, inventory management, customer Khata ledgers, and account support for local retailers and small businesses.",
   },
 };
 

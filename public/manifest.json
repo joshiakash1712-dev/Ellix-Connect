@@ -1,6 +1,6 @@
 {
-  "short_name": "Ellix Android",
-  "name": "Ellix Connect Android OS",
+  "short_name": "Ellix Connect",
+  "name": "Ellix Connect — Business Management, Without the Complexity",
   "icons": [
     {
       "src": "/icon.svg",
@@ -27,5 +27,5 @@
   "display": "standalone",
   "orientation": "portrait",
   "categories": ["business", "shopping", "productivity"],
-  "description": "Android Native & Flutter Retail OS for Wholesalers, Retailers and Customers"
+  "description": "Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses."
 }

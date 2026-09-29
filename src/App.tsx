@@ -1,5 +1,6 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { EllixLandingPage } from './components/landing/EllixLandingPage';
+import { LEGAL_PAGE_ROUTES, getLegalSlugFromLocation } from './config/legal.config';
 import { ThemeProvider } from './context/ThemeContext';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { StoreProvider, useStore } from './context/StoreContext';
@@ -342,20 +343,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
         isMenuOpen={isMobileDrawerOpen}
       />
 
-      {/* Machine-Readable AI Context & Application Data for Headless Agents and Scrapers */}
-      <section
-        id="app-machine-readable-context"
-        className="sr-only"
-        aria-label="Machine-Readable Application Knowledge"
-      >
-        <h2>Ellix Connect Android Retail Platform</h2>
-        <p>
-          Active business management system operating on Android and Web. Supporting POS sub-second billing,
-          multi-batch inventory, customer khata credit management, dynamic UPI QR payments, and GST reports.
-        </p>
-        <p>Available endpoints: /api/about, /llms.txt, /llms-full.txt, /sitemap.xml</p>
-      </section>
-
     </motion.div>
   );
 };
@@ -403,8 +390,19 @@ const ApplicationPage: React.FC<{ onNavigateToWebsite: () => void }> = ({ onNavi
 
 function isAppUrlPath(): boolean {
   if (typeof window === 'undefined') return false;
-  const pathname = window.location.pathname.replace(/\/+$/, '') || '/';
-  return pathname === '/app' || pathname.startsWith('/app/') || window.location.hash === '#app';
+  const pathname = window.location.pathname.replace(/\/+$/, '').toLowerCase() || '/';
+  const hash = window.location.hash.toLowerCase();
+  return (
+    pathname === '/app' ||
+    pathname.startsWith('/app/') ||
+    pathname === '/admin' ||
+    pathname.startsWith('/admin/') ||
+    pathname === '/demo' ||
+    pathname.startsWith('/demo/') ||
+    hash === '#app' ||
+    hash === '#admin' ||
+    hash === '#demo'
+  );
 }
 
 const AppContent: React.FC = () => {
@@ -459,12 +457,43 @@ const AppContent: React.FC = () => {
 
   React.useEffect(() => {
     if (typeof document !== 'undefined') {
+      const isPublicWebsite = currentPage === 'website';
+      const legalSlug = isPublicWebsite ? getLegalSlugFromLocation() : null;
+      const legalRoute = legalSlug ? LEGAL_PAGE_ROUTES[legalSlug] : null;
       document.title =
         currentPage === 'app'
           ? 'Ellix Connect OS — Retail & POS Application'
           : currentPage === 'demo'
             ? 'Ellix Connect OS — Interactive App Demo'
-            : 'Ellix Connect — Business management, without the complexity';
+            : legalRoute
+              ? `${legalRoute.title} — Ellix Connect`
+              : 'Ellix Connect — Business Management, Without the Complexity';
+
+      const robotsValue = isPublicWebsite
+        ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+        : 'noindex, nofollow';
+      const googlebotValue = isPublicWebsite
+        ? 'index, follow, max-snippet:-1, max-image-preview:large'
+        : 'noindex, nofollow';
+
+      const robotsMeta = document.querySelector('meta[name="robots"]');
+      if (robotsMeta) {
+        robotsMeta.setAttribute('content', robotsValue);
+      }
+      const googlebotMeta = document.querySelector('meta[name="googlebot"]');
+      if (googlebotMeta) {
+        googlebotMeta.setAttribute('content', googlebotValue);
+      }
+      if (!isPublicWebsite) {
+        const canonicalLink = document.querySelector('link[rel="canonical"]');
+        if (canonicalLink) {
+          canonicalLink.setAttribute('href', 'https://ellix-connect.ai.studio/');
+        }
+        const ogUrlMeta = document.querySelector('meta[property="og:url"]');
+        if (ogUrlMeta) {
+          ogUrlMeta.setAttribute('content', 'https://ellix-connect.ai.studio/');
+        }
+      }
     }
   }, [currentPage]);
 

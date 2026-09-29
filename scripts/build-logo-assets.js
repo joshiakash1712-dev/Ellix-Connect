@@ -327,6 +327,15 @@ async function run() {
     .png({ quality: 100 })
     .toFile(path.resolve('public/icon-512.png'));
 
+  // Open Graph 1200x630 share preview PNG
+  const ogSvgPath = path.resolve('public/og-image.svg');
+  if (fs.existsSync(ogSvgPath)) {
+    await sharp(ogSvgPath)
+      .resize(1200, 630)
+      .png({ quality: 100 })
+      .toFile(path.resolve('public/og-image.png'));
+  }
+
   console.log('Official brand assets successfully built and exported to public/assets/logo/');
 }
 

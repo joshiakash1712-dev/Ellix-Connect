@@ -103,6 +103,10 @@ async function testFirestoreConnection() {
   }
 }
 
-testFirestoreConnection();
+if (typeof window !== 'undefined') {
+  setTimeout(() => {
+    void testFirestoreConnection();
+  }, 1500);
+}
 
 export default app;

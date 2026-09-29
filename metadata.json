@@ -1,6 +1,6 @@
 {
-  "name": "Ellix Connect Android",
-  "description": "Business management, without the complexity. The modern retail platform for billing, inventory, customers, payments, and business insights.",
+  "name": "Ellix Connect — Business Management, Without the Complexity",
+  "description": "Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.",
   "requestFramePermissions": ["camera", "microphone", "geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

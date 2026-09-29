@@ -11,6 +11,7 @@ import { HowItWorks } from './HowItWorks';
 import { ProductPreview } from './ProductPreview';
 import { WhoItsFor } from './WhoItsFor';
 import { GuidebookPreview } from './GuidebookPreview';
+import { SecurityComplianceSection } from './SecurityComplianceSection';
 import { FAQSection } from './FAQSection';
 import { FinalCTA } from './FinalCTA';
 import { LandingFooter } from './LandingFooter';
@@ -111,6 +112,55 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp,
       window.removeEventListener('hashchange', syncLegalRoute);
     };
   }, []);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const baseOrigin = 'https://ellix-connect.ai.studio';
+    const defaultDescription =
+      'Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.';
+    const routeInfo = activeLegalPageSlug ? LEGAL_PAGE_ROUTES[activeLegalPageSlug] : null;
+    const pageTitle = routeInfo
+      ? `${routeInfo.title} — Ellix Connect`
+      : 'Ellix Connect — Business Management, Without the Complexity';
+    const pageDescription = routeInfo ? routeInfo.description : defaultDescription;
+    document.title = pageTitle;
+
+    const canonicalHref = routeInfo ? `${baseOrigin}${routeInfo.path}` : `${baseOrigin}/`;
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', canonicalHref);
+    }
+
+    const descriptionMeta = document.querySelector('meta[name="description"]');
+    if (descriptionMeta) {
+      descriptionMeta.setAttribute('content', pageDescription);
+    }
+
+    const ogUrlMeta = document.querySelector('meta[property="og:url"]');
+    if (ogUrlMeta) {
+      ogUrlMeta.setAttribute('content', canonicalHref);
+    }
+
+    const ogTitleMeta = document.querySelector('meta[property="og:title"]');
+    if (ogTitleMeta) {
+      ogTitleMeta.setAttribute('content', pageTitle);
+    }
+
+    const ogDescriptionMeta = document.querySelector('meta[property="og:description"]');
+    if (ogDescriptionMeta) {
+      ogDescriptionMeta.setAttribute('content', pageDescription);
+    }
+
+    const twitterTitleMeta = document.querySelector('meta[name="twitter:title"]');
+    if (twitterTitleMeta) {
+      twitterTitleMeta.setAttribute('content', pageTitle);
+    }
+
+    const twitterDescriptionMeta = document.querySelector('meta[name="twitter:description"]');
+    if (twitterDescriptionMeta) {
+      twitterDescriptionMeta.setAttribute('content', pageDescription);
+    }
+  }, [activeLegalPageSlug]);
 
   const handleNavigateToLegalPage = (slug: LegalPageSlug) => {
     const targetPath = LEGAL_PAGE_ROUTES[slug]?.path || `/${slug}`;
@@ -547,10 +597,16 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp,
           guideCompleted={guideProgressState.completed}
         />
 
-        {/* 10. FAQ Section */}
+        {/* 10. Security & Compliance (Checklist Design #1: Certifications and compliance) */}
+        <SecurityComplianceSection
+          onOpenLegalPage={handleNavigateToLegalPage}
+          onOpenContact={() => setIsContactOpen(true)}
+        />
+
+        {/* 11. FAQ Section */}
         <FAQSection onOpenContact={() => setIsContactOpen(true)} />
 
-        {/* 11. Final CTA */}
+        {/* 12. Final CTA */}
         <FinalCTA onOpenGetStarted={handleOpenGetStarted} />
 
       </main>
@@ -594,29 +650,6 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp,
 
       {/* Cookie & Local Storage Transparency Banner */}
       <CookieConsentBanner onOpenLegalPage={handleNavigateToLegalPage} />
-
-      {/* Semantic Machine-Readable AI & Crawler Knowledge Section */}
-      <section
-        id="ai-machine-readable-data"
-        className="sr-only"
-        aria-label="Machine-Readable Application Knowledge"
-      >
-        <h2>Ellix Connect Android: System Specification & Capability Data</h2>
-        <p>
-          Ellix Connect is an offline-first enterprise retail Point of Sale (POS), inventory management,
-          digital khata ledger, and business intelligence operating system.
-        </p>
-        <ul>
-          <li>Module: Sub-Second Barcode Billing (ESC/POS 80mm thermal printing, instant GST tax calculation)</li>
-          <li>Module: Real-Time Batch Inventory Tracking (multi-warehouse, low-stock threshold alerts, barcode generator)</li>
-          <li>Module: Digital Khata Customer CRM (credit limit enforcement, automated WhatsApp balance reminders with dynamic UPI links)</li>
-          <li>Module: Unified Multi-Tender Payments (Dynamic UPI QR, card terminal, split tenders, cashier shift reconciliation)</li>
-          <li>Module: Day-End GST Filing Reports (GSTR-1, GSTR-3B tax schedules exportable in Excel and PDF)</li>
-          <li>Module: AI Sales Velocity & Dead Stock Analytics (stock turn rate, slow-moving items alert)</li>
-          <li>Security: Role-Based Access Control (Admin, Wholesaler, Store Manager, Cashier) with Google Cloud Firestore sync</li>
-        </ul>
-        <p>Documentation links: /llms.txt, /llms-full.txt, /api/about, /sitemap.xml</p>
-      </section>
 
       {/* Back to top utility */}
       <BackToTop />

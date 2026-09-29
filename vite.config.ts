@@ -56,10 +56,31 @@ export default defineConfig(({ command }) => {
       emptyOutDir: true,
       sourcemap: false,
       target: 'es2022',
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_debugger: true,
+          passes: 2,
+        },
+        format: {
+          comments: false,
+        },
+      },
       cssCodeSplit: true,
       chunkSizeWarningLimit: 2500,
       commonjsOptions: {
         transformMixedEsModules: true,
+      },
+      modulePreload: {
+        resolveDependencies: (_filename, deps) =>
+          deps.filter(
+            (dep) =>
+              !dep.includes('jspdf') &&
+              !dep.includes('html2canvas') &&
+              !dep.includes('recharts') &&
+              !dep.includes('vendor-pdf') &&
+              !dep.includes('vendor-charts')
+          ),
       },
       rollupOptions: {
         output: {
@@ -73,15 +94,6 @@ export default defineConfig(({ command }) => {
                 return 'vendor-react';
               }
               if (id.includes('firebase')) return 'vendor-firebase';
-              if (id.includes('recharts') || id.includes('d3-')) return 'vendor-charts';
-              if (
-                id.includes('jspdf') ||
-                id.includes('html2canvas') ||
-                id.includes('canvg') ||
-                id.includes('dompurify')
-              ) {
-                return 'vendor-pdf';
-              }
               if (id.includes('motion') || id.includes('gsap')) return 'vendor-motion';
               if (id.includes('lucide-react')) return 'vendor-icons';
             }
