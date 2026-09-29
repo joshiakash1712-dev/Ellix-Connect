@@ -43,7 +43,12 @@ import {
   mockInvoiceTemplates
 } from '../data/mockData';
 import { useAuth } from './AuthContext';
-import { syncManager as rawSyncManager, getOfflineQueue } from '../lib/firestoreSync';
+import {
+  syncManager as rawSyncManager,
+  getOfflineQueue,
+  InsufficientStockError,
+  isInsufficientStockError
+} from '../lib/firestoreSync';
 import { doc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { db as firestoreDb } from '../lib/firebase';
 
@@ -98,7 +103,7 @@ interface StoreContextType {
   updateProduct: (id: string, updates: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
   toggleProductSharing: (id: string) => void;
-  createInvoice: (invoice: Omit<POSInvoice, 'id' | 'invoiceNumber'>) => POSInvoice;
+  createInvoice: (invoice: Omit<POSInvoice, 'id' | 'invoiceNumber'>) => Promise<POSInvoice>;
   deleteInvoice: (id: string) => void;
   addInvoiceTemplate: (template: Omit<InvoiceTemplate, 'id' | 'createdAt'>) => InvoiceTemplate;
   updateInvoiceTemplate: (id: string, updates: Partial<InvoiceTemplate>) => void;
@@ -195,9 +200,20 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
     return fallback.filter((item: any) => !item?.storeId || item.storeId === storeId);
   };
 
-  const [products, setProducts] = useState<Product[]>(() =>
+  const [products, rawSetProducts] = useState<Product[]>(() =>
     loadStoreScopedCache('ellix_products', activeStore.id, mockProducts)
   );
+  const productsRef = React.useRef<Product[]>(products);
+  const inFlightReservedStockRef = React.useRef<Map<string, number>>(new Map());
+  const invoiceSeqRef = React.useRef<number>(0);
+
+  const setProducts = React.useCallback((updater: React.SetStateAction<Product[]>) => {
+    const next = typeof updater === 'function'
+      ? (updater as (prev: Product[]) => Product[])(productsRef.current)
+      : updater;
+    productsRef.current = next;
+    rawSetProducts(next);
+  }, []);
 
   const [wholesalers, setWholesalers] = useState<Wholesaler[]>(() =>
     loadStoreScopedCache('ellix_wholesalers', activeStore.id, mockWholesalers)
@@ -789,13 +805,80 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
     }));
   };
 
-  // Billing POS Invoice
-  const createInvoice = (invoiceData: Omit<POSInvoice, 'id' | 'invoiceNumber'>): POSInvoice => {
-    const invCount = invoices.length + 1;
+  // Billing POS Invoice (Concurrency-Safe & Transactional)
+  const createInvoice = async (invoiceData: Omit<POSInvoice, 'id' | 'invoiceNumber'>): Promise<POSInvoice> => {
+    if (!invoiceData.items || invoiceData.items.length === 0) {
+      throw new InsufficientStockError('Cannot create an invoice with an empty cart.');
+    }
+
+    // 1. Aggregate requested quantities per productId
+    const requestedByProduct = new Map<string, { quantity: number; productName: string }>();
+    for (const item of invoiceData.items) {
+      const qty = Number(item.quantity);
+      if (!Number.isFinite(qty) || qty <= 0) {
+        throw new InsufficientStockError(
+          `Invalid sale quantity (${item.quantity}) for "${item.productName || item.productId}".`,
+          { productId: item.productId, requestedQuantity: qty }
+        );
+      }
+      const existing = requestedByProduct.get(item.productId);
+      requestedByProduct.set(item.productId, {
+        quantity: (existing?.quantity || 0) + qty,
+        productName: item.productName || existing?.productName || item.productId
+      });
+    }
+
+    // 2. Synchronous check against productsRef.current minus any in-flight reservations
+    //    Prevents negative stock and blocks simultaneous same-terminal sales before any await
+    const currentProductsSnapshot = productsRef.current;
+    for (const [productId, req] of requestedByProduct.entries()) {
+      const prod = currentProductsSnapshot.find(p => p.id === productId);
+      const reservedQty = inFlightReservedStockRef.current.get(productId) || 0;
+      const availableStock = prod ? Math.max(0, Number(prod.stock ?? 0) - reservedQty) : 0;
+      if (!prod || !Number.isFinite(availableStock) || availableStock < req.quantity) {
+        const err = new InsufficientStockError(
+          `Insufficient stock for "${prod?.name || req.productName}": only ${availableStock} available, requested ${req.quantity}.`,
+          {
+            productId,
+            availableStock,
+            requestedQuantity: req.quantity
+          }
+        );
+        addNotification({
+          title: 'Sale Rejected: Insufficient Stock',
+          message: err.message,
+          category: 'low_stock',
+          linkModule: 'retailer'
+        });
+        throw err;
+      }
+    }
+
+    // 3. Synchronously reserve stock in inFlightReservedStockRef before any await
+    for (const [productId, req] of requestedByProduct.entries()) {
+      const prevReserved = inFlightReservedStockRef.current.get(productId) || 0;
+      inFlightReservedStockRef.current.set(productId, prevReserved + req.quantity);
+    }
+
+    const releaseReservation = () => {
+      for (const [productId, req] of requestedByProduct.entries()) {
+        const currentReserved = inFlightReservedStockRef.current.get(productId) || 0;
+        const nextReserved = Math.max(0, currentReserved - req.quantity);
+        if (nextReserved === 0) {
+          inFlightReservedStockRef.current.delete(productId);
+        } else {
+          inFlightReservedStockRef.current.set(productId, nextReserved);
+        }
+      }
+    };
+
+    invoiceSeqRef.current += 1;
+    const invCount = invoices.length + invoiceSeqRef.current;
+    const uniqueSuffix = Math.random().toString(36).slice(2, 7);
     const invoiceNumber = `INV-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${invCount.toString().padStart(2, '0')}`;
     const newInvoice: POSInvoice = {
       ...invoiceData,
-      id: `inv-${Date.now()}`,
+      id: `inv-${Date.now()}-${uniqueSuffix}`,
       invoiceNumber,
       storeId: invoiceData.storeId || activeStore.id,
       clientId: invoiceData.clientId || activeStore.clientId || 'client-001',
@@ -806,16 +889,100 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
       paymentStatus: 'paid'
     };
 
-    // Deduct inventory stock automatically and check low-stock thresholds
-    const updatedProductsList: Product[] = [];
+    // Prepare preview of updated products for offline/unseeded fallback
+    const previewUpdatedProducts: Product[] = [];
+    for (const p of currentProductsSnapshot) {
+      const req = requestedByProduct.get(p.id);
+      if (req) {
+        const reservedTotal = inFlightReservedStockRef.current.get(p.id) || req.quantity;
+        previewUpdatedProducts.push({
+          ...p,
+          stock: Math.max(0, p.stock - reservedTotal)
+        });
+      }
+    }
+
+    // Prepare Customer loyalty, totalPurchases & creditBalance update if customer linked
+    let updatedCustObj: CustomerProfile | undefined = undefined;
+    if (newInvoice.customerId || newInvoice.customerPhone) {
+      const matchedCustomer = customers.find(
+        c =>
+          (newInvoice.customerId && c.id === newInvoice.customerId) ||
+          (newInvoice.customerPhone && c.phone === newInvoice.customerPhone)
+      );
+      if (matchedCustomer) {
+        const creditDelta = newInvoice.paymentMethod === 'credit' ? Number(newInvoice.grandTotal || 0) : 0;
+        updatedCustObj = {
+          ...matchedCustomer,
+          totalPurchases: (Number(matchedCustomer.totalPurchases) || 0) + newInvoice.grandTotal,
+          loyaltyPoints: Math.max(
+            0,
+            (Number(matchedCustomer.loyaltyPoints) || 0) -
+              (newInvoice.loyaltyPointsRedeemed || 0) +
+              (newInvoice.loyaltyPointsEarned || 0)
+          ),
+          creditBalance: (Number(matchedCustomer.creditBalance) || 0) + creditDelta
+        };
+      }
+    }
+
+    const auditLogObj: AuditLog = {
+      id: `log-${Date.now()}-${uniqueSuffix}`,
+      user: currentUser.name,
+      role: activeRole,
+      action: 'POS Invoice Created',
+      details: `Invoice ${invoiceNumber} created for ${newInvoice.customerName} (₹${newInvoice.grandTotal}) at ${activeStore.name}`,
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      ipAddress: '127.0.0.1',
+      status: 'success'
+    };
+
+    // 4. Atomic persistence & stock verification via Firestore transaction
+    let txCommittedProducts: Product[] | undefined;
+    try {
+      txCommittedProducts = await syncManager.syncPOSSaleAtomic(
+        activeStore.id,
+        newInvoice,
+        previewUpdatedProducts,
+        updatedCustObj,
+        auditLogObj
+      );
+    } catch (err: any) {
+      releaseReservation();
+      if (isInsufficientStockError(err) && err.productId && typeof err.availableStock === 'number') {
+        const remoteStock = Math.max(0, err.availableStock);
+        setProducts(prev =>
+          prev.map(p => (p.id === err.productId ? { ...p, stock: remoteStock } : p))
+        );
+      }
+      addNotification({
+        title: 'Sale Rejected: Insufficient Stock',
+        message: err?.message || 'Concurrent sale updated stock levels. Please review cart quantities.',
+        category: 'low_stock',
+        linkModule: 'retailer'
+      });
+      throw err;
+    }
+
+    // 5. Commit stock deduction to local state and release in-flight reservation simultaneously
+    releaseReservation();
+
+    const committedById = new Map<string, Product>(
+      Array.isArray(txCommittedProducts) ? txCommittedProducts.map(p => [p.id, p]) : []
+    );
     const lowStockAlerts: { product: Product; newStock: number; isCritical: boolean }[] = [];
 
-    setProducts(prev => prev.map(p => {
-      const soldItem = newInvoice.items.find(i => i.productId === p.id);
-      if (soldItem) {
-        const newStock = Math.max(0, p.stock - soldItem.quantity);
-        const updatedProd = { ...p, stock: newStock };
-        updatedProductsList.push(updatedProd);
+    setProducts(prev =>
+      prev.map(p => {
+        const req = requestedByProduct.get(p.id);
+        if (!req) return p;
+
+        const txProd = committedById.get(p.id);
+        const newStock = txProd
+          ? Math.max(0, Math.min(p.stock, Number(txProd.stock)))
+          : Math.max(0, p.stock - req.quantity);
+
+        const updatedProd: Product = { ...p, stock: newStock };
 
         // Low stock rule: Warning level <= minThreshold; Critical level <= 3 units
         if (newStock <= p.minThreshold) {
@@ -823,9 +990,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
           lowStockAlerts.push({ product: p, newStock, isCritical });
         }
         return updatedProd;
-      }
-      return p;
-    }));
+      })
+    );
 
     // Low stock alert: visible to all, but push notification is dispatched to Client / Owner only
     if (lowStockAlerts.length > 0) {
@@ -840,45 +1006,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
       });
     }
 
-    // Update Customer loyalty & total purchases if customer linked
-    let updatedCustObj: CustomerProfile | undefined = undefined;
-    if (newInvoice.customerPhone) {
-      setCustomers(prev => prev.map(c => {
-        if (c.phone === newInvoice.customerPhone) {
-          const updatedCust = {
-            ...c,
-            totalPurchases: c.totalPurchases + newInvoice.grandTotal,
-            loyaltyPoints: Math.max(0, c.loyaltyPoints - (newInvoice.loyaltyPointsRedeemed || 0) + (newInvoice.loyaltyPointsEarned || 0))
-          };
-          updatedCustObj = updatedCust;
-          return updatedCust;
-        }
-        return c;
-      }));
+    if (updatedCustObj) {
+      const finalCust = updatedCustObj;
+      setCustomers(prev => prev.map(c => (c.id === finalCust.id ? finalCust : c)));
     }
 
     setInvoices(prev => [newInvoice, ...prev]);
-
-    const auditLogObj: AuditLog = {
-      id: `log-${Date.now()}`,
-      user: currentUser.name,
-      role: activeRole,
-      action: 'POS Invoice Created',
-      details: `Invoice ${invoiceNumber} created for ${newInvoice.customerName} (₹${newInvoice.grandTotal}) at ${activeStore.name}`,
-      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
-      ipAddress: '127.0.0.1',
-      status: 'success'
-    };
     setAuditLogs(prev => [auditLogObj, ...prev]);
-
-    // Atomic persistence across all related entities
-    syncManager.syncPOSSaleAtomic(
-      activeStore.id,
-      newInvoice,
-      updatedProductsList,
-      updatedCustObj,
-      auditLogObj
-    );
 
     addNotification({
       title: 'Invoice Generated',

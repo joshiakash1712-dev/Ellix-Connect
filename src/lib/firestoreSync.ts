@@ -5,6 +5,7 @@ import {
   deleteDoc,
   onSnapshot,
   writeBatch,
+  runTransaction,
   query,
   where,
   Unsubscribe
@@ -29,6 +30,33 @@ import {
 import firebaseConfig from '../../firebase-applet-config.json';
 
 const OFFLINE_QUEUE_KEY = 'ellix_offline_sync_queue';
+
+export class InsufficientStockError extends Error {
+  public readonly code = 'INSUFFICIENT_STOCK';
+  public readonly productId?: string;
+  public readonly availableStock?: number;
+  public readonly requestedQuantity?: number;
+
+  constructor(
+    message: string,
+    details?: { productId?: string; availableStock?: number; requestedQuantity?: number }
+  ) {
+    super(message);
+    this.name = 'InsufficientStockError';
+    this.productId = details?.productId;
+    this.availableStock = details?.availableStock;
+    this.requestedQuantity = details?.requestedQuantity;
+  }
+}
+
+export function isInsufficientStockError(err: unknown): err is InsufficientStockError {
+  return (
+    err instanceof InsufficientStockError ||
+    (typeof err === 'object' &&
+      err !== null &&
+      ((err as any).name === 'InsufficientStockError' || (err as any).code === 'INSUFFICIENT_STOCK'))
+  );
+}
 
 export function getOfflineQueue(): OfflineSyncItem[] {
   try {
@@ -628,62 +656,248 @@ export class FirestoreSyncManager {
     }
   }
 
-  // Atomic POS checkout write: updates invoice, product stocks, customer loyalty, and audit log together
+  // Atomic POS checkout write: validates stock and updates invoice, product stocks, customer loyalty, and audit log together via Firestore transaction
   public async syncPOSSaleAtomic(
     storeId: string,
     invoice: POSInvoice,
     updatedProducts: Product[],
     updatedCustomer?: CustomerProfile,
     auditLog?: AuditLog
-  ): Promise<void> {
+  ): Promise<Product[]> {
     this.notifyFeedback('saving', 'Processing transaction...');
+
+    // 1. Aggregate requested quantities per productId from invoice items
+    const requestedByProduct = new Map<string, { quantity: number; productName: string }>();
+    for (const item of invoice.items || []) {
+      const qty = Number(item.quantity);
+      if (!Number.isFinite(qty) || qty <= 0) {
+        const err = new InsufficientStockError(
+          `Invalid sale quantity (${item.quantity}) for "${item.productName || item.productId}".`,
+          { productId: item.productId, requestedQuantity: qty }
+        );
+        this.notifyFeedback('error', err.message);
+        throw err;
+      }
+      const existing = requestedByProduct.get(item.productId);
+      requestedByProduct.set(item.productId, {
+        quantity: (existing?.quantity || 0) + qty,
+        productName: item.productName || existing?.productName || item.productId
+      });
+    }
+
+    const updatedProductsMap = new Map<string, Product>(
+      (updatedProducts || []).map(p => [p.id, p])
+    );
+
+    // Ensure no caller-supplied product stock is negative
+    for (const [productId, req] of requestedByProduct.entries()) {
+      const localProd = updatedProductsMap.get(productId);
+      if (localProd && Number(localProd.stock) < 0) {
+        const err = new InsufficientStockError(
+          `Insufficient stock for "${localProd.name || req.productName}".`,
+          {
+            productId,
+            availableStock: Math.max(0, Number(localProd.stock) + req.quantity),
+            requestedQuantity: req.quantity
+          }
+        );
+        this.notifyFeedback('error', err.message);
+        throw err;
+      }
+    }
+
     try {
-      const batch = writeBatch(db);
+      const committedProducts = await runTransaction(db, async (transaction) => {
+        const nowIso = new Date().toISOString();
+        const productEntries = Array.from(requestedByProduct.entries());
 
-      // 1. Invoice
-      const invRef = doc(db, 'stores', storeId, 'invoices', invoice.id);
-      batch.set(invRef, sanitizeData({
-        ...invoice,
-        totalAmount: invoice.grandTotal,
-        storeId,
-        updatedAt: new Date().toISOString()
-      }), { merge: true });
+        // Phase 1: Read all product documents and customer document before any writes
+        const productRefs = productEntries.map(([productId]) =>
+          doc(db, 'stores', storeId, 'products', productId)
+        );
+        const productSnaps = await Promise.all(
+          productRefs.map(ref => transaction.get(ref))
+        );
 
-      // 2. Affected products stock deduction
-      for (const p of updatedProducts) {
-        const pRef = doc(db, 'stores', storeId, 'products', p.id);
-        batch.set(pRef, sanitizeData({ ...p, storeId, updatedAt: new Date().toISOString() }), { merge: true });
-      }
+        const customerRef = updatedCustomer
+          ? doc(db, 'stores', storeId, 'customers', updatedCustomer.id)
+          : null;
+        const customerSnap = customerRef ? await transaction.get(customerRef) : null;
 
-      // 3. Customer profile if linked
-      if (updatedCustomer) {
-        const cRef = doc(db, 'stores', storeId, 'customers', updatedCustomer.id);
-        batch.set(cRef, sanitizeData({ ...updatedCustomer, storeId, updatedAt: new Date().toISOString() }), { merge: true });
-      }
+        // Phase 2: Validate stock against authoritative Firestore documents
+        const nextProductsToCommit: {
+          ref: ReturnType<typeof doc>;
+          existsInCloud: boolean;
+          nextStock: number;
+          mergedProduct: Product;
+        }[] = [];
 
-      // 4. Audit Log
-      if (auditLog) {
-        const lRef = doc(db, 'stores', storeId, 'auditLogs', auditLog.id);
-        batch.set(lRef, sanitizeData({ ...auditLog, storeId }), { merge: true });
-      }
+        for (let i = 0; i < productEntries.length; i++) {
+          const [productId, req] = productEntries[i];
+          const pRef = productRefs[i];
+          const pSnap = productSnaps[i];
+          const fallbackProd = updatedProductsMap.get(productId);
 
-      await batch.commit();
+          if (pSnap.exists()) {
+            const remoteData = pSnap.data() as Product;
+            const currentStock = Number(remoteData.stock ?? 0);
+            if (!Number.isFinite(currentStock) || currentStock < req.quantity) {
+              throw new InsufficientStockError(
+                `Insufficient stock for "${remoteData.name || req.productName}": only ${Math.max(0, currentStock)} available, requested ${req.quantity}.`,
+                {
+                  productId,
+                  availableStock: Math.max(0, currentStock),
+                  requestedQuantity: req.quantity
+                }
+              );
+            }
+            const nextStock = currentStock - req.quantity;
+            nextProductsToCommit.push({
+              ref: pRef,
+              existsInCloud: true,
+              nextStock,
+              mergedProduct: {
+                ...(fallbackProd || remoteData),
+                ...remoteData,
+                id: productId,
+                stock: nextStock
+              }
+            });
+          } else if (fallbackProd && Number.isFinite(Number(fallbackProd.stock)) && Number(fallbackProd.stock) >= 0) {
+            const nextStock = Number(fallbackProd.stock);
+            nextProductsToCommit.push({
+              ref: pRef,
+              existsInCloud: false,
+              nextStock,
+              mergedProduct: {
+                ...fallbackProd,
+                id: productId,
+                stock: nextStock
+              }
+            });
+          } else {
+            throw new InsufficientStockError(
+              `Product "${req.productName}" is unavailable or out of stock.`,
+              {
+                productId,
+                availableStock: 0,
+                requestedQuantity: req.quantity
+              }
+            );
+          }
+        }
+
+        // Phase 3: Perform all writes atomically inside the transaction
+        // 1. Affected products stock deduction
+        for (const item of nextProductsToCommit) {
+          if (item.existsInCloud) {
+            transaction.update(item.ref, {
+              stock: item.nextStock,
+              updatedAt: nowIso
+            });
+          } else {
+            transaction.set(
+              item.ref,
+              sanitizeData({
+                ...item.mergedProduct,
+                stock: item.nextStock,
+                storeId,
+                updatedAt: nowIso
+              }),
+              { merge: true }
+            );
+          }
+        }
+
+        // 2. Invoice
+        const invRef = doc(db, 'stores', storeId, 'invoices', invoice.id);
+        transaction.set(
+          invRef,
+          sanitizeData({
+            ...invoice,
+            totalAmount: invoice.grandTotal,
+            storeId,
+            updatedAt: nowIso
+          }),
+          { merge: true }
+        );
+
+        // 3. Customer profile if linked
+        if (updatedCustomer && customerRef) {
+          if (customerSnap && customerSnap.exists()) {
+            const remoteCust = customerSnap.data() as CustomerProfile;
+            const remotePurchases = Number(remoteCust.totalPurchases ?? 0);
+            const remoteLoyalty = Number(remoteCust.loyaltyPoints ?? 0);
+            const remoteCredit = Number(remoteCust.creditBalance ?? 0);
+            const redeemed = Number(invoice.loyaltyPointsRedeemed ?? 0);
+            const earned = Number(invoice.loyaltyPointsEarned ?? 0);
+            const creditDelta = invoice.paymentMethod === 'credit' ? Number(invoice.grandTotal ?? 0) : 0;
+
+            transaction.set(
+              customerRef,
+              sanitizeData({
+                ...updatedCustomer,
+                ...remoteCust,
+                totalPurchases: remotePurchases + Number(invoice.grandTotal ?? 0),
+                loyaltyPoints: Math.max(0, remoteLoyalty - redeemed + earned),
+                creditBalance: remoteCredit + creditDelta,
+                storeId,
+                updatedAt: nowIso
+              }),
+              { merge: true }
+            );
+          } else {
+            transaction.set(
+              customerRef,
+              sanitizeData({ ...updatedCustomer, storeId, updatedAt: nowIso }),
+              { merge: true }
+            );
+          }
+        }
+
+        // 4. Audit Log
+        if (auditLog) {
+          const lRef = doc(db, 'stores', storeId, 'auditLogs', auditLog.id);
+          transaction.set(lRef, sanitizeData({ ...auditLog, storeId }), { merge: true });
+        }
+
+        return nextProductsToCommit.map(item => item.mergedProduct);
+      });
+
       this.notifyFeedback('saved', 'Transaction saved');
-    } catch (err) {
-      console.warn('[FirestoreSync] POS sale atomic write failed, queuing items offline:', err);
-      // Fallback: queue individual operations into offline queue
+      return committedProducts;
+    } catch (err: any) {
+      // Never queue insufficient-stock or validation rejections into the offline queue
+      if (isInsufficientStockError(err)) {
+        this.notifyFeedback('error', err.message);
+        throw err;
+      }
+
+      const isOfflineError =
+        !this.isOnline ||
+        (typeof navigator !== 'undefined' && !navigator.onLine) ||
+        err?.code === 'unavailable';
+
+      if (!isOfflineError) {
+        this.notifyFeedback('error', err?.message || 'Transaction failed.');
+        throw err;
+      }
+
+      console.warn('[FirestoreSync] POS sale atomic write failed while offline, queuing items:', err);
+      const nowIso = new Date().toISOString();
+      // Fallback: queue individual operations into offline queue when genuinely offline
       queueOfflineAction({
         collection: 'invoices',
         action: 'create',
         docId: invoice.id,
-        data: sanitizeData({ ...invoice, totalAmount: invoice.grandTotal, storeId, updatedAt: new Date().toISOString() })
+        data: sanitizeData({ ...invoice, totalAmount: invoice.grandTotal, storeId, updatedAt: nowIso })
       });
       for (const p of updatedProducts) {
         queueOfflineAction({
           collection: 'products',
           action: 'update',
           docId: p.id,
-          data: sanitizeData({ ...p, storeId, updatedAt: new Date().toISOString() })
+          data: sanitizeData({ ...p, storeId, updatedAt: nowIso })
         });
       }
       if (updatedCustomer) {
@@ -691,10 +905,11 @@ export class FirestoreSyncManager {
           collection: 'customers',
           action: 'update',
           docId: updatedCustomer.id,
-          data: sanitizeData({ ...updatedCustomer, storeId, updatedAt: new Date().toISOString() })
+          data: sanitizeData({ ...updatedCustomer, storeId, updatedAt: nowIso })
         });
       }
       this.notifyFeedback('error', 'Transaction saved offline. Will sync when connected.');
+      return updatedProducts;
     }
   }
 

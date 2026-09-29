@@ -12,28 +12,135 @@ interface InvoiceRendererProps {
 export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invoice, printMode = false }) => {
   const { branding, variableFields, columnSettings, additionalInfo, internationalSettings, templateStyle, paperSize } = template;
   
-  // Normalize items
-  const items = (invoice.items || []).map((item: any, idx: number) => ({
-    id: item.productId || item.id || `ITEM-${idx + 1}`,
-    name: item.productName || item.name || 'Product Item',
-    quantity: item.quantity ?? 1,
-    unitPrice: item.unitPrice ?? item.price ?? 0,
-    price: item.unitPrice ?? item.price ?? 0,
-    discount: item.discount ?? item.discountAmount ?? 0,
-    taxRate: item.taxRate ?? 18,
-    hsnCode: item.hsnCode || item.hsn || '2106',
-    unit: item.unit || 'PCS'
-  }));
+  // Normalize items using actual invoice item GST rates and amounts
+  const items = (invoice.items || []).map((item: any, idx: number) => {
+    const quantity = Number(item.quantity ?? 1);
+    const price = Number(item.unitPrice ?? item.price ?? 0);
+    const discount = Number(item.discount ?? item.discountAmount ?? 0);
+    const taxRate = invoice.isGSTInvoice === false ? 0 : Number(item.taxRate ?? 0);
+    const taxableValue = Number(Math.max(0, price * quantity - discount).toFixed(2));
 
-  // Calculate item summaries
+    let cgstAmount: number;
+    let sgstAmount: number;
+    let taxAmount: number;
+
+    if (invoice.isGSTInvoice === false) {
+      cgstAmount = 0;
+      sgstAmount = 0;
+      taxAmount = 0;
+    } else if (typeof item.taxAmount === 'number' && Number.isFinite(item.taxAmount)) {
+      taxAmount = Number(item.taxAmount.toFixed(2));
+      cgstAmount = Number((taxAmount / 2).toFixed(2));
+      sgstAmount = Number((taxAmount - cgstAmount).toFixed(2));
+    } else {
+      const rawTax = (taxableValue * taxRate) / 100;
+      cgstAmount = Number((rawTax / 2).toFixed(2));
+      sgstAmount = Number((rawTax / 2).toFixed(2));
+      taxAmount = Number((cgstAmount + sgstAmount).toFixed(2));
+    }
+
+    const lineTotal =
+      typeof item.total === 'number' && Number.isFinite(item.total)
+        ? Number(item.total.toFixed(2))
+        : Number((taxableValue + taxAmount).toFixed(2));
+
+    return {
+      id: item.productId || item.id || `ITEM-${idx + 1}`,
+      name: item.productName || item.name || 'Product Item',
+      quantity,
+      unitPrice: price,
+      price,
+      discount,
+      taxableValue,
+      taxRate,
+      cgstAmount,
+      sgstAmount,
+      taxAmount,
+      lineTotal,
+      hsnCode: item.hsnCode || item.hsn || '2106',
+      unit: item.unit || 'PCS'
+    };
+  });
+
+  // Calculate item summaries from actual invoice fields and item data
   const totalQty = items.reduce((acc, item) => acc + item.quantity, 0);
-  const totalDiscount = invoice.discountTotal ?? items.reduce((acc, item) => acc + (item.discount || 0), 0);
-  const subtotal = invoice.subtotal ?? items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const taxableAmount = invoice.taxableAmount || (subtotal - totalDiscount);
-  const grandTotal = invoice.grandTotal ?? invoice.total ?? (taxableAmount * 1.18);
-  const totalTax = invoice.tax ?? ((invoice.cgst || 0) + (invoice.sgst || 0) + (invoice.igst || 0)) ?? (grandTotal - taxableAmount);
-  const cgstAmount = invoice.cgst || (totalTax / 2);
-  const sgstAmount = invoice.sgst || (totalTax / 2);
+  const totalDiscount = Number(
+    (invoice.discountTotal ?? items.reduce((acc, item) => acc + (item.discount || 0), 0)).toFixed(2)
+  );
+  const subtotal = Number(
+    (invoice.subtotal ?? items.reduce((acc, item) => acc + item.price * item.quantity, 0)).toFixed(2)
+  );
+  const taxableAmount = Number(
+    ((invoice as any).taxableAmount ?? Math.max(0, subtotal - totalDiscount)).toFixed(2)
+  );
+
+  const cgstAmount =
+    invoice.isGSTInvoice === false
+      ? 0
+      : typeof invoice.cgst === 'number'
+      ? Number(invoice.cgst.toFixed(2))
+      : Number(items.reduce((acc, item) => acc + item.cgstAmount, 0).toFixed(2));
+  const sgstAmount =
+    invoice.isGSTInvoice === false
+      ? 0
+      : typeof invoice.sgst === 'number'
+      ? Number(invoice.sgst.toFixed(2))
+      : Number(items.reduce((acc, item) => acc + item.sgstAmount, 0).toFixed(2));
+  const igstAmount =
+    invoice.isGSTInvoice === false
+      ? 0
+      : typeof invoice.igst === 'number'
+      ? Number(invoice.igst.toFixed(2))
+      : 0;
+  const totalTax =
+    invoice.isGSTInvoice === false
+      ? 0
+      : typeof (invoice as any).tax === 'number'
+      ? Number((invoice as any).tax.toFixed(2))
+      : typeof invoice.cgst === 'number' || typeof invoice.sgst === 'number' || typeof invoice.igst === 'number'
+      ? Number((cgstAmount + sgstAmount + igstAmount).toFixed(2))
+      : Number(items.reduce((acc, item) => acc + item.taxAmount, 0).toFixed(2));
+  const grandTotal = Number(
+    (invoice.grandTotal ?? (invoice as any).total ?? taxableAmount + totalTax).toFixed(2)
+  );
+
+  // Distinct GST rates & half-rates (CGST/SGST) for dynamic labels
+  const distinctTaxRates = Array.from(
+    new Set<number>(items.map(item => Number(item.taxRate) || 0))
+  ).sort((a, b) => a - b);
+  const halfRateSlabsLabel =
+    distinctTaxRates.length > 0
+      ? distinctTaxRates.map(r => `${Number((r / 2).toFixed(2))}%`).join(', ')
+      : '0%';
+
+  // Group items by taxRate for Tax Slabs Breakdown
+  interface TaxSlabEntry {
+    taxRate: number;
+    taxableAmount: number;
+    cgstAmount: number;
+    sgstAmount: number;
+    taxAmount: number;
+  }
+  const taxSlabBreakdown: TaxSlabEntry[] = Array.from<TaxSlabEntry>(
+    items
+      .reduce((map, item) => {
+        const rate = Number(item.taxRate) || 0;
+        const existing: TaxSlabEntry = map.get(rate) || {
+          taxRate: rate,
+          taxableAmount: 0,
+          cgstAmount: 0,
+          sgstAmount: 0,
+          taxAmount: 0
+        };
+        existing.taxableAmount = Number((existing.taxableAmount + item.taxableValue).toFixed(2));
+        existing.cgstAmount = Number((existing.cgstAmount + item.cgstAmount).toFixed(2));
+        existing.sgstAmount = Number((existing.sgstAmount + item.sgstAmount).toFixed(2));
+        existing.taxAmount = Number((existing.taxAmount + item.taxAmount).toFixed(2));
+        map.set(rate, existing);
+        return map;
+      }, new Map<number, TaxSlabEntry>())
+      .values()
+  ).sort((a, b) => a.taxRate - b.taxRate);
   
   const invoiceId = invoice.invoiceNumber || invoice.id || 'INV-2026-0801';
   const customerName = invoice.customerName || 'Cash Customer';
@@ -217,7 +324,7 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
                     {cols.mrp && <td className="py-2 px-2 border-r border-amber-200/60 text-right text-slate-500 line-through">₹{(item.price * 1.15).toFixed(2)}</td>}
                     {cols.price && <td className="py-2 px-2 border-r border-amber-200/60 text-right font-mono text-slate-700">₹{item.price.toFixed(2)}</td>}
                     {cols.discount && <td className="py-2 px-2 border-r border-amber-200/60 text-right text-emerald-700 font-medium">₹{(item.discount || 0).toFixed(2)}</td>}
-                    {cols.tax && <td className="py-2 px-2 border-r border-amber-200/60 text-right text-slate-600">{item.taxRate || 18}%</td>}
+                    {cols.tax && <td className="py-2 px-2 border-r border-amber-200/60 text-right text-slate-600">{item.taxRate}%</td>}
                     {cols.amount && <td className="py-2 px-3 text-right font-bold text-slate-900 font-mono">₹{((item.price * item.quantity) - (item.discount || 0)).toFixed(2)}</td>}
                   </tr>
                 ))}
@@ -264,11 +371,11 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
                 <span className="font-mono font-medium">₹{taxableAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-600">
-                <span>CGST (9%):</span>
+                <span>CGST ({halfRateSlabsLabel}):</span>
                 <span className="font-mono font-medium">₹{cgstAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-600">
-                <span>SGST (9%):</span>
+                <span>SGST ({halfRateSlabsLabel}):</span>
                 <span className="font-mono font-medium">₹{sgstAmount.toFixed(2)}</span>
               </div>
               {totalDiscount > 0 && (
@@ -475,8 +582,19 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
           <div className="p-3 rounded-lg border border-slate-200 space-y-1">
             <p className="font-bold text-slate-800 uppercase tracking-wider text-[10px]">Tax Slabs Breakdown</p>
             <div className="text-[11px] space-y-1 text-slate-600">
-              <div className="flex justify-between"><span>IGST @ 5%:</span> <span className="font-mono">₹{(totalTax * 0.3).toFixed(2)}</span></div>
-              <div className="flex justify-between"><span>IGST @ 18%:</span> <span className="font-mono">₹{(totalTax * 0.7).toFixed(2)}</span></div>
+              {taxSlabBreakdown.map(slab => {
+                const halfRate = Number((slab.taxRate / 2).toFixed(2));
+                return (
+                  <div key={slab.taxRate} className="flex justify-between">
+                    <span>
+                      {igstAmount > 0
+                        ? `IGST @ ${slab.taxRate}%:`
+                        : `GST @ ${slab.taxRate}% (CGST ${halfRate}%: ₹${slab.cgstAmount.toFixed(2)} + SGST ${halfRate}%: ₹${slab.sgstAmount.toFixed(2)}):`}
+                    </span>
+                    <span className="font-mono">₹{slab.taxAmount.toFixed(2)}</span>
+                  </div>
+                );
+              })}
               <div className="flex justify-between font-semibold text-slate-800 pt-1 border-t border-slate-200">
                 <span>Total Tax Amount:</span> <span className="font-mono">₹{totalTax.toFixed(2)}</span>
               </div>
@@ -723,8 +841,8 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
                 <th className="py-1.5 px-3 border-r border-sky-700">ITEMS</th>
                 <th className="py-1.5 px-2 text-center w-16 border-r border-sky-700">HSN</th>
                 <th className="py-1.5 px-2 text-center w-14 border-r border-sky-700">QTY.</th>
-                <th className="py-1.5 px-2 text-right w-16 border-r border-sky-700">SGST (9%)</th>
-                <th className="py-1.5 px-2 text-right w-16 border-r border-sky-700">CGST (9%)</th>
+                <th className="py-1.5 px-2 text-right w-16 border-r border-sky-700">SGST ({halfRateSlabsLabel})</th>
+                <th className="py-1.5 px-2 text-right w-16 border-r border-sky-700">CGST ({halfRateSlabsLabel})</th>
                 <th className="py-1.5 px-3 text-right w-24">AMOUNT (₹)</th>
               </tr>
             </thead>
@@ -735,9 +853,9 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
                   <td className="py-1 px-3 border-r border-sky-200 font-semibold">{item.name}</td>
                   <td className="py-1 px-2 text-center font-mono text-[11px] border-r border-sky-200">{item.hsnCode || '7318'}</td>
                   <td className="py-1 px-2 text-center font-bold font-mono border-r border-sky-200">{item.quantity} {item.unit || 'PCS'}</td>
-                  <td className="py-1 px-2 text-right font-mono border-r border-sky-200">₹{((item.price * item.quantity * 0.09)).toFixed(2)}</td>
-                  <td className="py-1 px-2 text-right font-mono border-r border-sky-200">₹{((item.price * item.quantity * 0.09)).toFixed(2)}</td>
-                  <td className="py-1 px-3 text-right font-bold font-mono">₹{((item.price * item.quantity) * 1.18).toFixed(2)}</td>
+                  <td className="py-1 px-2 text-right font-mono border-r border-sky-200">₹{item.sgstAmount.toFixed(2)}</td>
+                  <td className="py-1 px-2 text-right font-mono border-r border-sky-200">₹{item.cgstAmount.toFixed(2)}</td>
+                  <td className="py-1 px-3 text-right font-bold font-mono">₹{item.lineTotal.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -855,7 +973,7 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
                 <div className="text-[9px] text-slate-500 pl-6 flex justify-between">
                   <span>HSN:{item.hsnCode || '2106'}</span>
                   <span>Disc: ₹{(item.discount || 0).toFixed(0)}</span>
-                  <span>Tax: {item.taxRate || 18}%</span>
+                  <span>Tax: {item.taxRate}%</span>
                 </div>
               )}
             </div>

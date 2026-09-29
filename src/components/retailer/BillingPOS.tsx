@@ -156,6 +156,8 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
   const [shortcutNotice, setShortcutNotice] = useState<string | null>(null);
   const [generatedInvoice, setGeneratedInvoice] = useState<POSInvoice | null>(null);
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const isCheckingOutRef = useRef(false);
 
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
@@ -169,27 +171,40 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
   });
 
   const addToCart = (product: Product) => {
+    const liveProduct = products.find(p => p.id === product.id) || product;
+    if (liveProduct.stock <= 0) {
+      triggerShortcutNotice(`⚠️ "${liveProduct.name}" is out of stock.`);
+      return;
+    }
     setCart(prev => {
-      const existing = prev.find(item => item.product.id === product.id);
+      const existing = prev.find(item => item.product.id === liveProduct.id);
       if (existing) {
-        if (existing.quantity >= product.stock) return prev; // Limit to stock
+        if (existing.quantity >= liveProduct.stock) {
+          triggerShortcutNotice(`⚠️ Only ${liveProduct.stock} units of "${liveProduct.name}" available in stock.`);
+          return prev; // Limit to stock
+        }
         return prev.map(item =>
-          item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.product.id === liveProduct.id ? { ...item, product: liveProduct, quantity: item.quantity + 1 } : item
         );
       }
-      return [...prev, { product, quantity: 1, discount: 0 }];
+      return [...prev, { product: liveProduct, quantity: 1, discount: 0 }];
     });
   };
 
   const updateQuantity = (productId: string, delta: number) => {
+    const liveProduct = products.find(p => p.id === productId);
     setCart(prev =>
       prev
         .map(item => {
           if (item.product.id === productId) {
+            const maxStock = liveProduct ? liveProduct.stock : item.product.stock;
             const newQty = item.quantity + delta;
             if (newQty <= 0) return null;
-            if (newQty > item.product.stock) return item;
-            return { ...item, quantity: newQty };
+            if (delta > 0 && newQty > maxStock) {
+              triggerShortcutNotice(`⚠️ Only ${maxStock} units of "${item.product.name}" available in stock.`);
+              return item;
+            }
+            return { ...item, product: liveProduct || item.product, quantity: newQty };
           }
           return item;
         })
@@ -240,29 +255,122 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
     setFlatDiscountInput('');
   };
 
-  // Subtotal & Calculations
-  const subtotal = cart.reduce((acc, item) => acc + item.product.sellingPrice * item.quantity, 0);
-  const itemDiscountsTotal = isCrew ? 0 : cart.reduce((acc, item) => acc + item.discount, 0);
+  // Subtotal, Discounts & Per-Line GST Calculations
+  const subtotal = Number(
+    cart.reduce((acc, item) => acc + item.product.sellingPrice * item.quantity, 0).toFixed(2)
+  );
+  const itemDiscountsTotal = isCrew
+    ? 0
+    : Number(
+        cart
+          .reduce(
+            (acc, item) =>
+              acc + Math.min(item.product.sellingPrice * item.quantity, Math.max(0, item.discount)),
+            0
+          )
+          .toFixed(2)
+      );
   const flatDiscountVal = isCrew ? 0 : (parseFloat(flatDiscountInput) || 0);
-  const percentDiscountAmount = isCrew ? 0 : Math.round((subtotal * billDiscountPercent) / 100);
-  const billDiscountAmount = isCrew ? 0 : (billDiscountPercent > 0 ? percentDiscountAmount : Math.min(subtotal, flatDiscountVal));
-  const loyaltyDiscount = !isCrew && redeemPoints && selectedCustomer ? Math.min(subtotal, selectedCustomer.loyaltyPoints) : 0;
-  const totalDiscount = isCrew ? 0 : Math.min(subtotal, itemDiscountsTotal + billDiscountAmount + loyaltyDiscount);
+  const percentDiscountAmount = isCrew ? 0 : Number(((subtotal * billDiscountPercent) / 100).toFixed(2));
+  const billDiscountAmount = isCrew
+    ? 0
+    : billDiscountPercent > 0
+    ? percentDiscountAmount
+    : Math.min(subtotal, flatDiscountVal);
+  const loyaltyDiscount =
+    !isCrew && redeemPoints && selectedCustomer
+      ? Math.min(subtotal, selectedCustomer.loyaltyPoints)
+      : 0;
+  const totalDiscount = isCrew
+    ? 0
+    : Number(Math.min(subtotal, itemDiscountsTotal + billDiscountAmount + loyaltyDiscount).toFixed(2));
 
-  const taxableAmount = Math.max(0, subtotal - totalDiscount);
-  // Avg tax rate calc
-  const avgTaxRate = cart.length > 0 ? cart.reduce((acc, i) => acc + i.product.taxRate, 0) / cart.length : 5;
-  const totalTaxAmount = isGSTInvoice ? Math.round((taxableAmount * avgTaxRate) / 100) : 0;
-  const cgst = Math.round(totalTaxAmount / 2);
-  const sgst = Math.round(totalTaxAmount / 2);
+  const taxableAmount = Number(Math.max(0, subtotal - totalDiscount).toFixed(2));
+  const netAfterItemDiscounts = Number(Math.max(0, subtotal - itemDiscountsTotal).toFixed(2));
+  const extraBillDiscount = Number(Math.max(0, totalDiscount - itemDiscountsTotal).toFixed(2));
 
-  const grandTotal = Math.round(taxableAmount + totalTaxAmount);
+  // Calculate GST separately for each cart line using that product's own taxRate
+  let allocatedBillDiscount = 0;
+  const lineCalculations = cart.map((item, idx) => {
+    const lineGross = Number((item.product.sellingPrice * item.quantity).toFixed(2));
+    const lineItemDiscount = isCrew
+      ? 0
+      : Number(Math.min(lineGross, Math.max(0, item.discount)).toFixed(2));
+    const lineAfterItemDiscount = Number(Math.max(0, lineGross - lineItemDiscount).toFixed(2));
+
+    let lineBillDiscountShare = 0;
+    if (extraBillDiscount > 0 && netAfterItemDiscounts > 0) {
+      if (idx === cart.length - 1) {
+        lineBillDiscountShare = Number(
+          Math.max(0, extraBillDiscount - allocatedBillDiscount).toFixed(2)
+        );
+      } else {
+        lineBillDiscountShare = Number(
+          ((lineAfterItemDiscount / netAfterItemDiscounts) * extraBillDiscount).toFixed(2)
+        );
+        allocatedBillDiscount = Number((allocatedBillDiscount + lineBillDiscountShare).toFixed(2));
+      }
+    }
+
+    const effectiveLineDiscount = Number(
+      Math.min(lineGross, lineItemDiscount + lineBillDiscountShare).toFixed(2)
+    );
+    const lineTaxable = Number(Math.max(0, lineGross - effectiveLineDiscount).toFixed(2));
+    const rate = Number(item.product.taxRate) || 0;
+    const rawLineTax = isGSTInvoice ? (lineTaxable * rate) / 100 : 0;
+    const lineCgst = isGSTInvoice ? Number((rawLineTax / 2).toFixed(2)) : 0;
+    const lineSgst = isGSTInvoice ? Number((rawLineTax / 2).toFixed(2)) : 0;
+    const lineTax = isGSTInvoice ? Number((lineCgst + lineSgst).toFixed(2)) : 0;
+    const lineTotal = Number((lineTaxable + lineTax).toFixed(2));
+
+    return {
+      productId: item.product.id,
+      productName: item.product.name,
+      quantity: item.quantity,
+      unitPrice: item.product.sellingPrice,
+      discount: effectiveLineDiscount,
+      taxRate: rate,
+      cgstAmount: lineCgst,
+      sgstAmount: lineSgst,
+      taxAmount: lineTax,
+      total: lineTotal
+    };
+  });
+
+  const cgst = isGSTInvoice
+    ? Number(lineCalculations.reduce((acc, item) => acc + item.cgstAmount, 0).toFixed(2))
+    : 0;
+  const sgst = isGSTInvoice
+    ? Number(lineCalculations.reduce((acc, item) => acc + item.sgstAmount, 0).toFixed(2))
+    : 0;
+  const igst = 0;
+  const totalTaxAmount = isGSTInvoice ? Number((cgst + sgst + igst).toFixed(2)) : 0;
+  const grandTotal = Number(
+    lineCalculations.reduce((acc, item) => acc + item.total, 0).toFixed(2)
+  );
+
+  const distinctTaxRates = Array.from(
+    new Set<number>(cart.map(i => Number(i.product.taxRate) || 0))
+  ).sort((a, b) => a - b);
+  const gstSlabsLabel =
+    distinctTaxRates.length > 0
+      ? distinctTaxRates.map(r => `${r}%`).join(', ')
+      : '0%';
 
   // Split payment dynamic calculations (Automatic Remaining Balance & Overpayment check)
-  const totalSplitTendered = (Number(splitCash) || 0) + (Number(splitCard) || 0) + (Number(splitUpi) || 0) + (Number(splitBank) || 0);
-  const splitRemaining = Math.max(0, grandTotal - totalSplitTendered);
-  const splitOverpayment = Math.max(0, totalSplitTendered - grandTotal);
-  const isSplitValid = paymentMethod !== 'split' || (totalSplitTendered === grandTotal && grandTotal > 0);
+  const totalSplitTendered = Number(
+    (
+      (Number(splitCash) || 0) +
+      (Number(splitCard) || 0) +
+      (Number(splitUpi) || 0) +
+      (Number(splitBank) || 0)
+    ).toFixed(2)
+  );
+  const splitRemaining = Number(Math.max(0, grandTotal - totalSplitTendered).toFixed(2));
+  const splitOverpayment = Number(Math.max(0, totalSplitTendered - grandTotal).toFixed(2));
+  const isSplitValid =
+    paymentMethod !== 'split' ||
+    (Math.abs(totalSplitTendered - grandTotal) < 0.01 && grandTotal > 0);
 
   const handleCreateNewCustomer = () => {
     let hasErr = false;
@@ -299,24 +407,24 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
     setShowAddCustomer(false);
   };
 
-  const handleCheckout = () => {
-    if (cart.length === 0) return;
+  const handleCheckout = async () => {
+    if (cart.length === 0 || isCheckingOutRef.current) return;
 
-    const itemsData = cart.map(item => {
-      const lineDiscount = isCrew ? 0 : item.discount;
-      const lineSubtotal = item.product.sellingPrice * item.quantity - lineDiscount;
-      const lineTax = isGSTInvoice ? (lineSubtotal * item.product.taxRate) / 100 : 0;
-      return {
-        productId: item.product.id,
-        productName: item.product.name,
-        quantity: item.quantity,
-        unitPrice: item.product.sellingPrice,
-        discount: lineDiscount,
-        taxRate: item.product.taxRate,
-        taxAmount: lineTax,
-        total: Math.round(lineSubtotal + lineTax)
-      };
-    });
+    // Validate live stock availability for all items in cart before checkout
+    for (const item of cart) {
+      const liveProd = products.find(p => p.id === item.product.id);
+      const available = liveProd ? Number(liveProd.stock ?? 0) : 0;
+      if (!liveProd || item.quantity <= 0 || available < item.quantity) {
+        triggerShortcutNotice(
+          `⚠️ Insufficient stock for "${item.product.name}" (Available: ${Math.max(0, available)}, Requested: ${item.quantity}).`
+        );
+        return;
+      }
+    }
+
+    const itemsData = lineCalculations.map(
+      ({ cgstAmount: _cgst, sgstAmount: _sgst, ...lineItem }) => lineItem
+    );
 
     if (paymentMethod === 'credit') {
       if (!selectedCustomer) {
@@ -340,63 +448,77 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
       }
     }
 
-    if (paymentMethod === 'credit' && selectedCustomer) {
-      const currentCredit = Number(selectedCustomer.creditBalance) || 0;
-      updateCustomer(selectedCustomer.id, {
-        creditBalance: currentCredit + grandTotal
-      });
-    }
-
     const earnedPoints = Math.round(grandTotal * 0.05);
+    const redeemedPoints = isCrew ? 0 : (redeemPoints ? loyaltyDiscount : 0);
 
-    const inv = createInvoice({
-      storeId: activeStore.id,
-      storeName: activeStore.name,
-      storeGSTIN: activeStore.gstin,
-      storeAddress: activeStore.address,
-      customerId: selectedCustomer ? selectedCustomer.id : undefined,
-      customerName: selectedCustomer ? selectedCustomer.name : 'Walk-in Retail Customer',
-      customerPhone: selectedCustomer ? selectedCustomer.phone : '+91 99999 00000',
-      date: new Date().toISOString().replace('T', ' ').slice(0, 16),
-      isGSTInvoice,
-      items: itemsData,
-      subtotal,
-      discountTotal: isCrew ? 0 : totalDiscount,
-      cgst,
-      sgst,
-      igst: 0,
-      grandTotal,
-      paymentMethod,
-      splitDetails: paymentMethod === 'split' ? {
-        cashAmount: splitCash || 0,
-        cardAmount: splitCard || 0,
-        upiAmount: splitUpi || 0,
-        bankAmount: splitBank || 0
-      } : undefined,
-      referenceNumber: paymentMethod === 'bank_transfer' ? (bankRefNumber || 'NEFT/IMPS') : undefined,
-      upiTxnRef: paymentMethod === 'upi' ? `UPI/${Math.floor(100000000 + Math.random() * 900000000)}/OKAXIS` : undefined,
-      loyaltyPointsEarned: earnedPoints,
-      loyaltyPointsRedeemed: isCrew ? 0 : (redeemPoints ? loyaltyDiscount : 0),
-      templateId: selectedTemplateId
-    });
+    isCheckingOutRef.current = true;
+    setIsCheckingOut(true);
 
-    setGeneratedInvoice(inv);
-    setIsInvoiceModalOpen(true);
-    setCart([]);
-    setBankRefNumber('');
-    setSplitCash(0);
-    setSplitCard(0);
-    setSplitUpi(0);
-    setSplitBank(0);
+    try {
+      const inv = await createInvoice({
+        storeId: activeStore.id,
+        storeName: activeStore.name,
+        storeGSTIN: activeStore.gstin,
+        storeAddress: activeStore.address,
+        customerId: selectedCustomer ? selectedCustomer.id : undefined,
+        customerName: selectedCustomer ? selectedCustomer.name : 'Walk-in Retail Customer',
+        customerPhone: selectedCustomer ? selectedCustomer.phone : '+91 99999 00000',
+        date: new Date().toISOString().replace('T', ' ').slice(0, 16),
+        isGSTInvoice,
+        items: itemsData,
+        subtotal,
+        discountTotal: isCrew ? 0 : totalDiscount,
+        cgst,
+        sgst,
+        igst: 0,
+        grandTotal,
+        paymentMethod,
+        splitDetails: paymentMethod === 'split' ? {
+          cashAmount: splitCash || 0,
+          cardAmount: splitCard || 0,
+          upiAmount: splitUpi || 0,
+          bankAmount: splitBank || 0
+        } : undefined,
+        referenceNumber: paymentMethod === 'bank_transfer' ? (bankRefNumber || 'NEFT/IMPS') : undefined,
+        upiTxnRef: paymentMethod === 'upi' ? `UPI/${Math.floor(100000000 + Math.random() * 900000000)}/OKAXIS` : undefined,
+        loyaltyPointsEarned: earnedPoints,
+        loyaltyPointsRedeemed: redeemedPoints,
+        templateId: selectedTemplateId
+      });
 
-    if (autoWhatsAppShare) {
-      const targetPhone = inv.customerPhone || '+91 99999 00000';
-      const cleanDigits = targetPhone.replace(/[^0-9]/g, '');
-      const formattedPhone = cleanDigits.length === 10 ? `91${cleanDigits}` : cleanDigits;
-      const pdfInvoiceUrl = `https://ellixconnect.com/invoices/pdf/${inv.invoiceNumber}.pdf`;
+      if (selectedCustomer) {
+        setSelectedCustomer(prev =>
+          prev
+            ? {
+                ...prev,
+                totalPurchases: (Number(prev.totalPurchases) || 0) + grandTotal,
+                loyaltyPoints: Math.max(0, (Number(prev.loyaltyPoints) || 0) - redeemedPoints + earnedPoints),
+                creditBalance:
+                  paymentMethod === 'credit'
+                    ? (Number(prev.creditBalance) || 0) + grandTotal
+                    : prev.creditBalance
+              }
+            : null
+        );
+      }
 
-      const cashierName = inv.cashierName || userProfile?.name || 'Staff Cashier';
-      const whatsappText = `*TAX INVOICE / OFFICIAL BILL* 🧾
+      setGeneratedInvoice(inv);
+      setIsInvoiceModalOpen(true);
+      setCart([]);
+      setBankRefNumber('');
+      setSplitCash(0);
+      setSplitCard(0);
+      setSplitUpi(0);
+      setSplitBank(0);
+
+      if (autoWhatsAppShare) {
+        const targetPhone = inv.customerPhone || '+91 99999 00000';
+        const cleanDigits = targetPhone.replace(/[^0-9]/g, '');
+        const formattedPhone = cleanDigits.length === 10 ? `91${cleanDigits}` : cleanDigits;
+        const pdfInvoiceUrl = `https://ellixconnect.com/invoices/pdf/${inv.invoiceNumber}.pdf`;
+
+        const cashierName = inv.cashierName || userProfile?.name || 'Staff Cashier';
+        const whatsappText = `*TAX INVOICE / OFFICIAL BILL* 🧾
 *Store:* ${inv.storeName}
 *Cashier / Billed by:* ${cashierName}
 --------------------------------
@@ -416,12 +538,18 @@ ${pdfInvoiceUrl}
 
 Thank you for shopping with ${inv.storeName}!`;
 
-      const waApiUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(whatsappText)}`;
-      try {
-        window.open(waApiUrl, '_blank');
-      } catch (err) {
-        console.warn('Unable to launch WhatsApp window in sandbox:', err);
+        const waApiUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(whatsappText)}`;
+        try {
+          window.open(waApiUrl, '_blank');
+        } catch (err) {
+          console.warn('Unable to launch WhatsApp window in sandbox:', err);
+        }
       }
+    } catch (err: any) {
+      triggerShortcutNotice(`⚠️ ${err?.message || 'Sale rejected due to insufficient stock.'}`);
+    } finally {
+      isCheckingOutRef.current = false;
+      setIsCheckingOut(false);
     }
   };
 
@@ -1220,7 +1348,7 @@ Thank you for shopping with ${inv.storeName}!`;
 
             {isGSTInvoice && (
               <div className="flex justify-between text-slate-400">
-                <span>GST (CGST + SGST avg {avgTaxRate}%):</span>
+                <span>GST (CGST + SGST · {gstSlabsLabel}):</span>
                 <span className="font-semibold text-slate-200">₹{totalTaxAmount}</span>
               </div>
             )}
@@ -1555,7 +1683,7 @@ Thank you for shopping with ${inv.storeName}!`;
           <button
             id="btn-pos-complete-sale"
             onClick={handleCheckout}
-            disabled={paymentMethod === 'split' && !isSplitValid}
+            disabled={isCheckingOut || (paymentMethod === 'split' && !isSplitValid)}
             title={
               paymentMethod === 'split' && !isSplitValid
                 ? splitOverpayment > 0
@@ -1564,7 +1692,7 @@ Thank you for shopping with ${inv.storeName}!`;
                 : "Complete Sale & Generate Invoice (F8)"
             }
             className={`w-full py-3 rounded-lg text-sm font-black shadow-xl flex items-center justify-center gap-2 transition-all tabular-nums ${
-              paymentMethod === 'split' && !isSplitValid
+              isCheckingOut || (paymentMethod === 'split' && !isSplitValid)
                 ? 'bg-slate-800/90 text-slate-500 border border-slate-700 cursor-not-allowed opacity-60'
                 : 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-600/25 active:scale-[0.99]'
             }`}

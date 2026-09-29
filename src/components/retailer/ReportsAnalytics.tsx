@@ -202,40 +202,113 @@ export const ReportsAnalytics: React.FC<ReportsAnalyticsProps> = ({ onNavigateTo
     return Math.round((grossProfit / totalSubtotal) * 100);
   }, [grossProfit, totalSubtotal]);
 
-  // GST Breakdown by slab
+  // GST Breakdown by slab calculated from actual invoice items and their taxRate
   const gstSlabReport = useMemo(() => {
-    const slab5Taxable = Math.round(totalSubtotal * 0.35);
-    const slab12Taxable = Math.round(totalSubtotal * 0.45);
-    const slab18Taxable = Math.round(totalSubtotal * 0.20);
+    interface SlabBucket {
+      rate: number;
+      taxRate: string;
+      taxable: number;
+      cgst: number;
+      sgst: number;
+      igst: number;
+      totalTax: number;
+    }
 
-    const slab5Tax = Math.round(slab5Taxable * 0.05);
-    const slab12Tax = Math.round(slab12Taxable * 0.12);
-    const slab18Tax = Math.round(slab18Taxable * 0.18);
+    const slabMap = new Map<number, SlabBucket>();
 
-    return [
-      {
-        taxRate: '5% GST Slab',
-        taxable: slab5Taxable,
-        cgst: Math.round(slab5Tax / 2),
-        sgst: Math.round(slab5Tax / 2),
-        totalTax: slab5Tax
-      },
-      {
-        taxRate: '12% GST Slab',
-        taxable: slab12Taxable,
-        cgst: Math.round(slab12Tax / 2),
-        sgst: Math.round(slab12Tax / 2),
-        totalTax: slab12Tax
-      },
-      {
-        taxRate: '18% GST Slab',
-        taxable: slab18Taxable,
-        cgst: Math.round(slab18Tax / 2),
-        sgst: Math.round(slab18Tax / 2),
-        totalTax: slab18Tax
+    filteredInvoices.forEach(inv => {
+      const isNonGst = inv.isGSTInvoice === false;
+      const isIgstInvoice =
+        !isNonGst && (inv.igst || 0) > 0 && (inv.cgst || 0) === 0 && (inv.sgst || 0) === 0;
+
+      const parsedLines = (inv.items || []).map(item => {
+        const rate = isNonGst ? 0 : Number(item.taxRate ?? 0);
+        const quantity = Number(item.quantity ?? 1);
+        const unitPrice = Number(item.unitPrice ?? (item as any).price ?? 0);
+        const discount = Number(item.discount ?? (item as any).discountAmount ?? 0);
+
+        const rawTaxable =
+          typeof (item as any).taxableValue === 'number' && Number.isFinite((item as any).taxableValue)
+            ? Number((item as any).taxableValue)
+            : Math.max(0, unitPrice * quantity - discount);
+        const lineTaxable = Number(rawTaxable.toFixed(2));
+
+        let lineCgst = 0;
+        let lineSgst = 0;
+        let lineIgst = 0;
+        let lineTotalTax = 0;
+
+        if (!isNonGst && rate > 0) {
+          if (typeof item.taxAmount === 'number' && Number.isFinite(item.taxAmount)) {
+            lineTotalTax = Number(item.taxAmount.toFixed(2));
+          } else {
+            const rawTax = (lineTaxable * rate) / 100;
+            const halfTax = Number((rawTax / 2).toFixed(2));
+            lineTotalTax = Number((halfTax * 2).toFixed(2));
+          }
+
+          if (isIgstInvoice) {
+            lineIgst = lineTotalTax;
+          } else {
+            lineCgst = Number((lineTotalTax / 2).toFixed(2));
+            lineSgst = Number((lineTotalTax - lineCgst).toFixed(2));
+          }
+        }
+
+        return { rate, lineTaxable, lineCgst, lineSgst, lineIgst, lineTotalTax };
+      });
+
+      // Reconcile any 1-paisa half-tax rounding difference with stored invoice-level GST totals
+      if (!isNonGst && parsedLines.length > 0) {
+        const invCgst = Number((inv.cgst || 0).toFixed(2));
+        const invSgst = Number((inv.sgst || 0).toFixed(2));
+        const invIgst = Number((inv.igst || 0).toFixed(2));
+        const invTotalTax = Number((invCgst + invSgst + invIgst).toFixed(2));
+
+        const sumLineTax = Number(parsedLines.reduce((s, l) => s + l.lineTotalTax, 0).toFixed(2));
+        const taxDiff = Number((invTotalTax - sumLineTax).toFixed(2));
+
+        if (invTotalTax > 0 && Math.abs(taxDiff) > 0 && Math.abs(taxDiff) <= 0.02 * parsedLines.length) {
+          for (let i = parsedLines.length - 1; i >= 0; i--) {
+            if (parsedLines[i].rate > 0) {
+              const sumCgst = Number(parsedLines.reduce((s, l) => s + l.lineCgst, 0).toFixed(2));
+              const sumSgst = Number(parsedLines.reduce((s, l) => s + l.lineSgst, 0).toFixed(2));
+              const sumIgst = Number(parsedLines.reduce((s, l) => s + l.lineIgst, 0).toFixed(2));
+              parsedLines[i].lineCgst = Number((parsedLines[i].lineCgst + (invCgst - sumCgst)).toFixed(2));
+              parsedLines[i].lineSgst = Number((parsedLines[i].lineSgst + (invSgst - sumSgst)).toFixed(2));
+              parsedLines[i].lineIgst = Number((parsedLines[i].lineIgst + (invIgst - sumIgst)).toFixed(2));
+              parsedLines[i].lineTotalTax = Number(
+                (parsedLines[i].lineCgst + parsedLines[i].lineSgst + parsedLines[i].lineIgst).toFixed(2)
+              );
+              break;
+            }
+          }
+        }
       }
-    ];
-  }, [totalSubtotal]);
+
+      parsedLines.forEach(({ rate, lineTaxable, lineCgst, lineSgst, lineIgst, lineTotalTax }) => {
+        const existing = slabMap.get(rate) || {
+          rate,
+          taxRate: `${rate}% GST Slab`,
+          taxable: 0,
+          cgst: 0,
+          sgst: 0,
+          igst: 0,
+          totalTax: 0
+        };
+
+        existing.taxable = Number((existing.taxable + lineTaxable).toFixed(2));
+        existing.cgst = Number((existing.cgst + lineCgst).toFixed(2));
+        existing.sgst = Number((existing.sgst + lineSgst).toFixed(2));
+        existing.igst = Number((existing.igst + lineIgst).toFixed(2));
+        existing.totalTax = Number((existing.totalTax + lineTotalTax).toFixed(2));
+
+        slabMap.set(rate, existing);
+      });
+    });
+
+    return Array.from(slabMap.values()).sort((a, b) => a.rate - b.rate);
+  }, [filteredInvoices]);
 
   // Payment methods chart data
   const paymentMethodData = useMemo(() => {
@@ -953,18 +1026,67 @@ export const ReportsAnalytics: React.FC<ReportsAnalyticsProps> = ({ onNavigateTo
                       <td className="py-3">₹{row.taxable.toLocaleString('en-IN')}</td>
                       <td className="py-3">₹{row.cgst.toLocaleString('en-IN')}</td>
                       <td className="py-3">₹{row.sgst.toLocaleString('en-IN')}</td>
-                      <td className="py-3 text-slate-500">₹0</td>
+                      <td className="py-3 text-slate-500">₹{row.igst.toLocaleString('en-IN')}</td>
                       <td className="py-3 text-right font-bold text-emerald-400">₹{row.totalTax.toLocaleString('en-IN')}</td>
                     </tr>
                   ))}
-                  <tr className="bg-[#0A0E1A]/60 font-bold text-white border-t-2 border-slate-700">
-                    <td className="py-3.5 font-sans">TOTAL SUMMARY</td>
-                    <td className="py-3.5">₹{totalSubtotal.toLocaleString('en-IN')}</td>
-                    <td className="py-3.5">₹{Math.round(totalTaxCollected / 2).toLocaleString('en-IN')}</td>
-                    <td className="py-3.5">₹{Math.round(totalTaxCollected / 2).toLocaleString('en-IN')}</td>
-                    <td className="py-3.5 text-slate-500">₹0</td>
-                    <td className="py-3.5 text-right font-black text-emerald-400">₹{totalTaxCollected.toLocaleString('en-IN')}</td>
-                  </tr>
+                  {(() => {
+                    const netTaxableTurnover = Number(
+                      (gstSlabReport.length > 0
+                        ? gstSlabReport.reduce((acc, row) => acc + row.taxable, 0)
+                        : filteredInvoices.reduce(
+                            (acc, inv) =>
+                              acc +
+                              Math.max(
+                                0,
+                                ((inv as any).taxableAmount ?? (inv.subtotal || 0) - (inv.discountTotal || 0))
+                              ),
+                            0
+                          )
+                      ).toFixed(2)
+                    );
+                    const invCgstTotal = Number(
+                      filteredInvoices
+                        .reduce((acc, inv) => acc + (inv.isGSTInvoice === false ? 0 : inv.cgst || 0), 0)
+                        .toFixed(2)
+                    );
+                    const invSgstTotal = Number(
+                      filteredInvoices
+                        .reduce((acc, inv) => acc + (inv.isGSTInvoice === false ? 0 : inv.sgst || 0), 0)
+                        .toFixed(2)
+                    );
+                    const invIgstTotal = Number(
+                      filteredInvoices
+                        .reduce((acc, inv) => acc + (inv.isGSTInvoice === false ? 0 : inv.igst || 0), 0)
+                        .toFixed(2)
+                    );
+                    const slabCgstTotal = Number(
+                      gstSlabReport.reduce((acc, row) => acc + row.cgst, 0).toFixed(2)
+                    );
+                    const slabSgstTotal = Number(
+                      gstSlabReport.reduce((acc, row) => acc + row.sgst, 0).toFixed(2)
+                    );
+                    const slabIgstTotal = Number(
+                      gstSlabReport.reduce((acc, row) => acc + row.igst, 0).toFixed(2)
+                    );
+                    const totalCgst = invCgstTotal > 0 || slabCgstTotal === 0 ? invCgstTotal : slabCgstTotal;
+                    const totalSgst = invSgstTotal > 0 || slabSgstTotal === 0 ? invSgstTotal : slabSgstTotal;
+                    const totalIgst = invIgstTotal > 0 || slabIgstTotal === 0 ? invIgstTotal : slabIgstTotal;
+                    const totalGstLiability = Number((totalCgst + totalSgst + totalIgst).toFixed(2));
+
+                    return (
+                      <tr className="bg-[#0A0E1A]/60 font-bold text-white border-t-2 border-slate-700">
+                        <td className="py-3.5 font-sans">TOTAL SUMMARY</td>
+                        <td className="py-3.5">₹{netTaxableTurnover.toLocaleString('en-IN')}</td>
+                        <td className="py-3.5">₹{totalCgst.toLocaleString('en-IN')}</td>
+                        <td className="py-3.5">₹{totalSgst.toLocaleString('en-IN')}</td>
+                        <td className="py-3.5 text-slate-500">₹{totalIgst.toLocaleString('en-IN')}</td>
+                        <td className="py-3.5 text-right font-black text-emerald-400">
+                          ₹{totalGstLiability.toLocaleString('en-IN')}
+                        </td>
+                      </tr>
+                    );
+                  })()}
                 </tbody>
               </table>
             </div>

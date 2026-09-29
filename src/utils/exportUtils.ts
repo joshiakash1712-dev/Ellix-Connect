@@ -307,11 +307,158 @@ export function exportFinancialPDF(
   doc.text('1. GST / Tax Liability Ledger', 14, 78);
 
   const gstTableHead = [['Tax Rate Slab', 'Taxable Value', 'CGST', 'SGST', 'IGST', 'Total Tax Liability']];
+  const slabMap = new Map<
+    number,
+    {
+      rate: number;
+      taxRate: string;
+      taxable: number;
+      cgst: number;
+      sgst: number;
+      igst: number;
+      totalTax: number;
+    }
+  >();
+
+  invoices.forEach(inv => {
+    const isNonGst = inv.isGSTInvoice === false;
+    const isIgstInvoice =
+      !isNonGst && (inv.igst || 0) > 0 && (inv.cgst || 0) === 0 && (inv.sgst || 0) === 0;
+
+    const parsedLines = (inv.items || []).map(item => {
+      const rate = isNonGst ? 0 : Number(item.taxRate ?? 0);
+      const quantity = Number(item.quantity ?? 1);
+      const unitPrice = Number(item.unitPrice ?? (item as any).price ?? 0);
+      const discount = Number(item.discount ?? (item as any).discountAmount ?? 0);
+
+      const rawTaxable =
+        typeof (item as any).taxableValue === 'number' && Number.isFinite((item as any).taxableValue)
+          ? Number((item as any).taxableValue)
+          : Math.max(0, unitPrice * quantity - discount);
+      const lineTaxable = Number(rawTaxable.toFixed(2));
+
+      let lineCgst = 0;
+      let lineSgst = 0;
+      let lineIgst = 0;
+      let lineTotalTax = 0;
+
+      if (!isNonGst && rate > 0) {
+        if (typeof item.taxAmount === 'number' && Number.isFinite(item.taxAmount)) {
+          lineTotalTax = Number(item.taxAmount.toFixed(2));
+        } else {
+          const rawTax = (lineTaxable * rate) / 100;
+          const halfTax = Number((rawTax / 2).toFixed(2));
+          lineTotalTax = Number((halfTax * 2).toFixed(2));
+        }
+
+        if (isIgstInvoice) {
+          lineIgst = lineTotalTax;
+        } else {
+          lineCgst = Number((lineTotalTax / 2).toFixed(2));
+          lineSgst = Number((lineTotalTax - lineCgst).toFixed(2));
+        }
+      }
+
+      return { rate, lineTaxable, lineCgst, lineSgst, lineIgst, lineTotalTax };
+    });
+
+    if (!isNonGst && parsedLines.length > 0) {
+      const invCgst = Number((inv.cgst || 0).toFixed(2));
+      const invSgst = Number((inv.sgst || 0).toFixed(2));
+      const invIgst = Number((inv.igst || 0).toFixed(2));
+      const invTotalTax = Number((invCgst + invSgst + invIgst).toFixed(2));
+
+      const sumLineTax = Number(parsedLines.reduce((s, l) => s + l.lineTotalTax, 0).toFixed(2));
+      const taxDiff = Number((invTotalTax - sumLineTax).toFixed(2));
+
+      if (invTotalTax > 0 && Math.abs(taxDiff) > 0 && Math.abs(taxDiff) <= 0.02 * parsedLines.length) {
+        for (let i = parsedLines.length - 1; i >= 0; i--) {
+          if (parsedLines[i].rate > 0) {
+            const sumCgst = Number(parsedLines.reduce((s, l) => s + l.lineCgst, 0).toFixed(2));
+            const sumSgst = Number(parsedLines.reduce((s, l) => s + l.lineSgst, 0).toFixed(2));
+            const sumIgst = Number(parsedLines.reduce((s, l) => s + l.lineIgst, 0).toFixed(2));
+            parsedLines[i].lineCgst = Number((parsedLines[i].lineCgst + (invCgst - sumCgst)).toFixed(2));
+            parsedLines[i].lineSgst = Number((parsedLines[i].lineSgst + (invSgst - sumSgst)).toFixed(2));
+            parsedLines[i].lineIgst = Number((parsedLines[i].lineIgst + (invIgst - sumIgst)).toFixed(2));
+            parsedLines[i].lineTotalTax = Number(
+              (parsedLines[i].lineCgst + parsedLines[i].lineSgst + parsedLines[i].lineIgst).toFixed(2)
+            );
+            break;
+          }
+        }
+      }
+    }
+
+    parsedLines.forEach(({ rate, lineTaxable, lineCgst, lineSgst, lineIgst, lineTotalTax }) => {
+      const existing = slabMap.get(rate) || {
+        rate,
+        taxRate: `${rate}% GST Slab`,
+        taxable: 0,
+        cgst: 0,
+        sgst: 0,
+        igst: 0,
+        totalTax: 0
+      };
+
+      existing.taxable = Number((existing.taxable + lineTaxable).toFixed(2));
+      existing.cgst = Number((existing.cgst + lineCgst).toFixed(2));
+      existing.sgst = Number((existing.sgst + lineSgst).toFixed(2));
+      existing.igst = Number((existing.igst + lineIgst).toFixed(2));
+      existing.totalTax = Number((existing.totalTax + lineTotalTax).toFixed(2));
+
+      slabMap.set(rate, existing);
+    });
+  });
+
+  const gstSlabRows = Array.from(slabMap.values()).sort((a, b) => a.rate - b.rate);
+  const netTaxableTurnover = Number(
+    (gstSlabRows.length > 0
+      ? gstSlabRows.reduce((acc, row) => acc + row.taxable, 0)
+      : invoices.reduce(
+          (acc, inv) =>
+            acc +
+            Math.max(
+              0,
+              ((inv as any).taxableAmount ?? (inv.subtotal || 0) - (inv.discountTotal || 0))
+            ),
+          0
+        )
+    ).toFixed(2)
+  );
+  const invCgstTotal = Number(
+    invoices.reduce((acc, inv) => acc + (inv.isGSTInvoice === false ? 0 : inv.cgst || 0), 0).toFixed(2)
+  );
+  const invSgstTotal = Number(
+    invoices.reduce((acc, inv) => acc + (inv.isGSTInvoice === false ? 0 : inv.sgst || 0), 0).toFixed(2)
+  );
+  const invIgstTotal = Number(
+    invoices.reduce((acc, inv) => acc + (inv.isGSTInvoice === false ? 0 : inv.igst || 0), 0).toFixed(2)
+  );
+  const slabCgstTotal = Number(gstSlabRows.reduce((acc, row) => acc + row.cgst, 0).toFixed(2));
+  const slabSgstTotal = Number(gstSlabRows.reduce((acc, row) => acc + row.sgst, 0).toFixed(2));
+  const slabIgstTotal = Number(gstSlabRows.reduce((acc, row) => acc + row.igst, 0).toFixed(2));
+  const totalCgst = invCgstTotal > 0 || slabCgstTotal === 0 ? invCgstTotal : slabCgstTotal;
+  const totalSgst = invSgstTotal > 0 || slabSgstTotal === 0 ? invSgstTotal : slabSgstTotal;
+  const totalIgst = invIgstTotal > 0 || slabIgstTotal === 0 ? invIgstTotal : slabIgstTotal;
+  const totalGstLiability = Number((totalCgst + totalSgst + totalIgst).toFixed(2));
+
   const gstData = [
-    ['5% GST Slab', `₹${Math.round(totalSubtotal * 0.4).toLocaleString('en-IN')}`, `₹${Math.round(totalTax * 0.15).toLocaleString('en-IN')}`, `₹${Math.round(totalTax * 0.15).toLocaleString('en-IN')}`, '₹0', `₹${Math.round(totalTax * 0.3).toLocaleString('en-IN')}`],
-    ['12% GST Slab', `₹${Math.round(totalSubtotal * 0.35).toLocaleString('en-IN')}`, `₹${Math.round(totalTax * 0.25).toLocaleString('en-IN')}`, `₹${Math.round(totalTax * 0.25).toLocaleString('en-IN')}`, '₹0', `₹${Math.round(totalTax * 0.5).toLocaleString('en-IN')}`],
-    ['18% GST Slab', `₹${Math.round(totalSubtotal * 0.25).toLocaleString('en-IN')}`, `₹${Math.round(totalTax * 0.1).toLocaleString('en-IN')}`, `₹${Math.round(totalTax * 0.1).toLocaleString('en-IN')}`, '₹0', `₹${Math.round(totalTax * 0.2).toLocaleString('en-IN')}`],
-    ['TOTAL', `₹${totalSubtotal.toLocaleString('en-IN')}`, `₹${Math.round(totalTax / 2).toLocaleString('en-IN')}`, `₹${Math.round(totalTax / 2).toLocaleString('en-IN')}`, '₹0', `₹${totalTax.toLocaleString('en-IN')}`]
+    ...gstSlabRows.map(row => [
+      row.taxRate,
+      `₹${row.taxable.toLocaleString('en-IN')}`,
+      `₹${row.cgst.toLocaleString('en-IN')}`,
+      `₹${row.sgst.toLocaleString('en-IN')}`,
+      `₹${row.igst.toLocaleString('en-IN')}`,
+      `₹${row.totalTax.toLocaleString('en-IN')}`
+    ]),
+    [
+      'TOTAL',
+      `₹${netTaxableTurnover.toLocaleString('en-IN')}`,
+      `₹${totalCgst.toLocaleString('en-IN')}`,
+      `₹${totalSgst.toLocaleString('en-IN')}`,
+      `₹${totalIgst.toLocaleString('en-IN')}`,
+      `₹${totalGstLiability.toLocaleString('en-IN')}`
+    ]
   ];
 
   autoTable(doc, {

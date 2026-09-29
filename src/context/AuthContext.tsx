@@ -325,7 +325,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw new Error('Demo role login is disabled in production builds.');
     }
     let demoEmail = '';
-    const demoPass = 'EllixSecure2026!';
+    const demoPass = (import.meta as any).env?.VITE_DEMO_AUTH_PASSWORD || '';
+    if (!demoPass) {
+      throw new Error('Demo account password is not configured. Set VITE_DEMO_AUTH_PASSWORD in your local .env file.');
+    }
     let demoName = '';
 
     if (role === 'super_admin') {

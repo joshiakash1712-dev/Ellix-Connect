@@ -171,6 +171,7 @@ service cloud.firestore {
         data.id.size() > 0 && data.id.size() <= 128 &&
         data.name is string && data.name.size() > 0 && data.name.size() <= 256 &&
         data.stock is number &&
+        data.stock >= 0 &&
         data.sellingPrice is number;
     }
 
@@ -344,6 +345,8 @@ service cloud.firestore {
               isCrewAssignedToStore(storeId) &&
               incoming().name == existing().name &&
               incoming().sellingPrice == existing().sellingPrice &&
+              incoming().stock is number &&
+              incoming().stock >= 0 &&
               incoming().diff(existing()).affectedKeys().hasOnly(['stock', 'updatedAt', 'lastRestockedAt', 'lastRestockedBy', 'lastRestockedQty'])
             )
           );

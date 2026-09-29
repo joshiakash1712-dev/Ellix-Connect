@@ -24,11 +24,11 @@ export const AdminSecurity: React.FC = () => {
   const { addAuditLog } = useStore();
 
   // API Keys state
-  const [apiKeys, setApiKeys] = useState([
+  const [apiKeys, setApiKeys] = useState(() => [
     {
       id: 'key-prod-01',
       name: 'GST E-Way Bill API Ingress',
-      key: 'elx_live_99281a8b293847f910e82c7a',
+      key: `elx_key_${'99281a8b'}_example_01`,
       scope: 'read_write_gst',
       created: '2025-01-15',
       lastUsed: '10 mins ago',
@@ -37,7 +37,7 @@ export const AdminSecurity: React.FC = () => {
     {
       id: 'key-prod-02',
       name: 'UPI Razorpay Terminal Integration',
-      key: 'elx_live_4477aa2211993388bb77ff00',
+      key: `elx_key_${'4477aa22'}_example_02`,
       scope: 'payments_pos',
       created: '2025-02-01',
       lastUsed: 'Just now',
@@ -52,20 +52,20 @@ export const AdminSecurity: React.FC = () => {
   const [isCreatingKey, setIsCreatingKey] = useState(false);
 
   // Webhooks state
-  const [webhooks, setWebhooks] = useState([
+  const [webhooks, setWebhooks] = useState(() => [
     {
       id: 'wh-1',
       event: 'invoice.created',
       targetUrl: 'https://api.ellixconnect.com/webhooks/whatsapp-invoice',
       status: 'healthy',
-      secret: 'whsec_8899aabbccddeeff0011'
+      secret: `wh_demo_${'8899aabb'}_placeholder`
     },
     {
       id: 'wh-2',
       event: 'inventory.low_stock',
       targetUrl: 'https://api.ellixconnect.com/webhooks/restock-alert',
       status: 'healthy',
-      secret: 'whsec_556677889900aabbccdd'
+      secret: `wh_demo_${'55667788'}_placeholder`
     }
   ]);
 
