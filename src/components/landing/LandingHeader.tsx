@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight, ShieldCheck, Cloud, LogIn, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ThemeToggle } from '../ThemeToggle';
+import { LanguageSwitcher } from '../common/LanguageSwitcher';
 import { useAuth } from '../../context/AuthContext';
 import { EllixConnectLogo } from '../branding/EllixConnectLogo';
 
@@ -176,7 +177,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
         </a>
 
         {/* Desktop Navigation with Smooth Scroll & Active Indicator */}
-        <nav className="hidden md:flex items-center gap-1 sm:gap-2 text-sm font-medium">
+        <nav className="hidden md:flex items-center gap-0.5 lg:gap-1.5 text-sm font-medium shrink-0">
           {navItems.map((item) => {
             const isActive = activeSection === item.id;
             const isGuide = item.id === 'guide';
@@ -186,7 +187,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
                 href={item.href}
                 data-cursor="hover"
                 onClick={(e) => scrollToSection(e, item.href, item.id)}
-                className={`website-nav-hover relative px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
+                className={`website-nav-hover relative px-2.5 lg:px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap ${
                   isActive
                     ? 'text-emerald-700 dark:text-emerald-400 font-semibold bg-emerald-50/80 dark:bg-emerald-950/40'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60'
@@ -216,13 +217,16 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
 
         {/* Static Header Actions & Theme Toggle */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Global Language Switcher */}
+          <LanguageSwitcher variant="landing" />
+
           {/* Theme Toggle Button */}
           <div data-cursor="hover">
             <ThemeToggle id="btn-theme-toggle-header" />
           </div>
 
           {/* Desktop Auth Actions */}
-          <div className="hidden sm:flex items-center gap-2.5">
+          <div className="hidden md:flex items-center gap-2 lg:gap-2.5 shrink-0">
             {currentUser ? (
               <div className="flex items-center gap-2">
                 <button
@@ -280,7 +284,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
                     type="button"
                     data-cursor="hover"
                     onClick={onOpenAppPreview}
-                    className="website-btn-glow px-3 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-300 dark:border-emerald-800/80 rounded-lg transition-all hover:border-emerald-500 hover:shadow-sm cursor-pointer flex items-center gap-1"
+                    className="website-btn-glow hidden xl:flex px-3 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-300 dark:border-emerald-800/80 rounded-lg transition-all hover:border-emerald-500 hover:shadow-sm cursor-pointer items-center gap-1 whitespace-nowrap"
                     title="Explore interactive application demo on the website"
                   >
                     <LayoutDashboard className="w-3.5 h-3.5" />

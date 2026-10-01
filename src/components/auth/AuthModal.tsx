@@ -73,26 +73,6 @@ export const AuthModal: React.FC = () => {
     setSuccessMessage(null);
   }, [authModalMode, isAuthModalOpen]);
 
-  useEffect(() => {
-    if (!isAuthModalOpen) return;
-    const timer = setTimeout(() => {
-      if (mode === 'login') {
-        loginEmailRef.current?.focus();
-      } else if (mode === 'phone') {
-        if (!otpSent) {
-          phoneInputRef.current?.focus();
-        } else {
-          otpInputRefs.current[0]?.focus();
-        }
-      } else if (mode === 'register') {
-        registerNameRef.current?.focus();
-      } else if (mode === 'forgot_password') {
-        forgotEmailRef.current?.focus();
-      }
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [isAuthModalOpen, mode, otpSent]);
-
   // Resend OTP countdown
   useEffect(() => {
     let interval: any = null;
@@ -223,10 +203,6 @@ export const AuthModal: React.FC = () => {
       setOtpSent(true);
       setResendTimer(60);
       setSuccessMessage(`6-digit verification code sent via SMS to ${fullPhone}`);
-      // Auto focus first OTP input
-      setTimeout(() => {
-        otpInputRefs.current[0]?.focus();
-      }, 150);
     } catch (err: any) {
       const code = err?.code || '';
       if (code === 'auth/invalid-phone-number') {
@@ -468,7 +444,6 @@ export const AuthModal: React.FC = () => {
                     ref={loginEmailRef}
                     type="email"
                     inputMode="email"
-                    autoFocus
                     autoComplete="email"
                     autoCapitalize="none"
                     spellCheck={false}
@@ -576,7 +551,6 @@ export const AuthModal: React.FC = () => {
                           ref={phoneInputRef}
                           type="tel"
                           inputMode="tel"
-                          autoFocus
                           autoComplete="tel"
                           pattern="[0-9]*"
                           required
@@ -634,7 +608,6 @@ export const AuthModal: React.FC = () => {
                         inputMode="numeric"
                         pattern="[0-9]*"
                         autoComplete={idx === 0 ? 'one-time-code' : undefined}
-                        autoFocus={idx === 0}
                         maxLength={1}
                         value={digit}
                         onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
@@ -704,7 +677,6 @@ export const AuthModal: React.FC = () => {
                     ref={registerNameRef}
                     type="text"
                     inputMode="text"
-                    autoFocus
                     autoComplete="name"
                     autoCapitalize="words"
                     required
@@ -873,7 +845,6 @@ export const AuthModal: React.FC = () => {
                     ref={forgotEmailRef}
                     type="email"
                     inputMode="email"
-                    autoFocus
                     autoComplete="email"
                     autoCapitalize="none"
                     spellCheck={false}

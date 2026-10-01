@@ -162,7 +162,6 @@ export const AccountSyncHubModal: React.FC = () => {
       setConfirmationResult(res);
       setOtpSent(true);
       setSuccessMessage(`SMS OTP sent to ${cleanPhone}`);
-      setTimeout(() => otpInputRefs.current[0]?.focus(), 150);
     } catch (err: any) {
       setErrorMessage(err.message || 'Failed to dispatch phone verification SMS.');
     } finally {

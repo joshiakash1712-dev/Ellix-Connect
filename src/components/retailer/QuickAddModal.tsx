@@ -399,7 +399,6 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                 <input
                   id="quick-product-name-input"
                   type="text"
-                  autoFocus
                   value={productName}
                   onChange={e => {
                     setProductName(e.target.value);

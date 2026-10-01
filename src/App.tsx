@@ -2,6 +2,7 @@ import React, { useState, Suspense, lazy } from 'react';
 import { EllixLandingPage } from './components/landing/EllixLandingPage';
 import { LEGAL_PAGE_ROUTES, getLegalSlugFromLocation } from './config/legal.config';
 import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -250,7 +251,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
           transformTemplate={clearTransformWhenIdle}
           className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-2 flex items-center justify-between text-xs text-amber-200"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
             <span>
               <strong>Verify Email:</strong> Please verify <strong>{authUser?.email}</strong> for full permissions and account recovery.
@@ -559,11 +560,13 @@ function authUserIsSignedIn(currentUser: unknown): boolean {
 export function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <StoreProvider>
-          <AppContent />
-        </StoreProvider>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <StoreProvider>
+            <AppContent />
+          </StoreProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

@@ -28,8 +28,403 @@ import {
   SaveFeedback
 } from '../types';
 import firebaseConfig from '../../firebase-applet-config.json';
+import {
+  mockProducts,
+  mockCustomers,
+  mockInvoices,
+  mockRestockOrders,
+  mockCustomerOrders,
+  mockEmployees,
+  mockAuditLogs,
+  mockWholesalers,
+  mockWholesalerProducts,
+  mockSuppliers,
+  mockRestockLogs,
+  mockConnections,
+  mockNotifications,
+  mockBusinessApplications
+} from '../data/mockData';
 
 const OFFLINE_QUEUE_KEY = 'ellix_offline_sync_queue';
+const INVOICE_COUNTER_STORAGE_PREFIX = 'ellix_invoice_counter_';
+
+export const MOCK_FIXTURE_IDS = new Set<string>([
+  ...mockProducts.map(item => item.id),
+  ...mockCustomers.map(item => item.id),
+  ...mockInvoices.map(item => item.id),
+  ...mockRestockOrders.map(item => item.id),
+  ...mockCustomerOrders.map(item => item.id),
+  ...mockEmployees.map(item => item.id),
+  ...mockAuditLogs.map(item => item.id),
+  ...mockWholesalers.map(item => item.id),
+  ...mockWholesalerProducts.map(item => item.id),
+  ...mockSuppliers.map(item => item.id),
+  ...mockRestockLogs.map(item => item.id),
+  ...mockConnections.map(item => item.id),
+  ...mockNotifications.map(item => item.id),
+  ...mockBusinessApplications.map(item => item.id)
+]);
+
+export function isMockFixtureId(id: unknown): boolean {
+  return typeof id === 'string' && MOCK_FIXTURE_IDS.has(id);
+}
+
+export function stripMockFixtures<T>(items: T[]): T[] {
+  if (!Array.isArray(items)) return [];
+  return items.filter((item: any) => !isMockFixtureId(item?.id));
+}
+
+export interface StoreInvoiceCounterState {
+  storeId: string;
+  lastSequence: number;
+  baselineSequence: number;
+  issuedNumbers: Record<string, string>; // invoiceNumber -> invoiceId
+  issuedByInvoiceId: Record<
+    string,
+    { invoiceNumber: string; sequence: number; updatedAt: string }
+  >;
+  updatedAt: string;
+}
+
+const inMemoryStoreCounters = new Map<string, StoreInvoiceCounterState>();
+
+export function getInvoiceDateKey(dateStr?: string): string {
+  if (typeof dateStr === 'string') {
+    const digits = dateStr.slice(0, 10).replace(/-/g, '');
+    if (/^\d{8}$/.test(digits)) {
+      return digits;
+    }
+  }
+  return new Date().toISOString().slice(0, 10).replace(/-/g, '');
+}
+
+export function formatStoreInvoiceNumber(dateKey: string, sequence: number): string {
+  const safeSeq = Math.max(1, Math.floor(Number(sequence) || 1));
+  const cleanDate = /^\d{8}$/.test(dateKey)
+    ? dateKey
+    : new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  return `INV-${cleanDate}-${safeSeq.toString().padStart(2, '0')}`;
+}
+
+export function parseInvoiceSequenceNumber(invoiceNumber?: string | null): number {
+  if (!invoiceNumber || typeof invoiceNumber !== 'string') return 0;
+  const match = invoiceNumber.trim().match(/^INV-(?:\d{8}|\d{4}-\d{4})-(\d+)$/i);
+  if (!match) return 0;
+  const parsed = parseInt(match[1], 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}
+
+function pruneCounterMaps(state: StoreInvoiceCounterState, maxEntries = 500): void {
+  const idEntries = Object.entries(state.issuedByInvoiceId);
+  if (idEntries.length <= maxEntries) return;
+  idEntries.sort((a, b) => a[1].sequence - b[1].sequence);
+  const toRemove = idEntries.slice(0, idEntries.length - maxEntries);
+  for (const [invId, info] of toRemove) {
+    delete state.issuedByInvoiceId[invId];
+    if (state.issuedNumbers[info.invoiceNumber] === invId) {
+      delete state.issuedNumbers[info.invoiceNumber];
+    }
+  }
+}
+
+export function getStoreInvoiceCounterState(storeId: string): StoreInvoiceCounterState {
+  const cleanStoreId = storeId || 'store-1';
+  const existingMem = inMemoryStoreCounters.get(cleanStoreId);
+  let storedState: Partial<StoreInvoiceCounterState> | null = null;
+  try {
+    const raw = localStorage.getItem(`${INVOICE_COUNTER_STORAGE_PREFIX}${cleanStoreId}`);
+    if (raw) {
+      storedState = JSON.parse(raw);
+    }
+  } catch {
+    // ignore storage read errors
+  }
+
+  const nowIso = new Date().toISOString();
+  const mergedIssuedNumbers: Record<string, string> = {
+    ...(storedState?.issuedNumbers || {}),
+    ...(existingMem?.issuedNumbers || {})
+  };
+  const mergedIssuedByInvoiceId: Record<
+    string,
+    { invoiceNumber: string; sequence: number; updatedAt: string }
+  > = {
+    ...(storedState?.issuedByInvoiceId || {}),
+    ...(existingMem?.issuedByInvoiceId || {})
+  };
+
+  let maxSeq = Math.max(
+    0,
+    Number(storedState?.lastSequence || 0),
+    Number(existingMem?.lastSequence || 0),
+    Number(storedState?.baselineSequence || 0),
+    Number(existingMem?.baselineSequence || 0)
+  );
+  for (const info of Object.values(mergedIssuedByInvoiceId)) {
+    if (Number.isFinite(info.sequence) && info.sequence > maxSeq) {
+      maxSeq = info.sequence;
+    }
+  }
+
+  const state: StoreInvoiceCounterState = {
+    storeId: cleanStoreId,
+    lastSequence: maxSeq,
+    baselineSequence: Math.max(
+      0,
+      Number(storedState?.baselineSequence || 0),
+      Number(existingMem?.baselineSequence || 0)
+    ),
+    issuedNumbers: mergedIssuedNumbers,
+    issuedByInvoiceId: mergedIssuedByInvoiceId,
+    updatedAt: nowIso
+  };
+  inMemoryStoreCounters.set(cleanStoreId, state);
+  return state;
+}
+
+export function saveStoreInvoiceCounterState(
+  storeId: string,
+  state: StoreInvoiceCounterState
+): void {
+  const cleanStoreId = storeId || 'store-1';
+  pruneCounterMaps(state);
+  inMemoryStoreCounters.set(cleanStoreId, state);
+  try {
+    localStorage.setItem(
+      `${INVOICE_COUNTER_STORAGE_PREFIX}${cleanStoreId}`,
+      JSON.stringify(state)
+    );
+  } catch {
+    // ignore storage quota errors
+  }
+}
+
+export function reconcileStoreInvoiceCounter(
+  storeId: string,
+  existingInvoices?: Array<{ id?: string; invoiceNumber?: string; storeId?: string }>,
+  remoteCounter?: Partial<StoreInvoiceCounterState>
+): StoreInvoiceCounterState {
+  const cleanStoreId = storeId || 'store-1';
+  const state = getStoreInvoiceCounterState(cleanStoreId);
+  const nowIso = new Date().toISOString();
+
+  if (remoteCounter) {
+    if (
+      typeof remoteCounter.lastSequence === 'number' &&
+      remoteCounter.lastSequence > state.lastSequence
+    ) {
+      state.lastSequence = remoteCounter.lastSequence;
+    }
+    if (
+      typeof remoteCounter.baselineSequence === 'number' &&
+      remoteCounter.baselineSequence > state.baselineSequence
+    ) {
+      state.baselineSequence = remoteCounter.baselineSequence;
+    }
+    if (remoteCounter.issuedNumbers && typeof remoteCounter.issuedNumbers === 'object') {
+      state.issuedNumbers = {
+        ...state.issuedNumbers,
+        ...remoteCounter.issuedNumbers
+      };
+    }
+    if (remoteCounter.issuedByInvoiceId && typeof remoteCounter.issuedByInvoiceId === 'object') {
+      state.issuedByInvoiceId = {
+        ...state.issuedByInvoiceId,
+        ...remoteCounter.issuedByInvoiceId
+      };
+      for (const info of Object.values(remoteCounter.issuedByInvoiceId)) {
+        if (info && Number.isFinite(info.sequence)) {
+          if (info.sequence > state.lastSequence) state.lastSequence = info.sequence;
+          if (info.sequence > state.baselineSequence) state.baselineSequence = info.sequence;
+        }
+      }
+    }
+  }
+
+  const allSources: Array<{
+    id?: string;
+    invoiceNumber?: string;
+    storeId?: string;
+    isOfflineQueued?: boolean;
+  }> = [];
+  if (Array.isArray(existingInvoices)) {
+    allSources.push(...existingInvoices);
+  }
+
+  // Also include any store-scoped cached invoices in localStorage
+  try {
+    const rawCached = localStorage.getItem(`ellix_invoices_${cleanStoreId}`);
+    if (rawCached) {
+      const parsed = JSON.parse(rawCached);
+      if (Array.isArray(parsed)) {
+        allSources.push(...parsed);
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  // Also include any pending offline queue invoices for this store
+  const queue = getOfflineQueue();
+  for (const item of queue) {
+    if (
+      item.collection === 'invoices' &&
+      item.action !== 'delete' &&
+      item.data &&
+      (!item.data.storeId || item.data.storeId === cleanStoreId)
+    ) {
+      allSources.push({
+        id: item.docId || item.data.id,
+        invoiceNumber: item.data.invoiceNumber,
+        storeId: item.data.storeId || cleanStoreId,
+        isOfflineQueued: true
+      });
+    }
+  }
+
+  let scopedCount = 0;
+  let committedCount = 0;
+  const seenIds = new Set<string>();
+  for (const inv of allSources) {
+    if (!inv || (inv.storeId && inv.storeId !== cleanStoreId)) continue;
+    if (inv.id && !seenIds.has(inv.id)) {
+      seenIds.add(inv.id);
+      scopedCount += 1;
+      if (!inv.isOfflineQueued) {
+        committedCount += 1;
+      }
+    }
+    const seq = parseInvoiceSequenceNumber(inv.invoiceNumber);
+    if (seq > state.lastSequence) {
+      state.lastSequence = seq;
+    }
+    if (!inv.isOfflineQueued && seq > state.baselineSequence) {
+      state.baselineSequence = seq;
+    }
+    if (inv.invoiceNumber && inv.id) {
+      if (!state.issuedNumbers[inv.invoiceNumber]) {
+        state.issuedNumbers[inv.invoiceNumber] = inv.id;
+      }
+      if (!state.issuedByInvoiceId[inv.id]) {
+        state.issuedByInvoiceId[inv.id] = {
+          invoiceNumber: inv.invoiceNumber,
+          sequence: seq > 0 ? seq : scopedCount,
+          updatedAt: nowIso
+        };
+      }
+    }
+  }
+
+  if (scopedCount > state.lastSequence) {
+    state.lastSequence = scopedCount;
+  }
+  if (committedCount > state.baselineSequence) {
+    state.baselineSequence = committedCount;
+  }
+
+  state.updatedAt = nowIso;
+  saveStoreInvoiceCounterState(cleanStoreId, state);
+  return state;
+}
+
+export function reserveStoreInvoiceNumber(
+  storeId: string,
+  invoiceId: string,
+  dateStr?: string,
+  existingInvoices?: Array<{ id?: string; invoiceNumber?: string; storeId?: string }>
+): string {
+  const cleanStoreId = storeId || 'store-1';
+  const state = reconcileStoreInvoiceCounter(cleanStoreId, existingInvoices);
+  const nowIso = new Date().toISOString();
+
+  // Idempotent return if this exact invoiceId already has a reserved/issued number
+  const existingForId = state.issuedByInvoiceId[invoiceId];
+  if (existingForId && existingForId.invoiceNumber) {
+    state.issuedNumbers[existingForId.invoiceNumber] = invoiceId;
+    saveStoreInvoiceCounterState(cleanStoreId, state);
+    return existingForId.invoiceNumber;
+  }
+
+  const dateKey = getInvoiceDateKey(dateStr);
+  let nextSeq = state.lastSequence + 1;
+  let candidate = formatStoreInvoiceNumber(dateKey, nextSeq);
+
+  while (state.issuedNumbers[candidate] && state.issuedNumbers[candidate] !== invoiceId) {
+    nextSeq += 1;
+    candidate = formatStoreInvoiceNumber(dateKey, nextSeq);
+  }
+
+  state.lastSequence = nextSeq;
+  state.issuedNumbers[candidate] = invoiceId;
+  state.issuedByInvoiceId[invoiceId] = {
+    invoiceNumber: candidate,
+    sequence: nextSeq,
+    updatedAt: nowIso
+  };
+  state.updatedAt = nowIso;
+  saveStoreInvoiceCounterState(cleanStoreId, state);
+  return candidate;
+}
+
+export function commitStoreInvoiceNumber(
+  storeId: string,
+  invoiceId: string,
+  invoiceNumber: string
+): void {
+  const cleanStoreId = storeId || 'store-1';
+  const state = getStoreInvoiceCounterState(cleanStoreId);
+  const nowIso = new Date().toISOString();
+  const seq = parseInvoiceSequenceNumber(invoiceNumber);
+
+  // Remove any previous tentative number registered to this invoiceId if reassigned
+  const previous = state.issuedByInvoiceId[invoiceId];
+  if (previous && previous.invoiceNumber !== invoiceNumber) {
+    if (state.issuedNumbers[previous.invoiceNumber] === invoiceId) {
+      delete state.issuedNumbers[previous.invoiceNumber];
+    }
+  }
+
+  const effectiveSeq = seq > 0 ? seq : Math.max(1, state.lastSequence);
+  if (effectiveSeq > state.lastSequence) {
+    state.lastSequence = effectiveSeq;
+  }
+  if (effectiveSeq > state.baselineSequence) {
+    state.baselineSequence = effectiveSeq;
+  }
+  state.issuedNumbers[invoiceNumber] = invoiceId;
+  state.issuedByInvoiceId[invoiceId] = {
+    invoiceNumber,
+    sequence: effectiveSeq,
+    updatedAt: nowIso
+  };
+  state.updatedAt = nowIso;
+  saveStoreInvoiceCounterState(cleanStoreId, state);
+}
+
+export function releaseStoreInvoiceNumberReservation(
+  storeId: string,
+  invoiceId: string
+): void {
+  const cleanStoreId = storeId || 'store-1';
+  const state = getStoreInvoiceCounterState(cleanStoreId);
+  const existing = state.issuedByInvoiceId[invoiceId];
+  if (!existing) return;
+
+  delete state.issuedByInvoiceId[invoiceId];
+  if (state.issuedNumbers[existing.invoiceNumber] === invoiceId) {
+    delete state.issuedNumbers[existing.invoiceNumber];
+  }
+
+  let maxRemainingSeq = state.baselineSequence;
+  for (const info of Object.values(state.issuedByInvoiceId)) {
+    if (Number.isFinite(info.sequence) && info.sequence > maxRemainingSeq) {
+      maxRemainingSeq = info.sequence;
+    }
+  }
+  state.lastSequence = maxRemainingSeq;
+  state.updatedAt = new Date().toISOString();
+  saveStoreInvoiceCounterState(cleanStoreId, state);
+}
 
 export class InsufficientStockError extends Error {
   public readonly code = 'INSUFFICIENT_STOCK';
@@ -61,7 +456,10 @@ export function isInsufficientStockError(err: unknown): err is InsufficientStock
 export function getOfflineQueue(): OfflineSyncItem[] {
   try {
     const raw = localStorage.getItem(OFFLINE_QUEUE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item: any) => !isMockFixtureId(item?.docId));
   } catch (e) {
     console.error('Failed to read offline sync queue:', e);
     return [];
@@ -70,14 +468,90 @@ export function getOfflineQueue(): OfflineSyncItem[] {
 
 export function saveOfflineQueue(queue: OfflineSyncItem[]): void {
   try {
-    localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
+    const cleanQueue = Array.isArray(queue)
+      ? queue.filter(item => !isMockFixtureId(item?.docId))
+      : [];
+    localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(cleanQueue));
   } catch (e) {
     console.error('Failed to save offline sync queue:', e);
   }
 }
 
 export function queueOfflineAction(item: Omit<OfflineSyncItem, 'id' | 'timestamp'>): void {
+  if (isMockFixtureId(item.docId)) {
+    return;
+  }
   const queue = getOfflineQueue();
+  const targetStoreId = item.data?.storeId || '';
+
+  // Ensure invoice numbers in the offline queue are unique per store and idempotent per invoice docId
+  if (item.collection === 'invoices' && item.action !== 'delete' && item.data) {
+    const storeIdForInv = item.data.storeId || 'store-1';
+    const invId = item.docId || item.data.id;
+    const conflictingInQueue = queue.some(
+      q =>
+        q.collection === 'invoices' &&
+        q.action !== 'delete' &&
+        q.docId !== invId &&
+        (q.data?.storeId || 'store-1') === storeIdForInv &&
+        q.data?.invoiceNumber &&
+        q.data.invoiceNumber === item.data.invoiceNumber
+    );
+    if (!item.data.invoiceNumber || conflictingInQueue) {
+      if (conflictingInQueue) {
+        releaseStoreInvoiceNumberReservation(storeIdForInv, invId);
+      }
+      const assigned = reserveStoreInvoiceNumber(storeIdForInv, invId, item.data.date);
+      item.data = {
+        ...item.data,
+        invoiceNumber: assigned
+      };
+    } else {
+      const state = getStoreInvoiceCounterState(storeIdForInv);
+      const seq = parseInvoiceSequenceNumber(item.data.invoiceNumber);
+      if (seq > state.lastSequence) {
+        state.lastSequence = seq;
+      }
+      state.issuedNumbers[item.data.invoiceNumber] = invId;
+      state.issuedByInvoiceId[invId] = {
+        invoiceNumber: item.data.invoiceNumber,
+        sequence: seq > 0 ? seq : Math.max(1, state.lastSequence),
+        updatedAt: new Date().toISOString()
+      };
+      saveStoreInvoiceCounterState(storeIdForInv, state);
+    }
+  }
+
+  // Deduplicate existing queued action for the same collection + docId + storeId
+  const existingIdx = queue.findIndex(
+    q =>
+      q.collection === item.collection &&
+      q.docId === item.docId &&
+      (q.data?.storeId || '') === targetStoreId
+  );
+
+  if (existingIdx >= 0) {
+    if (item.action === 'delete' && queue[existingIdx].action === 'create') {
+      queue.splice(existingIdx, 1);
+    } else {
+      const preservedInvoiceNumber =
+        item.collection === 'invoices' && queue[existingIdx].data?.invoiceNumber
+          ? queue[existingIdx].data.invoiceNumber
+          : item.data?.invoiceNumber;
+      queue[existingIdx] = {
+        ...queue[existingIdx],
+        action: item.action,
+        data:
+          item.collection === 'invoices' && item.data && preservedInvoiceNumber
+            ? { ...item.data, invoiceNumber: preservedInvoiceNumber }
+            : item.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+    saveOfflineQueue(queue);
+    return;
+  }
+
   queue.push({
     ...item,
     id: `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
@@ -287,6 +761,7 @@ export class FirestoreSyncManager {
         (snapshot) => {
           counts.invoices = snapshot.size;
           const list = snapshot.docs.map(doc => doc.data() as POSInvoice);
+          reconcileStoreInvoiceCounter(storeId, list);
           callbacks.onInvoicesUpdate?.(list);
           notifySynced();
           checkInitialLoad('invoices');
@@ -297,6 +772,25 @@ export class FirestoreSyncManager {
         }
       );
       this.unsubs.push(unsubInvoices);
+
+      // 3b. Store Invoice Sequence Counter (Authoritative multi-terminal sync)
+      const invoiceCounterRef = doc(db, 'stores', storeId, 'counters', 'invoiceSequence');
+      const unsubInvoiceCounter = onSnapshot(
+        invoiceCounterRef,
+        (snap) => {
+          if (snap.exists()) {
+            reconcileStoreInvoiceCounter(
+              storeId,
+              undefined,
+              snap.data() as Partial<StoreInvoiceCounterState>
+            );
+          }
+        },
+        (error) => {
+          console.warn('[FirestoreSync] Invoice counter snapshot warning:', error.message);
+        }
+      );
+      this.unsubs.push(unsubInvoiceCounter);
 
       // 4. Restock Orders Collection
       const restockRef = collection(db, 'stores', storeId, 'restockOrders');
@@ -429,17 +923,19 @@ export class FirestoreSyncManager {
   }
 
   // --------------------------------------------------------------------------
-  // Seeders (Populates remote collection if empty so initial data is active)
+  // Seeders (Never writes static mockData fixtures to production Firestore)
   // --------------------------------------------------------------------------
   public async seedProducts(storeId: string, items: Product[]): Promise<void> {
     try {
+      const realItems = stripMockFixtures(items);
+      if (realItems.length === 0) return;
       const batch = writeBatch(db);
-      for (const item of items) {
+      for (const item of realItems) {
         const ref = doc(db, 'stores', storeId, 'products', item.id);
         batch.set(ref, sanitizeData({ ...item, storeId }), { merge: true });
       }
       await batch.commit();
-      console.log(`[FirestoreSync] Seeded ${items.length} products to store ${storeId}`);
+      console.log(`[FirestoreSync] Seeded ${realItems.length} products to store ${storeId}`);
     } catch (e) {
       console.warn('[FirestoreSync] Seeding products failed or postponed:', e);
     }
@@ -447,8 +943,10 @@ export class FirestoreSyncManager {
 
   public async seedCustomers(storeId: string, items: CustomerProfile[]): Promise<void> {
     try {
+      const realItems = stripMockFixtures(items);
+      if (realItems.length === 0) return;
       const batch = writeBatch(db);
-      for (const item of items) {
+      for (const item of realItems) {
         const ref = doc(db, 'stores', storeId, 'customers', item.id);
         batch.set(ref, sanitizeData({ ...item, storeId }), { merge: true });
       }
@@ -460,8 +958,11 @@ export class FirestoreSyncManager {
 
   public async seedInvoices(storeId: string, items: POSInvoice[]): Promise<void> {
     try {
+      const realItems = stripMockFixtures(items);
+      if (realItems.length === 0) return;
+      reconcileStoreInvoiceCounter(storeId, realItems);
       const batch = writeBatch(db);
-      for (const item of items) {
+      for (const item of realItems) {
         const ref = doc(db, 'stores', storeId, 'invoices', item.id);
         batch.set(ref, sanitizeData({ ...item, totalAmount: item.grandTotal, storeId }), { merge: true });
       }
@@ -473,8 +974,10 @@ export class FirestoreSyncManager {
 
   public async seedRestockOrders(storeId: string, items: RestockOrder[]): Promise<void> {
     try {
+      const realItems = stripMockFixtures(items);
+      if (realItems.length === 0) return;
       const batch = writeBatch(db);
-      for (const item of items) {
+      for (const item of realItems) {
         const ref = doc(db, 'stores', storeId, 'restockOrders', item.id);
         batch.set(ref, sanitizeData({
           ...item,
@@ -491,8 +994,10 @@ export class FirestoreSyncManager {
 
   public async seedCustomerOrders(storeId: string, items: CustomerOrder[]): Promise<void> {
     try {
+      const realItems = stripMockFixtures(items);
+      if (realItems.length === 0) return;
       const batch = writeBatch(db);
-      for (const item of items) {
+      for (const item of realItems) {
         const ref = doc(db, 'stores', storeId, 'customerOrders', item.id);
         batch.set(ref, sanitizeData({ ...item, storeId }), { merge: true });
       }
@@ -504,8 +1009,10 @@ export class FirestoreSyncManager {
 
   public async seedAuditLogs(storeId: string, items: AuditLog[]): Promise<void> {
     try {
+      const realItems = stripMockFixtures(items);
+      if (realItems.length === 0) return;
       const batch = writeBatch(db);
-      for (const item of items) {
+      for (const item of realItems) {
         const ref = doc(db, 'stores', storeId, 'auditLogs', item.id);
         batch.set(ref, sanitizeData({ ...item, storeId }), { merge: true });
       }
@@ -517,8 +1024,10 @@ export class FirestoreSyncManager {
 
   public async seedWholesalers(storeId: string, items: Wholesaler[]): Promise<void> {
     try {
+      const realItems = stripMockFixtures(items);
+      if (realItems.length === 0) return;
       const batch = writeBatch(db);
-      for (const item of items) {
+      for (const item of realItems) {
         const ref = doc(db, 'stores', storeId, 'wholesalers', item.id);
         batch.set(ref, sanitizeData({ ...item, storeId }), { merge: true });
       }
@@ -530,8 +1039,10 @@ export class FirestoreSyncManager {
 
   public async seedEmployees(storeId: string, items: Employee[]): Promise<void> {
     try {
+      const realItems = stripMockFixtures(items);
+      if (realItems.length === 0) return;
       const batch = writeBatch(db);
-      for (const item of items) {
+      for (const item of realItems) {
         const ref = doc(db, 'stores', storeId, 'employees', item.id);
         batch.set(ref, sanitizeData({ ...item, storeId }), { merge: true });
       }
@@ -616,26 +1127,322 @@ export class FirestoreSyncManager {
     }
   }
 
+  private storeTxQueues: Map<string, Promise<any>> = new Map();
+
+  public reconcileStoreInvoiceCounter(
+    storeId: string,
+    existingInvoices?: Array<{ id?: string; invoiceNumber?: string; storeId?: string }>
+  ): StoreInvoiceCounterState {
+    return reconcileStoreInvoiceCounter(storeId, existingInvoices);
+  }
+
+  public reserveStoreInvoiceNumber(
+    storeId: string,
+    invoiceId: string,
+    dateStr?: string,
+    existingInvoices?: Array<{ id?: string; invoiceNumber?: string; storeId?: string }>
+  ): string {
+    return reserveStoreInvoiceNumber(storeId, invoiceId, dateStr, existingInvoices);
+  }
+
+  public releaseStoreInvoiceNumberReservation(storeId: string, invoiceId: string): void {
+    releaseStoreInvoiceNumberReservation(storeId, invoiceId);
+  }
+
+  private runStoreSerialized<T>(storeId: string, task: () => Promise<T>): Promise<T> {
+    const cleanStoreId = storeId || 'store-1';
+    const prev = this.storeTxQueues.get(cleanStoreId) || Promise.resolve();
+    const next = prev.catch(() => {}).then(() => task());
+    this.storeTxQueues.set(
+      cleanStoreId,
+      next.catch(() => {})
+    );
+    return next;
+  }
+
+  private async runFirestoreTransactionWithRetry<T>(
+    storeId: string,
+    updateFunction: (transaction: any) => Promise<T>,
+    maxAttempts = 5
+  ): Promise<T> {
+    return this.runStoreSerialized(storeId, async () => {
+      let attempt = 0;
+      while (true) {
+        attempt += 1;
+        try {
+          return await runTransaction(db, updateFunction);
+        } catch (err: any) {
+          if (isInsufficientStockError(err)) {
+            throw err;
+          }
+          const isRetryableContention =
+            err?.code === 'aborted' ||
+            err?.code === 'failed-precondition' ||
+            (typeof err?.message === 'string' &&
+              (err.message.includes('aborted') || err.message.includes('contention')));
+          if (!isRetryableContention || attempt >= maxAttempts) {
+            throw err;
+          }
+          const backoffMs = 20 * attempt + Math.floor(Math.random() * 40);
+          await new Promise(resolve => setTimeout(resolve, backoffMs));
+        }
+      }
+    });
+  }
+
+  private resolveAuthoritativeInvoiceNumberInTx(
+    storeId: string,
+    invoice: POSInvoice,
+    counterSnap: any,
+    invSnap: any,
+    nowIso: string
+  ): {
+    authoritativeInvoiceNumber: string;
+    counterPayload: Record<string, any>;
+    alreadyCommitted: boolean;
+    existingInvoiceData?: POSInvoice;
+  } {
+    const cleanStoreId = storeId || 'store-1';
+    const localState = getStoreInvoiceCounterState(cleanStoreId);
+    const remoteCounter =
+      counterSnap && typeof counterSnap.exists === 'function' && counterSnap.exists()
+        ? (counterSnap.data() as Partial<StoreInvoiceCounterState>)
+        : undefined;
+
+    const remoteIssuedNumbers: Record<string, string> = {
+      ...(remoteCounter?.issuedNumbers || {})
+    };
+    const remoteIssuedByInvoiceId: Record<
+      string,
+      { invoiceNumber: string; sequence: number; updatedAt: string }
+    > = {
+      ...(remoteCounter?.issuedByInvoiceId || {})
+    };
+
+    // 1. If invoice document already exists in Firestore, preserve its committed invoiceNumber (idempotent retry)
+    if (invSnap && typeof invSnap.exists === 'function' && invSnap.exists()) {
+      const existingData = invSnap.data() as POSInvoice;
+      const committedNumber =
+        existingData?.invoiceNumber ||
+        remoteIssuedByInvoiceId[invoice.id]?.invoiceNumber ||
+        invoice.invoiceNumber ||
+        formatStoreInvoiceNumber(getInvoiceDateKey(invoice.date), 1);
+      const committedSeq = Math.max(
+        1,
+        parseInvoiceSequenceNumber(committedNumber),
+        Number(remoteCounter?.lastSequence || 0)
+      );
+      remoteIssuedNumbers[committedNumber] = invoice.id;
+      remoteIssuedByInvoiceId[invoice.id] = {
+        invoiceNumber: committedNumber,
+        sequence: committedSeq,
+        updatedAt: nowIso
+      };
+      return {
+        authoritativeInvoiceNumber: committedNumber,
+        counterPayload: sanitizeData({
+          storeId: cleanStoreId,
+          lastSequence: committedSeq,
+          baselineSequence: Math.max(
+            Number(remoteCounter?.baselineSequence || 0),
+            localState.baselineSequence,
+            committedSeq
+          ),
+          issuedNumbers: remoteIssuedNumbers,
+          issuedByInvoiceId: remoteIssuedByInvoiceId,
+          updatedAt: nowIso
+        }),
+        alreadyCommitted: true,
+        existingInvoiceData: existingData
+      };
+    }
+
+    // 2. If counter doc already has an allocation for this exact invoice.id, reuse it idempotently
+    const existingRemoteAlloc = remoteIssuedByInvoiceId[invoice.id];
+    if (existingRemoteAlloc && existingRemoteAlloc.invoiceNumber) {
+      const committedNumber = existingRemoteAlloc.invoiceNumber;
+      const committedSeq = Math.max(
+        1,
+        existingRemoteAlloc.sequence || parseInvoiceSequenceNumber(committedNumber),
+        Number(remoteCounter?.lastSequence || 0)
+      );
+      remoteIssuedNumbers[committedNumber] = invoice.id;
+      return {
+        authoritativeInvoiceNumber: committedNumber,
+        counterPayload: sanitizeData({
+          storeId: cleanStoreId,
+          lastSequence: committedSeq,
+          baselineSequence: Math.max(
+            Number(remoteCounter?.baselineSequence || 0),
+            localState.baselineSequence,
+            committedSeq
+          ),
+          issuedNumbers: remoteIssuedNumbers,
+          issuedByInvoiceId: remoteIssuedByInvoiceId,
+          updatedAt: nowIso
+        }),
+        alreadyCommitted: false
+      };
+    }
+
+    // 3. Gather all numbers and sequences already claimed by OTHER invoices (remote + local)
+    const knownNumbersExcludingSelf = new Set<string>();
+    for (const [num, ownerId] of Object.entries(remoteIssuedNumbers)) {
+      if (ownerId && ownerId !== invoice.id) {
+        knownNumbersExcludingSelf.add(num);
+      }
+    }
+    for (const [num, ownerId] of Object.entries(localState.issuedNumbers)) {
+      if (ownerId && ownerId !== invoice.id) {
+        knownNumbersExcludingSelf.add(num);
+      }
+    }
+
+    let maxSeqExcludingSelf = Math.max(
+      0,
+      Number(remoteCounter?.lastSequence || 0),
+      Number(remoteCounter?.baselineSequence || 0),
+      localState.baselineSequence
+    );
+    for (const [invId, info] of Object.entries(remoteIssuedByInvoiceId)) {
+      if (invId !== invoice.id && Number.isFinite(info.sequence) && info.sequence > maxSeqExcludingSelf) {
+        maxSeqExcludingSelf = info.sequence;
+      }
+    }
+    for (const [invId, info] of Object.entries(localState.issuedByInvoiceId)) {
+      if (invId !== invoice.id && Number.isFinite(info.sequence) && info.sequence > maxSeqExcludingSelf) {
+        maxSeqExcludingSelf = info.sequence;
+      }
+    }
+
+    const dateKey = getInvoiceDateKey(invoice.date);
+    const requestedNumber = (invoice.invoiceNumber || '').trim();
+    const requestedSeq = parseInvoiceSequenceNumber(requestedNumber);
+
+    let nextSeq = maxSeqExcludingSelf + 1;
+    if (
+      requestedSeq > maxSeqExcludingSelf &&
+      requestedNumber &&
+      !knownNumbersExcludingSelf.has(requestedNumber)
+    ) {
+      nextSeq = requestedSeq;
+    }
+
+    let candidateNumber = formatStoreInvoiceNumber(dateKey, nextSeq);
+    while (knownNumbersExcludingSelf.has(candidateNumber)) {
+      nextSeq += 1;
+      candidateNumber = formatStoreInvoiceNumber(dateKey, nextSeq);
+    }
+
+    remoteIssuedNumbers[candidateNumber] = invoice.id;
+    remoteIssuedByInvoiceId[invoice.id] = {
+      invoiceNumber: candidateNumber,
+      sequence: nextSeq,
+      updatedAt: nowIso
+    };
+
+    const tempStateForPrune: StoreInvoiceCounterState = {
+      storeId: cleanStoreId,
+      lastSequence: nextSeq,
+      baselineSequence: Math.max(
+        Number(remoteCounter?.baselineSequence || 0),
+        localState.baselineSequence,
+        nextSeq
+      ),
+      issuedNumbers: remoteIssuedNumbers,
+      issuedByInvoiceId: remoteIssuedByInvoiceId,
+      updatedAt: nowIso
+    };
+    pruneCounterMaps(tempStateForPrune);
+
+    return {
+      authoritativeInvoiceNumber: candidateNumber,
+      counterPayload: sanitizeData(tempStateForPrune),
+      alreadyCommitted: false
+    };
+  }
+
+  private async commitInvoiceAtomic(storeId: string, invoice: POSInvoice): Promise<string> {
+    const cleanStoreId = storeId || invoice.storeId || 'store-1';
+    if (!invoice.invoiceNumber) {
+      invoice.invoiceNumber = reserveStoreInvoiceNumber(cleanStoreId, invoice.id, invoice.date);
+    }
+
+    const committedNumber = await this.runFirestoreTransactionWithRetry(
+      cleanStoreId,
+      async (transaction) => {
+        const nowIso = new Date().toISOString();
+        const counterRef = doc(db, 'stores', cleanStoreId, 'counters', 'invoiceSequence');
+        const invRef = doc(db, 'stores', cleanStoreId, 'invoices', invoice.id);
+
+        const [counterSnap, invSnap] = await Promise.all([
+          transaction.get(counterRef),
+          transaction.get(invRef)
+        ]);
+
+        const {
+          authoritativeInvoiceNumber,
+          counterPayload,
+          alreadyCommitted
+        } = this.resolveAuthoritativeInvoiceNumberInTx(
+          cleanStoreId,
+          invoice,
+          counterSnap,
+          invSnap,
+          nowIso
+        );
+
+        transaction.set(counterRef, counterPayload, { merge: true });
+
+        if (!alreadyCommitted) {
+          transaction.set(
+            invRef,
+            sanitizeData({
+              ...invoice,
+              invoiceNumber: authoritativeInvoiceNumber,
+              totalAmount: invoice.grandTotal,
+              storeId: cleanStoreId,
+              updatedAt: nowIso
+            }),
+            { merge: true }
+          );
+        }
+
+        return authoritativeInvoiceNumber;
+      }
+    );
+
+    invoice.invoiceNumber = committedNumber;
+    commitStoreInvoiceNumber(cleanStoreId, invoice.id, committedNumber);
+    return committedNumber;
+  }
+
   // POS Invoice & Transactional atomic sales
   public async syncInvoice(storeId: string, invoice: POSInvoice): Promise<void> {
     this.notifyFeedback('saving', 'Recording invoice...');
-    const sanitized = sanitizeData({
-      ...invoice,
-      totalAmount: invoice.grandTotal,
-      storeId,
-      updatedAt: new Date().toISOString()
-    });
+    const cleanStoreId = storeId || invoice.storeId || 'store-1';
+    if (!invoice.invoiceNumber) {
+      invoice.invoiceNumber = reserveStoreInvoiceNumber(cleanStoreId, invoice.id, invoice.date);
+    }
     try {
-      const docRef = doc(db, 'stores', storeId, 'invoices', invoice.id);
-      await setDoc(docRef, sanitized, { merge: true });
+      await this.commitInvoiceAtomic(cleanStoreId, invoice);
       this.notifyFeedback('saved', 'Invoice saved');
     } catch (err) {
+      const sanitized = sanitizeData({
+        ...invoice,
+        totalAmount: invoice.grandTotal,
+        storeId: cleanStoreId,
+        updatedAt: new Date().toISOString()
+      });
       queueOfflineAction({
         collection: 'invoices',
         action: 'create',
         docId: invoice.id,
         data: sanitized
       });
+      if (sanitized.invoiceNumber) {
+        invoice.invoiceNumber = sanitized.invoiceNumber;
+      }
       this.notifyFeedback('error', 'Saved offline. Will sync when connected.');
     }
   }
@@ -656,75 +1463,120 @@ export class FirestoreSyncManager {
     }
   }
 
-  // Atomic POS checkout write: validates stock and updates invoice, product stocks, customer loyalty, and audit log together via Firestore transaction
-  public async syncPOSSaleAtomic(
-    storeId: string,
+  private async executePOSSaleTransaction(
+    cleanStoreId: string,
     invoice: POSInvoice,
-    updatedProducts: Product[],
+    requestedByProduct: Map<string, { quantity: number; productName: string }>,
+    updatedProductsMap: Map<string, Product>,
     updatedCustomer?: CustomerProfile,
-    auditLog?: AuditLog
-  ): Promise<Product[]> {
-    this.notifyFeedback('saving', 'Processing transaction...');
+    auditLog?: AuditLog,
+    previousTentativeNumber?: string
+  ): Promise<{
+    products: Product[];
+    customer?: CustomerProfile;
+    auditLog: AuditLog;
+    invoiceNumber: string;
+    alreadyCommitted: boolean;
+  }> {
+    const effectiveAuditLog: AuditLog = auditLog || {
+      id: `log-${invoice.id}`,
+      user: invoice.cashierName || invoice.createdBy || 'POS Cashier',
+      role: 'client',
+      action: 'POS Invoice Created',
+      details: `Invoice ${invoice.invoiceNumber} created for ${invoice.customerName || 'Walk-in Retail Customer'} (₹${invoice.grandTotal})`,
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      ipAddress: '127.0.0.1',
+      status: 'success'
+    };
 
-    // 1. Aggregate requested quantities per productId from invoice items
-    const requestedByProduct = new Map<string, { quantity: number; productName: string }>();
-    for (const item of invoice.items || []) {
-      const qty = Number(item.quantity);
-      if (!Number.isFinite(qty) || qty <= 0) {
-        const err = new InsufficientStockError(
-          `Invalid sale quantity (${item.quantity}) for "${item.productName || item.productId}".`,
-          { productId: item.productId, requestedQuantity: qty }
-        );
-        this.notifyFeedback('error', err.message);
-        throw err;
-      }
-      const existing = requestedByProduct.get(item.productId);
-      requestedByProduct.set(item.productId, {
-        quantity: (existing?.quantity || 0) + qty,
-        productName: item.productName || existing?.productName || item.productId
-      });
-    }
-
-    const updatedProductsMap = new Map<string, Product>(
-      (updatedProducts || []).map(p => [p.id, p])
-    );
-
-    // Ensure no caller-supplied product stock is negative
-    for (const [productId, req] of requestedByProduct.entries()) {
-      const localProd = updatedProductsMap.get(productId);
-      if (localProd && Number(localProd.stock) < 0) {
-        const err = new InsufficientStockError(
-          `Insufficient stock for "${localProd.name || req.productName}".`,
-          {
-            productId,
-            availableStock: Math.max(0, Number(localProd.stock) + req.quantity),
-            requestedQuantity: req.quantity
-          }
-        );
-        this.notifyFeedback('error', err.message);
-        throw err;
-      }
-    }
-
-    try {
-      const committedProducts = await runTransaction(db, async (transaction) => {
+    return this.runFirestoreTransactionWithRetry(
+      cleanStoreId,
+      async (transaction) => {
         const nowIso = new Date().toISOString();
         const productEntries = Array.from(requestedByProduct.entries());
 
-        // Phase 1: Read all product documents and customer document before any writes
+        // Phase 1: Read counter document, invoice document, all product documents, and customer document before any writes
+        const counterRef = doc(db, 'stores', cleanStoreId, 'counters', 'invoiceSequence');
+        const invRef = doc(db, 'stores', cleanStoreId, 'invoices', invoice.id);
         const productRefs = productEntries.map(([productId]) =>
-          doc(db, 'stores', storeId, 'products', productId)
+          doc(db, 'stores', cleanStoreId, 'products', productId)
         );
-        const productSnaps = await Promise.all(
-          productRefs.map(ref => transaction.get(ref))
-        );
-
-        const customerRef = updatedCustomer
-          ? doc(db, 'stores', storeId, 'customers', updatedCustomer.id)
+        const customerRef = updatedCustomer?.id
+          ? doc(db, 'stores', cleanStoreId, 'customers', updatedCustomer.id)
           : null;
-        const customerSnap = customerRef ? await transaction.get(customerRef) : null;
 
-        // Phase 2: Validate stock against authoritative Firestore documents
+        const [counterSnap, invSnap, productSnaps, customerSnap] = await Promise.all([
+          transaction.get(counterRef),
+          transaction.get(invRef),
+          Promise.all(productRefs.map(ref => transaction.get(ref))),
+          customerRef ? transaction.get(customerRef) : Promise.resolve(null)
+        ]);
+
+        // Phase 2: Idempotency check — if this exact invoice.id was already committed in Firestore, return existing state without re-deducting stock, re-updating customer, or re-incrementing counter
+        if (invSnap && typeof invSnap.exists === 'function' && invSnap.exists()) {
+          const {
+            authoritativeInvoiceNumber,
+            counterPayload
+          } = this.resolveAuthoritativeInvoiceNumberInTx(
+            cleanStoreId,
+            invoice,
+            counterSnap,
+            invSnap,
+            nowIso
+          );
+          const remoteCounterData =
+            counterSnap && typeof counterSnap.exists === 'function' && counterSnap.exists()
+              ? (counterSnap.data() as Partial<StoreInvoiceCounterState>)
+              : undefined;
+          if (!remoteCounterData?.issuedByInvoiceId?.[invoice.id]) {
+            transaction.set(counterRef, counterPayload, { merge: true });
+          }
+
+          const existingProducts: Product[] = [];
+          for (let i = 0; i < productEntries.length; i++) {
+            const [productId] = productEntries[i];
+            const pSnap = productSnaps[i];
+            const fallbackProd = updatedProductsMap.get(productId);
+            if (pSnap.exists()) {
+              existingProducts.push({
+                ...(fallbackProd || (pSnap.data() as Product)),
+                ...(pSnap.data() as Product),
+                id: productId
+              });
+            } else if (fallbackProd) {
+              existingProducts.push(fallbackProd);
+            }
+          }
+
+          const existingCustomer =
+            customerSnap && typeof customerSnap.exists === 'function' && customerSnap.exists()
+              ? ({
+                  ...(updatedCustomer || {}),
+                  ...(customerSnap.data() as CustomerProfile),
+                  id: updatedCustomer?.id || (customerSnap.data() as CustomerProfile).id
+                } as CustomerProfile)
+              : updatedCustomer;
+
+          const updatedDetails =
+            previousTentativeNumber &&
+            previousTentativeNumber !== authoritativeInvoiceNumber &&
+            effectiveAuditLog.details.includes(previousTentativeNumber)
+              ? effectiveAuditLog.details.replace(previousTentativeNumber, authoritativeInvoiceNumber)
+              : effectiveAuditLog.details;
+
+          return {
+            products: existingProducts,
+            customer: existingCustomer,
+            auditLog: {
+              ...effectiveAuditLog,
+              details: updatedDetails
+            },
+            invoiceNumber: authoritativeInvoiceNumber,
+            alreadyCommitted: true
+          };
+        }
+
+        // Phase 3: Validate stock against authoritative Firestore documents before allocating/writing
         const nextProductsToCommit: {
           ref: ReturnType<typeof doc>;
           existsInCloud: boolean;
@@ -787,8 +1639,75 @@ export class FirestoreSyncManager {
           }
         }
 
-        // Phase 3: Perform all writes atomically inside the transaction
-        // 1. Affected products stock deduction
+        // Phase 4: Resolve authoritative unique invoiceNumber from Firestore counter state
+        const {
+          authoritativeInvoiceNumber,
+          counterPayload
+        } = this.resolveAuthoritativeInvoiceNumberInTx(
+          cleanStoreId,
+          invoice,
+          counterSnap,
+          invSnap,
+          nowIso
+        );
+
+        // Prepare authoritative customer payload if linked
+        let committedCustomer: CustomerProfile | undefined = undefined;
+        let committedCustomerStoreId = cleanStoreId;
+        if (updatedCustomer && customerRef) {
+          if (customerSnap && typeof customerSnap.exists === 'function' && customerSnap.exists()) {
+            const remoteCust = customerSnap.data() as CustomerProfile & { storeId?: string };
+            const remotePurchases = Number(remoteCust.totalPurchases ?? 0);
+            const remoteLoyalty = Number(remoteCust.loyaltyPoints ?? 0);
+            const remoteCredit = Number(remoteCust.creditBalance ?? 0);
+            const redeemed = Number(invoice.loyaltyPointsRedeemed ?? 0);
+            const earned = Number(invoice.loyaltyPointsEarned ?? 0);
+            const creditDelta = invoice.paymentMethod === 'credit' ? Number(invoice.grandTotal ?? 0) : 0;
+
+            committedCustomerStoreId = remoteCust.storeId || cleanStoreId;
+            committedCustomer = {
+              ...updatedCustomer,
+              ...remoteCust,
+              id: updatedCustomer.id,
+              name: remoteCust.name || updatedCustomer.name || invoice.customerName || 'Walk-in Customer',
+              phone: remoteCust.phone || updatedCustomer.phone || invoice.customerPhone || '+91 00000 00000',
+              totalPurchases: Number((remotePurchases + Number(invoice.grandTotal ?? 0)).toFixed(2)),
+              loyaltyPoints: Math.max(0, remoteLoyalty - redeemed + earned),
+              creditBalance: Number((remoteCredit + creditDelta).toFixed(2))
+            };
+          } else {
+            committedCustomer = {
+              ...updatedCustomer,
+              id: updatedCustomer.id,
+              name: updatedCustomer.name || invoice.customerName || 'Walk-in Customer',
+              phone: updatedCustomer.phone || invoice.customerPhone || '+91 00000 00000'
+            };
+          }
+        }
+
+        // Prepare authoritative audit log payload with final invoiceNumber
+        const updatedAuditDetails =
+          previousTentativeNumber &&
+          previousTentativeNumber !== authoritativeInvoiceNumber &&
+          effectiveAuditLog.details.includes(previousTentativeNumber)
+            ? effectiveAuditLog.details.replace(previousTentativeNumber, authoritativeInvoiceNumber)
+            : effectiveAuditLog.details.includes(authoritativeInvoiceNumber)
+            ? effectiveAuditLog.details
+            : `Invoice ${authoritativeInvoiceNumber} — ${effectiveAuditLog.details}`;
+
+        const committedAuditLog: AuditLog = {
+          ...effectiveAuditLog,
+          id: effectiveAuditLog.id || `log-${invoice.id}`,
+          action: effectiveAuditLog.action || 'POS Invoice Created',
+          timestamp: effectiveAuditLog.timestamp || nowIso.replace('T', ' ').slice(0, 19),
+          details: updatedAuditDetails
+        };
+
+        // Phase 5: Perform all 5 POS sale writes atomically inside the single transaction
+        // 1. Update store invoice sequence counter
+        transaction.set(counterRef, counterPayload, { merge: true });
+
+        // 2. Affected products stock deduction
         for (const item of nextProductsToCommit) {
           if (item.existsInCloud) {
             transaction.update(item.ref, {
@@ -801,7 +1720,7 @@ export class FirestoreSyncManager {
               sanitizeData({
                 ...item.mergedProduct,
                 stock: item.nextStock,
-                storeId,
+                storeId: cleanStoreId,
                 updatedAt: nowIso
               }),
               { merge: true }
@@ -809,66 +1728,152 @@ export class FirestoreSyncManager {
           }
         }
 
-        // 2. Invoice
-        const invRef = doc(db, 'stores', storeId, 'invoices', invoice.id);
+        // 3. Invoice with authoritative unique invoiceNumber
         transaction.set(
           invRef,
           sanitizeData({
             ...invoice,
+            invoiceNumber: authoritativeInvoiceNumber,
             totalAmount: invoice.grandTotal,
-            storeId,
+            storeId: cleanStoreId,
             updatedAt: nowIso
           }),
           { merge: true }
         );
 
-        // 3. Customer profile if linked
-        if (updatedCustomer && customerRef) {
-          if (customerSnap && customerSnap.exists()) {
-            const remoteCust = customerSnap.data() as CustomerProfile;
-            const remotePurchases = Number(remoteCust.totalPurchases ?? 0);
-            const remoteLoyalty = Number(remoteCust.loyaltyPoints ?? 0);
-            const remoteCredit = Number(remoteCust.creditBalance ?? 0);
-            const redeemed = Number(invoice.loyaltyPointsRedeemed ?? 0);
-            const earned = Number(invoice.loyaltyPointsEarned ?? 0);
-            const creditDelta = invoice.paymentMethod === 'credit' ? Number(invoice.grandTotal ?? 0) : 0;
-
-            transaction.set(
-              customerRef,
-              sanitizeData({
-                ...updatedCustomer,
-                ...remoteCust,
-                totalPurchases: remotePurchases + Number(invoice.grandTotal ?? 0),
-                loyaltyPoints: Math.max(0, remoteLoyalty - redeemed + earned),
-                creditBalance: remoteCredit + creditDelta,
-                storeId,
-                updatedAt: nowIso
-              }),
-              { merge: true }
-            );
-          } else {
-            transaction.set(
-              customerRef,
-              sanitizeData({ ...updatedCustomer, storeId, updatedAt: nowIso }),
-              { merge: true }
-            );
-          }
+        // 4. Customer profile if linked
+        if (committedCustomer && customerRef) {
+          transaction.set(
+            customerRef,
+            sanitizeData({
+              ...committedCustomer,
+              storeId: committedCustomerStoreId,
+              updatedAt: nowIso
+            }),
+            { merge: true }
+          );
         }
 
-        // 4. Audit Log
-        if (auditLog) {
-          const lRef = doc(db, 'stores', storeId, 'auditLogs', auditLog.id);
-          transaction.set(lRef, sanitizeData({ ...auditLog, storeId }), { merge: true });
-        }
+        // 5. Audit Log (always committed atomically with the sale)
+        const lRef = doc(db, 'stores', cleanStoreId, 'auditLogs', committedAuditLog.id);
+        transaction.set(
+          lRef,
+          sanitizeData({
+            ...committedAuditLog,
+            storeId: cleanStoreId
+          })
+        );
 
-        return nextProductsToCommit.map(item => item.mergedProduct);
+        return {
+          products: nextProductsToCommit.map(item => item.mergedProduct),
+          customer: committedCustomer,
+          auditLog: committedAuditLog,
+          invoiceNumber: authoritativeInvoiceNumber,
+          alreadyCommitted: false
+        };
+      }
+    );
+  }
+
+  // Atomic POS checkout write: validates stock, guarantees store-scoped invoiceNumber uniqueness, and updates invoice, product stocks, customer loyalty, and audit log together via Firestore transaction
+  public async syncPOSSaleAtomic(
+    storeId: string,
+    invoice: POSInvoice,
+    updatedProducts: Product[],
+    updatedCustomer?: CustomerProfile,
+    auditLog?: AuditLog
+  ): Promise<Product[]> {
+    this.notifyFeedback('saving', 'Processing transaction...');
+    const cleanStoreId = storeId || invoice.storeId || 'store-1';
+
+    // 1. Aggregate requested quantities per productId from invoice items
+    const requestedByProduct = new Map<string, { quantity: number; productName: string }>();
+    for (const item of invoice.items || []) {
+      const qty = Number(item.quantity);
+      if (!Number.isFinite(qty) || qty <= 0) {
+        releaseStoreInvoiceNumberReservation(cleanStoreId, invoice.id);
+        const err = new InsufficientStockError(
+          `Invalid sale quantity (${item.quantity}) for "${item.productName || item.productId}".`,
+          { productId: item.productId, requestedQuantity: qty }
+        );
+        this.notifyFeedback('error', err.message);
+        throw err;
+      }
+      const existing = requestedByProduct.get(item.productId);
+      requestedByProduct.set(item.productId, {
+        quantity: (existing?.quantity || 0) + qty,
+        productName: item.productName || existing?.productName || item.productId
       });
+    }
+
+    const updatedProductsMap = new Map<string, Product>(
+      (updatedProducts || []).map(p => [p.id, p])
+    );
+
+    // Ensure no caller-supplied product stock is negative
+    for (const [productId, req] of requestedByProduct.entries()) {
+      const localProd = updatedProductsMap.get(productId);
+      if (localProd && Number(localProd.stock) < 0) {
+        releaseStoreInvoiceNumberReservation(cleanStoreId, invoice.id);
+        const err = new InsufficientStockError(
+          `Insufficient stock for "${localProd.name || req.productName}".`,
+          {
+            productId,
+            availableStock: Math.max(0, Number(localProd.stock) + req.quantity),
+            requestedQuantity: req.quantity
+          }
+        );
+        this.notifyFeedback('error', err.message);
+        throw err;
+      }
+    }
+
+    // Ensure invoice has a local tentative reservation before entering transaction
+    const previousTentativeNumber = invoice.invoiceNumber;
+    if (!invoice.invoiceNumber) {
+      invoice.invoiceNumber = reserveStoreInvoiceNumber(cleanStoreId, invoice.id, invoice.date);
+    }
+
+    const effectiveAuditLog: AuditLog = auditLog || {
+      id: `log-${invoice.id}`,
+      user: invoice.cashierName || invoice.createdBy || 'POS Cashier',
+      role: 'client',
+      action: 'POS Invoice Created',
+      details: `Invoice ${invoice.invoiceNumber} created for ${invoice.customerName || 'Walk-in Retail Customer'} (₹${invoice.grandTotal})`,
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      ipAddress: '127.0.0.1',
+      status: 'success'
+    };
+
+    try {
+      const txResult = await this.executePOSSaleTransaction(
+        cleanStoreId,
+        invoice,
+        requestedByProduct,
+        updatedProductsMap,
+        updatedCustomer,
+        effectiveAuditLog,
+        previousTentativeNumber
+      );
+
+      // Commit authoritative invoiceNumber, customer state, and auditLog back to caller objects and local counter state
+      if (txResult.invoiceNumber) {
+        invoice.invoiceNumber = txResult.invoiceNumber;
+        commitStoreInvoiceNumber(cleanStoreId, invoice.id, txResult.invoiceNumber);
+      }
+      if (updatedCustomer && txResult.customer) {
+        Object.assign(updatedCustomer, txResult.customer);
+      }
+      if (auditLog && txResult.auditLog) {
+        Object.assign(auditLog, txResult.auditLog);
+      }
 
       this.notifyFeedback('saved', 'Transaction saved');
-      return committedProducts;
+      return txResult.products;
     } catch (err: any) {
-      // Never queue insufficient-stock or validation rejections into the offline queue
+      // Never queue insufficient-stock or validation rejections into the offline queue; release reserved invoice number
       if (isInsufficientStockError(err)) {
+        releaseStoreInvoiceNumberReservation(cleanStoreId, invoice.id);
         this.notifyFeedback('error', err.message);
         throw err;
       }
@@ -879,25 +1884,66 @@ export class FirestoreSyncManager {
         err?.code === 'unavailable';
 
       if (!isOfflineError) {
+        releaseStoreInvoiceNumberReservation(cleanStoreId, invoice.id);
         this.notifyFeedback('error', err?.message || 'Transaction failed.');
         throw err;
       }
 
-      console.warn('[FirestoreSync] POS sale atomic write failed while offline, queuing items:', err);
+      console.warn('[FirestoreSync] POS sale atomic write failed while offline, queuing atomic bundle:', err);
       const nowIso = new Date().toISOString();
-      // Fallback: queue individual operations into offline queue when genuinely offline
+      // Ensure unique offline invoice number in local store counter & offline queue
+      const offlineInvoiceNumber = reserveStoreInvoiceNumber(
+        cleanStoreId,
+        invoice.id,
+        invoice.date
+      );
+      if (
+        effectiveAuditLog &&
+        invoice.invoiceNumber &&
+        invoice.invoiceNumber !== offlineInvoiceNumber &&
+        effectiveAuditLog.details.includes(invoice.invoiceNumber)
+      ) {
+        effectiveAuditLog.details = effectiveAuditLog.details.replace(
+          invoice.invoiceNumber,
+          offlineInvoiceNumber
+        );
+      }
+      invoice.invoiceNumber = offlineInvoiceNumber;
+      if (auditLog) {
+        Object.assign(auditLog, effectiveAuditLog);
+      }
+
+      // Queue POS sale with embedded atomic bundle so flushQueue commits all 5 entities in a single Firestore transaction upon reconnection
       queueOfflineAction({
         collection: 'invoices',
         action: 'create',
         docId: invoice.id,
-        data: sanitizeData({ ...invoice, totalAmount: invoice.grandTotal, storeId, updatedAt: nowIso })
+        data: sanitizeData({
+          ...invoice,
+          invoiceNumber: offlineInvoiceNumber,
+          totalAmount: invoice.grandTotal,
+          storeId: cleanStoreId,
+          updatedAt: nowIso,
+          _posSaleBundle: {
+            updatedProducts: updatedProducts.map(p => sanitizeData({ ...p, storeId: cleanStoreId })),
+            updatedCustomer: updatedCustomer
+              ? sanitizeData({ ...updatedCustomer, storeId: cleanStoreId })
+              : undefined,
+            auditLog: sanitizeData({ ...effectiveAuditLog, storeId: cleanStoreId })
+          }
+        })
       });
       for (const p of updatedProducts) {
         queueOfflineAction({
           collection: 'products',
           action: 'update',
           docId: p.id,
-          data: sanitizeData({ ...p, storeId, updatedAt: nowIso })
+          data: sanitizeData({
+            ...p,
+            storeId: cleanStoreId,
+            updatedAt: nowIso,
+            _parentInvoiceId: invoice.id
+          })
         });
       }
       if (updatedCustomer) {
@@ -905,9 +1951,24 @@ export class FirestoreSyncManager {
           collection: 'customers',
           action: 'update',
           docId: updatedCustomer.id,
-          data: sanitizeData({ ...updatedCustomer, storeId, updatedAt: nowIso })
+          data: sanitizeData({
+            ...updatedCustomer,
+            storeId: cleanStoreId,
+            updatedAt: nowIso,
+            _parentInvoiceId: invoice.id
+          })
         });
       }
+      queueOfflineAction({
+        collection: 'auditLogs',
+        action: 'create',
+        docId: effectiveAuditLog.id,
+        data: sanitizeData({
+          ...effectiveAuditLog,
+          storeId: cleanStoreId,
+          _parentInvoiceId: invoice.id
+        })
+      });
       this.notifyFeedback('error', 'Transaction saved offline. Will sync when connected.');
       return updatedProducts;
     }
@@ -1112,23 +2173,101 @@ export class FirestoreSyncManager {
     console.log(`[FirestoreSync] Flushing ${queue.length} pending offline items...`);
     const remaining: OfflineSyncItem[] = [];
     let processed = 0;
+    const atomicallyHandledInvoiceIds = new Set<string>();
+    const atomicallyFailedInvoiceIds = new Set<string>();
 
     for (const item of queue) {
+      const parentInvoiceId = item.data?._parentInvoiceId;
+      if (parentInvoiceId) {
+        if (atomicallyHandledInvoiceIds.has(parentInvoiceId)) {
+          processed++;
+          continue;
+        }
+        if (atomicallyFailedInvoiceIds.has(parentInvoiceId)) {
+          remaining.push(item);
+          continue;
+        }
+      }
+
       try {
+        const itemStoreId = item.data?.storeId || this.activeStoreId;
+        if (item.collection === 'invoices' && item.action !== 'delete' && item.data) {
+          const { _posSaleBundle, _parentInvoiceId: _ignoredParent, ...rawInvoiceData } = item.data;
+          const invoicePayload: POSInvoice = {
+            ...(rawInvoiceData as POSInvoice),
+            id: item.docId || rawInvoiceData.id,
+            storeId: itemStoreId
+          };
+
+          if (_posSaleBundle && typeof _posSaleBundle === 'object') {
+            const reqMap = new Map<string, { quantity: number; productName: string }>();
+            for (const line of invoicePayload.items || []) {
+              const qty = Number(line.quantity);
+              if (Number.isFinite(qty) && qty > 0) {
+                const prev = reqMap.get(line.productId);
+                reqMap.set(line.productId, {
+                  quantity: (prev?.quantity || 0) + qty,
+                  productName: line.productName || prev?.productName || line.productId
+                });
+              }
+            }
+            const prodList: Product[] = Array.isArray(_posSaleBundle.updatedProducts)
+              ? _posSaleBundle.updatedProducts
+              : [];
+            const prodMap = new Map<string, Product>(prodList.map(p => [p.id, p]));
+            const txRes = await this.executePOSSaleTransaction(
+              itemStoreId,
+              invoicePayload,
+              reqMap,
+              prodMap,
+              _posSaleBundle.updatedCustomer as CustomerProfile | undefined,
+              _posSaleBundle.auditLog as AuditLog | undefined,
+              invoicePayload.invoiceNumber
+            );
+            commitStoreInvoiceNumber(itemStoreId, invoicePayload.id, txRes.invoiceNumber);
+            atomicallyHandledInvoiceIds.add(invoicePayload.id);
+            processed++;
+            continue;
+          }
+
+          await this.commitInvoiceAtomic(itemStoreId, invoicePayload);
+          processed++;
+          continue;
+        }
+
         let docRef;
         if (item.collection === 'stores') {
           docRef = doc(db, 'stores', item.docId);
         } else {
-          docRef = doc(db, 'stores', this.activeStoreId, item.collection, item.docId);
+          docRef = doc(db, 'stores', itemStoreId, item.collection, item.docId);
         }
 
         if (item.action === 'delete') {
           await deleteDoc(docRef);
         } else {
-          await setDoc(docRef, item.data, { merge: true });
+          const { _parentInvoiceId: _pId, ...cleanPayload } = item.data || {};
+          await setDoc(docRef, cleanPayload, { merge: true });
         }
         processed++;
       } catch (err) {
+        if (item.collection === 'invoices' && item.data?._posSaleBundle) {
+          const failedInvId = item.docId || item.data?.id;
+          if (failedInvId) {
+            atomicallyFailedInvoiceIds.add(failedInvId);
+          }
+          // Do not keep permanently rejected insufficient-stock sales in the queue
+          if (isInsufficientStockError(err)) {
+            if (failedInvId) {
+              releaseStoreInvoiceNumberReservation(
+                item.data?.storeId || this.activeStoreId,
+                failedInvId
+              );
+              atomicallyHandledInvoiceIds.add(failedInvId);
+              atomicallyFailedInvoiceIds.delete(failedInvId);
+            }
+            continue;
+          }
+        }
         remaining.push(item);
       }
     }

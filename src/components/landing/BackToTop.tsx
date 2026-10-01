@@ -45,7 +45,7 @@ export const BackToTop: React.FC = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 12 }}
           transition={{ duration: 0.2 }}
-          className="website-btn-glow fixed bottom-18 right-3.5 sm:bottom-22 sm:right-6 z-40 p-2.5 sm:p-3 rounded-full glass-panel glass-panel-interactive text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 shadow-xl hover:shadow-2xl hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all flex items-center justify-center group cursor-pointer"
+          className="website-btn-glow fixed bottom-36 md:bottom-22 right-3.5 sm:right-6 z-40 p-2.5 sm:p-3 rounded-full glass-panel glass-panel-interactive text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 shadow-xl hover:shadow-2xl hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all flex items-center justify-center group cursor-pointer"
           data-cursor="hover"
         >
           <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />

@@ -101,40 +101,24 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
   const [newCustNameError, setNewCustNameError] = useState<string | null>(null);
   const [newCustPhoneError, setNewCustPhoneError] = useState<string | null>(null);
 
-  // Focus refs for mobile keyboard optimization
+  // Focus refs for inputs (triggered only on explicit user interaction)
   const searchInputRef = useRef<HTMLInputElement>(null);
   const splitCashRef = useRef<HTMLInputElement>(null);
   const newCustNameRef = useRef<HTMLInputElement>(null);
 
-  // Auto focus search input on mount or when switching to catalog tab
+  // Keep selectedCustomer synchronized with authoritative store customers state
   useEffect(() => {
-    if (mobileTab === 'catalog') {
-      const timer = setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 100);
-      return () => clearTimeout(timer);
+    if (!selectedCustomer) return;
+    const latest = customers.find(c => c.id === selectedCustomer.id);
+    if (
+      latest &&
+      (latest.totalPurchases !== selectedCustomer.totalPurchases ||
+        latest.loyaltyPoints !== selectedCustomer.loyaltyPoints ||
+        latest.creditBalance !== selectedCustomer.creditBalance)
+    ) {
+      setSelectedCustomer(latest);
     }
-  }, [mobileTab]);
-
-  // Auto focus cash input when split payment is chosen
-  useEffect(() => {
-    if (paymentMethod === 'split') {
-      const timer = setTimeout(() => {
-        splitCashRef.current?.focus();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [paymentMethod]);
-
-  // Auto focus customer name input when quick add is opened
-  useEffect(() => {
-    if (showAddCustomer) {
-      const timer = setTimeout(() => {
-        newCustNameRef.current?.focus();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [showAddCustomer]);
+  }, [customers, selectedCustomer]);
 
   // Auto-match template when customer segment changes
   useEffect(() => {
@@ -158,6 +142,7 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const isCheckingOutRef = useRef(false);
+  const checkoutAttemptIdRef = useRef<string | null>(null);
 
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
@@ -454,8 +439,14 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
     isCheckingOutRef.current = true;
     setIsCheckingOut(true);
 
+    if (!checkoutAttemptIdRef.current) {
+      checkoutAttemptIdRef.current = `inv-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    }
+    const currentAttemptId = checkoutAttemptIdRef.current;
+
     try {
       const inv = await createInvoice({
+        id: currentAttemptId,
         storeId: activeStore.id,
         storeName: activeStore.name,
         storeGSTIN: activeStore.gstin,
@@ -502,6 +493,7 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
         );
       }
 
+      checkoutAttemptIdRef.current = null;
       setGeneratedInvoice(inv);
       setIsInvoiceModalOpen(true);
       setCart([]);
@@ -564,8 +556,13 @@ Thank you for shopping with ${inv.storeName}!`;
     return () => clearTimeout(t);
   }, [shortcutNotice]);
 
+  useEffect(() => {
+    checkoutAttemptIdRef.current = null;
+  }, [cart, activeStore.id, selectedCustomer?.id, paymentMethod, isGSTInvoice, totalDiscount]);
+
   // F2: Start New Sale / Reset Cart
   const handleStartNewSale = () => {
+    checkoutAttemptIdRef.current = null;
     setIsInvoiceModalOpen(false);
     setIsScannerOpen(false);
     setIsShortcutsModalOpen(false);
@@ -576,17 +573,12 @@ Thank you for shopping with ${inv.storeName}!`;
     setRedeemPoints(false);
     setMobileTab('catalog');
     triggerShortcutNotice('New Sale Started (F2)');
-    setTimeout(() => {
-      searchInputRef.current?.focus();
-      searchInputRef.current?.select();
-    }, 50);
   };
 
   // F8: Complete Sale / Checkout
   const handleCompleteSaleShortcut = () => {
     if (cart.length === 0) {
       triggerShortcutNotice('Cart is empty — add items first');
-      searchInputRef.current?.focus();
       return;
     }
     triggerShortcutNotice('Completing Transaction (F8)...');
@@ -884,7 +876,6 @@ Thank you for shopping with ${inv.storeName}!`;
                   ref={searchInputRef}
                   type="search"
                   inputMode="search"
-                  autoFocus
                   autoCapitalize="none"
                   spellCheck={false}
                   value={searchQuery}
@@ -996,12 +987,12 @@ Thank you for shopping with ${inv.storeName}!`;
           }`}
         >
           {/* Terminal Header */}
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <Receipt className="w-5 h-5 text-emerald-400" />
               <h3 className="text-sm font-bold text-white">POS Checkout Terminal</h3>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 type="button"
                 onClick={handleStartNewSale}
@@ -1080,7 +1071,6 @@ Thank you for shopping with ${inv.storeName}!`;
                       ref={newCustNameRef}
                       type="text"
                       inputMode="text"
-                      autoFocus
                       autoCapitalize="words"
                       placeholder="Customer Full Name *"
                       value={newCustName}
@@ -1535,7 +1525,6 @@ Thank you for shopping with ${inv.storeName}!`;
                         type="number"
                         inputMode="numeric"
                         pattern="[0-9]*"
-                        autoFocus
                         min="0"
                         step="any"
                         placeholder="0"
@@ -1718,7 +1707,7 @@ Thank you for shopping with ${inv.storeName}!`;
 
       {/* Floating Sticky Mobile Quick Checkout Bar */}
       {cart.length > 0 && mobileTab === 'catalog' && (
-        <div className="fixed bottom-16 left-3 right-3 z-30 lg:hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 rounded-xl p-3 shadow-2xl border border-emerald-400/40 flex items-center justify-between text-white animate-in slide-in-from-bottom duration-200 tabular-nums">
+        <div className="fixed bottom-[4.5rem] md:bottom-4 left-3 right-3 z-30 lg:hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 rounded-xl p-3 shadow-2xl border border-emerald-400/40 flex items-center justify-between text-white animate-in slide-in-from-bottom duration-200 tabular-nums">
           <div>
             <div className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-100">
               Cart ({cart.reduce((a, c) => a + c.quantity, 0)} Items)

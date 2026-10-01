@@ -26,11 +26,13 @@ import {
   ShieldAlert,
   Trash2,
   Lock,
-  AlertTriangle
+  AlertTriangle,
+  Globe
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { EllixConnectLogo } from '../branding/EllixConnectLogo';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -169,20 +171,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
 
         {/* Tab Switcher */}
         <div
-          className={`px-4 pt-3 border-b flex gap-2 ${
+          className={`px-4 pt-3 border-b flex gap-2 overflow-x-auto no-scrollbar ${
             theme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-slate-950/60 border-slate-800'
           }`}
         >
           {[
-            { id: 'appearance', label: 'Appearance & Theme', icon: <Palette className="w-3.5 h-3.5" /> },
-            { id: 'subscription', label: 'Subscription & Billing', icon: <CreditCard className="w-3.5 h-3.5" /> },
-            { id: 'data', label: 'Storage & Diagnostics', icon: <Database className="w-3.5 h-3.5" /> },
-            { id: 'about', label: 'About System', icon: <Info className="w-3.5 h-3.5" /> }
+            { id: 'appearance', label: 'Appearance & Theme', icon: <Palette className="w-3.5 h-3.5 shrink-0" /> },
+            { id: 'subscription', label: 'Subscription & Billing', icon: <CreditCard className="w-3.5 h-3.5 shrink-0" /> },
+            { id: 'data', label: 'Storage & Diagnostics', icon: <Database className="w-3.5 h-3.5 shrink-0" /> },
+            { id: 'about', label: 'About System', icon: <Info className="w-3.5 h-3.5 shrink-0" /> }
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveSettingsTab(tab.id as any)}
-              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold border-b-2 transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold border-b-2 transition-all whitespace-nowrap shrink-0 ${
                 activeSettingsTab === tab.id
                   ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400'
                   : theme === 'light'
@@ -403,6 +405,28 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                       Active
                     </span>
                   </div>
+                </div>
+              </div>
+
+              {/* Multi-Language & Localization Settings */}
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-emerald-500" />
+                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    Application Language & Multi-Language Support
+                  </h4>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Switch Ellix Connect to any Indian regional language or global language. Your choice is saved automatically.
+                </p>
+                <div
+                  className={`p-4 rounded-xl border ${
+                    theme === 'light'
+                      ? 'bg-slate-50/70 border-slate-200'
+                      : 'bg-slate-900/60 border-slate-800'
+                  }`}
+                >
+                  <LanguageSwitcher variant="panel" />
                 </div>
               </div>
             </div>

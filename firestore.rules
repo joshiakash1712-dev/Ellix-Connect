@@ -379,7 +379,7 @@ service cloud.firestore {
       // RULE: Crew members must NEVER be able to apply or approve discounts
       match /invoices/{invoiceId} {
         allow get: if isClientOwnerOfStore(storeId) ||
-          (isCrewAssignedToStore(storeId) && resource.data.cashierId == request.auth.uid);
+          (isCrewAssignedToStore(storeId) && (resource == null || resource.data.cashierId == request.auth.uid));
 
         allow list: if isClientOwnerOfStore(storeId) ||
           (isCrewAssignedToStore(storeId) && resource.data.cashierId == request.auth.uid);
@@ -411,6 +411,18 @@ service cloud.firestore {
           hasValidClientId(incoming(), storeId);
 
         allow delete: if isValidId(invoiceId) && isClientOwnerOfStore(storeId);
+      }
+
+      // Master Gate: Store Atomic Counters (Invoice sequence & uniqueness reservation)
+      match /counters/{counterId} {
+        allow get, list: if isStoreAuthorizedUser(storeId);
+
+        allow create, update: if isValidId(counterId) &&
+          isStoreAuthorizedUser(storeId) &&
+          hasValidStoreId(incoming(), storeId) &&
+          (!('lastSequence' in incoming()) || (incoming().lastSequence is number && incoming().lastSequence >= 0));
+
+        allow delete: if isClientOwnerOfStore(storeId);
       }
 
       // Master Gate: Staff & RBAC (Isolated to Store Owner; Forbidden for Crew)

@@ -249,8 +249,8 @@ export const CustomerCRM: React.FC = () => {
       {/* Module Header & High-Level Actions */}
       <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-black text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-emerald-400" />
+          <h2 className="text-lg font-black text-white flex items-center gap-2 flex-wrap">
+            <Users className="w-5 h-5 text-emerald-400 shrink-0" />
             <span>Customer CRM & Batch Template Assignment</span>
             <span className="text-xs px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono font-bold tabular-nums">
               {customers.length} Profiles
@@ -261,7 +261,7 @@ export const CustomerCRM: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
           <button
             onClick={handleAutoGroupSmartAssign}
             className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 text-xs font-bold shadow-sm flex items-center gap-1.5 transition-all active:scale-95"
@@ -335,7 +335,7 @@ export const CustomerCRM: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto sm:justify-end">
             <button
               onClick={() => {
                 setTargetTemplateId(invoiceTemplates[0]?.id || '');
@@ -581,7 +581,7 @@ export const CustomerCRM: React.FC = () => {
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
                 <div className="p-3 rounded-xl bg-[#0A0E1A]/80 border border-slate-800">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Outstanding Credit</span>
                   <span className={`text-base font-black ${selectedCust.creditBalance > 0 ? 'text-amber-400' : 'text-slate-200'}`}>

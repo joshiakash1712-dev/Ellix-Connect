@@ -83,15 +83,6 @@ How can I help you today? You can ask me about:
     }
   }, [messages, isOpen, isMinimized, isLoading]);
 
-  // Focus input when chat opens
-  useEffect(() => {
-    if (isOpen && !isMinimized) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 200);
-    }
-  }, [isOpen, isMinimized]);
-
   // Listen to global open-support-chat event from other components (Footer, Sidebar, etc.)
   useEffect(() => {
     const handleOpenChat = (event: Event) => {
@@ -257,7 +248,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
   return (
     <div
       id="customer-support-chatbot-container"
-      className="fixed bottom-3.5 sm:bottom-6 right-3.5 sm:right-6 z-50 flex flex-col items-end pointer-events-none max-w-[calc(100vw-1.75rem)] box-border"
+      className="fixed bottom-20 md:bottom-6 right-3.5 sm:right-6 z-50 flex flex-col items-end pointer-events-none max-w-[calc(100vw-1.75rem)] box-border"
     >
       
       {/* Floating Prompt Bubble on Initial Visit (Desktop/Tablet only to prevent mobile screen clutter) */}

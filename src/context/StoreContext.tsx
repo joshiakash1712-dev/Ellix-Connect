@@ -47,7 +47,12 @@ import {
   syncManager as rawSyncManager,
   getOfflineQueue,
   InsufficientStockError,
-  isInsufficientStockError
+  isInsufficientStockError,
+  reconcileStoreInvoiceCounter,
+  reserveStoreInvoiceNumber,
+  commitStoreInvoiceNumber,
+  releaseStoreInvoiceNumberReservation,
+  stripMockFixtures
 } from '../lib/firestoreSync';
 import { doc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { db as firestoreDb } from '../lib/firebase';
@@ -103,7 +108,7 @@ interface StoreContextType {
   updateProduct: (id: string, updates: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
   toggleProductSharing: (id: string) => void;
-  createInvoice: (invoice: Omit<POSInvoice, 'id' | 'invoiceNumber'>) => Promise<POSInvoice>;
+  createInvoice: (invoice: Omit<POSInvoice, 'id' | 'invoiceNumber'> & { id?: string }) => Promise<POSInvoice>;
   deleteInvoice: (id: string) => void;
   addInvoiceTemplate: (template: Omit<InvoiceTemplate, 'id' | 'createdAt'>) => InvoiceTemplate;
   updateInvoiceTemplate: (id: string, updates: Partial<InvoiceTemplate>) => void;
@@ -155,8 +160,14 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: boolean }> = ({
   children,
-  isDemoMode = false,
+  isDemoMode: isDemoModeProp = false,
 }) => {
+  const isDemoRoute =
+    typeof window !== 'undefined' &&
+    (window.location.pathname.replace(/\/+$/, '').toLowerCase() === '/demo' ||
+      window.location.pathname.toLowerCase().startsWith('/demo/') ||
+      window.location.hash.toLowerCase() === '#demo');
+  const isDemoMode = Boolean(isDemoModeProp || isDemoRoute);
   const isFirestoreAvailable = Boolean(firestoreDb) && !isDemoMode;
   const syncManager = React.useMemo<typeof rawSyncManager>(() => {
     if (!isDemoMode) return rawSyncManager;
@@ -189,15 +200,18 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
   const hydratedStoreIdRef = React.useRef<string>((stores[0] || mockStores[0]).id);
 
   const loadStoreScopedCache = <T,>(baseKey: string, storeId: string, fallback: T[]): T[] => {
-    if (!isDemoMode) {
-      try {
-        const scoped = localStorage.getItem(`${baseKey}_${storeId}`);
-        if (scoped) return JSON.parse(scoped);
-      } catch {
-        // ignore parse error
-      }
+    if (isDemoMode) {
+      return fallback.filter((item: any) => !item?.storeId || item.storeId === storeId);
     }
-    return fallback.filter((item: any) => !item?.storeId || item.storeId === storeId);
+    try {
+      const scoped = localStorage.getItem(`${baseKey}_${storeId}`);
+      if (scoped) {
+        return stripMockFixtures<T>(JSON.parse(scoped));
+      }
+    } catch {
+      // ignore parse error
+    }
+    return [];
   };
 
   const [products, rawSetProducts] = useState<Product[]>(() =>
@@ -218,21 +232,48 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
   const [wholesalers, setWholesalers] = useState<Wholesaler[]>(() =>
     loadStoreScopedCache('ellix_wholesalers', activeStore.id, mockWholesalers)
   );
-  const [wholesalerProducts] = useState<WholesalerProduct[]>(mockWholesalerProducts);
+  const [wholesalerProducts] = useState<WholesalerProduct[]>(() =>
+    isDemoMode ? mockWholesalerProducts : []
+  );
 
   const [connections, setConnections] = useState<RetailerWholesalerConnection[]>(() => {
     if (isDemoMode) return mockConnections;
-    const saved = localStorage.getItem(`ellix_connections_${activeStore.id}`);
-    return saved ? JSON.parse(saved) : mockConnections;
+    try {
+      const saved = localStorage.getItem(`ellix_connections_${activeStore.id}`);
+      return saved ? stripMockFixtures<RetailerWholesalerConnection>(JSON.parse(saved)) : [];
+    } catch {
+      return [];
+    }
   });
 
-  const [customers, setCustomers] = useState<CustomerProfile[]>(() =>
+  const [customers, rawSetCustomers] = useState<CustomerProfile[]>(() =>
     loadStoreScopedCache('ellix_customers', activeStore.id, mockCustomers)
   );
+  const customersRef = React.useRef<CustomerProfile[]>(customers);
 
-  const [invoices, setInvoices] = useState<POSInvoice[]>(() =>
-    loadStoreScopedCache('ellix_invoices', activeStore.id, mockInvoices)
-  );
+  const setCustomers = React.useCallback((updater: React.SetStateAction<CustomerProfile[]>) => {
+    const next = typeof updater === 'function'
+      ? (updater as (prev: CustomerProfile[]) => CustomerProfile[])(customersRef.current)
+      : updater;
+    customersRef.current = next;
+    rawSetCustomers(next);
+  }, []);
+
+  const [invoices, rawSetInvoices] = useState<POSInvoice[]>(() => {
+    const initial = loadStoreScopedCache('ellix_invoices', activeStore.id, mockInvoices);
+    reconcileStoreInvoiceCounter(activeStore.id, initial);
+    return initial;
+  });
+  const invoicesRef = React.useRef<POSInvoice[]>(invoices);
+  const inFlightInvoiceTasksRef = React.useRef<Map<string, Promise<POSInvoice>>>(new Map());
+
+  const setInvoices = React.useCallback((updater: React.SetStateAction<POSInvoice[]>) => {
+    const next = typeof updater === 'function'
+      ? (updater as (prev: POSInvoice[]) => POSInvoice[])(invoicesRef.current)
+      : updater;
+    invoicesRef.current = next;
+    rawSetInvoices(next);
+  }, []);
 
   const [restockOrders, setRestockOrders] = useState<RestockOrder[]>(() =>
     loadStoreScopedCache('ellix_restock_orders', activeStore.id, mockRestockOrders)
@@ -248,8 +289,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
 
   const [notifications, setNotifications] = useState<AppNotification[]>(() => {
     if (isDemoMode) return mockNotifications;
-    const saved = localStorage.getItem(`ellix_notifications_${activeStore.id}`);
-    return saved ? JSON.parse(saved) : mockNotifications;
+    try {
+      const saved = localStorage.getItem(`ellix_notifications_${activeStore.id}`);
+      return saved ? stripMockFixtures<AppNotification>(JSON.parse(saved)) : [];
+    } catch {
+      return [];
+    }
   });
 
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() =>
@@ -272,8 +317,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
 
   const [businessApplications, setBusinessApplications] = useState<BusinessApplication[]>(() => {
     if (isDemoMode) return mockBusinessApplications;
-    const saved = localStorage.getItem('ellix_business_applications');
-    return saved ? JSON.parse(saved) : mockBusinessApplications;
+    try {
+      const saved = localStorage.getItem('ellix_business_applications');
+      return saved ? stripMockFixtures<BusinessApplication>(JSON.parse(saved)) : [];
+    } catch {
+      return [];
+    }
   });
 
   const activeClientId = activeStore.clientId || 'client-001';
@@ -353,13 +402,17 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
   }, []);
 
   const scheduleStorageWrite = React.useCallback((key: string, value: any) => {
-    pendingStorageWritesRef.current.set(key, value);
+    const sanitizedValue =
+      !isDemoMode && Array.isArray(value) && !key.startsWith('ellix_invoice_templates_')
+        ? stripMockFixtures(value)
+        : value;
+    pendingStorageWritesRef.current.set(key, sanitizedValue);
     if (storageTimerRef.current !== null) return;
     storageTimerRef.current = window.setTimeout(() => {
       storageTimerRef.current = null;
       flushPendingStorageWrites();
     }, 120);
-  }, [flushPendingStorageWrites]);
+  }, [isDemoMode, flushPendingStorageWrites]);
 
   useEffect(() => {
     if (isDemoMode) return;
@@ -510,20 +563,28 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
     id: authUser?.uid || (activeRole === 'crew' ? 'emp-3' : 'usr-current'),
     firebaseUid: authUser?.uid,
     name: userProfile?.displayName || authUser?.displayName || (
-      activeRole === 'super_admin' ? 'Akash Joshi (Super Admin)' :
-      activeRole === 'ellix_admin' ? 'Siddharth Admin (Ellix Connect)' :
-      activeRole === 'crew' ? 'Rahul Sharma' :
-      activeRole === 'wholesaler_admin' ? 'Metro Wholesaler Admin' :
-      'Vikram Malhotra'
+      isDemoMode
+        ? (
+            activeRole === 'super_admin' ? 'Akash Joshi (Super Admin)' :
+            activeRole === 'ellix_admin' ? 'Siddharth Admin (Ellix Connect)' :
+            activeRole === 'crew' ? 'Rahul Sharma' :
+            activeRole === 'wholesaler_admin' ? 'Metro Wholesaler Admin' :
+            'Vikram Malhotra'
+          )
+        : (userProfile?.email?.split('@')[0] || authUser?.email?.split('@')[0] || 'Merchant')
     ),
     email: userProfile?.email || authUser?.email || (
-      activeRole === 'super_admin' ? 'superadmin@ellixconnect.com' :
-      activeRole === 'ellix_admin' ? 'admin@ellixconnect.com' :
-      activeRole === 'crew' ? 'crew@ellixconnect.com' :
-      activeRole === 'wholesaler_admin' ? 'wholesaler@ellixconnect.com' :
-      'client@ellixconnect.com'
+      isDemoMode
+        ? (
+            activeRole === 'super_admin' ? 'superadmin@ellixconnect.com' :
+            activeRole === 'ellix_admin' ? 'admin@ellixconnect.com' :
+            activeRole === 'crew' ? 'crew@ellixconnect.com' :
+            activeRole === 'wholesaler_admin' ? 'wholesaler@ellixconnect.com' :
+            'client@ellixconnect.com'
+          )
+        : ''
     ),
-    phone: userProfile?.phoneNumber || authUser?.phoneNumber || '+91 98765 43210',
+    phone: userProfile?.phoneNumber || authUser?.phoneNumber || (isDemoMode ? '+91 98765 43210' : ''),
     role: activeRole,
     storeId: activeStore.id,
     clientId: userProfile?.clientId || 'client-001',
@@ -586,7 +647,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
     setIsDataLoading(true);
     setProducts(loadStoreScopedCache('ellix_products', activeStore.id, mockProducts));
     setCustomers(loadStoreScopedCache('ellix_customers', activeStore.id, mockCustomers));
-    setInvoices(loadStoreScopedCache('ellix_invoices', activeStore.id, mockInvoices));
+    const cachedStoreInvoices = loadStoreScopedCache('ellix_invoices', activeStore.id, mockInvoices);
+    reconcileStoreInvoiceCounter(activeStore.id, cachedStoreInvoices);
+    setInvoices(cachedStoreInvoices);
     setRestockOrders(loadStoreScopedCache('ellix_restock_orders', activeStore.id, mockRestockOrders));
     setCustomerOrders(loadStoreScopedCache('ellix_customer_orders', activeStore.id, mockCustomerOrders));
     setSuppliers(loadStoreScopedCache('ellix_suppliers', activeStore.id, mockSuppliers));
@@ -594,6 +657,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
     setEmployees(loadStoreScopedCache('ellix_employees', activeStore.id, mockEmployees));
     setAuditLogs(loadStoreScopedCache('ellix_audit_logs', activeStore.id, mockAuditLogs));
     setWholesalers(loadStoreScopedCache('ellix_wholesalers', activeStore.id, mockWholesalers));
+    setConnections(loadStoreScopedCache('ellix_connections', activeStore.id, mockConnections));
+    setNotifications(loadStoreScopedCache('ellix_notifications', activeStore.id, mockNotifications));
     hydratedStoreIdRef.current = activeStore.id;
 
     if (!authUser || isDemoMode) {
@@ -614,7 +679,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
           setCustomers(cloudCustomers || []);
         },
         onInvoicesUpdate: (cloudInvoices) => {
-          setInvoices(cloudInvoices || []);
+          const list = cloudInvoices || [];
+          reconcileStoreInvoiceCounter(activeStore.id, list);
+          setInvoices(list);
         },
         onRestockOrdersUpdate: (cloudOrders) => {
           setRestockOrders(cloudOrders || []);
@@ -712,15 +779,31 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
   }, [activeStore.clientId, isFirestoreAvailable]);
 
   const forceCloudSync = async () => {
+    if (isDemoMode) return;
     setIsDataLoading(true);
     setCloudSyncState(prev => ({ ...prev, status: 'syncing' }));
     try {
       await syncManager.flushQueue();
-      await syncManager.seedProducts(activeStore.id, products);
-      await syncManager.seedCustomers(activeStore.id, customers);
-      await syncManager.seedInvoices(activeStore.id, invoices);
-      await syncManager.seedRestockOrders(activeStore.id, restockOrders);
-      await syncManager.seedCustomerOrders(activeStore.id, customerOrders);
+      const realProducts = stripMockFixtures(products);
+      const realCustomers = stripMockFixtures(customers);
+      const realInvoices = stripMockFixtures(invoices);
+      const realRestockOrders = stripMockFixtures(restockOrders);
+      const realCustomerOrders = stripMockFixtures(customerOrders);
+      if (realProducts.length > 0) {
+        await syncManager.seedProducts(activeStore.id, realProducts);
+      }
+      if (realCustomers.length > 0) {
+        await syncManager.seedCustomers(activeStore.id, realCustomers);
+      }
+      if (realInvoices.length > 0) {
+        await syncManager.seedInvoices(activeStore.id, realInvoices);
+      }
+      if (realRestockOrders.length > 0) {
+        await syncManager.seedRestockOrders(activeStore.id, realRestockOrders);
+      }
+      if (realCustomerOrders.length > 0) {
+        await syncManager.seedCustomerOrders(activeStore.id, realCustomerOrders);
+      }
       setCloudSyncState(prev => ({
         ...prev,
         status: 'synced',
@@ -728,11 +811,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
         pendingCount: getOfflineQueue().length,
         lastError: null,
         syncedCounts: {
-          products: products.length,
-          customers: customers.length,
-          invoices: invoices.length,
-          restockOrders: restockOrders.length,
-          customerOrders: customerOrders.length
+          products: realProducts.length,
+          customers: realCustomers.length,
+          invoices: realInvoices.length,
+          restockOrders: realRestockOrders.length,
+          customerOrders: realCustomerOrders.length
         }
       }));
       addNotification({
@@ -806,9 +889,28 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
   };
 
   // Billing POS Invoice (Concurrency-Safe & Transactional)
-  const createInvoice = async (invoiceData: Omit<POSInvoice, 'id' | 'invoiceNumber'>): Promise<POSInvoice> => {
+  const createInvoice = async (
+    invoiceData: Omit<POSInvoice, 'id' | 'invoiceNumber'> & { id?: string }
+  ): Promise<POSInvoice> => {
     if (!invoiceData.items || invoiceData.items.length === 0) {
       throw new InsufficientStockError('Cannot create an invoice with an empty cart.');
+    }
+
+    const targetStoreId = invoiceData.storeId || activeStore.id;
+    const requestedId = invoiceData.id?.trim();
+
+    // Idempotency guard for retries with the same invoice ID
+    if (requestedId) {
+      const alreadyCreated = invoicesRef.current.find(
+        inv => inv.id === requestedId && (!inv.storeId || inv.storeId === targetStoreId)
+      );
+      if (alreadyCreated) {
+        return alreadyCreated;
+      }
+      const inFlightTask = inFlightInvoiceTasksRef.current.get(requestedId);
+      if (inFlightTask) {
+        return inFlightTask;
+      }
     }
 
     // 1. Aggregate requested quantities per productId
@@ -873,14 +975,20 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
     };
 
     invoiceSeqRef.current += 1;
-    const invCount = invoices.length + invoiceSeqRef.current;
-    const uniqueSuffix = Math.random().toString(36).slice(2, 7);
-    const invoiceNumber = `INV-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${invCount.toString().padStart(2, '0')}`;
+    const uniqueSuffix = `${invoiceSeqRef.current}-${Math.random().toString(36).slice(2, 7)}`;
+    const invoiceId = requestedId || `inv-${Date.now()}-${uniqueSuffix}`;
+    const tentativeInvoiceNumber = reserveStoreInvoiceNumber(
+      targetStoreId,
+      invoiceId,
+      invoiceData.date,
+      invoicesRef.current
+    );
+
     const newInvoice: POSInvoice = {
       ...invoiceData,
-      id: `inv-${Date.now()}-${uniqueSuffix}`,
-      invoiceNumber,
-      storeId: invoiceData.storeId || activeStore.id,
+      id: invoiceId,
+      invoiceNumber: tentativeInvoiceNumber,
+      storeId: targetStoreId,
       clientId: invoiceData.clientId || activeStore.clientId || 'client-001',
       createdBy: currentUser.name,
       createdById: currentUser.id,
@@ -889,139 +997,159 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
       paymentStatus: 'paid'
     };
 
-    // Prepare preview of updated products for offline/unseeded fallback
-    const previewUpdatedProducts: Product[] = [];
-    for (const p of currentProductsSnapshot) {
-      const req = requestedByProduct.get(p.id);
-      if (req) {
-        const reservedTotal = inFlightReservedStockRef.current.get(p.id) || req.quantity;
-        previewUpdatedProducts.push({
-          ...p,
-          stock: Math.max(0, p.stock - reservedTotal)
+    const executeCreation = async (): Promise<POSInvoice> => {
+      // Prepare preview of updated products for offline/unseeded fallback
+      const previewUpdatedProducts: Product[] = [];
+      for (const p of currentProductsSnapshot) {
+        const req = requestedByProduct.get(p.id);
+        if (req) {
+          const reservedTotal = inFlightReservedStockRef.current.get(p.id) || req.quantity;
+          previewUpdatedProducts.push({
+            ...p,
+            stock: Math.max(0, p.stock - reservedTotal)
+          });
+        }
+      }
+
+      // Prepare Customer loyalty, totalPurchases & creditBalance update if customer linked
+      let updatedCustObj: CustomerProfile | undefined = undefined;
+      if (newInvoice.customerId || newInvoice.customerPhone) {
+        const matchedCustomer = customersRef.current.find(
+          c =>
+            (newInvoice.customerId && c.id === newInvoice.customerId) ||
+            (newInvoice.customerPhone && c.phone === newInvoice.customerPhone)
+        );
+        if (matchedCustomer) {
+          newInvoice.customerId = matchedCustomer.id;
+          const creditDelta = newInvoice.paymentMethod === 'credit' ? Number(newInvoice.grandTotal || 0) : 0;
+          updatedCustObj = {
+            ...matchedCustomer,
+            totalPurchases: Number(((Number(matchedCustomer.totalPurchases) || 0) + newInvoice.grandTotal).toFixed(2)),
+            loyaltyPoints: Math.max(
+              0,
+              (Number(matchedCustomer.loyaltyPoints) || 0) -
+                (newInvoice.loyaltyPointsRedeemed || 0) +
+                (newInvoice.loyaltyPointsEarned || 0)
+            ),
+            creditBalance: Number(((Number(matchedCustomer.creditBalance) || 0) + creditDelta).toFixed(2))
+          };
+        }
+      }
+
+      const auditLogObj: AuditLog = {
+        id: `log-${invoiceId}`,
+        user: currentUser.name,
+        role: activeRole,
+        action: 'POS Invoice Created',
+        details: `Invoice ${newInvoice.invoiceNumber} created for ${newInvoice.customerName} (₹${newInvoice.grandTotal}) at ${activeStore.name}`,
+        timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+        ipAddress: '127.0.0.1',
+        status: 'success'
+      };
+
+      // 4. Atomic persistence, invoiceNumber uniqueness & stock verification via Firestore transaction
+      let txCommittedProducts: Product[] | undefined;
+      try {
+        txCommittedProducts = await syncManager.syncPOSSaleAtomic(
+          targetStoreId,
+          newInvoice,
+          previewUpdatedProducts,
+          updatedCustObj,
+          auditLogObj
+        );
+      } catch (err: any) {
+        releaseReservation();
+        releaseStoreInvoiceNumberReservation(targetStoreId, invoiceId);
+        if (isInsufficientStockError(err) && err.productId && typeof err.availableStock === 'number') {
+          const remoteStock = Math.max(0, err.availableStock);
+          setProducts(prev =>
+            prev.map(p => (p.id === err.productId ? { ...p, stock: remoteStock } : p))
+          );
+        }
+        addNotification({
+          title: isInsufficientStockError(err) ? 'Sale Rejected: Insufficient Stock' : 'Sale Transaction Failed',
+          message: err?.message || 'Concurrent sale updated stock levels. Please review cart quantities.',
+          category: 'low_stock',
+          linkModule: 'retailer'
+        });
+        throw err;
+      }
+
+      // Ensure final committed invoiceNumber is registered in store counter (handles demo mode as well)
+      commitStoreInvoiceNumber(targetStoreId, newInvoice.id, newInvoice.invoiceNumber);
+
+      // 5. Commit stock deduction to local state and release in-flight reservation simultaneously
+      releaseReservation();
+
+      const committedById = new Map<string, Product>(
+        Array.isArray(txCommittedProducts) ? txCommittedProducts.map(p => [p.id, p]) : []
+      );
+      const lowStockAlerts: { product: Product; newStock: number; isCritical: boolean }[] = [];
+
+      setProducts(prev =>
+        prev.map(p => {
+          const req = requestedByProduct.get(p.id);
+          if (!req) return p;
+
+          const txProd = committedById.get(p.id);
+          const newStock =
+            txProd && Number.isFinite(Number(txProd.stock))
+              ? Math.max(0, Number(txProd.stock))
+              : Math.max(0, p.stock - req.quantity);
+
+          const updatedProd: Product = { ...p, stock: newStock };
+
+          // Low stock rule: Warning level <= minThreshold; Critical level <= 3 units
+          if (newStock <= p.minThreshold) {
+            const isCritical = newStock <= 3;
+            lowStockAlerts.push({ product: p, newStock, isCritical });
+          }
+          return updatedProd;
+        })
+      );
+
+      // Low stock alert: visible to all, but push notification is dispatched to Client / Owner only
+      if (lowStockAlerts.length > 0) {
+        lowStockAlerts.forEach(alert => {
+          addNotification({
+            title: alert.isCritical ? `🚨 CRITICAL Low Stock: ${alert.product.name}` : `⚠️ Low Stock Warning: ${alert.product.name}`,
+            message: `Stock level dropped to ${alert.newStock} ${alert.product.unit || 'units'} in ${activeStore.name}. Min threshold is ${alert.product.minThreshold}. Please initiate manual restock.`,
+            category: 'low_stock',
+            linkModule: 'retailer',
+            targetRole: 'client' // Client/Owner push alert
+          });
         });
       }
-    }
 
-    // Prepare Customer loyalty, totalPurchases & creditBalance update if customer linked
-    let updatedCustObj: CustomerProfile | undefined = undefined;
-    if (newInvoice.customerId || newInvoice.customerPhone) {
-      const matchedCustomer = customers.find(
-        c =>
-          (newInvoice.customerId && c.id === newInvoice.customerId) ||
-          (newInvoice.customerPhone && c.phone === newInvoice.customerPhone)
-      );
-      if (matchedCustomer) {
-        const creditDelta = newInvoice.paymentMethod === 'credit' ? Number(newInvoice.grandTotal || 0) : 0;
-        updatedCustObj = {
-          ...matchedCustomer,
-          totalPurchases: (Number(matchedCustomer.totalPurchases) || 0) + newInvoice.grandTotal,
-          loyaltyPoints: Math.max(
-            0,
-            (Number(matchedCustomer.loyaltyPoints) || 0) -
-              (newInvoice.loyaltyPointsRedeemed || 0) +
-              (newInvoice.loyaltyPointsEarned || 0)
-          ),
-          creditBalance: (Number(matchedCustomer.creditBalance) || 0) + creditDelta
-        };
+      if (updatedCustObj) {
+        const finalCust = updatedCustObj;
+        setCustomers(prev => prev.map(c => (c.id === finalCust.id ? finalCust : c)));
       }
-    }
 
-    const auditLogObj: AuditLog = {
-      id: `log-${Date.now()}-${uniqueSuffix}`,
-      user: currentUser.name,
-      role: activeRole,
-      action: 'POS Invoice Created',
-      details: `Invoice ${invoiceNumber} created for ${newInvoice.customerName} (₹${newInvoice.grandTotal}) at ${activeStore.name}`,
-      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
-      ipAddress: '127.0.0.1',
-      status: 'success'
-    };
-
-    // 4. Atomic persistence & stock verification via Firestore transaction
-    let txCommittedProducts: Product[] | undefined;
-    try {
-      txCommittedProducts = await syncManager.syncPOSSaleAtomic(
-        activeStore.id,
+      setInvoices(prev => [
         newInvoice,
-        previewUpdatedProducts,
-        updatedCustObj,
-        auditLogObj
-      );
-    } catch (err: any) {
-      releaseReservation();
-      if (isInsufficientStockError(err) && err.productId && typeof err.availableStock === 'number') {
-        const remoteStock = Math.max(0, err.availableStock);
-        setProducts(prev =>
-          prev.map(p => (p.id === err.productId ? { ...p, stock: remoteStock } : p))
-        );
-      }
+        ...prev.filter(inv => inv.id !== newInvoice.id)
+      ]);
+      setAuditLogs(prev => [
+        auditLogObj,
+        ...prev.filter(l => l.id !== auditLogObj.id)
+      ]);
+
       addNotification({
-        title: 'Sale Rejected: Insufficient Stock',
-        message: err?.message || 'Concurrent sale updated stock levels. Please review cart quantities.',
-        category: 'low_stock',
+        title: 'Invoice Generated',
+        message: `Invoice #${newInvoice.invoiceNumber} created for ₹${newInvoice.grandTotal} (${newInvoice.paymentMethod.toUpperCase()}).`,
+        category: 'payment',
         linkModule: 'retailer'
       });
-      throw err;
-    }
 
-    // 5. Commit stock deduction to local state and release in-flight reservation simultaneously
-    releaseReservation();
+      return newInvoice;
+    };
 
-    const committedById = new Map<string, Product>(
-      Array.isArray(txCommittedProducts) ? txCommittedProducts.map(p => [p.id, p]) : []
-    );
-    const lowStockAlerts: { product: Product; newStock: number; isCritical: boolean }[] = [];
-
-    setProducts(prev =>
-      prev.map(p => {
-        const req = requestedByProduct.get(p.id);
-        if (!req) return p;
-
-        const txProd = committedById.get(p.id);
-        const newStock = txProd
-          ? Math.max(0, Math.min(p.stock, Number(txProd.stock)))
-          : Math.max(0, p.stock - req.quantity);
-
-        const updatedProd: Product = { ...p, stock: newStock };
-
-        // Low stock rule: Warning level <= minThreshold; Critical level <= 3 units
-        if (newStock <= p.minThreshold) {
-          const isCritical = newStock <= 3;
-          lowStockAlerts.push({ product: p, newStock, isCritical });
-        }
-        return updatedProd;
-      })
-    );
-
-    // Low stock alert: visible to all, but push notification is dispatched to Client / Owner only
-    if (lowStockAlerts.length > 0) {
-      lowStockAlerts.forEach(alert => {
-        addNotification({
-          title: alert.isCritical ? `🚨 CRITICAL Low Stock: ${alert.product.name}` : `⚠️ Low Stock Warning: ${alert.product.name}`,
-          message: `Stock level dropped to ${alert.newStock} ${alert.product.unit || 'units'} in ${activeStore.name}. Min threshold is ${alert.product.minThreshold}. Please initiate manual restock.`,
-          category: 'low_stock',
-          linkModule: 'retailer',
-          targetRole: 'client' // Client/Owner push alert
-        });
-      });
-    }
-
-    if (updatedCustObj) {
-      const finalCust = updatedCustObj;
-      setCustomers(prev => prev.map(c => (c.id === finalCust.id ? finalCust : c)));
-    }
-
-    setInvoices(prev => [newInvoice, ...prev]);
-    setAuditLogs(prev => [auditLogObj, ...prev]);
-
-    addNotification({
-      title: 'Invoice Generated',
-      message: `Invoice #${invoiceNumber} created for ₹${newInvoice.grandTotal} (${newInvoice.paymentMethod.toUpperCase()}).`,
-      category: 'payment',
-      linkModule: 'retailer'
+    const taskPromise = executeCreation().finally(() => {
+      inFlightInvoiceTasksRef.current.delete(invoiceId);
     });
-
-    return newInvoice;
+    inFlightInvoiceTasksRef.current.set(invoiceId, taskPromise);
+    return taskPromise;
   };
 
   const deleteInvoice = (id: string) => {
@@ -1918,23 +2046,51 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
   };
 
   const resetToDefaultData = () => {
-    if (!isDemoMode) {
-      localStorage.clear();
+    if (isDemoMode) {
+      const defaultStoreId = mockStores[0].id;
+      setStores(mockStores);
+      setActiveStore(mockStores[0]);
+      setProducts(loadStoreScopedCache('ellix_products', defaultStoreId, mockProducts));
+      setWholesalers(loadStoreScopedCache('ellix_wholesalers', defaultStoreId, mockWholesalers));
+      setConnections(mockConnections);
+      setCustomers(loadStoreScopedCache('ellix_customers', defaultStoreId, mockCustomers));
+      setInvoices(loadStoreScopedCache('ellix_invoices', defaultStoreId, mockInvoices));
+      setRestockOrders(loadStoreScopedCache('ellix_restock_orders', defaultStoreId, mockRestockOrders));
+      setCustomerOrders(loadStoreScopedCache('ellix_customer_orders', defaultStoreId, mockCustomerOrders));
+      setEmployees(loadStoreScopedCache('ellix_employees', defaultStoreId, mockEmployees));
+      setSuppliers(loadStoreScopedCache('ellix_suppliers', defaultStoreId, mockSuppliers));
+      setRestockLogs(loadStoreScopedCache('ellix_restock_logs', defaultStoreId, mockRestockLogs));
+      setNotifications(mockNotifications);
+      setAuditLogs(loadStoreScopedCache('ellix_audit_logs', defaultStoreId, mockAuditLogs));
+      setInvoiceTemplates(mockInvoiceTemplates);
+      return;
     }
-    setStores(mockStores);
-    setActiveStore(mockStores[0]);
-    setProducts(mockProducts);
-    setWholesalers(mockWholesalers);
-    setConnections(mockConnections);
-    setCustomers(mockCustomers);
-    setInvoices(mockInvoices);
-    setRestockOrders(mockRestockOrders);
-    setCustomerOrders(mockCustomerOrders);
-    setEmployees(mockEmployees);
-    setNotifications(mockNotifications);
-    setAuditLogs(mockAuditLogs);
+
+    localStorage.removeItem(`ellix_products_${activeStore.id}`);
+    localStorage.removeItem(`ellix_wholesalers_${activeStore.id}`);
+    localStorage.removeItem(`ellix_connections_${activeStore.id}`);
+    localStorage.removeItem(`ellix_customers_${activeStore.id}`);
+    localStorage.removeItem(`ellix_invoices_${activeStore.id}`);
+    localStorage.removeItem(`ellix_restock_orders_${activeStore.id}`);
+    localStorage.removeItem(`ellix_customer_orders_${activeStore.id}`);
+    localStorage.removeItem(`ellix_employees_${activeStore.id}`);
+    localStorage.removeItem(`ellix_suppliers_${activeStore.id}`);
+    localStorage.removeItem(`ellix_restock_logs_${activeStore.id}`);
+    localStorage.removeItem(`ellix_notifications_${activeStore.id}`);
+    localStorage.removeItem(`ellix_audit_logs_${activeStore.id}`);
+    setProducts([]);
+    setWholesalers([]);
+    setConnections([]);
+    setCustomers([]);
+    setInvoices([]);
+    setRestockOrders([]);
+    setCustomerOrders([]);
+    setEmployees([]);
+    setSuppliers([]);
+    setRestockLogs([]);
+    setNotifications([]);
+    setAuditLogs([]);
     setInvoiceTemplates(mockInvoiceTemplates);
-    addAuditLog('Database Reset', 'Restored all collections to default factory fixtures', 'warning');
   };
 
   const restoreDatabaseFromJSON = (snapshot: any): { success: boolean; message: string } => {

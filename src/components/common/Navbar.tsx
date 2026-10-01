@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { ActiveModule, UserRole, AppRole } from '../../types';
 import { NotificationCenter } from './NotificationCenter';
 import { SettingsModal } from './SettingsModal';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { EllixConnectLogo } from '../branding/EllixConnectLogo';
 import {
   Store as StoreIcon,
@@ -69,6 +70,23 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [showStoreDropdown, setShowStoreDropdown] = useState(false);
+  const storeDropdownRef = React.useRef<HTMLDivElement>(null);
+  const roleDropdownRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (storeDropdownRef.current && !storeDropdownRef.current.contains(event.target as Node)) {
+        setShowStoreDropdown(false);
+      }
+      if (roleDropdownRef.current && !roleDropdownRef.current.contains(event.target as Node)) {
+        setShowRoleDropdown(false);
+      }
+    };
+    if (showStoreDropdown || showRoleDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showStoreDropdown, showRoleDropdown]);
 
   // Connectivity detection using navigator.onLine API
   const [isOnline, setIsOnline] = useState<boolean>(() => {
@@ -153,7 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 glass-panel border-b border-slate-800 text-slate-100 shadow-xl w-full max-w-full overflow-x-hidden relative">
+    <header className="sticky top-0 z-40 glass-panel border-b border-slate-800 text-slate-100 shadow-xl w-full max-w-full relative">
       {/* Subtle brand gradient backdrop BEHIND the glass navbar to give frosted refraction depth */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-emerald-600/10 via-teal-500/5 to-emerald-600/10 pointer-events-none" />
       <div className="w-full max-w-7xl mx-auto px-2.5 sm:px-4 lg:px-6">
@@ -200,10 +218,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             {/* Active Store Indicator & Switcher (FIX 3: Clear Current Store Visibility) */}
-            <div className="relative">
+            <div ref={storeDropdownRef} className="relative">
               <button
                 id="btn-navbar-store-select"
-                onClick={() => setShowStoreDropdown(!showStoreDropdown)}
+                onClick={() => {
+                  setShowStoreDropdown(!showStoreDropdown);
+                  setShowRoleDropdown(false);
+                }}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm max-w-[130px] xs:max-w-[165px] sm:max-w-[230px] ${
                   isCrew
                     ? 'bg-amber-500/10 border-amber-500/30 text-amber-200 hover:bg-amber-500/20'
@@ -274,6 +295,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Right Action Controls */}
           <div className="flex items-center gap-2 shrink-0">
 
+            {/* Global Multi-Language Switcher */}
+            <LanguageSwitcher variant="compact" />
+
             {/* Notification Bell */}
             <button
               id="btn-nav-notifications"
@@ -317,9 +341,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
 
             {/* Role Switcher & Profile Dropdown */}
-            <div className="relative shrink-0">
+            <div ref={roleDropdownRef} className="relative shrink-0">
               <button
-                onClick={() => setShowRoleDropdown(!showRoleDropdown)}
+                onClick={() => {
+                  setShowRoleDropdown(!showRoleDropdown);
+                  setShowStoreDropdown(false);
+                }}
                 className="flex items-center gap-2 p-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 hover:border-slate-600 text-xs text-slate-200 transition-all"
               >
                 {authUser?.photoURL ? (
@@ -352,7 +379,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
 
               {showRoleDropdown && (
-                <div className="absolute right-0 mt-2 w-72 rounded-xl bg-[#161D2C] border border-slate-700/80 shadow-2xl p-2 z-50">
+                <div className="absolute right-0 mt-2 w-72 max-w-[calc(100vw-1.5rem)] rounded-xl bg-[#161D2C] border border-slate-700/80 shadow-2xl p-2 z-50">
                   
                   {/* Authenticated User Status Bar */}
                   {authUser ? (

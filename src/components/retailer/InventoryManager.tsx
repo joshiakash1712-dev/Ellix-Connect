@@ -650,47 +650,49 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({ isLoading })
                       </button>
                     </td>
 
-                    <td className="py-3 text-right space-x-1.5">
-                      <button
-                        onClick={() => setRestockTargetProduct(prod)}
-                        className={`px-3 py-1.5 rounded-lg text-[11px] font-bold inline-flex items-center gap-1.5 transition-colors shadow-sm ${
-                          isLowStock
-                            ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-400'
-                            : 'bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500/40'
-                        }`}
-                        title="Restock Product Inventory"
-                      >
-                        <Zap className="w-3.5 h-3.5" />
-                        <span>Restock</span>
-                      </button>
+                    <td className="py-3 text-right whitespace-nowrap">
+                      <div className="inline-flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setRestockTargetProduct(prod)}
+                          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold inline-flex items-center gap-1.5 transition-colors shadow-sm ${
+                            isLowStock
+                              ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-400'
+                              : 'bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500/40'
+                          }`}
+                          title="Restock Product Inventory"
+                        >
+                          <Zap className="w-3.5 h-3.5" />
+                          <span>Restock</span>
+                        </button>
 
-                      <button
-                        onClick={() => setBarcodeTarget(prod)}
-                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 transition-colors"
-                        title="Print / View Barcode"
-                      >
-                        <QrCode className="w-3.5 h-3.5" />
-                      </button>
+                        <button
+                          onClick={() => setBarcodeTarget(prod)}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 transition-colors"
+                          title="Print / View Barcode"
+                        >
+                          <QrCode className="w-3.5 h-3.5" />
+                        </button>
 
-                      {isOwnerOrAdmin && (
-                        <>
-                          <button
-                            onClick={() => handleEditProduct(prod)}
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 transition-colors"
-                            title="Edit Product"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
+                        {isOwnerOrAdmin && (
+                          <>
+                            <button
+                              onClick={() => handleEditProduct(prod)}
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 transition-colors"
+                              title="Edit Product"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
 
-                          <button
-                            onClick={() => deleteProduct(prod.id)}
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-slate-700/80 transition-colors"
-                            title="Delete Product"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </>
-                      )}
+                            <button
+                              onClick={() => deleteProduct(prod.id)}
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-slate-700/80 transition-colors"
+                              title="Delete Product"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );
@@ -791,7 +793,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({ isLoading })
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="text-slate-400 font-semibold block mb-1">Purchase Price ₹</label>
                   <input

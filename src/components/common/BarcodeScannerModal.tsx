@@ -158,7 +158,6 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
               id="input-manual-barcode"
               type="text"
               inputMode="numeric"
-              autoFocus
               pattern="[0-9]*"
               value={manualCode}
               onChange={e => setManualCode(e.target.value)}

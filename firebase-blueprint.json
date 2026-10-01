@@ -272,6 +272,17 @@
         "createdAt": { "type": "string" }
       },
       "required": ["id", "storeId", "productId", "quantity"]
+    },
+    "InvoiceCounter": {
+      "title": "InvoiceCounter",
+      "description": "Atomic per-store sequence and invoice number uniqueness registry",
+      "type": "object",
+      "properties": {
+        "storeId": { "type": "string", "maxLength": 128 },
+        "lastSequence": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["storeId", "lastSequence"]
     }
   },
   "firestore": {
@@ -298,6 +309,10 @@
     "/stores/{storeId}/invoices/{invoiceId}": {
       "schema": "POSInvoice",
       "description": "Store sales invoices and receipts"
+    },
+    "/stores/{storeId}/counters/{counterId}": {
+      "schema": "InvoiceCounter",
+      "description": "Atomic per-store invoice sequence and uniqueness counter"
     },
     "/stores/{storeId}/suppliers/{supplierId}": {
       "schema": "Supplier",
