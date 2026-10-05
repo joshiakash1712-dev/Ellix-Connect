@@ -360,12 +360,12 @@ export const mockCustomers: CustomerProfile[] = [
     name: 'Pooja Iyer',
     phone: '+91 98999 77665',
     email: 'pooja.iyer@yahoo.com',
-    address: '88 Green Park Road, Juhu',
+    address: '88 Blue Crest Road, Juhu',
     creditBalance: 0,
     loyaltyPoints: 520,
     phoneVerified: true,
     totalPurchases: 41200,
-    savedAddresses: ['88 Green Park Road, Juhu'],
+    savedAddresses: ['88 Blue Crest Road, Juhu'],
     segment: 'VIP / Corporate',
     assignedTemplateId: 'tpl-1'
   },
@@ -1168,7 +1168,7 @@ export const mockInvoiceTemplates: InvoiceTemplate[] = [
       storeDisplayName: 'Quick Mart Mini',
       headerTagline: 'Fast Counter Express',
       primaryColor: '#0f172a',
-      accentColor: '#059669',
+      accentColor: '#1D4ED8',
       footerNote: '*** THANK YOU - VISIT AGAIN ***',
       termsAndConditions: 'No exchange without physical receipt.'
     },

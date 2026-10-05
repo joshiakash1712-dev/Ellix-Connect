@@ -60,9 +60,9 @@ const capabilities: CapabilityItem[] = [
       ],
       snippet: (
         <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
-          <div className="flex justify-between text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+          <div className="flex justify-between text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
             <span>INV-2026-0842</span>
-            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">GST COMPLIANT</span>
+            <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">GST COMPLIANT</span>
           </div>
           <div className="flex justify-between text-slate-300">
             <span>Basmati Rice 5kg x 1</span>
@@ -78,7 +78,7 @@ const capabilities: CapabilityItem[] = [
           </div>
           <div className="flex justify-between font-bold text-white text-sm pt-1">
             <span>Total Amount Paid</span>
-            <span className="text-emerald-400">₹880.00 (UPI Verified)</span>
+            <span className="text-sky-400">₹880.00 (UPI Verified)</span>
           </div>
         </div>
       )
@@ -111,7 +111,7 @@ const capabilities: CapabilityItem[] = [
         <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2.5 border border-slate-800 shadow-inner">
           <div className="flex justify-between items-center text-slate-300 border-b border-slate-800 pb-1.5">
             <span className="font-bold text-white">SKU-89241 · Tata Tea Gold 500g</span>
-            <span className="text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded text-[10px] font-bold border border-emerald-800/60">In Stock: 84 units</span>
+            <span className="text-sky-400 bg-blue-950/80 px-2 py-0.5 rounded text-[10px] font-bold border border-sky-800/60">In Stock: 84 units</span>
           </div>
           <div className="grid grid-cols-3 gap-2 text-[11px]">
             <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
@@ -124,7 +124,7 @@ const capabilities: CapabilityItem[] = [
             </div>
             <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
               <div className="text-slate-400 text-[10px]">Reorder Level</div>
-              <div className="font-bold text-emerald-400">15 Units</div>
+              <div className="font-bold text-sky-400">15 Units</div>
             </div>
           </div>
         </div>
@@ -213,7 +213,7 @@ const capabilities: CapabilityItem[] = [
               <div className="font-bold text-amber-300 text-sm">₹2,450.00</div>
             </div>
           </div>
-          <div className="flex justify-between text-[11px] text-emerald-400 pt-1">
+          <div className="flex justify-between text-[11px] text-sky-400 pt-1">
             <span>Available Reward Points: 340 pts</span>
             <span className="text-white underline cursor-pointer">One-Tap UPI Link</span>
           </div>
@@ -248,7 +248,7 @@ const capabilities: CapabilityItem[] = [
         <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
           <div className="flex justify-between items-center border-b border-slate-800 pb-1.5">
             <span className="font-bold text-white">Dynamic UPI QR Code</span>
-            <span className="text-emerald-400 text-[10px]">Verified Settlement</span>
+            <span className="text-sky-400 text-[10px]">Verified Settlement</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-16 h-16 bg-white p-1 rounded-lg flex items-center justify-center shrink-0 shadow">
@@ -256,7 +256,7 @@ const capabilities: CapabilityItem[] = [
             </div>
             <div className="space-y-1 text-[11px]">
               <div className="text-slate-300">Bill Total: <strong className="text-white">₹1,450.00</strong></div>
-              <div className="text-emerald-400">Scan via GPay / PhonePe / Paytm</div>
+              <div className="text-sky-400">Scan via GPay / PhonePe / Paytm</div>
               <div className="text-[10px] text-slate-400">Merchant VPA: ellix.store@icici</div>
             </div>
           </div>
@@ -291,13 +291,13 @@ const capabilities: CapabilityItem[] = [
         <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
           <div className="flex justify-between border-b border-slate-800 pb-1.5 font-bold text-white">
             <span>Shift Handover: Morning Register #02</span>
-            <span className="text-emerald-400">Balanced ✓</span>
+            <span className="text-sky-400">Balanced ✓</span>
           </div>
           <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
             <div>Opening Cash: ₹2,000.00</div>
             <div>Cash Collected: ₹18,450.00</div>
             <div>UPI Settlements: ₹24,800.00</div>
-            <div className="text-emerald-400 font-bold">Closing Till: ₹20,450.00</div>
+            <div className="text-sky-400 font-bold">Closing Till: ₹20,450.00</div>
           </div>
         </div>
       )
@@ -330,7 +330,7 @@ const capabilities: CapabilityItem[] = [
         <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
           <div className="flex justify-between border-b border-slate-800 pb-1.5 text-white font-bold">
             <span>Day-End Report · Sep 16, 2026</span>
-            <span className="text-emerald-400">Export Complete</span>
+            <span className="text-sky-400">Export Complete</span>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center text-[11px]">
             <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
@@ -343,7 +343,7 @@ const capabilities: CapabilityItem[] = [
             </div>
             <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
               <div className="text-slate-400 text-[10px]">Est. Margin</div>
-              <div className="font-bold text-emerald-400">23.8%</div>
+              <div className="font-bold text-sky-400">23.8%</div>
             </div>
           </div>
         </div>
@@ -377,7 +377,7 @@ const capabilities: CapabilityItem[] = [
         <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
           <div className="flex justify-between border-b border-slate-800 pb-1.5 text-white font-bold">
             <span>Top Velocity SKUs (This Week)</span>
-            <span className="text-emerald-400">+18% vs Last Week</span>
+            <span className="text-sky-400">+18% vs Last Week</span>
           </div>
           <div className="space-y-1 text-[11px] text-slate-300">
             <div className="flex justify-between">
@@ -470,15 +470,18 @@ export const CoreCapabilities: React.FC = () => {
         
         {/* Section Header */}
         <div className="max-w-3xl mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
-            Core Capabilities
+          <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
+            <span>Core Capabilities</span>
+            <span className="text-slate-300 dark:text-slate-700">·</span>
+            <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">Store Operating System</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight">
             Everything your business needs to operate smoothly.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
             Eight foundational pillars engineered to replace clunky legacy billing systems and fragmented paper ledgers.
-            <span className="hidden lg:inline text-emerald-600 dark:text-emerald-400 font-semibold ml-1">
+            <span className="hidden lg:inline text-blue-600 dark:text-sky-400 font-semibold ml-1">
               Hover over any capability below to explore its live workspace in-place.
             </span>
           </p>
@@ -512,8 +515,8 @@ export const CoreCapabilities: React.FC = () => {
                   onMouseEnter={() => handleCardMouseEnter(cap.id, index)}
                   className={`website-card-hover p-5 rounded-2xl text-left flex flex-col justify-between cursor-pointer border transition-all duration-200 ${
                     isCurrent && !isHovered
-                      ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
-                      : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                      ? 'bg-white dark:bg-slate-900 border-sky-500/60 ring-2 ring-blue-500/30 shadow-md text-slate-900 dark:text-white'
+                      : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 hover:shadow-lg text-slate-900 dark:text-white'
                   }`}
                 >
                   <div>
@@ -521,7 +524,7 @@ export const CoreCapabilities: React.FC = () => {
                     <div className="flex items-center justify-between mb-4">
                       <div
                         data-icon-box
-                        className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200"
+                        className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center transition-all duration-200"
                       >
                         <Icon className="w-5 h-5 transition-transform duration-200" />
                       </div>
@@ -534,7 +537,7 @@ export const CoreCapabilities: React.FC = () => {
                     </div>
 
                     {/* Category & Title */}
-                    <div className="text-[10px] font-bold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-1">
+                    <div className="text-[10px] font-bold tracking-wider uppercase text-blue-600 dark:text-sky-400 mb-1">
                       {cap.category}
                     </div>
                     <h3 className="text-base font-bold text-slate-950 dark:text-white mb-2">
@@ -554,7 +557,7 @@ export const CoreCapabilities: React.FC = () => {
                   >
                     {cap.checklist.slice(0, 2).map((item, idx) => (
                       <div key={idx} className="flex items-center gap-1.5 truncate">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                        <CheckCircle2 className="w-3 h-3 text-sky-500 shrink-0" />
                         <span className="truncate">{item}</span>
                       </div>
                     ))}
@@ -600,19 +603,19 @@ export const CoreCapabilities: React.FC = () => {
                   duration: 0.32,
                   ease: [0.16, 1, 0.3, 1]
                 }}
-                className="col-start-1 row-start-1 z-20 w-full h-full min-h-[580px] box-border overflow-hidden p-6 sm:p-8 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 flex flex-col justify-between gap-5"
+                className="col-start-1 row-start-1 z-20 w-full h-full min-h-[580px] box-border overflow-hidden p-6 sm:p-8 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-sky-500/40 dark:border-sky-500/30 shadow-2xl ring-1 ring-blue-500/20 flex flex-col justify-between gap-5"
               >
                 {/* Top Interactive Capability Switcher Ribbon */}
                 <div>
                   <div className="flex items-center justify-between gap-2 pb-4 mb-6 border-b border-slate-200/80 dark:border-slate-800/80">
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
                       <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200">
                         Interactive Capability Workspace
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                      <MousePointer2 className="w-3.5 h-3.5 text-emerald-500" />
+                      <MousePointer2 className="w-3.5 h-3.5 text-sky-500" />
                       <span>Hover any pill to transform workspace</span>
                     </div>
                   </div>
@@ -631,11 +634,11 @@ export const CoreCapabilities: React.FC = () => {
                           onClick={() => handleCardMouseEnter(c.id, idx)}
                           className={`relative py-2 px-1.5 rounded-xl text-xs font-bold transition-all duration-150 hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${
                             isActive
-                              ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500/50 shadow-sm ring-1 ring-emerald-500/20'
+                              ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-sky-400 border border-sky-500/50 shadow-sm ring-1 ring-blue-500/20'
                               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-900/60 border border-transparent'
                           }`}
                         >
-                          <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-emerald-500' : 'text-slate-400'}`} />
+                          <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-sky-500' : 'text-slate-400'}`} />
                           <span className="truncate text-[11px]">{c.shortLabel}</span>
                         </button>
                       );
@@ -653,8 +656,8 @@ export const CoreCapabilities: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="w-full lg:w-[48%] space-y-4"
                   >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-300/60 dark:border-emerald-800/60">
-                      <ActiveIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 dark:bg-blue-950/80 text-blue-800 dark:text-sky-300 text-xs font-bold border border-sky-300/60 dark:border-sky-800/60">
+                      <ActiveIcon className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
                       <span>{activeCap.category}</span>
                     </div>
 
@@ -674,7 +677,7 @@ export const CoreCapabilities: React.FC = () => {
                       <div className="grid grid-cols-1 gap-2 text-xs font-medium text-slate-700 dark:text-slate-200">
                         {activeCap.checklist.map((point, idx) => (
                           <div key={idx} className="flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <CheckCircle2 className="w-4 h-4 text-sky-500 shrink-0" />
                             <span>{point}</span>
                           </div>
                         ))}
@@ -710,12 +713,12 @@ export const CoreCapabilities: React.FC = () => {
                     <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-lg space-y-3">
                       <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                         <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse" />
                           <span className="text-xs font-bold text-slate-900 dark:text-white font-mono">
                             {activeCap.previewData.badgeText}
                           </span>
                         </div>
-                        <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
+                        <span className="text-[11px] font-semibold text-blue-600 dark:text-sky-400 bg-sky-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-md border border-sky-200/60 dark:border-sky-800/60">
                           Live UI Preview
                         </span>
                       </div>
@@ -729,7 +732,7 @@ export const CoreCapabilities: React.FC = () => {
 
                       <div className="pt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80">
                         <span>End-to-end synchronized module</span>
-                        <span className="text-emerald-500 font-semibold">Zero latency cloud sync</span>
+                        <span className="text-sky-500 font-semibold">Zero latency cloud sync</span>
                       </div>
                     </div>
                   </motion.div>
@@ -757,14 +760,14 @@ export const CoreCapabilities: React.FC = () => {
                   aria-pressed={isSelected}
                   className={`snap-start shrink-0 w-[250px] sm:w-auto p-4 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
                     isSelected
-                      ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/40 shadow-md text-slate-900 dark:text-white'
+                      ? 'bg-white dark:bg-slate-900 border-sky-500 ring-2 ring-blue-500/40 shadow-md text-slate-900 dark:text-white'
                       : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white'
                   }`}
                 >
                   <div>
                     <div className="flex items-center justify-between mb-2.5">
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                        isSelected ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        isSelected ? 'bg-sky-50 dark:bg-blue-950 text-blue-600 dark:text-sky-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                       }`}>
                         <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
@@ -773,7 +776,7 @@ export const CoreCapabilities: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-0.5">
+                    <div className="text-[10px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider mb-0.5">
                       {cap.category}
                     </div>
                     <h3 className="text-sm sm:text-base font-bold mb-1">
@@ -784,7 +787,7 @@ export const CoreCapabilities: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-blue-600 dark:text-sky-400">
                     <span>{isSelected ? 'Viewing details ↓' : 'Tap to preview'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
@@ -795,7 +798,7 @@ export const CoreCapabilities: React.FC = () => {
 
           {/* Mobile Detail Panel */}
           <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-bold border border-sky-200 dark:border-sky-800">
               <ActiveIcon className="w-3.5 h-3.5" />
               <span>{activeCap.category}</span>
             </div>
@@ -815,7 +818,7 @@ export const CoreCapabilities: React.FC = () => {
               <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
                 {activeCap.checklist.map((pt, idx) => (
                   <div key={idx} className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                     <span>{pt}</span>
                   </div>
                 ))}

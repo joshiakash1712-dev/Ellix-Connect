@@ -25,7 +25,8 @@ import {
   RestockLog,
   OfflineSyncItem,
   CloudSyncState,
-  SaveFeedback
+  SaveFeedback,
+  normalizeCanonicalRole
 } from '../types';
 import firebaseConfig from '../../firebase-applet-config.json';
 import {
@@ -710,10 +711,36 @@ export class FirestoreSyncManager {
     };
 
     try {
-      // 1. Products Collection (Strictly Store-Isolated - No cross-store seeding)
-      const productsRef = collection(db, 'stores', storeId, 'products');
+      const canonicalRole = normalizeCanonicalRole(authOptions?.userRole ?? 'client');
+      if (canonicalRole === 'unauthorized') {
+        clearTimeout(safetyTimer);
+        callbacks.onProductsUpdate?.([]);
+        callbacks.onCustomersUpdate?.([]);
+        callbacks.onInvoicesUpdate?.([]);
+        callbacks.onRestockOrdersUpdate?.([]);
+        callbacks.onCustomerOrdersUpdate?.([]);
+        callbacks.onAuditLogsUpdate?.([]);
+        callbacks.onWholesalersUpdate?.([]);
+        callbacks.onEmployeesUpdate?.([]);
+        callbacks.onSuppliersUpdate?.([]);
+        callbacks.onRestockLogsUpdate?.([]);
+        callbacks.onInitialDataLoaded?.();
+        return () => {};
+      }
+
+      const isCrewRole = canonicalRole === 'crew';
+      const isWholesalerRole = canonicalRole === 'wholesaler_admin';
+      const canManageStoreRole =
+        canonicalRole === 'super_admin' ||
+        canonicalRole === 'ellix_admin' ||
+        canonicalRole === 'client';
+
+      // 1. Products Collection (Wholesaler queries only sharedWithWholesalers == true)
+      const productsQuery = isWholesalerRole
+        ? query(collection(db, 'stores', storeId, 'products'), where('sharedWithWholesalers', '==', true))
+        : collection(db, 'stores', storeId, 'products');
       const unsubProducts = onSnapshot(
-        productsRef,
+        productsQuery,
         (snapshot) => {
           counts.products = snapshot.size;
           const list = snapshot.docs.map(doc => doc.data() as Product);
@@ -732,122 +759,147 @@ export class FirestoreSyncManager {
       );
       this.unsubs.push(unsubProducts);
 
-      // 2. Customers Collection
-      const customersRef = collection(db, 'stores', storeId, 'customers');
-      const unsubCustomers = onSnapshot(
-        customersRef,
-        (snapshot) => {
-          counts.customers = snapshot.size;
-          const list = snapshot.docs.map(doc => doc.data() as CustomerProfile);
-          callbacks.onCustomersUpdate?.(list);
-          notifySynced();
-          checkInitialLoad('customers');
-        },
-        (error) => {
-          console.warn('[FirestoreSync] Customers snapshot warning:', error.message);
-          checkInitialLoad('customers');
-        }
-      );
-      this.unsubs.push(unsubCustomers);
-
-      // 3. Invoices Collection (Enforce Crew Privacy: Crew queries only their own cashierId)
-      const isCrewRole = authOptions?.userRole === 'crew' || authOptions?.userRole === 'cashier' || authOptions?.userRole === 'employee';
-      const invoicesQuery = (isCrewRole && authOptions?.userUid)
-        ? query(collection(db, 'stores', storeId, 'invoices'), where('cashierId', '==', authOptions.userUid))
-        : collection(db, 'stores', storeId, 'invoices');
-
-      const unsubInvoices = onSnapshot(
-        invoicesQuery,
-        (snapshot) => {
-          counts.invoices = snapshot.size;
-          const list = snapshot.docs.map(doc => doc.data() as POSInvoice);
-          reconcileStoreInvoiceCounter(storeId, list);
-          callbacks.onInvoicesUpdate?.(list);
-          notifySynced();
-          checkInitialLoad('invoices');
-        },
-        (error) => {
-          console.warn('[FirestoreSync] Invoices snapshot warning:', error.message);
-          checkInitialLoad('invoices');
-        }
-      );
-      this.unsubs.push(unsubInvoices);
-
-      // 3b. Store Invoice Sequence Counter (Authoritative multi-terminal sync)
-      const invoiceCounterRef = doc(db, 'stores', storeId, 'counters', 'invoiceSequence');
-      const unsubInvoiceCounter = onSnapshot(
-        invoiceCounterRef,
-        (snap) => {
-          if (snap.exists()) {
-            reconcileStoreInvoiceCounter(
-              storeId,
-              undefined,
-              snap.data() as Partial<StoreInvoiceCounterState>
-            );
+      // 2. Customers Collection (Client/Admin only — Crew & Wholesaler cannot list customer directory)
+      if (canManageStoreRole) {
+        const customersRef = collection(db, 'stores', storeId, 'customers');
+        const unsubCustomers = onSnapshot(
+          customersRef,
+          (snapshot) => {
+            counts.customers = snapshot.size;
+            const list = snapshot.docs.map(doc => doc.data() as CustomerProfile);
+            callbacks.onCustomersUpdate?.(list);
+            notifySynced();
+            checkInitialLoad('customers');
+          },
+          (error) => {
+            console.warn('[FirestoreSync] Customers snapshot warning:', error.message);
+            checkInitialLoad('customers');
           }
-        },
-        (error) => {
-          console.warn('[FirestoreSync] Invoice counter snapshot warning:', error.message);
-        }
-      );
-      this.unsubs.push(unsubInvoiceCounter);
+        );
+        this.unsubs.push(unsubCustomers);
+      } else {
+        callbacks.onCustomersUpdate?.([]);
+        checkInitialLoad('customers');
+      }
 
-      // 4. Restock Orders Collection
-      const restockRef = collection(db, 'stores', storeId, 'restockOrders');
-      const unsubRestock = onSnapshot(
-        restockRef,
-        (snapshot) => {
-          counts.restockOrders = snapshot.size;
-          const list = snapshot.docs.map(doc => doc.data() as RestockOrder);
-          callbacks.onRestockOrdersUpdate?.(list);
-          notifySynced();
-        },
-        (error) => console.warn('[FirestoreSync] Restock orders snapshot warning:', error.message)
-      );
-      this.unsubs.push(unsubRestock);
+      // 3. Invoices Collection (Enforce Crew Privacy: Crew queries only their own cashierId; Wholesaler has no access)
+      if (canManageStoreRole || (isCrewRole && authOptions?.userUid)) {
+        const invoicesQuery = (isCrewRole && authOptions?.userUid)
+          ? query(collection(db, 'stores', storeId, 'invoices'), where('cashierId', '==', authOptions.userUid))
+          : collection(db, 'stores', storeId, 'invoices');
 
-      // 5. Customer Orders Collection
-      const customerOrdersRef = collection(db, 'stores', storeId, 'customerOrders');
-      const unsubCustomerOrders = onSnapshot(
-        customerOrdersRef,
-        (snapshot) => {
-          counts.customerOrders = snapshot.size;
-          const list = snapshot.docs.map(doc => doc.data() as CustomerOrder);
-          callbacks.onCustomerOrdersUpdate?.(list);
-          notifySynced();
-        },
-        (error) => console.warn('[FirestoreSync] Customer orders snapshot warning:', error.message)
-      );
-      this.unsubs.push(unsubCustomerOrders);
+        const unsubInvoices = onSnapshot(
+          invoicesQuery,
+          (snapshot) => {
+            counts.invoices = snapshot.size;
+            const list = snapshot.docs.map(doc => doc.data() as POSInvoice);
+            reconcileStoreInvoiceCounter(storeId, list);
+            callbacks.onInvoicesUpdate?.(list);
+            notifySynced();
+            checkInitialLoad('invoices');
+          },
+          (error) => {
+            console.warn('[FirestoreSync] Invoices snapshot warning:', error.message);
+            checkInitialLoad('invoices');
+          }
+        );
+        this.unsubs.push(unsubInvoices);
 
-      // 6. Audit Logs Collection
-      const auditRef = collection(db, 'stores', storeId, 'auditLogs');
-      const unsubAudit = onSnapshot(
-        auditRef,
-        (snapshot) => {
-          const list = snapshot.docs.map(doc => doc.data() as AuditLog);
-          callbacks.onAuditLogsUpdate?.(list);
-        },
-        (error) => console.warn('[FirestoreSync] Audit logs snapshot warning:', error.message)
-      );
-      this.unsubs.push(unsubAudit);
+        // 3b. Store Invoice Sequence Counter (Authoritative multi-terminal sync)
+        const invoiceCounterRef = doc(db, 'stores', storeId, 'counters', 'invoiceSequence');
+        const unsubInvoiceCounter = onSnapshot(
+          invoiceCounterRef,
+          (snap) => {
+            if (snap.exists()) {
+              reconcileStoreInvoiceCounter(
+                storeId,
+                undefined,
+                snap.data() as Partial<StoreInvoiceCounterState>
+              );
+            }
+          },
+          (error) => {
+            console.warn('[FirestoreSync] Invoice counter snapshot warning:', error.message);
+          }
+        );
+        this.unsubs.push(unsubInvoiceCounter);
+      } else {
+        callbacks.onInvoicesUpdate?.([]);
+        checkInitialLoad('invoices');
+      }
 
-      // 7. Wholesalers Collection
-      const wholesalersRef = collection(db, 'stores', storeId, 'wholesalers');
-      const unsubWholesalers = onSnapshot(
-        wholesalersRef,
-        (snapshot) => {
-          counts.wholesalers = snapshot.size;
-          const list = snapshot.docs.map(doc => doc.data() as Wholesaler);
-          callbacks.onWholesalersUpdate?.(list);
-          notifySynced();
-        },
-        (error) => console.warn('[FirestoreSync] Wholesalers snapshot warning:', error.message)
-      );
-      this.unsubs.push(unsubWholesalers);
+      // 4. Restock Orders Collection (Client/Admin or Wholesaler; Crew cannot list B2B POs)
+      if (canManageStoreRole || isWholesalerRole) {
+        const restockRef = collection(db, 'stores', storeId, 'restockOrders');
+        const unsubRestock = onSnapshot(
+          restockRef,
+          (snapshot) => {
+            counts.restockOrders = snapshot.size;
+            const list = snapshot.docs.map(doc => doc.data() as RestockOrder);
+            callbacks.onRestockOrdersUpdate?.(list);
+            notifySynced();
+          },
+          (error) => console.warn('[FirestoreSync] Restock orders snapshot warning:', error.message)
+        );
+        this.unsubs.push(unsubRestock);
+      } else {
+        callbacks.onRestockOrdersUpdate?.([]);
+      }
 
-      // 8. Employees Collection (Client/Owner only)
-      if (!isCrewRole) {
+      // 5. Customer Orders Collection (Client/Admin only)
+      if (canManageStoreRole) {
+        const customerOrdersRef = collection(db, 'stores', storeId, 'customerOrders');
+        const unsubCustomerOrders = onSnapshot(
+          customerOrdersRef,
+          (snapshot) => {
+            counts.customerOrders = snapshot.size;
+            const list = snapshot.docs.map(doc => doc.data() as CustomerOrder);
+            callbacks.onCustomerOrdersUpdate?.(list);
+            notifySynced();
+          },
+          (error) => console.warn('[FirestoreSync] Customer orders snapshot warning:', error.message)
+        );
+        this.unsubs.push(unsubCustomerOrders);
+      } else {
+        callbacks.onCustomerOrdersUpdate?.([]);
+      }
+
+      // 6. Audit Logs Collection (Client/Admin only)
+      if (canManageStoreRole) {
+        const auditRef = collection(db, 'stores', storeId, 'auditLogs');
+        const unsubAudit = onSnapshot(
+          auditRef,
+          (snapshot) => {
+            const list = snapshot.docs.map(doc => doc.data() as AuditLog);
+            callbacks.onAuditLogsUpdate?.(list);
+          },
+          (error) => console.warn('[FirestoreSync] Audit logs snapshot warning:', error.message)
+        );
+        this.unsubs.push(unsubAudit);
+      } else {
+        callbacks.onAuditLogsUpdate?.([]);
+      }
+
+      // 7. Wholesalers Collection (Client/Admin only)
+      if (canManageStoreRole) {
+        const wholesalersRef = collection(db, 'stores', storeId, 'wholesalers');
+        const unsubWholesalers = onSnapshot(
+          wholesalersRef,
+          (snapshot) => {
+            counts.wholesalers = snapshot.size;
+            const list = snapshot.docs.map(doc => doc.data() as Wholesaler);
+            callbacks.onWholesalersUpdate?.(list);
+            notifySynced();
+          },
+          (error) => console.warn('[FirestoreSync] Wholesalers snapshot warning:', error.message)
+        );
+        this.unsubs.push(unsubWholesalers);
+      } else {
+        callbacks.onWholesalersUpdate?.([]);
+      }
+
+      // 8. Employees Collection (Client/Admin only)
+      if (canManageStoreRole) {
         const employeesRef = collection(db, 'stores', storeId, 'employees');
         const unsubEmployees = onSnapshot(
           employeesRef,
@@ -860,39 +912,50 @@ export class FirestoreSyncManager {
           (error) => console.warn('[FirestoreSync] Employees snapshot warning:', error.message)
         );
         this.unsubs.push(unsubEmployees);
+      } else {
+        callbacks.onEmployeesUpdate?.([]);
       }
 
-      // 9. Suppliers Collection (Store-level vendor profiles)
-      const suppliersRef = collection(db, 'stores', storeId, 'suppliers');
-      const unsubSuppliers = onSnapshot(
-        suppliersRef,
-        (snapshot) => {
-          counts.suppliers = snapshot.size;
-          const list = snapshot.docs.map(doc => doc.data() as Supplier);
-          callbacks.onSuppliersUpdate?.(list);
-          notifySynced();
-          checkInitialLoad('suppliers');
-        },
-        (error) => {
-          console.warn('[FirestoreSync] Suppliers snapshot warning:', error.message);
-          checkInitialLoad('suppliers');
-        }
-      );
-      this.unsubs.push(unsubSuppliers);
+      // 9. Suppliers Collection (Store-level vendor profiles: Client/Admin & Crew for restock dropdown)
+      if (canManageStoreRole || isCrewRole) {
+        const suppliersRef = collection(db, 'stores', storeId, 'suppliers');
+        const unsubSuppliers = onSnapshot(
+          suppliersRef,
+          (snapshot) => {
+            counts.suppliers = snapshot.size;
+            const list = snapshot.docs.map(doc => doc.data() as Supplier);
+            callbacks.onSuppliersUpdate?.(list);
+            notifySynced();
+            checkInitialLoad('suppliers');
+          },
+          (error) => {
+            console.warn('[FirestoreSync] Suppliers snapshot warning:', error.message);
+            checkInitialLoad('suppliers');
+          }
+        );
+        this.unsubs.push(unsubSuppliers);
+      } else {
+        callbacks.onSuppliersUpdate?.([]);
+        checkInitialLoad('suppliers');
+      }
 
-      // 10. Restock Logs Collection (Audited restock transactions)
-      const restockLogsRef = collection(db, 'stores', storeId, 'restockLogs');
-      const unsubRestockLogs = onSnapshot(
-        restockLogsRef,
-        (snapshot) => {
-          counts.restockLogs = snapshot.size;
-          const list = snapshot.docs.map(doc => doc.data() as RestockLog);
-          callbacks.onRestockLogsUpdate?.(list);
-          notifySynced();
-        },
-        (error) => console.warn('[FirestoreSync] RestockLogs snapshot warning:', error.message)
-      );
-      this.unsubs.push(unsubRestockLogs);
+      // 10. Restock Logs Collection (Audited restock transactions: Client/Admin & Crew)
+      if (canManageStoreRole || isCrewRole) {
+        const restockLogsRef = collection(db, 'stores', storeId, 'restockLogs');
+        const unsubRestockLogs = onSnapshot(
+          restockLogsRef,
+          (snapshot) => {
+            counts.restockLogs = snapshot.size;
+            const list = snapshot.docs.map(doc => doc.data() as RestockLog);
+            callbacks.onRestockLogsUpdate?.(list);
+            notifySynced();
+          },
+          (error) => console.warn('[FirestoreSync] RestockLogs snapshot warning:', error.message)
+        );
+        this.unsubs.push(unsubRestockLogs);
+      } else {
+        callbacks.onRestockLogsUpdate?.([]);
+      }
 
       // Flush any queued offline modifications
       this.flushQueue();
@@ -1741,17 +1804,32 @@ export class FirestoreSyncManager {
           { merge: true }
         );
 
-        // 4. Customer profile if linked
+        // 4. Customer profile if linked (Use minimal field update when doc exists so Crew POS sales satisfy strict affectedKeys rule)
         if (committedCustomer && customerRef) {
-          transaction.set(
-            customerRef,
-            sanitizeData({
-              ...committedCustomer,
-              storeId: committedCustomerStoreId,
-              updatedAt: nowIso
-            }),
-            { merge: true }
+          const customerExistsInCloud = Boolean(
+            customerSnap && typeof customerSnap.exists === 'function' && customerSnap.exists()
           );
+          if (customerExistsInCloud) {
+            transaction.update(
+              customerRef,
+              sanitizeData({
+                totalPurchases: committedCustomer.totalPurchases,
+                loyaltyPoints: committedCustomer.loyaltyPoints,
+                creditBalance: committedCustomer.creditBalance,
+                updatedAt: nowIso
+              })
+            );
+          } else {
+            transaction.set(
+              customerRef,
+              sanitizeData({
+                ...committedCustomer,
+                storeId: committedCustomerStoreId,
+                updatedAt: nowIso
+              }),
+              { merge: true }
+            );
+          }
         }
 
         // 5. Audit Log (always committed atomically with the sale)

@@ -158,7 +158,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
       className="fixed bottom-0 left-0 right-0 z-40 glass-panel border-t border-slate-800 md:hidden min-h-[68px] px-1.5 py-1 shadow-2xl flex items-center justify-around select-none safe-area-bottom overflow-hidden"
     >
       {/* Subtle brand backdrop behind the glass mobile bar */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-emerald-600/10 via-slate-900/60 to-teal-600/10 pointer-events-none" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600/10 via-slate-900/60 to-sky-600/10 pointer-events-none" />
       {currentTabs.map(tab => {
         const isMoreTab = tab.id === 'more';
         const isActive = isMoreTab
@@ -186,7 +186,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             <div
               className={`relative min-w-[48px] min-h-[32px] flex items-center justify-center px-3.5 sm:px-4 py-1.5 rounded-full transition-all duration-200 ${
                 isActive
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/35 shadow-sm shadow-emerald-500/10 scale-105'
+                  ? 'bg-blue-500/20 text-sky-400 border border-blue-500/35 shadow-sm shadow-blue-500/10 scale-105'
                   : 'text-slate-400 group-hover:text-slate-200'
               }`}
             >
@@ -198,7 +198,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
                   className={`absolute -top-1 -right-1.5 min-w-[16px] h-4 px-1 rounded-full text-[9px] font-black flex items-center justify-center border border-slate-900 shadow-sm ${
                     tab.highlightBadge
                       ? 'bg-amber-500 text-slate-950 animate-pulse'
-                      : 'bg-emerald-500 text-white'
+                      : 'bg-blue-600 text-white'
                   }`}
                 >
                   {tab.badgeCount}
@@ -209,7 +209,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             {/* Tab Label - Short, robust and unclipped on 360px+ screens */}
             <span
               className={`text-[10px] mt-0.5 tracking-tight truncate max-w-[68px] text-center transition-colors ${
-                isActive ? 'font-bold text-emerald-400' : 'font-medium text-slate-400 group-hover:text-slate-300'
+                isActive ? 'font-bold text-sky-400' : 'font-medium text-slate-400 group-hover:text-slate-300'
               }`}
             >
               {tab.label}

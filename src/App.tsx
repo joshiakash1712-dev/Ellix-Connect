@@ -13,6 +13,7 @@ import { BottomNavigation } from './components/common/BottomNavigation';
 import { AuthModal } from './components/auth/AuthModal';
 import { SaveStatusToast } from './components/common/SaveStatusToast';
 import { ShieldCheck, Mail, AlertCircle, X, Zap } from 'lucide-react';
+import { normalizeCanonicalRole } from './types';
 
 // Lazy-loaded application views & heavy widgets to keep initial website bundle fast
 const RetailerDashboard = lazy(() =>
@@ -141,21 +142,86 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
   const prefersReducedMotion = useReducedMotion();
 
+  const canonicalRole = normalizeCanonicalRole(activeRole);
+  const isPlatformAdmin = canonicalRole === 'super_admin' || canonicalRole === 'ellix_admin';
+  const isCrew = canonicalRole === 'crew';
+  const isWholesaler = canonicalRole === 'wholesaler_admin';
+
+  // Ensure Crew defaults to 'pos' when activeView is an owner-only view
+  React.useEffect(() => {
+    if (isCrew && !['pos', 'inventory', 'my_sales', 'journey_map'].includes(activeView)) {
+      setActiveView('pos');
+    }
+  }, [isCrew, activeView]);
+
+  const handleSelectView = React.useCallback((viewId: string) => {
+    if (isCrew && !['pos', 'inventory', 'my_sales', 'journey_map'].includes(viewId)) {
+      setActiveView('pos');
+      return;
+    }
+    setActiveView(viewId);
+  }, [isCrew]);
+
   const renderActiveView = () => {
+    if (!isDemoMode && canonicalRole === 'unauthorized') {
+      return (
+        <div className="min-h-[420px] flex flex-col items-center justify-center text-center p-8 bg-slate-900/60 border border-rose-500/30 rounded-2xl">
+          <AlertCircle className="w-12 h-12 text-rose-400 mb-3" />
+          <h2 className="text-xl font-bold text-white mb-2">Access Restricted</h2>
+          <p className="text-sm text-slate-400 max-w-md">
+            Your account is currently deactivated, suspended, or has an unrecognized role. Please contact your store administrator or Ellix Connect support.
+          </p>
+        </div>
+      );
+    }
+
     // Universal journey map view accessible from any module
     if (activeView === 'journey_map') {
       return <CustomerJourneyMap />;
     }
 
     // Authoritative Subscription Paywall: Restrict core retail operations if blocked or cancelled
-    const isClient = activeRole === 'client' || userProfile?.role === 'client';
+    const isClient = canonicalRole === 'client' || normalizeCanonicalRole(userProfile?.role) === 'client';
     const isSubscriptionBlocked = subscription && (subscription.status === 'blocked' || subscription.status === 'cancelled');
     if (isClient && isSubscriptionBlocked) {
       return <SubscriptionPaywall />;
     }
 
+    // Admin Views (Strictly Super Admin & Ellix Admin only)
+    if (activeModule === 'admin') {
+      if (!isPlatformAdmin) {
+        return isCrew ? <BillingPOS /> : isWholesaler ? <WholesalerPortal /> : (
+          <RetailerDashboard
+            onNavigateToInventory={() => handleSelectView('inventory')}
+            onNavigateToRestock={() => handleSelectView('inventory')}
+          />
+        );
+      }
+      return <AdminPanel />;
+    }
+
+    // Wholesaler Views (Blocked for Crew)
+    if (activeModule === 'wholesaler' || isWholesaler) {
+      if (isCrew) {
+        return <BillingPOS />;
+      }
+      return <WholesalerPortal />;
+    }
+
     // Retailer Views
     if (activeModule === 'retailer') {
+      if (isCrew) {
+        switch (activeView) {
+          case 'inventory':
+            return <InventoryManager />;
+          case 'my_sales':
+            return <CrewSales />;
+          case 'pos':
+          default:
+            return <BillingPOS />;
+        }
+      }
+
       switch (activeView) {
         case 'journey_map':
           return <CustomerJourneyMap />;
@@ -172,38 +238,30 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
         case 'templates':
           return <InvoiceTemplates />;
         case 'reports':
-          return <ReportsAnalytics onNavigateToPOS={() => setActiveView('pos')} />;
+          return <ReportsAnalytics onNavigateToPOS={() => handleSelectView('pos')} />;
         case 'employees':
           return <EmployeeRoles />;
         case 'dashboard':
         default:
           return (
             <RetailerDashboard
-              onNavigateToInventory={() => setActiveView('inventory')}
-              onNavigateToRestock={() => setActiveView('inventory')}
-              onNavigateToPOS={() => setActiveView('pos')}
+              onNavigateToInventory={() => handleSelectView('inventory')}
+              onNavigateToRestock={() => handleSelectView('inventory')}
+              onNavigateToPOS={() => handleSelectView('pos')}
               onNavigateToWholesale={() => setActiveModule('wholesaler')}
-              onNavigateToReports={() => setActiveView('reports')}
-              onNavigateToJourneyMap={() => setActiveView('journey_map')}
+              onNavigateToReports={() => handleSelectView('reports')}
+              onNavigateToJourneyMap={() => handleSelectView('journey_map')}
             />
           );
       }
     }
 
-    // Wholesaler Views
-    if (activeModule === 'wholesaler') {
-      return <WholesalerPortal />;
-    }
-
-    // Admin Views
-    if (activeModule === 'admin') {
-      return <AdminPanel />;
-    }
-
-    return (
+    return isCrew ? (
+      <BillingPOS />
+    ) : (
       <RetailerDashboard
-        onNavigateToInventory={() => setActiveView('inventory')}
-        onNavigateToRestock={() => setActiveView('inventory')}
+        onNavigateToInventory={() => handleSelectView('inventory')}
+        onNavigateToRestock={() => handleSelectView('inventory')}
       />
     );
   };
@@ -229,7 +287,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
       variants={mainLayoutContainerVariants}
       initial={prefersReducedMotion ? false : 'initial'}
       animate="animate"
-      className="min-h-screen bg-[#0A0E1A] text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-white w-full max-w-full overflow-x-hidden"
+      className="ellix-app-shell min-h-screen bg-[#070B14] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white w-full max-w-full overflow-x-hidden transition-colors duration-200"
     >
       
       {/* Top Main Navigation */}
@@ -298,7 +356,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
         {/* Module Sub-navigation Sidebar, Collapsible Drawer & Bottom Nav */}
         <Sidebar
           activeView={activeView}
-          onSelectView={setActiveView}
+          onSelectView={handleSelectView}
           isMobileDrawerOpen={isMobileDrawerOpen}
           onCloseMobileDrawer={() => setIsMobileDrawerOpen(false)}
           onOpenMobileDrawer={() => setIsMobileDrawerOpen(true)}
@@ -324,7 +382,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
               <Suspense
                 fallback={
                   <div className="w-full min-h-[320px] flex items-center justify-center">
-                    <div className="w-6 h-6 rounded-full border-2 border-emerald-500/30 border-t-emerald-400 animate-spin" />
+                    <div className="w-6 h-6 rounded-full border-2 border-blue-500/30 border-t-sky-400 animate-spin" />
                   </div>
                 }
               >
@@ -339,7 +397,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
       {/* Persistent Native Android-style Bottom Navigation for Mobile Critical Actions */}
       <BottomNavigation
         activeView={activeView}
-        onSelectView={setActiveView}
+        onSelectView={handleSelectView}
         onOpenMenu={() => setIsMobileDrawerOpen(true)}
         isMenuOpen={isMobileDrawerOpen}
       />

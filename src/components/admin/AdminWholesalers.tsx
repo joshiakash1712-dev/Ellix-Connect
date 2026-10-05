@@ -134,7 +134,7 @@ export const AdminWholesalers: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-base font-bold text-white flex items-center gap-2">
-            <Truck className="w-5 h-5 text-emerald-400" />
+            <Truck className="w-5 h-5 text-sky-400" />
             <span>B2B Wholesale Supplier Directory ({wholesalers.length})</span>
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -144,7 +144,7 @@ export const AdminWholesalers: React.FC = () => {
 
         <button
           onClick={handleOpenAdd}
-          className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition-all"
+          className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-600/20 flex items-center justify-center gap-1.5 transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>+ Onboard Supplier</span>
@@ -160,14 +160,14 @@ export const AdminWholesalers: React.FC = () => {
             placeholder="Search suppliers by name, GSTIN, representative, category, or city..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-sky-500 placeholder-slate-500 shadow-sm"
           />
         </div>
 
         <select
           value={categoryFilter}
           onChange={e => setCategoryFilter(e.target.value)}
-          className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
+          className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-sky-500 shadow-sm capitalize w-full sm:w-auto"
         >
           {categories.map(cat => (
             <option key={cat} value={cat}>
@@ -195,13 +195,13 @@ export const AdminWholesalers: React.FC = () => {
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <h3 className="text-sm font-bold text-white tracking-tight">{ws.name}</h3>
                       {ws.isVerified && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-400 font-extrabold flex items-center gap-1 border border-emerald-500/30">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-lg bg-sky-500/20 text-sky-400 font-extrabold flex items-center gap-1 border border-sky-500/30">
                           <CheckCircle2 className="w-2.5 h-2.5" />
                           Verified
                         </span>
                       )}
                     </div>
-                    <span className="text-xs font-semibold text-emerald-400 block">{ws.category}</span>
+                    <span className="text-xs font-semibold text-sky-400 block">{ws.category}</span>
                   </div>
 
                   <div className="flex items-center gap-1 shrink-0">
@@ -270,7 +270,7 @@ export const AdminWholesalers: React.FC = () => {
                     onClick={() => toggleConnectionStatus(activeConn.id, activeConn.status === 'approved' ? 'pending' : 'approved')}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-colors ${
                       activeConn.status === 'approved'
-                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                        ? 'bg-sky-500/10 text-sky-400 border-sky-500/30 hover:bg-blue-500/20'
                         : 'bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20'
                     }`}
                   >
@@ -295,7 +295,7 @@ export const AdminWholesalers: React.FC = () => {
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Truck className="w-5 h-5 text-emerald-400" />
+                  <Truck className="w-5 h-5 text-sky-400" />
                   <span>Onboard B2B Wholesale Partner</span>
                 </h3>
                 <button
@@ -315,7 +315,7 @@ export const AdminWholesalers: React.FC = () => {
                     placeholder="e.g. Apex FMCG Mega Distributors"
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                   />
                 </div>
 
@@ -328,7 +328,7 @@ export const AdminWholesalers: React.FC = () => {
                       placeholder="27AABCB1234F1Z1"
                       value={formData.gstin}
                       onChange={e => setFormData(prev => ({ ...prev, gstin: e.target.value.toUpperCase() }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -336,7 +336,7 @@ export const AdminWholesalers: React.FC = () => {
                     <select
                       value={formData.category}
                       onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     >
                       <option value="Groceries & Staples">Groceries & Staples</option>
                       <option value="Beverages & Dairy">Beverages & Dairy</option>
@@ -354,7 +354,7 @@ export const AdminWholesalers: React.FC = () => {
                       type="text"
                       value={formData.contactPerson}
                       onChange={e => setFormData(prev => ({ ...prev, contactPerson: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -363,7 +363,7 @@ export const AdminWholesalers: React.FC = () => {
                       type="text"
                       value={formData.phone}
                       onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -375,7 +375,7 @@ export const AdminWholesalers: React.FC = () => {
                       type="number"
                       value={formData.minOrderValue}
                       onChange={e => setFormData(prev => ({ ...prev, minOrderValue: Number(e.target.value) }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -384,7 +384,7 @@ export const AdminWholesalers: React.FC = () => {
                       type="number"
                       value={formData.deliveryDays}
                       onChange={e => setFormData(prev => ({ ...prev, deliveryDays: Number(e.target.value) }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -395,7 +395,7 @@ export const AdminWholesalers: React.FC = () => {
                     type="text"
                     value={formData.address}
                     onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                   />
                 </div>
 
@@ -409,7 +409,7 @@ export const AdminWholesalers: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Onboard Partner
                   </button>
@@ -432,7 +432,7 @@ export const AdminWholesalers: React.FC = () => {
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Edit className="w-5 h-5 text-emerald-400" />
+                  <Edit className="w-5 h-5 text-sky-400" />
                   <span>Edit Partner: {editingWholesaler.name}</span>
                 </h3>
                 <button
@@ -451,7 +451,7 @@ export const AdminWholesalers: React.FC = () => {
                     required
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                   />
                 </div>
 
@@ -463,7 +463,7 @@ export const AdminWholesalers: React.FC = () => {
                       required
                       value={formData.gstin}
                       onChange={e => setFormData(prev => ({ ...prev, gstin: e.target.value.toUpperCase() }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -472,7 +472,7 @@ export const AdminWholesalers: React.FC = () => {
                       type="text"
                       value={formData.category}
                       onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -484,7 +484,7 @@ export const AdminWholesalers: React.FC = () => {
                       type="number"
                       value={formData.minOrderValue}
                       onChange={e => setFormData(prev => ({ ...prev, minOrderValue: Number(e.target.value) }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -493,7 +493,7 @@ export const AdminWholesalers: React.FC = () => {
                       type="number"
                       value={formData.deliveryDays}
                       onChange={e => setFormData(prev => ({ ...prev, deliveryDays: Number(e.target.value) }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -508,7 +508,7 @@ export const AdminWholesalers: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Save Changes
                   </button>

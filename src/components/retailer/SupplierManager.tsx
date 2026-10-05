@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
-import { Supplier } from '../../types';
+import { Supplier, normalizeCanonicalRole } from '../../types';
 import { Skeleton } from '../common/skeletons/SkeletonBase';
 import {
   Truck,
@@ -37,7 +37,7 @@ export const SupplierManager: React.FC = () => {
   } = useStore();
   const { userProfile } = useAuth();
 
-  const isCrew = activeRole === 'crew' || userProfile?.role === 'crew';
+  const isCrew = normalizeCanonicalRole(activeRole) === 'crew' || normalizeCanonicalRole(userProfile?.role) === 'crew';
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');

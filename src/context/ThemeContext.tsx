@@ -17,28 +17,42 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (saved === 'light' || saved === 'dark') {
         return saved;
       }
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
     }
-    return 'light';
+    return 'dark';
   });
 
   useEffect(() => {
     const root = document.documentElement;
+    const body = document.body;
     if (theme === 'dark') {
       root.classList.add('dark');
-      root.classList.remove('light');
+      root.classList.remove('light', 'theme-light');
+      body?.classList.add('dark');
+      body?.classList.remove('light', 'theme-light');
     } else {
       root.classList.remove('dark');
-      root.classList.add('light');
+      root.classList.add('light', 'theme-light');
+      body?.classList.remove('dark');
+      body?.classList.add('light', 'theme-light');
     }
     try {
       localStorage.setItem('ellix_theme', theme);
+      window.dispatchEvent(new CustomEvent('ellix-theme-sync', { detail: theme }));
     } catch {
       // ignore storage errors
     }
   }, [theme]);
+
+  useEffect(() => {
+    const handleThemeSync = (e: Event) => {
+      const nextTheme = (e as CustomEvent<Theme>).detail;
+      if (nextTheme === 'light' || nextTheme === 'dark') {
+        setThemeState(prev => (prev !== nextTheme ? nextTheme : prev));
+      }
+    };
+    window.addEventListener('ellix-theme-sync', handleThemeSync);
+    return () => window.removeEventListener('ellix-theme-sync', handleThemeSync);
+  }, []);
 
   const toggleTheme = () => {
     setThemeState(prev => (prev === 'light' ? 'dark' : 'light'));

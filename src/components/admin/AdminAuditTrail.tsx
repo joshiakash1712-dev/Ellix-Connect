@@ -71,7 +71,7 @@ export const AdminAuditTrail: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-base font-bold text-white flex items-center gap-2">
-            <Activity className="w-5 h-5 text-emerald-400" />
+            <Activity className="w-5 h-5 text-sky-400" />
             <span>Immutable Compliance & System Audit Trail ({auditLogs.length})</span>
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -111,14 +111,14 @@ export const AdminAuditTrail: React.FC = () => {
             placeholder="Search audit trail by event action, staff operator, or details..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-sky-500 placeholder-slate-500 shadow-sm"
           />
         </div>
 
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
+          className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-sky-500 shadow-sm capitalize w-full sm:w-auto"
         >
           <option value="all">All Outcomes</option>
           <option value="success">Success Events</option>
@@ -154,7 +154,7 @@ export const AdminAuditTrail: React.FC = () => {
                     <td className="p-3.5">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-extrabold uppercase border ${
                         log.status === 'success'
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
                           : log.status === 'warning'
                           ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                           : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
@@ -205,7 +205,7 @@ export const AdminAuditTrail: React.FC = () => {
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-emerald-400" />
+                  <Activity className="w-5 h-5 text-sky-400" />
                   <span>Audit Event Inspector</span>
                 </h3>
                 <button
@@ -219,7 +219,7 @@ export const AdminAuditTrail: React.FC = () => {
               <div className="space-y-3 text-xs">
                 <div className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-1">
                   <div className="text-slate-400 font-semibold">Event ID</div>
-                  <div className="font-mono text-emerald-400 font-bold">{selectedLog.id}</div>
+                  <div className="font-mono text-sky-400 font-bold">{selectedLog.id}</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">

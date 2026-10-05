@@ -34,6 +34,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const prefersReducedMotion = useReducedMotion();
   const [activeSyncStep, setActiveSyncStep] = useState<number>(0);
   const [hoveredSyncStep, setHoveredSyncStep] = useState<number | null>(null);
+  const [activeWorkspaceMode, setActiveWorkspaceMode] = useState<'pos' | 'inventory' | 'finance'>('pos');
 
   // Subtle background data-flow cycle across the 3 Connected Sync Engine steps
   useEffect(() => {
@@ -75,21 +76,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       {/* Atmospheric Orbital Data Traces along the Hero Grid (Section 4) */}
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-24 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent overflow-hidden pointer-events-none"
+        className="absolute inset-x-0 top-24 h-px bg-gradient-to-r from-transparent via-sky-400/20 to-transparent overflow-hidden pointer-events-none"
       >
-        <div className="w-1/3 h-full bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent ellix-signal-trace" />
+        <div className="w-1/3 h-full bg-gradient-to-r from-transparent via-sky-400/50 to-transparent ellix-signal-trace" />
       </div>
 
       {/* Parallax Ambient Background Radial Glows with Slow Atmospheric Drift */}
       <motion.div
         style={{ y: ambientOrbPrimaryY, scale: ambientOrbScale }}
         aria-hidden="true"
-        className="absolute -top-24 left-1/2 -translate-x-1/2 w-[42rem] h-[22rem] rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 blur-3xl pointer-events-none will-change-transform ellix-ambient-drift"
+        className="absolute -top-24 left-1/2 -translate-x-1/2 w-[42rem] h-[22rem] rounded-full bg-sky-500/10 dark:bg-sky-500/15 blur-3xl pointer-events-none will-change-transform ellix-ambient-drift"
       />
       <motion.div
         style={{ y: ambientOrbSecondaryY }}
         aria-hidden="true"
-        className="absolute top-1/3 -right-24 w-[28rem] h-[28rem] rounded-full bg-teal-500/8 dark:bg-teal-500/10 blur-3xl pointer-events-none will-change-transform"
+        className="absolute top-1/3 -right-24 w-[28rem] h-[28rem] rounded-full bg-sky-500/8 dark:bg-sky-500/10 blur-3xl pointer-events-none will-change-transform"
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -97,22 +98,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Hero Copy & Headlines — Page Load Entrance Sequence (Section 3 & 5) */}
         <div className="text-center max-w-3xl mx-auto space-y-6">
           
-          {/* 1. Platform Badge */}
+          {/* 1. Platform Kicker — Zero-Pill Editorial Discipline */}
           <motion.div
             initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, ease: smoothEase, delay: 0.04 }}
+            className="flex items-center justify-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none"
           >
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-xs font-semibold tracking-wide shadow-2xs">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span>Business management, without the complexity</span>
-            </div>
+            <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)] animate-pulse" />
+            <span>Retail &amp; Commerce Operating System</span>
+            <span className="text-slate-300 dark:text-slate-700">·</span>
+            <span className="text-slate-500 dark:text-slate-400 normal-case tracking-normal font-semibold">Zero Complexity</span>
           </motion.div>
 
-          {/* 2. Large Headline — Blur-to-sharp entrance motion (Section 5) */}
+          {/* 2. Large Headline — Blur-to-sharp entrance motion with balanced typography */}
           <motion.h1
             initial={
               prefersReducedMotion
@@ -123,8 +122,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             transition={{ duration: 0.65, ease: smoothEase, delay: 0.1 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-950 dark:text-white tracking-tight leading-[1.12]"
           >
-            Run your business. <br className="hidden sm:inline" />
-            <span className="text-slate-900 dark:text-slate-200">Without the complexity.</span>
+            Run your store operations. <br className="hidden sm:inline" />
+            <span className="bg-gradient-to-r from-blue-600 via-sky-500 to-sky-400 bg-clip-text text-transparent">
+              Without the complexity.
+            </span>
           </motion.h1>
 
           {/* 3. Supporting Explanatory Paragraph */}
@@ -134,7 +135,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             transition={{ duration: 0.55, ease: smoothEase, delay: 0.18 }}
             className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto"
           >
-            Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights together into one connected platform built specifically for local retailers and growing merchants.
+            Ellix Connect brings billing, inventory, customer khata, payments, and multi-batch stock control into one seamless platform built specifically for growing merchants and retail teams.
           </motion.p>
 
           {/* 4. Primary & Secondary CTA Action Buttons (Section 6 & 7) */}
@@ -150,10 +151,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               data-cursor="hover"
               data-magnetic="cta"
               onClick={onOpenGetStarted}
-              className="website-btn-glow w-full sm:w-auto px-7 py-3.5 rounded-xl bg-slate-950 hover:bg-slate-800 active:bg-black dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-base font-semibold shadow-md hover:shadow-xl hover:shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+              className="website-btn-glow w-full sm:w-auto px-7 py-3.5 rounded-xl bg-slate-950 hover:bg-slate-800 active:bg-black dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-base font-semibold shadow-md hover:shadow-xl hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 group cursor-pointer"
             >
               <span>Get Started</span>
-              <ArrowRight className="w-4 h-4 text-emerald-400 dark:text-emerald-100 group-hover:translate-x-1 transition-transform duration-200" />
+              <ArrowRight className="w-4 h-4 text-sky-400 dark:text-sky-100 group-hover:translate-x-1 transition-transform duration-200" />
             </button>
 
             <a
@@ -161,9 +162,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               href="#how-it-works"
               data-cursor="hover"
               data-magnetic="cta"
-              className="website-btn-glow w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 active:bg-slate-100 text-slate-800 dark:text-slate-200 text-base font-semibold border border-slate-300 dark:border-slate-700 shadow-sm hover:border-emerald-500/40 hover:shadow-md transition-all flex items-center justify-center gap-2 group"
+              className="website-btn-glow w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 active:bg-slate-100 text-slate-800 dark:text-slate-200 text-base font-semibold border border-slate-300 dark:border-slate-700 shadow-sm hover:border-blue-500/40 hover:shadow-md transition-all flex items-center justify-center gap-2 group"
             >
-              <Play className="w-4 h-4 text-slate-600 dark:text-slate-400 fill-slate-600 dark:fill-slate-400 group-hover:scale-110 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-all duration-200" />
+              <Play className="w-4 h-4 text-slate-600 dark:text-slate-400 fill-slate-600 dark:fill-slate-400 group-hover:scale-110 group-hover:text-blue-600 dark:group-hover:text-sky-400 transition-all duration-200" />
               <span>See How It Works</span>
             </a>
           </motion.div>
@@ -192,7 +193,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       : 0
                   )
                 }
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900/70 border border-emerald-300/80 dark:border-emerald-700/80 text-emerald-800 dark:text-emerald-300 font-bold transition-all cursor-pointer shadow-2xs hover:border-emerald-500"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-sky-50 dark:bg-blue-950/70 hover:bg-sky-100 dark:hover:bg-blue-900/70 border border-sky-300/80 dark:border-blue-700/80 text-blue-800 dark:text-sky-300 font-bold transition-all cursor-pointer shadow-2xs hover:border-blue-500"
               >
                 <span>
                   {guideProgressStep >= 1 && guideProgressStep <= 12 && !guideCompleted
@@ -211,16 +212,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             className="pt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-500 dark:text-slate-400"
           >
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> No complex setup
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" /> No complex setup
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Works on any device
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" /> Works on any device
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Offline resilient
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" /> Offline resilient
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Instant digital bills
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" /> Instant digital bills
             </span>
           </motion.div>
 
@@ -238,33 +239,64 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <motion.div
             style={{ y: mockupBackingY }}
             aria-hidden="true"
-            className="absolute -inset-1 rounded-2xl bg-gradient-to-b from-emerald-500/15 via-slate-200 to-slate-100 dark:from-emerald-500/15 dark:via-slate-800 dark:to-slate-900 opacity-85 blur-xl -z-10 will-change-transform"
+            className="absolute -inset-1 rounded-2xl bg-gradient-to-b from-blue-500/15 via-slate-200 to-slate-100 dark:from-blue-500/15 dark:via-slate-800 dark:to-slate-900 opacity-85 blur-xl -z-10 will-change-transform"
           />
 
           {/* App Window Frame */}
           <div className="rounded-2xl border border-slate-300/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden transition-colors">
             
             {/* macOS / SaaS Window Header */}
-            <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-rose-400" />
-                <div className="w-3 h-3 rounded-full bg-amber-400" />
-                <div className="w-3 h-3 rounded-full bg-emerald-400" />
+            <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 px-3.5 sm:px-4 py-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-rose-400 shrink-0" />
+                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-400 shrink-0" />
+                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-sky-400 shrink-0" />
                 <div className="h-4 w-px bg-slate-300 dark:bg-slate-600 mx-2 hidden sm:block" />
                 <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 hidden sm:inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
                   Ellix Connect · Central Retail Store
                 </span>
               </div>
 
-              {/* Mock Address / Status Bar */}
-              <div className="bg-white dark:bg-slate-900 px-3 py-1 rounded-md border border-slate-200 dark:border-slate-700 text-[11px] font-mono text-slate-500 dark:text-slate-400 hidden md:flex items-center gap-2">
-                <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                <span>app.ellixconnect.com/live-register</span>
+              {/* Interactive Workspace Mode Segmented Control */}
+              <div className="flex items-center p-0.5 rounded-lg bg-slate-200/90 dark:bg-slate-900 border border-slate-300/80 dark:border-slate-700 text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setActiveWorkspaceMode('pos')}
+                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                    activeWorkspaceMode === 'pos'
+                      ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 shadow-2xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  POS Register
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveWorkspaceMode('inventory')}
+                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                    activeWorkspaceMode === 'inventory'
+                      ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 shadow-2xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  Live Stock
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveWorkspaceMode('finance')}
+                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                    activeWorkspaceMode === 'finance'
+                      ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 shadow-2xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  Margins &amp; Tax
+                </button>
               </div>
 
               {/* Status Indicator & Interactive Launch Button */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
                 {onLaunchApp && (
                   <button
                     id="btn-hero-try-live-console"
@@ -272,15 +304,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     data-cursor="hover"
                     data-magnetic="cta"
                     onClick={onLaunchApp}
-                    className="website-btn-glow flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition-all shadow-sm hover:shadow-emerald-500/30 cursor-pointer group"
+                    className="website-btn-glow flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold transition-all shadow-sm hover:shadow-blue-500/30 cursor-pointer group whitespace-nowrap shrink-0"
                   >
-                    <span>Try App Demo</span>
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    <span>Launch Live Demo</span>
+                    <ArrowRight className="w-3 h-3 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                   </button>
                 )}
-                <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md border border-emerald-200/60 dark:border-emerald-800/60 transition-colors hover:border-emerald-400">
-                  <Zap className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                  <span>Live Connected</span>
+                <div className="flex items-center gap-1.5 text-[11px] font-medium text-blue-700 dark:text-sky-300 bg-sky-50 dark:bg-blue-950/60 px-2 py-1 rounded-md border border-sky-200/60 dark:border-sky-800/60 whitespace-nowrap shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+                  <span>Real-Time Sync</span>
                 </div>
               </div>
             </div>
@@ -288,259 +320,515 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Inner Dashboard & POS Workspace Mockup */}
             <div className="p-4 sm:p-6 bg-slate-50/50 dark:bg-slate-950/50 space-y-5">
               
-              {/* Top Quick Stats Row */}
+              {/* Dynamic Quick Stats Row according to activeWorkspaceMode */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                
-                <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                  <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                    <span className="text-xs font-medium">Today&apos;s Sales</span>
-                    <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                  </div>
-                  <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹42,850</div>
-                  <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">+16.4% from yesterday</div>
-                </div>
+                {activeWorkspaceMode === 'pos' && (
+                  <>
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Today&apos;s Sales</span>
+                        <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹42,850</div>
+                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">+16.4% from yesterday</div>
+                    </div>
 
-                <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                  <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                    <span className="text-xs font-medium">Invoices Issued</span>
-                    <ShoppingBag className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                  </div>
-                  <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">38</div>
-                  <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Avg. ₹1,127 / bill</div>
-                </div>
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Invoices Issued</span>
+                        <ShoppingBag className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">38</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Avg. ₹1,127 / bill</div>
+                    </div>
 
-                <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                  <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                    <span className="text-xs font-medium">Inventory Health</span>
-                    <Package className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                  </div>
-                  <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">99.2%</div>
-                  <div className="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">2 items low on stock</div>
-                </div>
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Inventory Health</span>
+                        <Package className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">99.2%</div>
+                      <div className="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">2 items low on stock</div>
+                    </div>
 
-                <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                  <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                    <span className="text-xs font-medium">Cash in Drawer</span>
-                    <CreditCard className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 group-hover:scale-105 transition-transform duration-200" />
-                  </div>
-                  <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹14,600</div>
-                  <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">Reconciled &amp; balanced</div>
-                </div>
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Cash in Drawer</span>
+                        <CreditCard className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 group-hover:scale-105 transition-transform duration-200" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹14,600</div>
+                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">Reconciled &amp; balanced</div>
+                    </div>
+                  </>
+                )}
 
+                {activeWorkspaceMode === 'inventory' && (
+                  <>
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Total SKUs</span>
+                        <Package className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">248 items</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Across 8 categories</div>
+                    </div>
+
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Stock Valuation</span>
+                        <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹4,82,400</div>
+                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">FIFO purchase cost</div>
+                    </div>
+
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Reorder Triggers</span>
+                        <Zap className="w-3.5 h-3.5 text-amber-500" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-amber-500 tabular-nums">2 Low Items</div>
+                      <div className="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">Automatic draft ready</div>
+                    </div>
+
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Batch Expiry Shield</span>
+                        <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">0 Expired</div>
+                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">Zero dead inventory</div>
+                    </div>
+                  </>
+                )}
+
+                {activeWorkspaceMode === 'finance' && (
+                  <>
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Gross Revenue</span>
+                        <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹42,850</div>
+                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">38 Invoices settled</div>
+                    </div>
+
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Estimated Net Margin</span>
+                        <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹11,920</div>
+                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">27.8% Realized margin</div>
+                    </div>
+
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">GSTR-1 Tax Output</span>
+                        <ShieldCheck className="w-3.5 h-3.5 text-sky-500" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹2,040</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">CGST ₹1,020 + SGST ₹1,020</div>
+                    </div>
+
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
+                        <span className="text-xs font-medium">Cash vs UPI Settlement</span>
+                        <CreditCard className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">66% Digital</div>
+                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">₹28,250 UPI · ₹14,600 Cash</div>
+                    </div>
+                  </>
+                )}
               </div>
 
-              {/* Main Workstage Split: Active Billing POS + Live Activity Feed */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 relative">
-                
-                {/* Left: Active Billing Terminal (7 Cols) */}
-                <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-emerald-500/30">
-                  <div>
-                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
-                      <div className="flex items-center gap-2">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                        </span>
-                        <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">
-                          Live Counter · POS Invoice #1042
+              {/* Main Workstage Split according to activeWorkspaceMode */}
+              {activeWorkspaceMode === 'pos' && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 relative animate-in fade-in duration-200">
+                  {/* Left: Active Billing Terminal (7 Cols) */}
+                  <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-blue-500/30">
+                    <div>
+                      <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="relative flex h-2 w-2 shrink-0">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500" />
+                          </span>
+                          <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">
+                            Live Counter · POS Invoice #1042
+                          </span>
+                        </div>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 whitespace-nowrap shrink-0">
+                          <Clock className="w-3 h-3 text-sky-500 shrink-0" /> Just now
                         </span>
                       </div>
-                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-emerald-500" /> Just now
-                      </span>
+
+                      {/* Customer Info Chip */}
+                      <div className="bg-slate-50 dark:bg-slate-800/60 rounded-lg p-2.5 mb-3 border border-slate-200/80 dark:border-slate-700 flex items-center justify-between gap-3 text-xs transition-colors hover:border-blue-500/30">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Users className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 shrink-0" />
+                          <div className="min-w-0">
+                            <span className="font-semibold text-slate-900 dark:text-white">Rajesh Verma</span>
+                            <span className="text-slate-500 dark:text-slate-400 ml-1.5">(+91 98450 11223)</span>
+                          </div>
+                        </div>
+                        <span className="text-[11px] font-semibold text-blue-700 dark:text-sky-300 bg-sky-100/70 dark:bg-blue-950/60 px-2.5 py-1 rounded-md whitespace-nowrap shrink-0">
+                          120 Loyalty Pts
+                        </span>
+                      </div>
+
+                      {/* Itemized Cart List */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center justify-between gap-3 text-xs py-2 px-3 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:bg-sky-50/20 dark:hover:bg-blue-950/20 transition-all duration-150">
+                          <div className="min-w-0">
+                            <div className="font-medium text-slate-900 dark:text-white">Royal Basmati Rice 5kg</div>
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400">SKU: GRO-8821 · GST 5%</div>
+                          </div>
+                          <div className="text-right tabular-nums shrink-0">
+                            <div className="font-semibold text-slate-900 dark:text-white">₹540.00</div>
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400">1 unit</div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-3 text-xs py-2 px-3 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:bg-sky-50/20 dark:hover:bg-blue-950/20 transition-all duration-150">
+                          <div className="min-w-0">
+                            <div className="font-medium text-slate-900 dark:text-white">Cold Pressed Groundnut Oil 1L</div>
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400">SKU: OIL-4102 · GST 5%</div>
+                          </div>
+                          <div className="text-right tabular-nums shrink-0">
+                            <div className="font-semibold text-slate-900 dark:text-white">₹320.00</div>
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400">1 unit</div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-3 text-xs py-2 px-3 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:bg-sky-50/20 dark:hover:bg-blue-950/20 transition-all duration-150">
+                          <div className="min-w-0">
+                            <div className="font-medium text-slate-900 dark:text-white">Organic Roasted Almonds 250g</div>
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400">SKU: NUT-0914 · GST 12%</div>
+                          </div>
+                          <div className="text-right tabular-nums shrink-0">
+                            <div className="font-semibold text-slate-900 dark:text-white">₹260.00</div>
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400">1 unit</div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Customer Info Chip */}
-                    <div className="bg-slate-50 dark:bg-slate-800/60 rounded-lg p-2.5 mb-3 border border-slate-200/80 dark:border-slate-700 flex items-center justify-between text-xs transition-colors hover:border-emerald-500/30">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
-                        <div>
-                          <span className="font-semibold text-slate-900 dark:text-white">Rajesh Verma</span>
-                          <span className="text-slate-500 dark:text-slate-400 ml-1.5">(+91 98450 11223)</span>
-                        </div>
+                    {/* Bill Total & Instant Actions */}
+                    <div className="pt-4 mt-3 border-t border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">Grand Total (Incl. GST)</span>
+                        <span className="text-lg font-bold text-slate-950 dark:text-white tabular-nums shrink-0">₹1,120.00</span>
                       </div>
-                      <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-100/70 dark:bg-emerald-950/60 px-2 py-0.5 rounded">
-                        120 Loyalty Pts
-                      </span>
-                    </div>
-
-                    {/* Itemized Cart List */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs py-1.5 px-2.5 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-emerald-500/40 hover:bg-emerald-50/20 dark:hover:bg-emerald-950/20 transition-all duration-150">
-                        <div>
-                          <div className="font-medium text-slate-900 dark:text-white">Royal Basmati Rice 5kg</div>
-                          <div className="text-[10px] text-slate-500 dark:text-slate-400">SKU: GRO-8821 · GST 5%</div>
+                      <div className="grid grid-cols-3 gap-2.5 sm:gap-3 text-[11px] sm:text-xs">
+                        <div className="py-2.5 px-2 text-center font-semibold bg-sky-50 dark:bg-blue-950/60 text-blue-800 dark:text-sky-300 rounded-lg border border-sky-200 dark:border-sky-800/80 transition-all duration-200 hover:border-blue-500 flex items-center justify-center leading-snug">
+                          ✓ UPI QR Paid
                         </div>
-                        <div className="text-right tabular-nums">
-                          <div className="font-semibold text-slate-900 dark:text-white">₹540.00</div>
-                          <div className="text-[10px] text-slate-500 dark:text-slate-400">1 unit</div>
+                        <div className="py-2.5 px-2 text-center font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all duration-200 hover:border-blue-500/40 flex items-center justify-center leading-snug">
+                          WhatsApp Sent
                         </div>
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs py-1.5 px-2.5 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-emerald-500/40 hover:bg-emerald-50/20 dark:hover:bg-emerald-950/20 transition-all duration-150">
-                        <div>
-                          <div className="font-medium text-slate-900 dark:text-white">Cold Pressed Groundnut Oil 1L</div>
-                          <div className="text-[10px] text-slate-500 dark:text-slate-400">SKU: OIL-4102 · GST 5%</div>
-                        </div>
-                        <div className="text-right tabular-nums">
-                          <div className="font-semibold text-slate-900 dark:text-white">₹320.00</div>
-                          <div className="text-[10px] text-slate-500 dark:text-slate-400">1 unit</div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs py-1.5 px-2.5 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-emerald-500/40 hover:bg-emerald-50/20 dark:hover:bg-emerald-950/20 transition-all duration-150">
-                        <div>
-                          <div className="font-medium text-slate-900 dark:text-white">Organic Roasted Almonds 250g</div>
-                          <div className="text-[10px] text-slate-500 dark:text-slate-400">SKU: NUT-0914 · GST 12%</div>
-                        </div>
-                        <div className="text-right tabular-nums">
-                          <div className="font-semibold text-slate-900 dark:text-white">₹260.00</div>
-                          <div className="text-[10px] text-slate-500 dark:text-slate-400">1 unit</div>
+                        <div className="py-2.5 px-2 text-center font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all duration-200 hover:border-blue-500/40 flex items-center justify-center leading-snug">
+                          Stock Deducted
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Bill Total & Instant Actions */}
-                  <div className="pt-4 mt-3 border-t border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">Grand Total (Incl. GST)</span>
-                      <span className="text-lg font-bold text-slate-950 dark:text-white tabular-nums">₹1,120.00</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 text-xs">
-                      <div className="py-2 px-1 text-center font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 rounded-lg border border-emerald-200 dark:border-emerald-800/80 transition-all duration-200 hover:border-emerald-500">
-                        ✓ UPI QR Paid
+                  {/* Right: Connected System Flow Stream (5 Cols) — Live Active Sync Pulse */}
+                  <div
+                    className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-blue-500/30"
+                    onMouseLeave={() => setHoveredSyncStep(null)}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-1.5 min-w-0">
+                          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse shrink-0" />
+                          <span>Connected Sync Engine</span>
+                        </span>
+                        <span className="text-[11px] font-mono text-blue-600 dark:text-sky-400 bg-sky-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-md border border-sky-200/60 dark:border-sky-800/60 whitespace-nowrap shrink-0">
+                          0.04s latency
+                        </span>
                       </div>
-                      <div className="py-2 px-1 text-center font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all duration-200 hover:border-emerald-500/40">
-                        WhatsApp Sent
-                      </div>
-                      <div className="py-2 px-1 text-center font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all duration-200 hover:border-emerald-500/40">
-                        Stock Deducted
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Right: Connected System Flow Stream (5 Cols) — Live Active Sync Pulse */}
-                <div
-                  className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-emerald-500/30"
-                  onMouseLeave={() => setHoveredSyncStep(null)}
-                >
-                  <div>
-                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
-                      <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>Connected Sync Engine</span>
-                      </span>
-                      <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200/60 dark:border-emerald-800/60">
-                        0.04s latency
-                      </span>
-                    </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
+                        One counter checkout automatically updates every corner of your business:
+                      </p>
 
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
-                      One counter checkout automatically updates every corner of your business:
-                    </p>
-
-                    <div className="space-y-2.5 text-xs relative">
-                      {/* Step 1: Inventory Level Updated */}
-                      <div
-                        onMouseEnter={() => setHoveredSyncStep(0)}
-                        className={`flex items-start gap-2.5 p-2 rounded-lg border transition-all duration-300 cursor-default ${
-                          currentSyncStep === 0
-                            ? 'bg-emerald-50/60 dark:bg-emerald-950/35 border-emerald-400/60 dark:border-emerald-500/50 shadow-2xs translate-x-0.5'
-                            : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800'
-                        }`}
-                      >
+                      <div className="space-y-2.5 text-xs relative">
+                        {/* Step 1: Inventory Level Updated */}
                         <div
-                          className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5 transition-all duration-300 ${
+                          onMouseEnter={() => setHoveredSyncStep(0)}
+                          className={`flex items-start gap-2.5 p-2 rounded-lg border transition-all duration-300 cursor-default ${
                             currentSyncStep === 0
-                              ? 'bg-emerald-600 text-white shadow-[0_0_8px_rgba(16,185,129,0.5)] scale-105'
-                              : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400'
+                              ? 'bg-sky-50/60 dark:bg-blue-950/35 border-sky-400/60 dark:border-sky-500/50 shadow-2xs translate-x-0.5'
+                              : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800'
                           }`}
                         >
-                          1
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="font-semibold text-slate-900 dark:text-white">Inventory Level Updated</span>
-                            {currentSyncStep === 0 && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                            )}
+                          <div
+                            className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5 transition-all duration-300 ${
+                              currentSyncStep === 0
+                                ? 'bg-blue-600 text-white shadow-[0_0_8px_rgba(37,99,235,0.5)] scale-105'
+                                : 'bg-sky-100 dark:bg-blue-950 text-blue-700 dark:text-sky-400'
+                            }`}
+                          >
+                            1
                           </div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">Groundnut Oil: 14 → 13 units remaining</div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="font-semibold text-slate-900 dark:text-white">Inventory Level Updated</span>
+                              {currentSyncStep === 0 && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+                              )}
+                            </div>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400">Groundnut Oil: 14 → 13 units remaining</div>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Step 2: Customer History Synced */}
-                      <div
-                        onMouseEnter={() => setHoveredSyncStep(1)}
-                        className={`flex items-start gap-2.5 p-2 rounded-lg border transition-all duration-300 cursor-default ${
-                          currentSyncStep === 1
-                            ? 'bg-emerald-50/60 dark:bg-emerald-950/35 border-emerald-400/60 dark:border-emerald-500/50 shadow-2xs translate-x-0.5'
-                            : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800'
-                        }`}
-                      >
+                        {/* Step 2: Customer History Synced */}
                         <div
-                          className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5 transition-all duration-300 ${
+                          onMouseEnter={() => setHoveredSyncStep(1)}
+                          className={`flex items-start gap-2.5 p-2 rounded-lg border transition-all duration-300 cursor-default ${
                             currentSyncStep === 1
-                              ? 'bg-emerald-600 text-white shadow-[0_0_8px_rgba(16,185,129,0.5)] scale-105'
-                              : 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400'
+                              ? 'bg-sky-50/60 dark:bg-blue-950/35 border-sky-400/60 dark:border-sky-500/50 shadow-2xs translate-x-0.5'
+                              : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800'
                           }`}
                         >
-                          2
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="font-semibold text-slate-900 dark:text-white">Customer History Synced</span>
-                            {currentSyncStep === 1 && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                            )}
+                          <div
+                            className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5 transition-all duration-300 ${
+                              currentSyncStep === 1
+                                ? 'bg-blue-600 text-white shadow-[0_0_8px_rgba(37,99,235,0.5)] scale-105'
+                                : 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400'
+                            }`}
+                          >
+                            2
                           </div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">₹1,120 added to Rajesh&apos;s lifetime ledger</div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="font-semibold text-slate-900 dark:text-white">Customer History Synced</span>
+                              {currentSyncStep === 1 && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+                              )}
+                            </div>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400">₹1,120 added to Rajesh&apos;s lifetime ledger</div>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Step 3: Accounting & Tax Recorded */}
-                      <div
-                        onMouseEnter={() => setHoveredSyncStep(2)}
-                        className={`flex items-start gap-2.5 p-2 rounded-lg border transition-all duration-300 cursor-default ${
-                          currentSyncStep === 2
-                            ? 'bg-emerald-50/60 dark:bg-emerald-950/35 border-emerald-400/60 dark:border-emerald-500/50 shadow-2xs translate-x-0.5'
-                            : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800'
-                        }`}
-                      >
+                        {/* Step 3: Accounting & Tax Recorded */}
                         <div
-                          className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5 transition-all duration-300 ${
+                          onMouseEnter={() => setHoveredSyncStep(2)}
+                          className={`flex items-start gap-2.5 p-2 rounded-lg border transition-all duration-300 cursor-default ${
                             currentSyncStep === 2
-                              ? 'bg-emerald-600 text-white shadow-[0_0_8px_rgba(16,185,129,0.5)] scale-105'
-                              : 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-400'
+                              ? 'bg-sky-50/60 dark:bg-blue-950/35 border-sky-400/60 dark:border-sky-500/50 shadow-2xs translate-x-0.5'
+                              : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800'
                           }`}
                         >
-                          3
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="font-semibold text-slate-900 dark:text-white">Accounting &amp; Tax Recorded</span>
-                            {currentSyncStep === 2 && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                            )}
+                          <div
+                            className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5 transition-all duration-300 ${
+                              currentSyncStep === 2
+                                ? 'bg-blue-600 text-white shadow-[0_0_8px_rgba(37,99,235,0.5)] scale-105'
+                                : 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-400'
+                            }`}
+                          >
+                            3
                           </div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">CGST ₹26.50 + SGST ₹26.50 entered in GST report</div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="font-semibold text-slate-900 dark:text-white">Accounting &amp; Tax Recorded</span>
+                              {currentSyncStep === 2 && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+                              )}
+                            </div>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400">CGST ₹26.50 + SGST ₹26.50 entered in GST report</div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
-                    <span>Cloud Backup: Synced 2s ago</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      <span>100% Data Integrity</span>
-                    </span>
+                    <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-between gap-2">
+                      <span className="whitespace-nowrap">Cloud Backup: Synced 2s ago</span>
+                      <span className="text-blue-600 dark:text-sky-400 font-medium flex items-center gap-1 whitespace-nowrap">
+                        <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+                        <span>100% Data Integrity</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
+              )}
 
-              </div>
+              {activeWorkspaceMode === 'inventory' && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 relative animate-in fade-in duration-200">
+                  {/* Left: Active Stock Audit Terminal */}
+                  <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                          <Package className="w-4 h-4 text-blue-600 dark:text-sky-400" />
+                          <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">
+                            Live SKU Tracker · Batch Control
+                          </span>
+                        </div>
+                        <span className="text-[11px] font-mono text-blue-600 dark:text-sky-400 bg-sky-50 dark:bg-blue-950/60 px-2 py-0.5 rounded border border-sky-200 dark:border-sky-800">
+                          248 Active SKUs
+                        </span>
+                      </div>
+
+                      <div className="space-y-2 text-xs">
+                        <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                          <div>
+                            <div className="font-semibold text-slate-900 dark:text-white">Royal Basmati Rice 5kg</div>
+                            <div className="text-[10px] text-slate-500">Batch: B-2026A · Exp: Nov 2027</div>
+                          </div>
+                          <div className="text-right">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
+                              ✓ 142 In Stock
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-2.5 rounded-lg bg-amber-500/5 dark:bg-amber-950/20 border border-amber-500/30">
+                          <div>
+                            <div className="font-semibold text-slate-900 dark:text-white">Cold Pressed Groundnut Oil 1L</div>
+                            <div className="text-[10px] text-amber-600 dark:text-amber-400">Reorder Threshold: 10 units</div>
+                          </div>
+                          <div className="text-right">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                              ⚠ 8 Left (Low)
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                          <div>
+                            <div className="font-semibold text-slate-900 dark:text-white">Organic Roasted Almonds 250g</div>
+                            <div className="text-[10px] text-slate-500">Batch: B-8810 · Exp: Aug 2027</div>
+                          </div>
+                          <div className="text-right">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
+                              ✓ 34 In Stock
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                      <span className="text-slate-500 dark:text-slate-400">Automated Restock Status:</span>
+                      <span className="font-bold text-blue-600 dark:text-sky-400">PO Draft Generated for Supplier</span>
+                    </div>
+                  </div>
+
+                  {/* Right: Supplier & Reorder Trigger */}
+                  <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-1.5">
+                          <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                          <span>Supplier Auto-Restock</span>
+                        </span>
+                        <span className="text-[11px] font-mono text-sky-400">1-Tap PO</span>
+                      </div>
+
+                      <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs">
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-slate-900 dark:text-white">AgroPulse Wholesaler</span>
+                          <span className="text-[10px] text-blue-600 dark:text-sky-400 font-mono">PO #9042</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+                          Automated WhatsApp draft created for 24 bottles of Groundnut Oil 1L at wholesale rate ₹255.
+                        </p>
+                        <div className="pt-1 flex gap-2">
+                          <div className="px-2.5 py-1 rounded bg-blue-600 text-white font-bold text-[10px]">
+                            Auto-Draft Ready
+                          </div>
+                          <div className="px-2.5 py-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium text-[10px]">
+                            Credit Term: 15 Days
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between items-center">
+                      <span>Threshold check: Active</span>
+                      <span className="text-blue-600 dark:text-sky-400 font-semibold">Zero Stockout Guarantee</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeWorkspaceMode === 'finance' && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 relative animate-in fade-in duration-200">
+                  {/* Left: Margin & Sales Breakdown */}
+                  <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="w-4 h-4 text-blue-600 dark:text-sky-400" />
+                          <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">
+                            Real-Time Margin &amp; Profit Ledger
+                          </span>
+                        </div>
+                        <span className="text-[11px] font-mono text-blue-600 dark:text-sky-400 font-bold">
+                          27.8% Net Margin
+                        </span>
+                      </div>
+
+                      <div className="space-y-2 text-xs">
+                        <div className="flex justify-between items-center p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                          <span className="text-slate-600 dark:text-slate-300">Total Counter Sales</span>
+                          <span className="font-bold text-slate-900 dark:text-white tabular-nums">₹42,850.00</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                          <span className="text-slate-600 dark:text-slate-300">Goods Wholesale Cost (COGS)</span>
+                          <span className="font-bold text-slate-500 tabular-nums">₹30,930.00</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2.5 rounded-lg bg-sky-50 dark:bg-blue-950/40 border border-sky-200 dark:border-sky-800/60">
+                          <span className="font-bold text-blue-800 dark:text-sky-300">Realized Store Profit Today</span>
+                          <span className="font-extrabold text-blue-600 dark:text-sky-400 tabular-nums">₹11,920.00</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                      <span className="text-slate-500">Settlement Split:</span>
+                      <span className="font-bold text-slate-800 dark:text-slate-200">UPI: ₹28,250 (66%) · Cash: ₹14,600 (34%)</span>
+                    </div>
+                  </div>
+
+                  {/* Right: GSTR-1 Automated Ledger */}
+                  <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-1.5">
+                          <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                          <span>GSTR-1 Tax Engine</span>
+                        </span>
+                        <span className="text-[11px] font-mono text-sky-400">100% Verified</span>
+                      </div>
+
+                      <div className="space-y-2 text-xs">
+                        <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                          <span className="text-slate-500 dark:text-slate-400">Taxable Value</span>
+                          <span className="font-bold text-slate-900 dark:text-white tabular-nums">₹40,810.00</span>
+                        </div>
+                        <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                          <span className="text-slate-500 dark:text-slate-400">Central GST (CGST)</span>
+                          <span className="font-bold text-slate-900 dark:text-white tabular-nums">₹1,020.00</span>
+                        </div>
+                        <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                          <span className="text-slate-500 dark:text-slate-400">State GST (SGST)</span>
+                          <span className="font-bold text-slate-900 dark:text-white tabular-nums">₹1,020.00</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between items-center">
+                      <span>Export: CA-Ready JSON &amp; Excel</span>
+                      <span className="text-blue-600 dark:text-sky-400 font-semibold">1-Click Filing</span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
             </div>
 

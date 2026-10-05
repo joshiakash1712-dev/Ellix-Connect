@@ -112,7 +112,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-900/75">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+            <div className="w-10 h-10 rounded-xl bg-sky-500/10 dark:bg-sky-500/20 border border-sky-500/20 flex items-center justify-center text-blue-600 dark:text-sky-400">
               <Bot className="w-5 h-5" />
             </div>
             <div>
@@ -120,7 +120,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
                 <h2 id="ai-modal-title" className="text-base font-bold tracking-tight">
                   AI & Machine Discoverability
                 </h2>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-sky-100 dark:bg-blue-950/70 text-blue-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800">
                   <CheckCircle2 className="w-3 h-3" /> Fully Configured
                 </span>
               </div>
@@ -148,7 +148,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
             onClick={() => setActiveTab('overview')}
             className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${
               activeTab === 'overview'
-                ? 'bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold'
+                ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-sky-400 font-semibold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
@@ -161,7 +161,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
             onClick={() => setActiveTab('schema')}
             className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${
               activeTab === 'schema'
-                ? 'bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold'
+                ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-sky-400 font-semibold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
@@ -174,7 +174,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
             onClick={() => setActiveTab('llmstxt')}
             className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${
               activeTab === 'llmstxt'
-                ? 'bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold'
+                ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-sky-400 font-semibold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
@@ -187,7 +187,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
             onClick={() => setActiveTab('api')}
             className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${
               activeTab === 'api'
-                ? 'bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold'
+                ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-sky-400 font-semibold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
@@ -203,7 +203,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
               {/* Status Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  <div className="p-2 rounded-lg bg-sky-500/10 text-blue-600 dark:text-sky-400">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
                   <div>
@@ -217,7 +217,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
                 </div>
 
                 <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  <div className="p-2 rounded-lg bg-sky-500/10 text-blue-600 dark:text-sky-400">
                     <Bot className="w-4 h-4" />
                   </div>
                   <div>
@@ -231,7 +231,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
                 </div>
 
                 <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  <div className="p-2 rounded-lg bg-sky-500/10 text-blue-600 dark:text-sky-400">
                     <FileText className="w-4 h-4" />
                   </div>
                   <div>
@@ -245,7 +245,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
                 </div>
 
                 <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  <div className="p-2 rounded-lg bg-sky-500/10 text-blue-600 dark:text-sky-400">
                     <Database className="w-4 h-4" />
                   </div>
                   <div>
@@ -253,7 +253,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
                       Live JSON API Endpoint
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      <code className="text-emerald-600 dark:text-emerald-400">/api/about</code> returns structured application and route metadata.
+                      <code className="text-blue-600 dark:text-sky-400">/api/about</code> returns structured application and route metadata.
                     </p>
                   </div>
                 </div>
@@ -265,7 +265,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
                   <span className="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     Live Data Seen by AI Models & Search Engines
                   </span>
-                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                  <span className="text-xs text-blue-600 dark:text-sky-400 font-medium flex items-center gap-1">
                     <Globe className="w-3.5 h-3.5" /> Verified Production Spec
                   </span>
                 </div>
@@ -311,12 +311,12 @@ Ellix Connect is a modern web-based business management platform designed for lo
                   onClick={() => handleCopy(schemaJsonString, 'schema')}
                   className="px-2.5 py-1 text-xs rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1.5 transition-colors"
                 >
-                  {copiedKey === 'schema' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedKey === 'schema' ? <Check className="w-3.5 h-3.5 text-blue-600" /> : <Copy className="w-3.5 h-3.5" />}
                   {copiedKey === 'schema' ? 'Copied' : 'Copy JSON-LD'}
                 </button>
               </div>
 
-              <pre className="p-4 rounded-xl bg-slate-950 text-emerald-400 text-xs font-mono overflow-x-auto max-h-80 leading-relaxed">
+              <pre className="p-4 rounded-xl bg-slate-950 text-sky-400 text-xs font-mono overflow-x-auto max-h-80 leading-relaxed">
                 {schemaJsonString}
               </pre>
             </div>
@@ -326,14 +326,14 @@ Ellix Connect is a modern web-based business management platform designed for lo
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Served publicly at <a href="/llms.txt" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 underline inline-flex items-center gap-0.5">/llms.txt <ExternalLink className="w-3 h-3" /></a> for LLM agents.
+                  Served publicly at <a href="/llms.txt" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-sky-400 underline inline-flex items-center gap-0.5">/llms.txt <ExternalLink className="w-3 h-3" /></a> for LLM agents.
                 </p>
                 <button
                   type="button"
                   onClick={() => handleCopy(llmsTxtContent, 'llms')}
                   className="px-2.5 py-1 text-xs rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1.5 transition-colors"
                 >
-                  {copiedKey === 'llms' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedKey === 'llms' ? <Check className="w-3.5 h-3.5 text-blue-600" /> : <Copy className="w-3.5 h-3.5" />}
                   {copiedKey === 'llms' ? 'Copied' : 'Copy llms.txt'}
                 </button>
               </div>
@@ -348,13 +348,13 @@ Ellix Connect is a modern web-based business management platform designed for lo
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Machine-readable REST endpoint responding to AI agents at <code className="text-emerald-600 dark:text-emerald-400">GET /api/about</code>.
+                  Machine-readable REST endpoint responding to AI agents at <code className="text-blue-600 dark:text-sky-400">GET /api/about</code>.
                 </p>
                 <a
                   href="/api/about"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-2.5 py-1 text-xs rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition-colors"
+                  className="px-2.5 py-1 text-xs rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 transition-colors"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   Open Live Endpoint
@@ -364,7 +364,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-xs space-y-2">
                 <div className="font-semibold text-slate-900 dark:text-slate-100">Live Endpoint Structure:</div>
                 <div className="text-slate-600 dark:text-slate-400">
-                  Returns: <span className="font-mono text-emerald-600 dark:text-emerald-400">schema_version</span>, <span className="font-mono text-emerald-600 dark:text-emerald-400">name_for_model</span>, <span className="font-mono text-emerald-600 dark:text-emerald-400">description_for_model</span>, <span className="font-mono text-emerald-600 dark:text-emerald-400">features</span>, <span className="font-mono text-emerald-600 dark:text-emerald-400">specifications</span>, and documentation links.
+                  Returns: <span className="font-mono text-blue-600 dark:text-sky-400">schema_version</span>, <span className="font-mono text-blue-600 dark:text-sky-400">name_for_model</span>, <span className="font-mono text-blue-600 dark:text-sky-400">description_for_model</span>, <span className="font-mono text-blue-600 dark:text-sky-400">features</span>, <span className="font-mono text-blue-600 dark:text-sky-400">specifications</span>, and documentation links.
                 </div>
               </div>
             </div>
@@ -374,7 +374,7 @@ Ellix Connect is a modern web-based business management platform designed for lo
         {/* Footer */}
         <div className="px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-sky-400" />
             <span>Structured Data adheres to Schema.org, OpenGraph & llmstxt.org standards</span>
           </div>
           <button

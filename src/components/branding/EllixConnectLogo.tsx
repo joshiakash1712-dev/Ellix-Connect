@@ -142,38 +142,38 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
           <linearGradient id="ec-sym-top-surf" x1="20%" y1="70%" x2="80%" y2="20%">
-            <stop offset="0%" stopColor="#047857" />
-            <stop offset="25%" stopColor="#059669" />
-            <stop offset="55%" stopColor="#10B981" />
-            <stop offset="85%" stopColor="#2DD4A7" />
-            <stop offset="100%" stopColor="#5EEAD4" />
+            <stop offset="0%" stopColor="#1D4ED8" />
+            <stop offset="25%" stopColor="#2563EB" />
+            <stop offset="55%" stopColor="#3B82F6" />
+            <stop offset="85%" stopColor="#38BDF8" />
+            <stop offset="100%" stopColor="#7DD3FC" />
           </linearGradient>
           <linearGradient id="ec-sym-cradle-surf" x1="15%" y1="20%" x2="85%" y2="90%">
-            <stop offset="0%" stopColor="#0D9488" />
-            <stop offset="35%" stopColor="#10B981" />
-            <stop offset="70%" stopColor="#2DD4A7" />
-            <stop offset="100%" stopColor="#047857" />
+            <stop offset="0%" stopColor="#0284C7" />
+            <stop offset="35%" stopColor="#2563EB" />
+            <stop offset="70%" stopColor="#38BDF8" />
+            <stop offset="100%" stopColor="#1D4ED8" />
           </linearGradient>
           <linearGradient id="ec-sym-inner-shadow" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#042F2E" stopOpacity="0.9" />
-            <stop offset="70%" stopColor="#064E3B" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#0F766E" stopOpacity="0.2" />
+            <stop offset="0%" stopColor="#082F49" stopOpacity="0.9" />
+            <stop offset="70%" stopColor="#0C4A6E" stopOpacity="0.7" />
+            <stop offset="100%" stopColor="#0369A1" stopOpacity="0.2" />
           </linearGradient>
           <linearGradient id="ec-sym-rim-glow" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#10B981" stopOpacity="0.2" />
-            <stop offset="30%" stopColor="#2DD4A7" stopOpacity="0.9" />
-            <stop offset="70%" stopColor="#6EE7B7" stopOpacity="1" />
-            <stop offset="100%" stopColor="#F0FDF4" stopOpacity="0.95" />
+            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.2" />
+            <stop offset="30%" stopColor="#38BDF8" stopOpacity="0.9" />
+            <stop offset="70%" stopColor="#BAE6FD" stopOpacity="1" />
+            <stop offset="100%" stopColor="#F0F9FF" stopOpacity="0.95" />
           </linearGradient>
           <radialGradient id="ec-sym-sphere-grad" cx="35%" cy="32%" r="65%">
-            <stop offset="0%" stopColor="#F0FDF4" />
-            <stop offset="20%" stopColor="#A7F3D0" />
-            <stop offset="50%" stopColor="#2DD4A7" />
-            <stop offset="80%" stopColor="#0D9488" />
-            <stop offset="100%" stopColor="#042F2E" />
+            <stop offset="0%" stopColor="#F0F9FF" />
+            <stop offset="20%" stopColor="#BAE6FD" />
+            <stop offset="50%" stopColor="#38BDF8" />
+            <stop offset="80%" stopColor="#0284C7" />
+            <stop offset="100%" stopColor="#082F49" />
           </radialGradient>
         </defs>
-        <circle cx="80" cy="80" r="54" fill="#10B981" opacity="0.12" filter="url(#ec-sym-glow)" />
+        <circle cx="80" cy="80" r="54" fill="#38BDF8" opacity="0.15" filter="url(#ec-sym-glow)" />
         <g transform="translate(4, 2)">
           <path
             d="M 52 82 C 42 66 52 48 68 38 C 84 28 102 34 112 46 C 104 54 84 68 66 80 Z"
@@ -203,7 +203,7 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
           />
           <path
             d="M 116 70 C 102 82 82 94 62 106"
-            stroke="#6EE7B7"
+            stroke="#7DD3FC"
             strokeWidth="2.5"
             strokeLinecap="round"
             fill="none"
@@ -211,14 +211,14 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
           />
           <path
             d="M 58 122 C 70 128 88 124 104 112 C 114 104 116 96 114 90"
-            stroke="#2DD4A7"
+            stroke="#38BDF8"
             strokeWidth="2"
             strokeLinecap="round"
             fill="none"
             opacity="0.9"
           />
           <g transform="translate(108, 88)">
-            <ellipse cx="0" cy="11" rx="9" ry="3.5" fill="#042F2E" opacity="0.45" />
+            <ellipse cx="0" cy="11" rx="9" ry="3.5" fill="#082F49" opacity="0.45" />
             <circle cx="0" cy="0" r="12.5" fill="url(#ec-sym-sphere-grad)" />
             <circle cx="-3.5" cy="-3.5" r="3" fill="#FFFFFF" opacity="0.85" />
             <circle cx="-1.5" cy="-1.5" r="1.2" fill="#FFFFFF" opacity="0.95" />
@@ -234,7 +234,7 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
           <span className="relative inline-block" style={{ fontSize: `${height * 0.72}px` }}>
             i
             <span
-              className="absolute rounded-full bg-[#2DD4A7] shadow-[0_0_8px_#2DD4A7]"
+              className="absolute rounded-full bg-[#38BDF8] shadow-[0_0_8px_#38BDF8]"
               style={{
                 top: `${height * 0.08}px`,
                 left: '50%',
@@ -249,7 +249,7 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
           </span>
         </div>
         <div
-          className="font-bold text-[#2DD4A7] tracking-[0.38em] uppercase"
+          className="font-bold text-[#38BDF8] tracking-[0.38em] uppercase"
           style={{ fontSize: `${height * 0.28}px`, marginTop: `${height * 0.08}px` }}
         >
           CONNECT
@@ -271,36 +271,36 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
       >
         <defs>
           <linearGradient id="ec-fl-top-surf" x1="20%" y1="70%" x2="80%" y2="20%">
-            <stop offset="0%" stopColor="#047857" />
-            <stop offset="25%" stopColor="#059669" />
-            <stop offset="55%" stopColor="#10B981" />
-            <stop offset="85%" stopColor="#2DD4A7" />
-            <stop offset="100%" stopColor="#5EEAD4" />
+            <stop offset="0%" stopColor="#1D4ED8" />
+            <stop offset="25%" stopColor="#2563EB" />
+            <stop offset="55%" stopColor="#3B82F6" />
+            <stop offset="85%" stopColor="#38BDF8" />
+            <stop offset="100%" stopColor="#7DD3FC" />
           </linearGradient>
           <linearGradient id="ec-fl-cradle-surf" x1="15%" y1="20%" x2="85%" y2="90%">
-            <stop offset="0%" stopColor="#0D9488" />
-            <stop offset="35%" stopColor="#10B981" />
-            <stop offset="70%" stopColor="#2DD4A7" />
-            <stop offset="100%" stopColor="#047857" />
+            <stop offset="0%" stopColor="#0284C7" />
+            <stop offset="35%" stopColor="#2563EB" />
+            <stop offset="70%" stopColor="#38BDF8" />
+            <stop offset="100%" stopColor="#1D4ED8" />
           </linearGradient>
           <linearGradient id="ec-fl-rim-glow" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#10B981" stopOpacity="0.2" />
-            <stop offset="30%" stopColor="#2DD4A7" stopOpacity="0.9" />
-            <stop offset="70%" stopColor="#6EE7B7" stopOpacity="1" />
+            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.2" />
+            <stop offset="30%" stopColor="#38BDF8" stopOpacity="0.9" />
+            <stop offset="70%" stopColor="#BAE6FD" stopOpacity="1" />
             <stop offset="100%" stopColor="#F0FDF4" stopOpacity="0.95" />
           </linearGradient>
           <radialGradient id="ec-fl-sphere-grad" cx="35%" cy="32%" r="65%">
-            <stop offset="0%" stopColor="#F0FDF4" />
-            <stop offset="20%" stopColor="#A7F3D0" />
-            <stop offset="50%" stopColor="#2DD4A7" />
-            <stop offset="80%" stopColor="#0D9488" />
-            <stop offset="100%" stopColor="#042F2E" />
+            <stop offset="0%" stopColor="#F0F9FF" />
+            <stop offset="20%" stopColor="#BAE6FD" />
+            <stop offset="50%" stopColor="#38BDF8" />
+            <stop offset="80%" stopColor="#0284C7" />
+            <stop offset="100%" stopColor="#082F49" />
           </radialGradient>
           <radialGradient id="ec-fl-i-dot" cx="35%" cy="35%" r="65%">
-            <stop offset="0%" stopColor="#E6FFFA" />
-            <stop offset="40%" stopColor="#2DD4A7" />
-            <stop offset="85%" stopColor="#0D9488" />
-            <stop offset="100%" stopColor="#042F2E" />
+            <stop offset="0%" stopColor="#F0F9FF" />
+            <stop offset="40%" stopColor="#38BDF8" />
+            <stop offset="85%" stopColor="#0284C7" />
+            <stop offset="100%" stopColor="#082F49" />
           </radialGradient>
         </defs>
 
@@ -329,14 +329,14 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
           />
           <path
             d="M 116 70 C 102 82 82 94 62 106"
-            stroke="#6EE7B7"
+            stroke="#7DD3FC"
             strokeWidth="2.5"
             strokeLinecap="round"
             fill="none"
             opacity="0.85"
           />
           <g transform="translate(108, 88)">
-            <ellipse cx="0" cy="11" rx="9" ry="3.5" fill="#042F2E" opacity="0.4" />
+            <ellipse cx="0" cy="11" rx="9" ry="3.5" fill="#082F49" opacity="0.4" />
             <circle cx="0" cy="0" r="12.5" fill="url(#ec-fl-sphere-grad)" />
             <circle cx="-3.5" cy="-3.5" r="3" fill="#FFFFFF" opacity="0.85" />
           </g>
@@ -346,37 +346,38 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
         <g transform="translate(100, 0)">
           {/* 'e' */}
           <path
+            className="ellix-logo-wordmark"
             d="M 23 48 C 23 38 31 31 42 31 C 53 31 60 38 60 49 C 60 50.5 59.8 51.5 59.5 52.5 L 31.8 52.5 C 32.5 58 36.5 61.5 42.5 61.5 C 47 61.5 50.5 59.5 52.5 57 L 58.5 60 C 55 64.5 49.5 67.5 42 67.5 C 30.5 67.5 23 59.5 23 48 Z M 51.2 46.5 C 50.8 41.5 47 37.5 41.8 37.5 C 36.8 37.5 33 41.2 32.2 46.5 L 51.2 46.5 Z"
             fill="#FFFFFF"
           />
 
           {/* first 'l' */}
-          <path d="M 67 19 L 75.5 19 L 75.5 66.5 L 67 66.5 Z" fill="#FFFFFF" />
+          <path className="ellix-logo-wordmark" d="M 67 19 L 75.5 19 L 75.5 66.5 L 67 66.5 Z" fill="#FFFFFF" />
 
           {/* second 'l' */}
-          <path d="M 83 19 L 91.5 19 L 91.5 66.5 L 83 66.5 Z" fill="#FFFFFF" />
+          <path className="ellix-logo-wordmark" d="M 83 19 L 91.5 19 L 91.5 66.5 L 83 66.5 Z" fill="#FFFFFF" />
 
           {/* 'i' stem */}
-          <path d="M 99 32 L 107.5 32 L 107.5 66.5 L 99 66.5 Z" fill="#FFFFFF" />
+          <path className="ellix-logo-wordmark" d="M 99 32 L 107.5 32 L 107.5 66.5 L 99 66.5 Z" fill="#FFFFFF" />
 
           {/* 'i' dot: 3D mint orb */}
           <circle cx="103.25" cy="22" r="5.2" fill="url(#ec-fl-i-dot)" />
           <circle cx="101.8" cy="20.5" r="1.5" fill="#FFFFFF" opacity="0.8" />
 
           {/* 'x' main white stroke (top-left to bottom-right) */}
-          <path d="M 115 32 L 124 32 L 143.5 66.5 L 134.5 66.5 Z" fill="#FFFFFF" />
+          <path className="ellix-logo-wordmark" d="M 115 32 L 124 32 L 143.5 66.5 L 134.5 66.5 Z" fill="#FFFFFF" />
 
           {/* 'x' bottom-left white segment */}
-          <path d="M 115 66.5 L 123.5 66.5 L 129.5 56 L 125 48 Z" fill="#FFFFFF" />
+          <path className="ellix-logo-wordmark" d="M 115 66.5 L 123.5 66.5 L 129.5 56 L 125 48 Z" fill="#FFFFFF" />
 
           {/* 'x' top-right mint accent slash */}
-          <path d="M 129 49 L 134.5 40 L 144 32 L 135 32 L 127 44.5 Z" fill="#2DD4A7" />
+          <path d="M 129 49 L 134.5 40 L 144 32 L 135 32 L 127 44.5 Z" fill="#38BDF8" />
 
           {/* Tracked Tagline: CONNECT */}
           <text
             x="24"
             y="82"
-            fill="#2DD4A7"
+            fill="#38BDF8"
             style={{
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Plus Jakarta Sans", sans-serif',
               fontWeight: 700,

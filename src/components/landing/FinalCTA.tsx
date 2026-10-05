@@ -13,16 +13,18 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onOpenGetStarted }) => {
         {/* Container with High-Contrast Slate Canvas */}
         <div className="relative rounded-3xl bg-slate-950 text-white p-8 sm:p-12 lg:p-16 overflow-hidden shadow-2xl border border-slate-900 dark:border-slate-800">
           
-          {/* Subtle Background Structural Grid & Ambient Emerald Glow */}
+          {/* Subtle Background Structural Grid & Ambient Sapphire Glow */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#334155_1px,transparent_1px),linear-gradient(to_bottom,#334155_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
-          <div className="hero-ambient-orb absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[260px] rounded-full bg-emerald-500/15 blur-3xl pointer-events-none" />
+          <div className="hero-ambient-orb absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[260px] rounded-full bg-sky-500/15 blur-3xl pointer-events-none" />
 
           <div className="relative max-w-3xl mx-auto text-center space-y-6">
             
-            {/* Tagline Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-emerald-400 text-xs font-semibold tracking-wide">
-              <Zap className="w-3.5 h-3.5 text-emerald-400" />
+            {/* Tagline Kicker */}
+            <div className="flex items-center justify-center gap-2 text-xs font-bold tracking-widest text-sky-400 uppercase select-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.7)] animate-pulse" />
               <span>Ellix Connect Platform</span>
+              <span className="text-slate-600">·</span>
+              <span className="text-slate-300 font-semibold normal-case tracking-normal">Cloud &amp; Offline Ready</span>
             </div>
 
             {/* Main Headline */}
@@ -43,7 +45,7 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onOpenGetStarted }) => {
                 data-cursor="hover"
                 data-magnetic="true"
                 onClick={onOpenGetStarted}
-                className="website-btn-glow w-full sm:w-auto px-8 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-base font-bold shadow-lg hover:shadow-xl hover:shadow-emerald-500/25 flex items-center justify-center gap-2 group cursor-pointer"
+                className="website-btn-glow w-full sm:w-auto px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-base font-bold shadow-lg hover:shadow-xl hover:shadow-blue-500/25 flex items-center justify-center gap-2 group cursor-pointer"
               >
                 <span data-magnetic-inner className="flex items-center gap-2">
                   <span>Get Started</span>
@@ -55,13 +57,13 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onOpenGetStarted }) => {
             {/* Trust Assurances */}
             <div className="pt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs font-medium text-slate-400">
               <span className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" /> No credit card required
+                <CheckCircle2 className="w-4 h-4 text-sky-400" /> No credit card required
               </span>
               <span className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Free 14-day full trial
+                <CheckCircle2 className="w-4 h-4 text-sky-400" /> Free 14-day full trial
               </span>
               <span className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" /> Complete data privacy & backup
+                <ShieldCheck className="w-4 h-4 text-sky-400" /> Complete data privacy & backup
               </span>
             </div>
 

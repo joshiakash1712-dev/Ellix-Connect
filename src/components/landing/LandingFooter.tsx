@@ -1,12 +1,10 @@
 import React from 'react';
-import { ShieldCheck, Info } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { EllixConnectLogo } from '../branding/EllixConnectLogo';
 import {
   LEGAL_CONFIG,
   LegalPageSlug,
   isConfiguredLegalValue,
-  getUnconfiguredLegalKeys,
-  isDevelopmentEnvironment,
 } from '../../config/legal.config';
 
 interface LandingFooterProps {
@@ -51,9 +49,6 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
   const hasAnyConfiguredBusinessInfo =
     hasBusinessName || hasBusinessAddress || hasSupportEmail || hasSupportPhone || hasGstin;
 
-  const unconfiguredKeys = getUnconfiguredLegalKeys();
-  const isDevEnvironment = isDevelopmentEnvironment();
-
   return (
     <footer className="bg-white dark:bg-slate-950 border-t border-slate-200/90 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-xs transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
@@ -77,7 +72,7 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
             </div>
 
             <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs pt-1">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0" />
               <span>Designed for retail stores, supermarkets &amp; wholesalers in India (excluding restaurants).</span>
             </div>
           </div>
@@ -236,7 +231,7 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
                   <button
                     type="button"
                     onClick={onOpenAiMetadata}
-                    className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium transition-colors text-left cursor-pointer"
+                    className="text-blue-700 dark:text-sky-400 hover:text-blue-800 dark:hover:text-sky-300 font-medium transition-colors text-left cursor-pointer"
                   >
                     AI &amp; Crawler Spec
                   </button>
@@ -307,17 +302,6 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
                 </li>
               )}
             </ul>
-            {isDevEnvironment && unconfiguredKeys.length > 0 && (
-              <div
-                title={`Unconfigured fields in src/config/legal.config.ts: ${unconfiguredKeys.join(', ')}`}
-                className="pt-1 flex items-start gap-1.5 text-[10px] text-amber-700 dark:text-amber-400/90"
-              >
-                <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                <span>
-                  Dev Mode: {unconfiguredKeys.length} legal config fields pending in <code className="font-mono">legal.config.ts</code>
-                </span>
-              </div>
-            )}
           </div>
 
         </div>

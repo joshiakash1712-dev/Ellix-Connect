@@ -26,17 +26,24 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from '../lib/firebase';
+import { normalizeCanonicalRole, isUserStatusInactive } from '../types';
 
 export type ProfileRole =
   | 'super_admin'
   | 'ellix_admin'
   | 'client'
   | 'crew'
+  | 'wholesaler_admin'
+  | 'unauthorized'
   // Legacy compatibility
   | 'retailer'
+  | 'owner'
   | 'wholesaler'
   | 'admin'
-  | 'employee';
+  | 'platform_admin'
+  | 'employee'
+  | 'cashier'
+  | 'staff';
 
 export interface UserProfile {
   uid: string;
@@ -50,7 +57,11 @@ export interface UserProfile {
   role: ProfileRole;
   clientId?: string;
   assignedStoreIds?: string[];
-  status?: 'active' | 'pending_approval' | 'suspended';
+  wholesalerId?: string;
+  status?: 'active' | 'pending_approval' | 'suspended' | 'inactive' | 'revoked' | 'disabled';
+  disabled?: boolean;
+  active?: boolean;
+  isActive?: boolean;
   linkedProviders: string[]; // e.g. ['google.com', 'password', 'phone']
   passwordSynchronized: boolean;
   createdAt?: string;
@@ -123,65 +134,79 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const snap = await getDoc(userDocRef);
       const nowIso = new Date().toISOString();
 
-      const isAdminUser = user.email === 'joshiakash1712@gmail.com';
+      const isAdminUser = user.email === 'joshiakash1712@gmail.com' && isEmailVerified;
 
       if (snap.exists()) {
         const existingData = snap.data() as UserProfile;
         const mergedProviders = Array.from(new Set([...linkedProviders, ...(existingData.linkedProviders || [])]));
-        
-        // Preserve authoritative role already saved in Firestore; only allow dev overrides in development mode
-        const authoritativeRole: ProfileRole =
-          existingData.role ||
-          ((import.meta as any).env?.DEV ? additionalData?.role : undefined) ||
-          (isAdminUser ? 'super_admin' : 'client');
 
-        const { role: _ignoredRole, ...safeAdditionalData } = additionalData || {};
+        if (isUserStatusInactive(existingData)) {
+          const inactiveProfile: UserProfile = {
+            ...existingData,
+            uid: user.uid,
+            role: 'unauthorized',
+            linkedProviders: mergedProviders
+          };
+          setUserProfile(inactiveProfile);
+          return inactiveProfile;
+        }
 
-        const updates: Partial<UserProfile> = {
-          ...safeAdditionalData,
-          email: user.email || existingData.email || '',
+        // Preserve authoritative role already saved in Firestore; fail closed if unrecognized
+        const resolvedCanonical = isAdminUser
+          ? 'super_admin'
+          : normalizeCanonicalRole(existingData.role);
+
+        // Only write safe profile metadata fields to Firestore (never mutate role, clientId, assignedStoreIds, or status)
+        const safeFirestoreUpdates: Record<string, any> = {
           emailVerified: isEmailVerified,
           phoneNumber: user.phoneNumber || existingData.phoneNumber || '',
           phoneVerified: hasPhone,
-          displayName: user.displayName || existingData.displayName || (user.email ? user.email.split('@')[0] : 'Merchant'),
+          displayName: user.displayName || additionalData?.displayName || existingData.displayName || (user.email ? user.email.split('@')[0] : 'Merchant'),
           photoURL: user.photoURL || existingData.photoURL || '',
-          role: authoritativeRole,
-          clientId: existingData.clientId || safeAdditionalData.clientId || 'client-001',
-          assignedStoreIds: existingData.assignedStoreIds || safeAdditionalData.assignedStoreIds || ['store-1', 'store-2'],
-          status: existingData.status || 'active',
           linkedProviders: mergedProviders,
-          passwordSynchronized: existingData.passwordSynchronized ?? hasPassword,
+          passwordSynchronized: additionalData?.passwordSynchronized ?? existingData.passwordSynchronized ?? hasPassword,
           updatedAt: nowIso
         };
 
-        await updateDoc(userDocRef, updates);
-        const updatedProfile = { ...existingData, ...updates } as UserProfile;
+        try {
+          await updateDoc(userDocRef, safeFirestoreUpdates);
+        } catch (updateErr) {
+          console.warn('[AuthContext] Safe profile metadata update skipped:', updateErr);
+        }
+
+        const updatedProfile: UserProfile = {
+          ...existingData,
+          ...safeFirestoreUpdates,
+          uid: user.uid,
+          email: existingData.email || user.email || '',
+          role: resolvedCanonical,
+          clientId: existingData.clientId || 'client-001',
+          assignedStoreIds: existingData.assignedStoreIds || (resolvedCanonical === 'crew' ? ['store-1'] : ['store-1', 'store-2']),
+          status: existingData.status || 'active'
+        };
         setUserProfile(updatedProfile);
         return updatedProfile;
       } else {
-        const requestedRole = additionalData?.role;
+        const requestedCanonical = normalizeCanonicalRole(additionalData?.role);
+        const allowedSelfRegRoles: ProfileRole[] = ['client', 'crew', 'wholesaler_admin'];
         const initialRole: ProfileRole = isAdminUser
           ? 'super_admin'
-          : ((import.meta as any).env?.DEV && requestedRole)
-          ? requestedRole
-          : (requestedRole && requestedRole !== 'super_admin' && requestedRole !== 'ellix_admin' && requestedRole !== 'admin')
-          ? requestedRole
+          : allowedSelfRegRoles.includes(requestedCanonical)
+          ? requestedCanonical
           : 'client';
 
-        const { role: _ignoredRole, ...safeAdditionalData } = additionalData || {};
-
+        const defaultClientId = `client-${user.uid}`;
         const newProfile: UserProfile = {
-          ...safeAdditionalData,
           uid: user.uid,
           email: user.email || '',
           emailVerified: isEmailVerified,
           phoneNumber: user.phoneNumber || '',
           phoneVerified: hasPhone,
-          displayName: user.displayName || safeAdditionalData.displayName || (user.email ? user.email.split('@')[0] : 'Merchant'),
+          displayName: user.displayName || additionalData?.displayName || (user.email ? user.email.split('@')[0] : 'Merchant'),
           photoURL: user.photoURL || '',
           role: initialRole,
-          clientId: safeAdditionalData.clientId || 'client-001',
-          assignedStoreIds: safeAdditionalData.assignedStoreIds || ['store-1', 'store-2'],
+          clientId: defaultClientId,
+          assignedStoreIds: initialRole === 'crew' ? [] : ['store-1'],
           status: 'active',
           linkedProviders: linkedProviders.length > 0 ? linkedProviders : ['anonymous'],
           passwordSynchronized: hasPassword,
@@ -198,7 +223,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error?.code === 'permission-denied') {
         handleFirestoreError(error, OperationType.WRITE, `users/${user.uid}`);
       }
-      // Fallback local representation if Firestore throws
+      const isVerifiedRoot = user.email === 'joshiakash1712@gmail.com' && isEmailVerified;
+      const requestedCanonical = normalizeCanonicalRole(additionalData?.role);
+      const safeFallbackRole: ProfileRole = isVerifiedRoot
+        ? 'super_admin'
+        : (requestedCanonical === 'crew' || requestedCanonical === 'wholesaler_admin' || requestedCanonical === 'client')
+        ? requestedCanonical
+        : 'client';
+
       const fallbackProfile: UserProfile = {
         uid: user.uid,
         email: user.email || '',
@@ -207,7 +239,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         phoneVerified: Boolean(user.phoneNumber),
         displayName: user.displayName || 'Merchant',
         photoURL: user.photoURL || '',
-        role: (user.email === 'joshiakash1712@gmail.com') ? 'admin' : (additionalData?.role || 'retailer'),
+        role: safeFallbackRole,
+        clientId: `client-${user.uid}`,
+        assignedStoreIds: [],
+        status: 'active',
         linkedProviders,
         passwordSynchronized: hasPassword,
         createdAt: new Date().toISOString(),

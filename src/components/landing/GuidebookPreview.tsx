@@ -184,8 +184,11 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
-              Ellix Guidebook
+            <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
+              <span>Ellix Guidebook</span>
+              <span className="text-slate-300 dark:text-slate-700">·</span>
+              <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">12 Interactive Chapters</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-950 dark:text-white tracking-tight">
               Learn Ellix Connect, step by step.
@@ -207,7 +210,7 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
                     guideProgressStep > 0 && !guideCompleted ? guideProgressStep : undefined
                   )
                 }
-                className="website-btn-glow px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center gap-2 cursor-pointer group"
+                className="website-btn-glow px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold shadow-md shadow-blue-600/20 transition-all flex items-center gap-2 cursor-pointer group"
               >
                 <BookOpen className="w-4 h-4" />
                 <span>
@@ -224,11 +227,11 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
 
         {/* 12-Chapter Interactive Journey Quick-Jump Strip */}
         {onOpenInteractiveGuide && (
-          <div className="mb-10 p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/40 dark:from-emerald-950/25 dark:via-slate-900 dark:to-teal-950/20 border border-emerald-200/80 dark:border-emerald-800/60 shadow-2xs">
+          <div className="mb-10 p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-sky-50/70 via-white to-sky-100/40 dark:from-blue-950/25 dark:via-slate-900 dark:to-blue-950/20 border border-sky-200/80 dark:border-sky-800/60 shadow-2xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
+                <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+                <span className="text-xs font-extrabold uppercase tracking-wider text-blue-800 dark:text-sky-300">
                   Interactive First-Time User Guide • 12 Connected Chapters
                 </span>
               </div>
@@ -248,31 +251,31 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
                     onClick={() => onOpenInteractiveGuide(ch.stepNumber)}
                     className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between group ${
                       isCurrent
-                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                        ? 'bg-blue-600 text-white border-sky-500 shadow-sm'
                         : isDone
-                        ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-300/70 dark:border-emerald-800/60 text-slate-900 dark:text-white hover:border-emerald-500'
-                        : 'bg-white dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:border-emerald-500/60'
+                        ? 'bg-sky-50/70 dark:bg-blue-950/30 border-sky-300/70 dark:border-sky-800/60 text-slate-900 dark:text-white hover:border-blue-500'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:border-blue-500/60'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-1 mb-1">
                       <span
                         className={`text-[10px] font-mono font-bold ${
                           isCurrent
-                            ? 'text-emerald-100'
-                            : 'text-emerald-600 dark:text-emerald-400'
+                            ? 'text-sky-100'
+                            : 'text-blue-600 dark:text-sky-400'
                         }`}
                       >
                         STEP {ch.code}
                       </span>
                       {isDone && !isCurrent && (
-                        <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                        <CheckCircle2 className="w-3 h-3 text-sky-500 shrink-0" />
                       )}
                     </div>
                     <div
                       className={`text-xs font-bold leading-snug line-clamp-1 ${
                         isCurrent
                           ? 'text-white'
-                          : 'text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+                          : 'text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-sky-400'
                       }`}
                     >
                       {ch.shortTitle}
@@ -314,7 +317,7 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search guides or topics..."
-              className="w-full pl-9 pr-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors hover:border-emerald-500/40"
+              className="w-full pl-9 pr-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-sky-500 transition-colors hover:border-blue-500/40"
             />
           </div>
         </div>
@@ -336,14 +339,14 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
                   id={`guide-card-${guide.id}`}
                   data-cursor="card"
                   onClick={() => setActiveGuideModal(guide)}
-                  className="website-card-hover group p-6 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-lg transition-all flex flex-col justify-between cursor-pointer"
+                  className="website-card-hover group p-6 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-lg transition-all flex flex-col justify-between cursor-pointer"
                 >
                   <div>
                     {/* Top Bar: Icon + Read Time */}
                     <div className="flex items-center justify-between mb-5">
                       <div
                         data-icon-box
-                        className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white flex items-center justify-center group-hover:bg-slate-900 dark:group-hover:bg-slate-800 group-hover:text-emerald-400 transition-all duration-200"
+                        className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white flex items-center justify-center group-hover:bg-slate-900 dark:group-hover:bg-slate-800 group-hover:text-sky-400 transition-all duration-200"
                       >
                         <Icon className="w-4 h-4 transition-transform duration-200" />
                       </div>
@@ -354,10 +357,10 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
                     </div>
 
                     {/* Category & Title */}
-                    <div className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-1">
+                    <div className="text-[11px] font-semibold text-blue-700 dark:text-sky-400 uppercase tracking-wider mb-1">
                       {guide.category}
                     </div>
-                    <h3 className="text-base font-bold text-slate-950 dark:text-white mb-2.5 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                    <h3 className="text-base font-bold text-slate-950 dark:text-white mb-2.5 group-hover:text-blue-700 dark:group-hover:text-sky-400 transition-colors">
                       {guide.title}
                     </h3>
 
@@ -375,13 +378,13 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
                       </div>
                       {guide.keyTopics.map((topic, idx) => (
                         <div key={idx} className="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300">
-                          <FileCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          <FileCheck className="w-3 h-3 text-blue-600 dark:text-sky-400 shrink-0" />
                           <span className="line-clamp-1">{topic}</span>
                         </div>
                       ))}
                     </div>
 
-                    <div className="pt-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1 group-hover:underline">
+                    <div className="pt-2 text-xs font-semibold text-blue-700 dark:text-sky-400 flex items-center gap-1 group-hover:underline">
                       <span>Read full documentation</span>
                       <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />
                     </div>
@@ -395,7 +398,7 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
         {/* Illustrated Callout Card */}
         <div className="mt-10 p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-sky-100 dark:bg-blue-950/80 text-blue-700 dark:text-sky-300 flex items-center justify-center shrink-0">
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
@@ -449,7 +452,7 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
               <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded">
+                    <span className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-sky-400 bg-sky-50 dark:bg-blue-950/80 px-2 py-0.5 rounded">
                       {activeGuideModal.category}
                     </span>
                     <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
@@ -506,7 +509,7 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveGuideModal(null)}
-                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors cursor-pointer"
                 >
                   Close Walkthrough
                 </button>

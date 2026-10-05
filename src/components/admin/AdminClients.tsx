@@ -24,7 +24,7 @@ import {
   Mail,
   Shield
 } from 'lucide-react';
-import { BusinessApplication } from '../../types';
+import { BusinessApplication, normalizeCanonicalRole } from '../../types';
 
 interface AdminMember {
   uid: string;
@@ -48,7 +48,9 @@ export const AdminClients: React.FC = () => {
   } = useStore();
 
   const { userProfile, currentUser: authUser } = useAuth();
-  const isSuperAdmin = activeRole === 'super_admin' || userProfile?.role === 'super_admin';
+  const isSuperAdmin =
+    normalizeCanonicalRole(activeRole) === 'super_admin' ||
+    normalizeCanonicalRole(userProfile?.role) === 'super_admin';
 
   const [activeSubTab, setActiveSubTab] = useState<'applications' | 'clients' | 'plans' | 'admins'>('applications');
   const [searchTerm, setSearchTerm] = useState('');
@@ -88,17 +90,17 @@ export const AdminClients: React.FC = () => {
 
   // Fetch admin team on tab switch
   React.useEffect(() => {
-    if (activeSubTab === 'admins' && isSuperAdmin) {
+    if (activeSubTab === 'admins' && isSuperAdmin && authUser) {
       const fetchTeam = async () => {
         setIsLoadingTeam(true);
         try {
-          let token = '';
-          if (authUser) {
-            token = await authUser.getIdToken();
+          const token = await authUser.getIdToken();
+          if (!token || token.split('.').length !== 3) {
+            return;
           }
           const res = await fetch('/api/admin/team', {
             headers: {
-              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+              'Authorization': `Bearer ${token}`
             }
           });
           if (res.ok) {
@@ -235,7 +237,7 @@ export const AdminClients: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg">
         <div>
           <div className="flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-emerald-400" />
+            <Building2 className="w-5 h-5 text-sky-400" />
             <h2 className="text-lg font-black text-white">Client Management & Subscriptions</h2>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -249,7 +251,7 @@ export const AdminClients: React.FC = () => {
             onClick={() => setActiveSubTab('applications')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
               activeSubTab === 'applications'
-                ? 'bg-emerald-600 text-white shadow-md'
+                ? 'bg-blue-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -266,7 +268,7 @@ export const AdminClients: React.FC = () => {
             onClick={() => setActiveSubTab('clients')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
               activeSubTab === 'clients'
-                ? 'bg-emerald-600 text-white shadow-md'
+                ? 'bg-blue-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -278,7 +280,7 @@ export const AdminClients: React.FC = () => {
             onClick={() => setActiveSubTab('plans')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
               activeSubTab === 'plans'
-                ? 'bg-emerald-600 text-white shadow-md'
+                ? 'bg-blue-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -291,7 +293,7 @@ export const AdminClients: React.FC = () => {
               onClick={() => setActiveSubTab('admins')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
                 activeSubTab === 'admins'
-                  ? 'bg-emerald-600 text-white shadow-md'
+                  ? 'bg-blue-600 text-white shadow-md'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -306,7 +308,7 @@ export const AdminClients: React.FC = () => {
         <div
           className={`p-4 rounded-xl text-xs font-bold flex items-center gap-2 border ${
             feedbackMsg.type === 'success'
-              ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+              ? 'bg-sky-500/10 text-sky-300 border-sky-500/30'
               : 'bg-rose-500/10 text-rose-300 border-rose-500/30'
           }`}
         >
@@ -326,7 +328,7 @@ export const AdminClients: React.FC = () => {
                 placeholder="Search business or owner..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-lg bg-[#0A0E1A] border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                className="w-full pl-9 pr-4 py-2 rounded-lg bg-[#0A0E1A] border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
               />
             </div>
 
@@ -339,7 +341,7 @@ export const AdminClients: React.FC = () => {
 
           {filteredApps.length === 0 ? (
             <div className="p-12 text-center rounded-xl bg-[#121826] border border-slate-800">
-              <CheckCircle2 className="w-10 h-10 text-emerald-500/40 mx-auto mb-2" />
+              <CheckCircle2 className="w-10 h-10 text-sky-500/40 mx-auto mb-2" />
               <div className="text-sm font-bold text-white">No applications match your filter</div>
               <p className="text-xs text-slate-400 mt-1">Pending onboarding submissions will appear here for verification.</p>
             </div>
@@ -357,7 +359,7 @@ export const AdminClients: React.FC = () => {
                         <span
                           className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-lg border ${
                             app.status === 'approved'
-                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                              ? 'bg-sky-500/20 text-sky-300 border-sky-500/30'
                               : app.status === 'rejected'
                               ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
                               : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
@@ -388,7 +390,7 @@ export const AdminClients: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-400 block font-medium">Estimated Outlets</span>
-                      <span className="text-emerald-400 font-bold">{app.storeCount || 1} Outlets</span>
+                      <span className="text-sky-400 font-bold">{app.storeCount || 1} Outlets</span>
                     </div>
                   </div>
 
@@ -396,7 +398,7 @@ export const AdminClients: React.FC = () => {
                     <div className="flex items-center gap-2 pt-1">
                       <button
                         onClick={() => setAppToApprove(app)}
-                        className="flex-1 py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 transition-all"
+                        className="flex-1 py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-blue-600/20 transition-all"
                       >
                         <Check className="w-3.5 h-3.5" />
                         <span>Approve & Provision</span>
@@ -431,7 +433,7 @@ export const AdminClients: React.FC = () => {
                 <h3 className="text-sm font-black text-white">Active Tenant Accounts</h3>
                 <p className="text-xs text-slate-400">Total client organizations operating on Ellix Connect.</p>
               </div>
-              <div className="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-extrabold">
+              <div className="px-3 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-extrabold">
                 {stores.length} Retail Stores Deployed
               </div>
             </div>
@@ -440,7 +442,7 @@ export const AdminClients: React.FC = () => {
               {stores.map(st => (
                 <div key={st.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-black text-sm shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 font-black text-sm shrink-0">
                       {st.name.slice(0, 2).toUpperCase()}
                     </div>
                     <div>
@@ -453,7 +455,7 @@ export const AdminClients: React.FC = () => {
                     <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 font-medium">
                       Plan: {subscription.planName || 'Enterprise Pro'}
                     </span>
-                    <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                    <span className="px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 font-bold">
                       {subscription.status.toUpperCase()}
                     </span>
                   </div>
@@ -470,36 +472,36 @@ export const AdminClients: React.FC = () => {
           <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 space-y-4 shadow-md">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase text-slate-400">Starter</span>
-              <span className="text-xs text-emerald-400 font-extrabold">Single Store</span>
+              <span className="text-xs text-sky-400 font-extrabold">Single Store</span>
             </div>
             <div>
               <span className="text-2xl font-black text-white">₹799</span>
               <span className="text-xs text-slate-400"> / month</span>
             </div>
             <ul className="text-xs text-slate-300 space-y-2 border-t border-slate-800 pt-3">
-              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> POS & Billing (Fast Shift)</li>
-              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> Inventory alerts (Low stock)</li>
-              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> Customer ledger & GST invoicing</li>
+              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-sky-400" /> POS & Billing (Fast Shift)</li>
+              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-sky-400" /> Inventory alerts (Low stock)</li>
+              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-sky-400" /> Customer ledger & GST invoicing</li>
             </ul>
           </div>
 
-          <div className="p-5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 shadow-xl space-y-4 relative">
-            <div className="absolute -top-3 right-4 px-2 py-0.5 rounded-lg bg-emerald-500 text-slate-950 font-black text-[10px] uppercase">
+          <div className="p-5 rounded-xl bg-blue-950/30 border border-sky-500/40 shadow-xl space-y-4 relative">
+            <div className="absolute -top-3 right-4 px-2 py-0.5 rounded-lg bg-sky-500 text-slate-950 font-black text-[10px] uppercase">
               Most Popular
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase text-emerald-300">Growth Pro</span>
-              <span className="text-xs text-emerald-400 font-extrabold">Up to 3 Outlets</span>
+              <span className="text-xs font-bold uppercase text-sky-300">Growth Pro</span>
+              <span className="text-xs text-sky-400 font-extrabold">Up to 3 Outlets</span>
             </div>
             <div>
               <span className="text-2xl font-black text-white">₹1,999</span>
               <span className="text-xs text-slate-400"> / month</span>
             </div>
-            <ul className="text-xs text-slate-300 space-y-2 border-t border-emerald-900/60 pt-3">
-              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> Multi-store synchronization</li>
-              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> Crew RBAC & Discount controls</li>
-              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> B2B Wholesaler restock orders</li>
-              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> WhatsApp & PDF receipt delivery</li>
+            <ul className="text-xs text-slate-300 space-y-2 border-t border-blue-900/60 pt-3">
+              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-sky-400" /> Multi-store synchronization</li>
+              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-sky-400" /> Crew RBAC & Discount controls</li>
+              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-sky-400" /> B2B Wholesaler restock orders</li>
+              <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-sky-400" /> WhatsApp & PDF receipt delivery</li>
             </ul>
           </div>
 
@@ -574,7 +576,7 @@ export const AdminClients: React.FC = () => {
                             ? 'bg-indigo-500/20 border border-indigo-500/40 text-indigo-300'
                             : isRevoked
                             ? 'bg-slate-800 border border-slate-700 text-slate-500'
-                            : 'bg-teal-500/20 border border-teal-500/40 text-teal-300'
+                            : 'bg-sky-500/20 border border-sky-500/40 text-sky-300'
                         }`}
                       >
                         {isRoot ? 'SA' : isRevoked ? 'REV' : 'EA'}
@@ -588,7 +590,7 @@ export const AdminClients: React.FC = () => {
                             </span>
                           )}
                           {!isRoot && !isRevoked && (
-                            <span className="px-1.5 py-0.2 rounded-md text-[9px] font-extrabold uppercase bg-teal-500/20 text-teal-300 border border-teal-500/40">
+                            <span className="px-1.5 py-0.2 rounded-md text-[9px] font-extrabold uppercase bg-sky-500/20 text-sky-300 border border-sky-500/40">
                               Ellix Admin
                             </span>
                           )}
@@ -608,7 +610,7 @@ export const AdminClients: React.FC = () => {
 
                     <div className="flex items-center gap-2 self-end sm:self-center">
                       {isRoot ? (
-                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-sky-400 bg-sky-500/10 border border-sky-500/20">
                           Root Executive Authority
                         </span>
                       ) : isRevoked ? (
@@ -738,7 +740,7 @@ export const AdminClients: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-md animate-in fade-in duration-150">
           <div className="w-full max-w-md bg-[#161D2C] border border-slate-700/80 rounded-2xl p-5 shadow-2xl space-y-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
                 <Building2 className="w-5 h-5" />
               </div>
               <div>
@@ -770,7 +772,7 @@ export const AdminClients: React.FC = () => {
                 type="button"
                 disabled={isApproving}
                 onClick={handleConfirmApproval}
-                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition-all active:scale-95"
+                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-blue-600/20 transition-all active:scale-95"
               >
                 <Check className="w-4 h-4" />
                 <span>{isApproving ? 'Activating Workspace...' : 'Approve Application'}</span>

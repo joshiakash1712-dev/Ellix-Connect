@@ -816,10 +816,10 @@ export const initialTrackedRetailers: RetailerOnboardingProfile[] = [
   },
   {
     id: 'ret-108',
-    storeName: 'City Green Organic Grocers',
+    storeName: 'City Fresh Organic Grocers',
     ownerName: 'Anita Deshmukh',
     phone: '+91 98210 99823',
-    email: 'anita@citygreengrocers.in',
+    email: 'anita@cityfreshgrocers.in',
     city: 'Pune',
     segment: 'supermarket',
     skuCountApprox: 2100,

@@ -111,28 +111,28 @@ export const WebsiteCursor: React.FC = () => {
 
   // Determine size, color & scale based on cursor mode
   let auraSize = 34;
-  let auraBorder = 'border-emerald-500/40 dark:border-emerald-400/50';
-  let auraBg = 'bg-emerald-500/5 dark:bg-emerald-400/10';
-  let auraShadow = 'shadow-[0_0_12px_rgba(16,185,129,0.12)]';
+  let auraBorder = 'border-sky-500/40 dark:border-sky-400/50';
+  let auraBg = 'bg-sky-500/5 dark:bg-sky-400/10';
+  let auraShadow = 'shadow-[0_0_12px_rgba(37, 99, 235,0.12)]';
   let auraScale = 1;
 
   if (cursorMode === 'hover') {
     auraSize = 58;
-    auraBorder = 'border-emerald-400 dark:border-emerald-300';
-    auraBg = 'bg-emerald-400/15 dark:bg-emerald-400/20';
-    auraShadow = 'shadow-[0_0_24px_rgba(52,211,153,0.35)]';
+    auraBorder = 'border-sky-400 dark:border-sky-300';
+    auraBg = 'bg-sky-400/15 dark:bg-sky-400/20';
+    auraShadow = 'shadow-[0_0_24px_rgba(56, 189, 248,0.35)]';
     auraScale = 1.05;
   } else if (cursorMode === 'card') {
     auraSize = 68;
-    auraBorder = 'border-teal-400/60 dark:border-emerald-400/60';
-    auraBg = 'bg-emerald-500/8 dark:bg-emerald-400/12';
+    auraBorder = 'border-sky-400/60 dark:border-sky-400/60';
+    auraBg = 'bg-sky-500/8 dark:bg-sky-400/12';
     auraShadow = 'shadow-[0_0_28px_rgba(20,184,166,0.25)]';
     auraScale = 1.02;
   } else if (cursorMode === 'clicking') {
     auraSize = 26;
-    auraBorder = 'border-emerald-300 dark:border-emerald-200';
-    auraBg = 'bg-emerald-500/30 dark:bg-emerald-400/40';
-    auraShadow = 'shadow-[0_0_16px_rgba(16,185,129,0.5)]';
+    auraBorder = 'border-sky-300 dark:border-sky-200';
+    auraBg = 'bg-sky-500/30 dark:bg-sky-400/40';
+    auraShadow = 'shadow-[0_0_16px_rgba(37, 99, 235,0.5)]';
     auraScale = 0.9;
   }
 
@@ -144,7 +144,7 @@ export const WebsiteCursor: React.FC = () => {
     >
       {/* 1. Precision Center Dot (Tracks directly without lag) */}
       <motion.div
-        className="fixed top-0 left-0 w-2.5 h-2.5 -ml-[5px] -mt-[5px] rounded-full bg-gradient-to-tr from-emerald-600 via-emerald-400 to-teal-200 shadow-[0_0_10px_rgba(16,185,129,0.9)] ring-1 ring-white/70"
+        className="fixed top-0 left-0 w-2.5 h-2.5 -ml-[5px] -mt-[5px] rounded-full bg-gradient-to-tr from-blue-600 via-sky-400 to-sky-200 shadow-[0_0_10px_rgba(37, 99, 235,0.9)] ring-1 ring-white/70"
         style={{
           x: mouseX,
           y: mouseY,
@@ -181,7 +181,7 @@ export const WebsiteCursor: React.FC = () => {
       >
         {/* Subtle inner ambient focus ring when hovering clickable item */}
         {cursorMode === 'hover' && (
-          <div className="w-full h-full rounded-full opacity-30 border border-emerald-400 animate-pulse" />
+          <div className="w-full h-full rounded-full opacity-30 border border-sky-400 animate-pulse" />
         )}
       </motion.div>
     </div>

@@ -2,59 +2,59 @@
   <defs>
     <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#060B14" />
-      <stop offset="50%" stop-color="#0F172A" />
-      <stop offset="100%" stop-color="#091322" />
+      <stop offset="50%" stop-color="#0B1120" />
+      <stop offset="100%" stop-color="#060B14" />
     </linearGradient>
 
-    <radialGradient id="emerald-glow" cx="50%" cy="38%" r="55%">
-      <stop offset="0%" stop-color="#10B981" stop-opacity="0.18" />
-      <stop offset="55%" stop-color="#0D9488" stop-opacity="0.06" />
-      <stop offset="100%" stop-color="#0F172A" stop-opacity="0" />
+    <radialGradient id="sapphire-glow" cx="50%" cy="38%" r="55%">
+      <stop offset="0%" stop-color="#2563EB" stop-opacity="0.22" />
+      <stop offset="55%" stop-color="#1D4ED8" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#060B14" stop-opacity="0" />
     </radialGradient>
 
     <linearGradient id="card-border" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2DD4A7" stop-opacity="0.45" />
-      <stop offset="50%" stop-color="#334155" stop-opacity="0.5" />
-      <stop offset="100%" stop-color="#10B981" stop-opacity="0.3" />
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.5" />
+      <stop offset="50%" stop-color="#1E293B" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#2563EB" stop-opacity="0.35" />
     </linearGradient>
 
     <linearGradient id="fl-front-grad" x1="15%" y1="90%" x2="85%" y2="15%">
-      <stop offset="0%" stop-color="#047857" />
-      <stop offset="30%" stop-color="#10B981" />
-      <stop offset="65%" stop-color="#2DD4A7" />
-      <stop offset="100%" stop-color="#6EE7B7" />
+      <stop offset="0%" stop-color="#1D4ED8" />
+      <stop offset="30%" stop-color="#2563EB" />
+      <stop offset="65%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#7DD3FC" />
     </linearGradient>
 
     <linearGradient id="fl-shadow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#064E3B" />
-      <stop offset="60%" stop-color="#047857" />
-      <stop offset="100%" stop-color="#10B981" />
+      <stop offset="0%" stop-color="#082F49" />
+      <stop offset="60%" stop-color="#1D4ED8" />
+      <stop offset="100%" stop-color="#2563EB" />
     </linearGradient>
 
     <linearGradient id="fl-highlight-grad" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#10B981" stop-opacity="0.1" />
-      <stop offset="50%" stop-color="#5EEAD4" stop-opacity="0.85" />
-      <stop offset="100%" stop-color="#E6FFFA" stop-opacity="0.95" />
+      <stop offset="0%" stop-color="#2563EB" stop-opacity="0.1" />
+      <stop offset="50%" stop-color="#38BDF8" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#F0F9FF" stop-opacity="0.95" />
     </linearGradient>
 
     <radialGradient id="fl-orb-3d" cx="36%" cy="34%" r="62%">
-      <stop offset="0%" stop-color="#CCFBF1" />
-      <stop offset="28%" stop-color="#5EEAD4" />
-      <stop offset="65%" stop-color="#10B981" />
-      <stop offset="100%" stop-color="#064E3B" />
+      <stop offset="0%" stop-color="#F0F9FF" />
+      <stop offset="28%" stop-color="#BAE6FD" />
+      <stop offset="65%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#082F49" />
     </radialGradient>
 
     <radialGradient id="i-dot-grad" cx="35%" cy="35%" r="65%">
-      <stop offset="0%" stop-color="#E6FFFA" />
-      <stop offset="40%" stop-color="#2DD4A7" />
-      <stop offset="85%" stop-color="#0D9488" />
-      <stop offset="100%" stop-color="#042F2E" />
+      <stop offset="0%" stop-color="#F0F9FF" />
+      <stop offset="40%" stop-color="#38BDF8" />
+      <stop offset="85%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#082F49" />
     </radialGradient>
   </defs>
 
   <!-- Background -->
   <rect width="1200" height="630" fill="url(#bg-grad)" />
-  <rect width="1200" height="630" fill="url(#emerald-glow)" />
+  <rect width="1200" height="630" fill="url(#sapphire-glow)" />
 
   <!-- Subtle Structural Grid Lines -->
   <g stroke="#1E293B" stroke-width="1" opacity="0.55">
@@ -71,14 +71,14 @@
     width="1040"
     height="490"
     rx="28"
-    fill="#0F172A"
-    fill-opacity="0.82"
+    fill="#0B1120"
+    fill-opacity="0.88"
     stroke="url(#card-border)"
     stroke-width="2"
   />
 
-  <!-- Top Emerald Accent Bar -->
-  <rect x="480" y="70" width="240" height="3" rx="1.5" fill="#2DD4A7" />
+  <!-- Top Sapphire Accent Bar -->
+  <rect x="480" y="70" width="240" height="3" rx="1.5" fill="#38BDF8" />
 
   <!-- Official Ellix Connect Logo (Centered) -->
   <g transform="translate(410, 125) scale(1.1)">
@@ -109,14 +109,14 @@
       />
       <path
         d="M 44 72 C 58 63 78 61 90 70"
-        stroke="#5EEAD4"
+        stroke="#7DD3FC"
         stroke-width="2.5"
         stroke-linecap="round"
         fill="none"
         opacity="0.7"
       />
       <g transform="translate(68, 76)">
-        <ellipse cx="0" cy="11" rx="10" ry="4" fill="#042F2E" opacity="0.4" />
+        <ellipse cx="0" cy="11" rx="10" ry="4" fill="#082F49" opacity="0.4" />
         <circle cx="0" cy="0" r="13" fill="url(#fl-orb-3d)" />
         <circle cx="-4" cy="-4" r="3.2" fill="#FFFFFF" opacity="0.8" />
       </g>
@@ -135,7 +135,7 @@
       <circle cx="101.8" cy="20.5" r="1.5" fill="#FFFFFF" opacity="0.8" />
       <path d="M 115 32 L 124 32 L 143.5 66.5 L 134.5 66.5 Z" fill="#FFFFFF" />
       <path d="M 115 66.5 L 123.5 66.5 L 129.5 56 L 125 48 Z" fill="#FFFFFF" />
-      <path d="M 129 49 L 134.5 40 L 144 32 L 135 32 L 127 44.5 Z" fill="#2DD4A7" />
+      <path d="M 129 49 L 134.5 40 L 144 32 L 135 32 L 127 44.5 Z" fill="#38BDF8" />
       <text
         x="24"
         y="82"
@@ -143,7 +143,7 @@
         font-weight="700"
         font-size="11.5"
         letter-spacing="4.2"
-        fill="#2DD4A7"
+        fill="#38BDF8"
       >CONNECT</text>
     </g>
   </g>
@@ -182,6 +182,6 @@
     font-weight="700"
     font-size="20"
     letter-spacing="1.2"
-    fill="#2DD4A7"
+    fill="#38BDF8"
   >BILLING   ·   INVENTORY   ·   CUSTOMERS   ·   PAYMENTS   ·   TRANSACTIONS   ·   INSIGHTS</text>
 </svg>

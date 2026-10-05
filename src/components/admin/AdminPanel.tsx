@@ -23,6 +23,7 @@ import { AdminDatabaseSync } from './AdminDatabaseSync';
 import { AdminSecurity } from './AdminSecurity';
 import { AdminAuditTrail } from './AdminAuditTrail';
 import { AdminClients } from './AdminClients';
+import { normalizeCanonicalRole } from '../../types';
 
 export type AdminTab = 'overview' | 'clients' | 'stores' | 'wholesalers' | 'users' | 'database' | 'security' | 'audit';
 
@@ -48,7 +49,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   } = useStore();
   const { userProfile } = useAuth();
 
-  const isSuperAdmin = activeRole === 'super_admin' || userProfile?.role === 'super_admin';
+  const isSuperAdmin =
+    normalizeCanonicalRole(activeRole) === 'super_admin' ||
+    normalizeCanonicalRole(userProfile?.role) === 'super_admin';
 
   const [activeTab, setActiveTab] = useState<AdminTab>(() => {
     if (!isSuperAdmin && (initialTab === 'users' || initialTab === 'security' || initialTab === 'database')) {
@@ -97,10 +100,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       
       {/* 1. TOP ENTERPRISE BANNER & QUICK STATS */}
-      <div className="p-5 sm:p-6 rounded-xl bg-gradient-to-r from-[#121826] via-[#121826] to-emerald-950/30 border border-slate-800 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="p-5 sm:p-6 rounded-xl bg-gradient-to-r from-[#121826] via-[#121826] to-blue-950/30 border border-slate-800 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+            <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-400">
               <ShieldAlert className="w-6 h-6" />
             </div>
             <div>
@@ -108,7 +111,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 <h1 className="text-xl font-black text-white tracking-tight">
                   {isSuperAdmin ? 'Superadmin Control Center' : 'Ellix Admin Operations Console'}
                 </h1>
-                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30">
                   {isSuperAdmin ? 'Tenant Superuser' : 'Operational Admin (L2)'}
                 </span>
               </div>
@@ -129,11 +132,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           </div>
           <div className="p-3 rounded-xl bg-[#0A0E1A]/80 border border-slate-800">
             <span className="text-[10px] text-slate-400 block font-semibold">Wholesalers</span>
-            <span className="text-lg font-black text-emerald-400">{wholesalers.length} Suppliers</span>
+            <span className="text-lg font-black text-sky-400">{wholesalers.length} Suppliers</span>
           </div>
           <div className="p-3 rounded-xl bg-[#0A0E1A]/80 border border-slate-800">
             <span className="text-[10px] text-slate-400 block font-semibold">Roster Staff</span>
-            <span className="text-lg font-black text-teal-400">{employees.length} Users</span>
+            <span className="text-lg font-black text-sky-400">{employees.length} Users</span>
           </div>
           <div className="p-3 rounded-xl bg-[#0A0E1A]/80 border border-slate-800">
             <span className="text-[10px] text-slate-400 block font-semibold">Compliance</span>
@@ -155,7 +158,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               onClick={() => handleSelectTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                 isActive
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
               }`}
             >

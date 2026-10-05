@@ -290,7 +290,7 @@ export const AuthModal: React.FC = () => {
       {/* Container Card */}
       <div className="relative w-full max-w-lg glass-panel rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Subtle brand gradient backdrop BEHIND the glass modal */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-600/15 via-slate-900/60 to-teal-600/15 pointer-events-none" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-600/15 via-slate-900/60 to-sky-500/15 pointer-events-none" />
         
         {/* Top Header */}
         <div className="relative px-6 pt-6 pb-4 border-b border-slate-800/80 bg-gradient-to-b from-slate-800/40 to-transparent">
@@ -307,7 +307,7 @@ export const AuthModal: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <EllixConnectLogo variant="text" size={24} />
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-extrabold border border-emerald-500/30 flex items-center gap-1">
+                <span className="px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 text-[10px] font-extrabold border border-sky-500/30 flex items-center gap-1">
                   <ShieldCheck className="w-3 h-3" />
                   Verified Auth
                 </span>
@@ -328,7 +328,7 @@ export const AuthModal: React.FC = () => {
               }}
               className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 mode === 'login'
-                  ? 'bg-emerald-600 text-white shadow-sm'
+                  ? 'bg-blue-600 text-white shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -344,7 +344,7 @@ export const AuthModal: React.FC = () => {
               }}
               className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 mode === 'phone'
-                  ? 'bg-emerald-600 text-white shadow-sm'
+                  ? 'bg-blue-600 text-white shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -360,7 +360,7 @@ export const AuthModal: React.FC = () => {
               }}
               className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 mode === 'register'
-                  ? 'bg-emerald-600 text-white shadow-sm'
+                  ? 'bg-blue-600 text-white shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -382,8 +382,8 @@ export const AuthModal: React.FC = () => {
           )}
 
           {successMessage && (
-            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+            <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 text-xs flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
               <div className="flex-1 leading-relaxed">{successMessage}</div>
             </div>
           )}
@@ -451,7 +451,7 @@ export const AuthModal: React.FC = () => {
                     value={email}
                     onChange={handleEmailChange}
                     placeholder="merchant@retail.com"
-                    className="w-full pl-9 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full pl-9 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 transition-colors"
                   />
                 </div>
               </div>
@@ -468,7 +468,7 @@ export const AuthModal: React.FC = () => {
                       setErrorMessage(null);
                       setSuccessMessage(null);
                     }}
-                    className="text-[11px] text-emerald-400 hover:underline"
+                    className="text-[11px] text-sky-400 hover:underline"
                   >
                     Forgot password?
                   </button>
@@ -483,7 +483,7 @@ export const AuthModal: React.FC = () => {
                     value={password}
                     onChange={handlePasswordChange}
                     placeholder="Enter your synchronized password"
-                    className="w-full pl-9 pr-10 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full pl-9 pr-10 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 transition-colors"
                   />
                   <button
                     type="button"
@@ -497,7 +497,7 @@ export const AuthModal: React.FC = () => {
 
               {/* RBAC Security Policy Notice */}
               <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-start gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <ShieldCheck className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                 <div className="leading-relaxed">
                   <strong className="text-slate-200 font-semibold">Enterprise RBAC Enforced:</strong> Account roles and module permissions are assigned exclusively by your organization's Administrator.
                 </div>
@@ -507,7 +507,7 @@ export const AuthModal: React.FC = () => {
                 id="btn-submit-email-login"
                 type="submit"
                 disabled={loading}
-                className="w-full mt-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] disabled:opacity-50"
+                className="w-full mt-2 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20 active:scale-[0.99] disabled:opacity-50"
               >
                 {loading ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -534,7 +534,7 @@ export const AuthModal: React.FC = () => {
                       <select
                         value={countryCode}
                         onChange={(e) => setCountryCode(e.target.value)}
-                        className="w-24 px-2 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500"
+                        className="w-24 px-2 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white focus:outline-none focus:border-sky-500"
                       >
                         <option value="+91">🇮🇳 +91 (IN)</option>
                         <option value="+1">🇺🇸 +1 (US)</option>
@@ -557,7 +557,7 @@ export const AuthModal: React.FC = () => {
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
                           placeholder="9876543210"
-                          className="w-full pl-9 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                          className="w-full pl-9 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 transition-colors"
                         />
                       </div>
                     </div>
@@ -573,7 +573,7 @@ export const AuthModal: React.FC = () => {
                     id="btn-send-phone-otp"
                     type="submit"
                     disabled={loading}
-                    className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] disabled:opacity-50"
+                    className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20 active:scale-[0.99] disabled:opacity-50"
                   >
                     {loading ? (
                       <RefreshCw className="w-4 h-4 animate-spin" />
@@ -588,12 +588,12 @@ export const AuthModal: React.FC = () => {
               ) : (
                 <form onSubmit={handleVerifyOtp} className="space-y-4">
                   <div className="text-center space-y-1">
-                    <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
+                    <div className="w-12 h-12 rounded-full bg-sky-500/10 border border-sky-500/30 flex items-center justify-center mx-auto text-sky-400">
                       <ShieldCheck className="w-6 h-6" />
                     </div>
                     <h3 className="text-sm font-bold text-white">Enter 6-Digit SMS Verification Code</h3>
                     <p className="text-xs text-slate-400">
-                      Sent to <span className="text-emerald-400 font-semibold">{countryCode} {phoneNumber}</span>
+                      Sent to <span className="text-sky-400 font-semibold">{countryCode} {phoneNumber}</span>
                     </p>
                   </div>
 
@@ -612,7 +612,7 @@ export const AuthModal: React.FC = () => {
                         value={digit}
                         onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                        className="w-11 h-12 text-center text-lg font-bold bg-slate-950 border border-slate-700/80 rounded-xl text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                        className="w-11 h-12 text-center text-lg font-bold bg-slate-950 border border-slate-700/80 rounded-xl text-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
                       />
                     ))}
                   </div>
@@ -625,7 +625,7 @@ export const AuthModal: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleSendPhoneOtp()}
-                        className="text-emerald-400 hover:underline font-semibold"
+                        className="text-sky-400 hover:underline font-semibold"
                       >
                         Resend Code
                       </button>
@@ -636,7 +636,7 @@ export const AuthModal: React.FC = () => {
                     id="btn-verify-otp-submit"
                     type="submit"
                     disabled={loading || otpCode.join('').length !== 6}
-                    className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] disabled:opacity-50"
+                    className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20 active:scale-[0.99] disabled:opacity-50"
                   >
                     {loading ? (
                       <RefreshCw className="w-4 h-4 animate-spin" />
@@ -683,13 +683,13 @@ export const AuthModal: React.FC = () => {
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                     placeholder="e.g. Ramesh Patel"
-                    className="w-full pl-9 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full pl-9 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
                   />
                 </div>
               </div>
 
               <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-start gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <ShieldCheck className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                 <div className="leading-relaxed">
                   <strong className="text-slate-200 font-semibold">Role-Based Access Control:</strong> New merchant accounts are provisioned with standard access. Role assignments (Wholesaler, Manager, Cashier, Admin) are granted strictly by your organization's Administrator.
                 </div>
@@ -712,7 +712,7 @@ export const AuthModal: React.FC = () => {
                     value={email}
                     onChange={handleEmailChange}
                     placeholder="owner@store.com"
-                    className="w-full pl-9 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full pl-9 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
                   />
                 </div>
               </div>
@@ -732,7 +732,7 @@ export const AuthModal: React.FC = () => {
                       value={password}
                       onChange={handlePasswordChange}
                       placeholder="Min 6 chars"
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                      className="w-full pl-9 pr-3 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -751,16 +751,16 @@ export const AuthModal: React.FC = () => {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Repeat password"
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                      className="w-full pl-9 pr-3 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 text-[11px] text-slate-400 flex items-start gap-2">
-                <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <Sparkles className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                 <span>
-                  This password will be <strong className="text-emerald-300">synchronized</strong> across all your future linked providers (Google, Phone Number, and Email).
+                  This password will be <strong className="text-sky-300">synchronized</strong> across all your future linked providers (Google, Phone Number, and Email).
                 </span>
               </div>
 
@@ -771,7 +771,7 @@ export const AuthModal: React.FC = () => {
                   required
                   checked={acceptedLegalTerms}
                   onChange={(e) => setAcceptedLegalTerms(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 rounded accent-emerald-500 shrink-0"
+                  className="mt-0.5 h-4 w-4 rounded accent-blue-500 shrink-0"
                 />
                 <span className="leading-relaxed">
                   I agree to the {LEGAL_CONFIG.brandName}{' '}
@@ -783,7 +783,7 @@ export const AuthModal: React.FC = () => {
                       window.history.pushState({}, '', '/terms-of-service');
                       window.dispatchEvent(new PopStateEvent('popstate'));
                     }}
-                    className="text-emerald-400 font-semibold hover:underline"
+                    className="text-sky-400 font-semibold hover:underline"
                   >
                     Terms of Service
                   </a>{' '}
@@ -796,7 +796,7 @@ export const AuthModal: React.FC = () => {
                       window.history.pushState({}, '', '/privacy-policy');
                       window.dispatchEvent(new PopStateEvent('popstate'));
                     }}
-                    className="text-emerald-400 font-semibold hover:underline"
+                    className="text-sky-400 font-semibold hover:underline"
                   >
                     Privacy Policy
                   </a>.
@@ -807,7 +807,7 @@ export const AuthModal: React.FC = () => {
                 id="btn-submit-register"
                 type="submit"
                 disabled={loading || !acceptedLegalTerms}
-                className="w-full mt-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] disabled:opacity-50"
+                className="w-full mt-2 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20 active:scale-[0.99] disabled:opacity-50"
               >
                 {loading ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -852,7 +852,7 @@ export const AuthModal: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="merchant@retail.com"
-                    className="w-full pl-9 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full pl-9 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
                   />
                 </div>
               </div>
@@ -861,7 +861,7 @@ export const AuthModal: React.FC = () => {
                 id="btn-send-password-reset"
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] disabled:opacity-50"
+                className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20 active:scale-[0.99] disabled:opacity-50"
               >
                 {loading ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -888,7 +888,7 @@ export const AuthModal: React.FC = () => {
         {/* Bottom Assurance Footer */}
         <div className="px-6 py-3 border-t border-slate-800/80 bg-slate-950/60 flex items-center justify-between text-[11px] text-slate-500">
           <span className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-sky-400" />
             Verified Firebase Authentication
           </span>
           <span className="text-slate-400">

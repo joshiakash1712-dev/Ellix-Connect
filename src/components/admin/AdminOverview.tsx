@@ -129,10 +129,10 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
         <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
-              <Server className="w-4 h-4 text-emerald-400" />
+              <Server className="w-4 h-4 text-sky-400" />
               <span>Multi-Tenant Cluster Health</span>
             </span>
-            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+            <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-lg border border-sky-500/20">
               99.98% SLA
             </span>
           </div>
@@ -140,7 +140,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
           <div className="space-y-2 text-xs">
             <div className="flex justify-between text-slate-400">
               <span>Cluster Ingress Latency</span>
-              <span className="font-mono font-bold text-emerald-400">18 ms</span>
+              <span className="font-mono font-bold text-sky-400">18 ms</span>
             </div>
             <div className="flex justify-between text-slate-400">
               <span>WebSockets Active Channels</span>
@@ -151,7 +151,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
               <span className="font-mono font-bold text-slate-300">48.2 MB / 512 MB</span>
             </div>
             <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-              <div className="bg-emerald-500 h-full w-[9.4%]" />
+              <div className="bg-sky-500 h-full w-[9.4%]" />
             </div>
           </div>
         </div>
@@ -160,12 +160,12 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
         <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-teal-400" />
+              <Building2 className="w-4 h-4 text-sky-400" />
               <span>Branch Fleet Status</span>
             </span>
             <button
               onClick={() => onNavigateTab('stores')}
-              className="text-[11px] font-semibold text-teal-400 hover:underline"
+              className="text-[11px] font-semibold text-sky-400 hover:underline"
             >
               View All ({stores.length})
             </button>
@@ -178,14 +178,14 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
             </div>
             <div className="flex justify-between text-slate-400">
               <span>Managed Inventory SKUs</span>
-              <span className="font-mono font-bold text-teal-400">{products.length} Items</span>
+              <span className="font-mono font-bold text-sky-400">{products.length} Items</span>
             </div>
             <div className="flex justify-between text-slate-400">
               <span>Total Customers in Ledger</span>
               <span className="font-mono font-bold text-slate-300">{customers.length} Accounts</span>
             </div>
             <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-              <div className="bg-teal-500 h-full w-[85%]" />
+              <div className="bg-sky-500 h-full w-[85%]" />
             </div>
           </div>
         </div>
@@ -210,11 +210,11 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
           <div className="space-y-2 text-xs">
             <div className="flex justify-between text-slate-400">
               <span>2FA Admin Policy</span>
-              <span className="font-bold text-emerald-400">Enforced</span>
+              <span className="font-bold text-sky-400">Enforced</span>
             </div>
             <div className="flex justify-between text-slate-400">
               <span>Manager PIN on Discounts</span>
-              <span className="font-bold text-emerald-400">Active</span>
+              <span className="font-bold text-sky-400">Active</span>
             </div>
             <div className="flex justify-between text-slate-400">
               <span>Audit Records Stored</span>
@@ -236,14 +236,14 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-emerald-400" />
+                <Sliders className="w-4 h-4 text-sky-400" />
                 <span>Enterprise Feature Flags</span>
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
                 Toggle platform capabilities and canary rollouts in real-time.
               </p>
             </div>
-            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+            <span className="text-[10px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-lg border border-sky-500/20">
               Dynamic Canary
             </span>
           </div>
@@ -266,7 +266,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
                   id={`flag-toggle-${key}`}
                   onClick={() => toggleFlag(key as any)}
                   className={`w-11 h-6 rounded-full transition-colors p-1 flex items-center shrink-0 ${
-                    val ? 'bg-emerald-500 justify-end' : 'bg-slate-700 justify-start'
+                    val ? 'bg-sky-500 justify-end' : 'bg-slate-700 justify-start'
                   }`}
                   title={val ? 'Click to disable' : 'Click to enable'}
                 >
@@ -282,7 +282,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
           <div>
             <div className="flex items-center justify-between mb-1">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Bell className="w-4 h-4 text-emerald-400" />
+                <Bell className="w-4 h-4 text-sky-400" />
                 <span>Broadcast System Announcement</span>
               </h3>
               <span className="text-[10px] text-slate-400">Push to all POS & Portals</span>
@@ -303,7 +303,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
                         onClick={() => setAnnouncementTarget(target)}
                         className={`px-2 py-1.5 rounded-lg font-bold capitalize text-[11px] transition-colors ${
                           announcementTarget === target
-                            ? 'bg-emerald-600 text-white shadow'
+                            ? 'bg-blue-600 text-white shadow'
                             : 'bg-slate-800 text-slate-400 hover:text-white'
                         }`}
                       >
@@ -345,13 +345,13 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
                   onChange={e => setAnnouncement(e.target.value)}
                   placeholder="e.g. GST E-Way Bill 2.0 portal maintenance scheduled at 11:00 PM tonight. Please sync pending invoices before 10:30 PM..."
                   rows={3}
-                  className="w-full bg-[#0A0E1A] border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500"
+                  className="w-full bg-[#0A0E1A] border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-sky-500 placeholder-slate-500"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
               >
                 <Radio className="w-4 h-4" />
                 <span>Dispatch Instant Broadcast</span>
@@ -360,7 +360,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
           </div>
 
           {announcementPosted && (
-            <div className="text-xs text-emerald-400 font-bold bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/30 flex items-center gap-2 mt-3">
+            <div className="text-xs text-sky-400 font-bold bg-sky-500/10 p-3 rounded-xl border border-sky-500/30 flex items-center gap-2 mt-3">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
               <span>Broadcast dispatched successfully to active sessions and recorded in audit log.</span>
             </div>

@@ -100,7 +100,7 @@ export const CustomerPortal: React.FC = () => {
       );
     } else {
       return (
-        <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-extrabold text-[10px] border border-emerald-500/30 flex items-center gap-1">
+        <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-extrabold text-[10px] border border-sky-500/30 flex items-center gap-1">
           <CheckCircle2 className="w-3 h-3" />
           In Stock ({prod.stock} available)
         </span>
@@ -112,13 +112,13 @@ export const CustomerPortal: React.FC = () => {
     <div className="space-y-6">
       
       {/* Customer Hero Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 border border-teal-500/30 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 border border-sky-500/30 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2 z-10 max-w-xl">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-black uppercase tracking-wider text-teal-300 bg-teal-500/20 px-2.5 py-0.5 rounded-full border border-teal-400/30">
+            <span className="text-xs font-black uppercase tracking-wider text-sky-300 bg-sky-500/20 px-2.5 py-0.5 rounded-full border border-sky-400/30">
               Ellix Customer Hub
             </span>
-            <span className="text-xs text-teal-200/80">Real-Time Store Inventory Search</span>
+            <span className="text-xs text-sky-200/80">Real-Time Store Inventory Search</span>
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight">
             Reserve Nearby Products & Order Before Visiting
@@ -128,15 +128,15 @@ export const CustomerPortal: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-slate-900/80 p-3 rounded-2xl border border-teal-500/30 shadow-xl z-10">
-          <MapPin className="w-5 h-5 text-teal-400 shrink-0" />
+        <div className="flex items-center gap-2 bg-slate-900/80 p-3 rounded-2xl border border-sky-500/30 shadow-xl z-10">
+          <MapPin className="w-5 h-5 text-sky-400 shrink-0" />
           <div className="text-xs">
             <span className="text-[10px] uppercase font-bold text-slate-400 block">Active Store Outlet</span>
             <span className="font-extrabold text-white">{selectedStore.name}</span>
           </div>
         </div>
 
-        <div className="absolute right-0 bottom-0 -mb-12 -mr-12 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute right-0 bottom-0 -mb-12 -mr-12 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
       </div>
 
       {/* Search & Mode Tabs */}
@@ -149,7 +149,7 @@ export const CustomerPortal: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search products across nearby stores (e.g., Basmati Rice, Milk, Coffee)..."
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-500"
+            className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
           />
         </div>
 
@@ -158,7 +158,7 @@ export const CustomerPortal: React.FC = () => {
             onClick={() => setActiveTab('products')}
             className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'products'
-                ? 'bg-teal-600 text-white shadow-md'
+                ? 'bg-sky-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -168,7 +168,7 @@ export const CustomerPortal: React.FC = () => {
             onClick={() => setActiveTab('stores')}
             className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'stores'
-                ? 'bg-teal-600 text-white shadow-md'
+                ? 'bg-sky-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -178,7 +178,7 @@ export const CustomerPortal: React.FC = () => {
             onClick={() => setActiveTab('my_orders')}
             className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'my_orders'
-                ? 'bg-teal-600 text-white shadow-md'
+                ? 'bg-sky-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -194,7 +194,7 @@ export const CustomerPortal: React.FC = () => {
           {filteredProducts.map(prod => (
             <div
               key={prod.id}
-              className="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col justify-between space-y-3 hover:border-teal-500/40 transition-all group"
+              className="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col justify-between space-y-3 hover:border-sky-500/40 transition-all group"
             >
               <div className="space-y-3">
                 <div className="h-40 w-full rounded-xl overflow-hidden bg-slate-800 relative">
@@ -209,7 +209,7 @@ export const CustomerPortal: React.FC = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-extrabold text-white group-hover:text-teal-300 transition-colors">
+                  <h3 className="text-sm font-extrabold text-white group-hover:text-sky-300 transition-colors">
                     {prod.name}
                   </h3>
                   <p className="text-xs text-slate-400 line-clamp-2 mt-1">{prod.description}</p>
@@ -218,7 +218,7 @@ export const CustomerPortal: React.FC = () => {
 
               <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
                 <div>
-                  <div className="text-lg font-black text-emerald-400">₹{prod.sellingPrice}</div>
+                  <div className="text-lg font-black text-sky-400">₹{prod.sellingPrice}</div>
                   <div className="text-[10px] text-slate-500 line-through">MRP ₹{prod.mrp}</div>
                 </div>
 
@@ -227,7 +227,7 @@ export const CustomerPortal: React.FC = () => {
                   onClick={() => setSelectedProduct(prod)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                     prod.stock > 0
-                      ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-600/20 hover:scale-105'
+                      ? 'bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white shadow-lg shadow-blue-600/20 hover:scale-105'
                       : 'bg-slate-800 text-slate-500 cursor-not-allowed'
                   }`}
                 >
@@ -248,14 +248,14 @@ export const CustomerPortal: React.FC = () => {
               key={st.id}
               className={`p-5 rounded-2xl bg-slate-900 border transition-all space-y-4 ${
                 selectedStore.id === st.id
-                  ? 'border-teal-500 ring-2 ring-teal-500/20 shadow-2xl'
+                  ? 'border-sky-500 ring-2 ring-sky-500/20 shadow-2xl'
                   : 'border-slate-800 hover:border-slate-700'
               }`}
             >
               <div className="h-44 w-full rounded-xl overflow-hidden bg-slate-800 relative">
                 <img src={st.image} alt={st.name} className="w-full h-full object-cover" />
-                <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-950/80 text-teal-300 text-xs font-extrabold backdrop-blur-md border border-teal-500/30 flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 fill-teal-400 text-teal-400" />
+                <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-950/80 text-sky-300 text-xs font-extrabold backdrop-blur-md border border-sky-500/30 flex items-center gap-1">
+                  <Star className="w-3.5 h-3.5 fill-sky-400 text-sky-400" />
                   {st.rating} ({st.reviewCount} reviews)
                 </span>
               </div>
@@ -267,11 +267,11 @@ export const CustomerPortal: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-2 text-xs text-slate-300">
                 <div className="flex items-center gap-1.5 p-2 rounded-lg bg-slate-800">
-                  <Clock className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+                  <Clock className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                   <span>{st.timings}</span>
                 </div>
                 <div className="flex items-center gap-1.5 p-2 rounded-lg bg-slate-800">
-                  <Phone className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+                  <Phone className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                   <span>{st.phone}</span>
                 </div>
               </div>
@@ -280,7 +280,7 @@ export const CustomerPortal: React.FC = () => {
                 onClick={() => setSelectedStore(st)}
                 className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                   selectedStore.id === st.id
-                    ? 'bg-teal-600 text-white'
+                    ? 'bg-sky-600 text-white'
                     : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                 }`}
               >
@@ -309,7 +309,7 @@ export const CustomerPortal: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-extrabold text-white font-mono">{ord.orderNumber}</span>
-                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-extrabold uppercase border border-emerald-500/30">
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-extrabold uppercase border border-sky-500/30">
                       {ord.orderStatus.replace('_', ' ')}
                     </span>
                   </div>
@@ -329,7 +329,7 @@ export const CustomerPortal: React.FC = () => {
                     <QrCode className="w-10 h-10 text-slate-900" />
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-extrabold text-teal-400 block">Pickup QR Code</span>
+                    <span className="text-[10px] uppercase font-extrabold text-sky-400 block">Pickup QR Code</span>
                     <span className="text-xs font-mono font-bold text-white">{ord.pickupQrCode}</span>
                     <span className="text-[9px] text-slate-400 block mt-0.5">Show QR to cashier at counter</span>
                   </div>
@@ -360,7 +360,7 @@ export const CustomerPortal: React.FC = () => {
                 />
                 <div>
                   <h4 className="font-extrabold text-white text-sm">{selectedProduct.name}</h4>
-                  <div className="text-emerald-400 font-bold text-xs mt-1">₹{selectedProduct.sellingPrice} / unit</div>
+                  <div className="text-sky-400 font-bold text-xs mt-1">₹{selectedProduct.sellingPrice} / unit</div>
                   <div className="text-[10px] text-slate-400">Outlet: {selectedStore.name}</div>
                 </div>
               </div>
@@ -399,7 +399,7 @@ export const CustomerPortal: React.FC = () => {
                     onClick={() => setPaymentOption('pay_online')}
                     className={`p-2 rounded-lg text-xs font-bold border ${
                       paymentOption === 'pay_online'
-                        ? 'bg-teal-600 text-white border-teal-400'
+                        ? 'bg-sky-600 text-white border-sky-400'
                         : 'bg-slate-800 text-slate-400 border-slate-700'
                     }`}
                   >
@@ -410,7 +410,7 @@ export const CustomerPortal: React.FC = () => {
                     onClick={() => setPaymentOption('pay_at_store')}
                     className={`p-2 rounded-lg text-xs font-bold border ${
                       paymentOption === 'pay_at_store'
-                        ? 'bg-teal-600 text-white border-teal-400'
+                        ? 'bg-sky-600 text-white border-sky-400'
                         : 'bg-slate-800 text-slate-400 border-slate-700'
                     }`}
                   >
@@ -422,11 +422,11 @@ export const CustomerPortal: React.FC = () => {
               <div className="pt-3 border-t border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[10px] text-slate-400 block">Total Price</span>
-                  <span className="text-base font-black text-emerald-400">₹{selectedProduct.sellingPrice * orderQty}</span>
+                  <span className="text-base font-black text-sky-400">₹{selectedProduct.sellingPrice * orderQty}</span>
                 </div>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-lg"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold shadow-lg"
                 >
                   Confirm Reservation
                 </button>
@@ -438,10 +438,10 @@ export const CustomerPortal: React.FC = () => {
 
       {/* Order Confirmation Banner */}
       {confirmedOrder && (
-        <div className="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 space-y-2">
+        <div className="p-5 rounded-2xl bg-sky-500/10 border border-sky-500/30 text-sky-300 space-y-2">
           <div className="flex items-center justify-between">
             <span className="font-bold text-sm flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              <CheckCircle2 className="w-5 h-5 text-sky-400" />
               <span>Order Reserved Successfully! ({confirmedOrder.orderNumber})</span>
             </span>
             <button onClick={() => setConfirmedOrder(null)} className="text-slate-400 hover:text-white">

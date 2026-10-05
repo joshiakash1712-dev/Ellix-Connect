@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
-import { Product, PaymentMethod, CustomerProfile, POSInvoice } from '../../types';
+import { Product, PaymentMethod, CustomerProfile, POSInvoice, normalizeCanonicalRole } from '../../types';
 import { BarcodeScannerModal } from '../common/BarcodeScannerModal';
 import { InvoiceModal } from '../common/InvoiceModal';
 import { POSSkeleton } from '../common/skeletons/POSSkeleton';
@@ -59,7 +59,7 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
   } = useStore();
 
   const { userProfile } = useAuth();
-  const isCrew = activeRole === 'crew' || userProfile?.role === 'crew';
+  const isCrew = normalizeCanonicalRole(activeRole) === 'crew' || normalizeCanonicalRole(userProfile?.role) === 'crew';
 
   const isActuallyLoading = isLoading ?? isDataLoading;
 

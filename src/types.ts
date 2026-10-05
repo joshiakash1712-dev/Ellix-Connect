@@ -5,19 +5,81 @@ export type ActiveModule = 'retailer' | 'wholesaler' | 'admin';
 // Level 2: ellix_admin (Assigned operator / manager of Ellix Connect)
 // Level 3: client (Business / Store Owner)
 // Level 4: crew (In-store staff member / cashier)
+// B2B: wholesaler_admin
+// Fail-closed: unauthorized
 export type AppRole = 'super_admin' | 'ellix_admin' | 'client' | 'crew';
+
+export type CanonicalRole =
+  | 'super_admin'
+  | 'ellix_admin'
+  | 'client'
+  | 'crew'
+  | 'wholesaler_admin'
+  | 'unauthorized';
 
 export type UserRole =
   | 'super_admin'
   | 'ellix_admin'
   | 'client'
   | 'crew'
-  // Legacy aliases for backward compatibility
-  | 'owner'
-  | 'manager'
-  | 'inventory_staff'
   | 'wholesaler_admin'
-  | 'platform_admin';
+  | 'unauthorized'
+  // Legacy aliases for backward compatibility
+  | 'admin'
+  | 'platform_admin'
+  | 'owner'
+  | 'retailer'
+  | 'employee'
+  | 'cashier'
+  | 'staff'
+  | 'wholesaler'
+  | 'manager'
+  | 'inventory_staff';
+
+/**
+ * Canonical role normalization used identically across Frontend, Backend, and Firestore Rules.
+ * Unrecognized roles fail closed to 'unauthorized' and NEVER silently become 'client'.
+ */
+export function normalizeCanonicalRole(rawRole: unknown): CanonicalRole {
+  if (typeof rawRole !== 'string') return 'unauthorized';
+  const normalized = rawRole.trim().toLowerCase();
+  switch (normalized) {
+    case 'super_admin':
+      return 'super_admin';
+    case 'ellix_admin':
+    case 'admin':
+    case 'platform_admin':
+      return 'ellix_admin';
+    case 'client':
+    case 'owner':
+    case 'retailer':
+      return 'client';
+    case 'crew':
+    case 'employee':
+    case 'cashier':
+    case 'staff':
+      return 'crew';
+    case 'wholesaler_admin':
+    case 'wholesaler':
+      return 'wholesaler_admin';
+    default:
+      return 'unauthorized';
+  }
+}
+
+export function isUserStatusInactive(data: { status?: string; disabled?: boolean; active?: boolean; isActive?: boolean } | null | undefined): boolean {
+  if (!data) return false;
+  if (data.disabled === true || data.active === false || data.isActive === false) {
+    return true;
+  }
+  if (typeof data.status === 'string') {
+    const st = data.status.trim().toLowerCase();
+    if (['inactive', 'suspended', 'revoked', 'disabled', 'deactivated', 'deleted'].includes(st)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 export interface User {
   id: string;
@@ -37,7 +99,7 @@ export interface User {
   passwordSynchronized?: boolean;
   isRealAuth?: boolean;
   firebaseUid?: string;
-  status?: 'active' | 'pending_approval' | 'suspended';
+  status?: 'active' | 'pending_approval' | 'suspended' | 'inactive' | 'revoked' | 'disabled';
 }
 
 export interface Store {
@@ -261,6 +323,8 @@ export interface POSInvoice {
   }[];
   subtotal: number;
   discountTotal: number;
+  discountAmount?: number;
+  discountPercent?: number;
   cgst: number;
   sgst: number;
   igst: number;

@@ -81,7 +81,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                   onClick={() => setRegionTab(tab)}
                   className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
                     regionTab === tab
-                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                      ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-sky-400 shadow-sm'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -113,7 +113,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search any language (e.g. Hindi, Tamil, Spanish, French)..."
-              className="w-full pl-9 pr-8 py-2 bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+              className="w-full pl-9 pr-8 py-2 bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-sky-500"
             />
             {searchQuery && (
               <button
@@ -137,12 +137,12 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                 onClick={() => setLanguage(lang.code)}
                 className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
                   isSelected
-                    ? 'bg-emerald-50/90 dark:bg-emerald-950/40 border-emerald-500 dark:border-emerald-500/80 ring-1 ring-emerald-500/30'
-                    : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-slate-700 hover:bg-slate-50/60 dark:hover:bg-slate-800/50'
+                    ? 'bg-sky-50/90 dark:bg-blue-950/40 border-sky-500 dark:border-sky-500/80 ring-1 ring-blue-500/30'
+                    : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-sky-300 dark:hover:border-slate-700 hover:bg-slate-50/60 dark:hover:bg-slate-800/50'
                 }`}
               >
                 <div className="min-w-0 pr-2">
-                  <div className={`text-sm font-bold truncate ${isSelected ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-900 dark:text-white'}`}>
+                  <div className={`text-sm font-bold truncate ${isSelected ? 'text-blue-700 dark:text-sky-300' : 'text-slate-900 dark:text-white'}`}>
                     {lang.nativeName}
                   </div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1.5">
@@ -153,7 +153,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                   </div>
                 </div>
                 {isSelected && (
-                  <div className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                  <div className="h-5 w-5 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0">
                     <Check className="h-3 w-3" />
                   </div>
                 )}
@@ -164,18 +164,18 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
 
         {/* Custom ISO Language Code Support for any language worldwide */}
         <form onSubmit={handleCustomLanguageSubmit} className="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-          <Sparkles className="h-4 w-4 text-emerald-500 shrink-0" />
+          <Sparkles className="h-4 w-4 text-sky-500 shrink-0" />
           <input
             type="text"
             value={customCode}
             onChange={e => setCustomCode(e.target.value)}
             placeholder="Or enter any ISO language code (e.g. 'bh', 'kok', 'Esperanto' -> 'eo')..."
-            className="flex-1 px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+            className="flex-1 px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-sky-500"
           />
           <button
             type="submit"
             disabled={!customCode.trim()}
-            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white text-xs font-bold rounded-lg transition-colors"
+            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-xs font-bold rounded-lg transition-colors"
           >
             {t('settings.applyLanguage', 'Apply Language')}
           </button>
@@ -198,9 +198,9 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         aria-label="Change Application Language"
       >
         {isTranslating ? (
-          <Loader2 className="h-4 w-4 text-emerald-500 animate-spin shrink-0" />
+          <Loader2 className="h-4 w-4 text-sky-500 animate-spin shrink-0" />
         ) : (
-          <Globe className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <Globe className="h-4 w-4 text-blue-600 dark:text-sky-400 shrink-0" />
         )}
         <span className="max-w-[92px] truncate font-bold">
           {currentLanguageInfo.nativeName}
@@ -214,7 +214,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
           <div className="p-3.5 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200/70 dark:border-slate-800">
             <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <div className="h-7 w-7 rounded-lg bg-sky-500/10 dark:bg-sky-500/20 flex items-center justify-center text-blue-600 dark:text-sky-400">
                   <Globe className="h-4 w-4" />
                 </div>
                 <div>
@@ -233,7 +233,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                     resetLanguage();
                     setIsOpen(false);
                   }}
-                  className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold text-blue-700 dark:text-sky-300 bg-sky-50 dark:bg-blue-950/60 hover:bg-sky-100 dark:hover:bg-blue-900/60 rounded-lg transition-colors"
                 >
                   <RotateCcw className="h-3 w-3" />
                   {t('settings.resetLanguage', 'Reset to English')}
@@ -250,7 +250,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search 100+ languages (Hindi, Marathi, Tamil, Arabic, Spanish...)"
-                className="w-full pl-8 pr-7 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+                className="w-full pl-8 pr-7 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-sky-500"
               />
               {searchQuery && (
                 <button
@@ -272,7 +272,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                   onClick={() => setRegionTab(tab)}
                   className={`py-1 text-[11px] font-bold rounded-md transition-all ${
                     regionTab === tab
-                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
+                      ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-sky-400 shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -294,7 +294,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                     onClick={() => handleSelectLanguage(lang)}
                     className={`flex items-center justify-between px-3 py-2 rounded-xl text-left transition-all border ${
                       isSelected
-                        ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500/80 text-emerald-700 dark:text-emerald-300'
+                        ? 'bg-sky-50 dark:bg-blue-950/50 border-sky-500/80 text-blue-700 dark:text-sky-300'
                         : 'bg-transparent border-transparent hover:bg-slate-100/80 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200'
                     }`}
                   >
@@ -305,7 +305,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                       </div>
                     </div>
                     {isSelected && (
-                      <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <Check className="h-3.5 w-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
                     )}
                   </button>
                 );
@@ -322,7 +322,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                         setIsOpen(false);
                         setSearchQuery('');
                       }}
-                      className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700"
+                      className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700"
                     >
                       Use "{searchQuery.trim()}" Language Code
                     </button>
@@ -342,12 +342,12 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
               value={customCode}
               onChange={e => setCustomCode(e.target.value)}
               placeholder="Custom ISO language code (e.g. eo, la, haw)..."
-              className="flex-1 px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+              className="flex-1 px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-sky-500"
             />
             <button
               type="submit"
               disabled={!customCode.trim()}
-              className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white text-[11px] font-bold rounded-lg transition-colors shrink-0"
+              className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-[11px] font-bold rounded-lg transition-colors shrink-0"
             >
               Apply
             </button>

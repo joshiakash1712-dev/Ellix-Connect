@@ -225,15 +225,18 @@ export const WhoItsFor: React.FC = () => {
         
         {/* Section Header */}
         <div className="max-w-3xl mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
-            Who It&apos;s For
+          <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
+            <span>Who It&apos;s For</span>
+            <span className="text-slate-300 dark:text-slate-700">·</span>
+            <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">Retailers &amp; Merchants</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-950 dark:text-white tracking-tight">
             Built for local retailers, specialized merchants &amp; wholesalers.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
             Different businesses have different operational rhythms.
-            <span className="hidden lg:inline text-emerald-600 dark:text-emerald-400 font-semibold ml-1">
+            <span className="hidden lg:inline text-blue-600 dark:text-sky-400 font-semibold ml-1">
               Hover over any retail category card below to expand its live operational adaptation workspace.
             </span>
             <span className="lg:hidden ml-1">
@@ -277,27 +280,27 @@ export const WhoItsFor: React.FC = () => {
                     onKeyDown={(e) => handleCardKeyDown(e, vert.id, index)}
                     className={`website-card-hover p-6 rounded-2xl text-left border transition-all duration-200 flex flex-col justify-between cursor-pointer ${
                       isSelected && !isHovered
-                        ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
-                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                        ? 'bg-white dark:bg-slate-900 border-sky-500/60 ring-2 ring-blue-500/30 shadow-md text-slate-900 dark:text-white'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 hover:shadow-lg text-slate-900 dark:text-white'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         <div
                           data-icon-box
-                          className="w-11 h-11 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200"
+                          className="w-11 h-11 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center transition-all duration-200"
                         >
                           <Icon className="w-5 h-5 transition-transform duration-200" />
                         </div>
                         <span
                           data-card-badge
-                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
+                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-blue-700 dark:text-sky-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
                         >
                           {vert.badge}
                         </span>
                       </div>
 
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-sky-400 mb-1">
                         {vert.shortCategory}
                       </div>
                       <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">
@@ -314,7 +317,7 @@ export const WhoItsFor: React.FC = () => {
                     >
                       {vert.howEllixAdapts.slice(0, 2).map((item, idx) => (
                         <div key={idx} className="flex items-center gap-1.5 truncate">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                           <span className="truncate">{item}</span>
                         </div>
                       ))}
@@ -344,27 +347,27 @@ export const WhoItsFor: React.FC = () => {
                     onKeyDown={(e) => handleCardKeyDown(e, vert.id, index)}
                     className={`website-card-hover p-6 rounded-2xl text-left border transition-all duration-200 flex flex-row justify-between gap-6 cursor-pointer ${
                       isSelected && !isHovered
-                        ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
-                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                        ? 'bg-white dark:bg-slate-900 border-sky-500/60 ring-2 ring-blue-500/30 shadow-md text-slate-900 dark:text-white'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 hover:shadow-lg text-slate-900 dark:text-white'
                     }`}
                   >
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-4">
                         <div
                           data-icon-box
-                          className="w-11 h-11 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200"
+                          className="w-11 h-11 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center transition-all duration-200"
                         >
                           <Icon className="w-5 h-5 transition-transform duration-200" />
                         </div>
                         <span
                           data-card-badge
-                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
+                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-blue-700 dark:text-sky-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
                         >
                           {vert.badge}
                         </span>
                       </div>
 
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-sky-400 mb-1">
                         {vert.shortCategory}
                       </div>
                       <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">
@@ -381,7 +384,7 @@ export const WhoItsFor: React.FC = () => {
                     >
                       {vert.howEllixAdapts.map((item, idx) => (
                         <div key={idx} className="flex items-start gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 shrink-0 mt-0.5" />
                           <span className="line-clamp-2">{item}</span>
                         </div>
                       ))}
@@ -429,22 +432,22 @@ export const WhoItsFor: React.FC = () => {
                   ease: [0.16, 1, 0.3, 1]
                 }}
                 style={{ transformOrigin: getOrigin(originIndex) }}
-                className="col-start-1 row-start-1 z-20 w-full h-full min-h-[540px] box-border overflow-hidden rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 p-5 sm:p-7 flex flex-col justify-between gap-4"
+                className="col-start-1 row-start-1 z-20 w-full h-full min-h-[540px] box-border overflow-hidden rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-sky-500/40 dark:border-sky-500/30 shadow-2xl ring-1 ring-blue-500/20 p-5 sm:p-7 flex flex-col justify-between gap-4"
               >
                 {/* Top Workspace Header & Status */}
                 <div>
                   <div className="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-200/80 dark:border-slate-800/80">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
                       <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200">
                         Industry Specialization Workspace
                       </span>
-                      <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-mono font-bold border border-emerald-300/60 dark:border-emerald-800/60">
+                      <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-sky-100 dark:bg-blue-950/80 text-blue-800 dark:text-sky-300 text-[11px] font-mono font-bold border border-sky-300/60 dark:border-sky-800/60">
                         {selectedVertical.badge}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                      <MousePointer2 className="w-3.5 h-3.5 text-emerald-500" />
+                      <MousePointer2 className="w-3.5 h-3.5 text-sky-500" />
                       <span>Hover any vertical pill to switch specialization</span>
                     </div>
                   </div>
@@ -470,11 +473,11 @@ export const WhoItsFor: React.FC = () => {
                           }}
                           className={`relative py-2 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${
                             isActive
-                              ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500/50 shadow-sm ring-1 ring-emerald-500/20'
+                              ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-sky-400 border border-sky-500/50 shadow-sm ring-1 ring-blue-500/20'
                               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-900/60 border border-transparent'
                           }`}
                         >
-                          <VertIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-emerald-500' : 'text-slate-400'}`} />
+                          <VertIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-sky-500' : 'text-slate-400'}`} />
                           <span className="truncate">{vert.title}</span>
                         </button>
                       );
@@ -495,11 +498,11 @@ export const WhoItsFor: React.FC = () => {
                       <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
                         <div>
                           <div className="flex items-center gap-3 mb-3">
-                            <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center font-bold shrink-0">
+                            <div className="w-12 h-12 rounded-xl bg-sky-100 dark:bg-blue-950/80 text-blue-700 dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 flex items-center justify-center font-bold shrink-0">
                               <SelectedIcon className="w-6 h-6" />
                             </div>
                             <div>
-                              <span className="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">
+                              <span className="text-[11px] font-mono font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider block">
                                 {selectedVertical.shortCategory}
                               </span>
                               <h3 className="text-xl sm:text-2xl font-extrabold text-slate-950 dark:text-white">
@@ -514,7 +517,7 @@ export const WhoItsFor: React.FC = () => {
 
                           {/* Adaptation Summary Callout */}
                           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/90 border border-slate-200/90 dark:border-slate-800">
-                            <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                            <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-sky-400 mb-1">
                               Operational Focus
                             </div>
                             <p className="text-xs font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
@@ -531,7 +534,7 @@ export const WhoItsFor: React.FC = () => {
                           <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-mono font-semibold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                             Sub-0.2s POS
                           </span>
-                          <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-[11px] font-mono font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
+                          <span className="px-2.5 py-1 rounded-lg bg-sky-50 dark:bg-blue-950/60 text-[11px] font-mono font-semibold text-blue-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">
                             Live Stock Sync
                           </span>
                         </div>
@@ -559,8 +562,8 @@ export const WhoItsFor: React.FC = () => {
                         </div>
 
                         {/* How Ellix Connect Adapts */}
-                        <div className="p-4 rounded-2xl bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-200/70 dark:border-emerald-900/40 space-y-3">
-                          <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                        <div className="p-4 rounded-2xl bg-sky-50/40 dark:bg-blue-950/20 border border-sky-200/70 dark:border-blue-900/40 space-y-3">
+                          <div className="flex items-center gap-2 text-blue-700 dark:text-sky-400 font-bold text-xs uppercase tracking-wider">
                             <Sparkles className="w-4 h-4 shrink-0" />
                             <span>How Ellix Connect Adapts</span>
                           </div>
@@ -568,9 +571,9 @@ export const WhoItsFor: React.FC = () => {
                             {selectedVertical.howEllixAdapts.map((solution, idx) => (
                               <div
                                 key={idx}
-                                className="p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 border border-emerald-200/60 dark:border-emerald-900/40 text-xs text-slate-800 dark:text-slate-200 flex items-start gap-2.5 shadow-2xs"
+                                className="p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 border border-sky-200/60 dark:border-blue-900/40 text-xs text-slate-800 dark:text-slate-200 flex items-start gap-2.5 shadow-2xs"
                               >
-                                <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                                <Check className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                                 <span className="leading-relaxed font-medium">{solution}</span>
                               </div>
                             ))}
@@ -596,7 +599,7 @@ export const WhoItsFor: React.FC = () => {
                       setSelectedVerticalId(verticals[nextIdx].id);
                       setOriginIndex(nextIdx);
                     }}
-                    className="inline-flex items-center gap-1.5 font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 font-bold text-blue-600 dark:text-sky-400 hover:text-sky-500 cursor-pointer"
                   >
                     <span>Next Vertical</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -628,7 +631,7 @@ export const WhoItsFor: React.FC = () => {
                   }}
                   className={`snap-start shrink-0 w-[250px] sm:w-auto p-4 rounded-2xl text-left border transition-all flex flex-col justify-between cursor-pointer ${
                     isSelected
-                      ? 'bg-white dark:bg-slate-900 border-emerald-500 shadow-md ring-2 ring-emerald-500/20'
+                      ? 'bg-white dark:bg-slate-900 border-sky-500 shadow-md ring-2 ring-blue-500/20'
                       : 'bg-white/80 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800'
                   }`}
                 >
@@ -637,18 +640,18 @@ export const WhoItsFor: React.FC = () => {
                       <div
                         className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
                           isSelected
-                            ? 'bg-emerald-600 text-white'
+                            ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700'
                         }`}
                       >
                         <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
-                      <span className="text-[10px] font-mono font-semibold text-emerald-700 dark:text-emerald-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                      <span className="text-[10px] font-mono font-semibold text-blue-700 dark:text-sky-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
                         {vert.badge}
                       </span>
                     </div>
 
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-0.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-sky-400 mb-0.5">
                       {vert.shortCategory}
                     </div>
                     <h3 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white mb-1">
@@ -659,7 +662,7 @@ export const WhoItsFor: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 flex items-center justify-between">
+                  <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800 text-[11px] font-semibold text-blue-700 dark:text-sky-400 flex items-center justify-between">
                     <span>{isSelected ? 'Viewing solutions below ↓' : 'Tap to view solutions'}</span>
                     <ChevronRight className={`w-3.5 h-3.5 transition-transform ${isSelected ? 'translate-x-1' : ''}`} />
                   </div>
@@ -672,11 +675,11 @@ export const WhoItsFor: React.FC = () => {
           <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg space-y-5">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold">
+                <div className="w-11 h-11 rounded-xl bg-sky-100 dark:bg-blue-950/80 text-blue-700 dark:text-sky-400 flex items-center justify-center font-bold">
                   <SelectedIcon className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">
+                  <span className="text-[11px] font-mono font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider block">
                     {selectedVertical.shortCategory}
                   </span>
                   <h3 className="text-xl font-bold text-slate-950 dark:text-white">
@@ -684,7 +687,7 @@ export const WhoItsFor: React.FC = () => {
                   </h3>
                 </div>
               </div>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-sky-50 dark:bg-blue-950 text-blue-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800">
                 {selectedVertical.badge}
               </span>
             </div>
@@ -711,16 +714,16 @@ export const WhoItsFor: React.FC = () => {
               </div>
 
               <div className="space-y-2.5">
-                <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-blue-700 dark:text-sky-400 font-bold text-xs uppercase tracking-wider">
                   <Sparkles className="w-4 h-4" />
                   <span>How Ellix Connect Adapts</span>
                 </div>
                 {selectedVertical.howEllixAdapts.map((solution, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900/40 text-xs text-slate-800 dark:text-slate-200 flex items-start gap-2.5"
+                    className="p-3 rounded-xl bg-sky-50/60 dark:bg-blue-950/30 border border-sky-200/70 dark:border-blue-900/40 text-xs text-slate-800 dark:text-slate-200 flex items-start gap-2.5"
                   >
-                    <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                    <Check className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                     <span className="leading-relaxed font-medium">{solution}</span>
                   </div>
                 ))}

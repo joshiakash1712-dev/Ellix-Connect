@@ -6,27 +6,27 @@
 /* BRAND COLOR TOKENS & SYSTEM THEME VARIABLES (PHASE 3B)        */
 /* ------------------------------------------------------------- */
 :root {
-  /* Brand Palette */
-  --color-brand-primary: #059669;        /* emerald-600 */
-  --color-brand-primary-light: #10b981;  /* emerald-500 */
-  --color-brand-accent: #14b8a6;         /* teal-500 */
-  --color-brand-highlight: #34d399;      /* emerald-400 */
-  --color-brand-dark: #0A0E1A;           /* Level 0: Primary background */
-  --color-brand-surface-dark: #121826;   /* Level 1: Main surface */
+  /* Brand Palette — Cyber Sapphire & Obsidian Cobalt */
+  --color-brand-primary: #2563EB;        /* blue-600: Electric Cobalt */
+  --color-brand-primary-light: #3B82F6;  /* blue-500: Electric Blue */
+  --color-brand-accent: #0284C7;         /* sky-600: Deep Sapphire */
+  --color-brand-highlight: #38BDF8;      /* sky-400: Ice Cyan */
+  --color-brand-dark: #070B14;           /* Level 0: Obsidian Midnight */
+  --color-brand-surface-dark: #0E1726;   /* Level 1: Midnight Navy */
   --color-brand-bg-light: #F8FAFC;       /* Light mode Level 0 */
-  --color-brand-bg-dark: #0A0E1A;        /* Dark mode Level 0 */
-  --gradient-brand: linear-gradient(135deg, #059669 0%, #14b8a6 50%, #34d399 100%);
+  --color-brand-bg-dark: #070B14;        /* Dark mode Level 0 */
+  --gradient-brand: linear-gradient(135deg, #1D4ED8 0%, #2563EB 50%, #38BDF8 100%);
 
   /* Surface Hierarchy Tokens (Dark Default) */
-  --ellix-bg-level-0: #0A0E1A;           /* Application background */
-  --ellix-surface-level-1: #121826;      /* Standard card / panel / table surface */
-  --ellix-surface-level-2: #161D2C;      /* Elevated card / dropdown / modal surface */
-  --ellix-surface-level-3: rgba(10, 14, 26, 0.82); /* Special overlay / dialog backdrop */
+  --ellix-bg-level-0: #070B14;           /* Application background */
+  --ellix-surface-level-1: #0E1726;      /* Standard card / panel / table surface */
+  --ellix-surface-level-2: #152238;      /* Elevated card / dropdown / modal surface */
+  --ellix-surface-level-3: rgba(7, 11, 20, 0.85); /* Special overlay / dialog backdrop */
 
   /* Border Tokens */
   --ellix-border-subtle: rgba(148, 163, 184, 0.14);
   --ellix-border-default: rgba(148, 163, 184, 0.22);
-  --ellix-border-strong: rgba(16, 185, 129, 0.35);
+  --ellix-border-strong: rgba(37, 99, 235, 0.45);
 
   /* Text Hierarchy Tokens */
   --ellix-text-primary: #F8FAFC;
@@ -34,7 +34,7 @@
   --ellix-text-muted: #64748B;
 
   /* Semantic Status Tokens */
-  --ellix-status-success: #10B981;
+  --ellix-status-success: #2563EB;
   --ellix-status-warning: #F59E0B;
   --ellix-status-danger: #F43F5E;
 
@@ -59,10 +59,10 @@
 
 .dark,
 html.dark {
-  --color-brand-text-accent: #34d399;
-  --ellix-bg-level-0: #0A0E1A;
-  --ellix-surface-level-1: #121826;
-  --ellix-surface-level-2: #161D2C;
+  --color-brand-text-accent: #38BDF8;
+  --ellix-bg-level-0: #070B14;
+  --ellix-surface-level-1: #0E1726;
+  --ellix-surface-level-2: #152238;
   --ellix-border-subtle: rgba(148, 163, 184, 0.14);
   --ellix-border-default: rgba(148, 163, 184, 0.22);
   --ellix-text-primary: #F8FAFC;
@@ -70,19 +70,29 @@ html.dark {
   --ellix-text-muted: #64748B;
 }
 
-html.light {
+html.light,
+html.theme-light {
   --ellix-bg-level-0: #F8FAFC;
   --ellix-surface-level-1: #FFFFFF;
   --ellix-surface-level-2: #F1F5F9;
-  --ellix-border-subtle: rgba(15, 23, 42, 0.09);
-  --ellix-border-default: rgba(15, 23, 42, 0.16);
+  --ellix-border-subtle: rgba(15, 23, 42, 0.08);
+  --ellix-border-default: rgba(15, 23, 42, 0.14);
   --ellix-text-primary: #0F172A;
-  --ellix-text-secondary: #475569;
+  --ellix-text-secondary: #334155;
   --ellix-text-muted: #64748B;
+  --ellix-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --ellix-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.07), 0 1px 3px rgba(15, 23, 42, 0.05);
+  --ellix-shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.1), 0 4px 10px rgba(15, 23, 42, 0.05);
+}
+
+/* Official Ellix Connect Logo Wordmark Adaptation */
+html.light .ellix-logo-wordmark,
+html.theme-light .ellix-logo-wordmark {
+  fill: #0F172A;
 }
 
 /* ------------------------------------------------------------- */
-/* SURFACE HIERARCHY & GLASSMORPHISM DESIGN TOKens               */
+/* SURFACE HIERARCHY & GLASSMORPHISM DESIGN TOKENS               */
 /* ------------------------------------------------------------- */
 .ellix-bg-0 {
   background-color: var(--ellix-bg-level-0);
@@ -101,27 +111,30 @@ html.light {
 }
 
 .glass-panel {
-  background-color: #121826;
+  background-color: #0E1726;
   background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.14);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.26);
-}
-
-.dark .glass-panel,
-html.dark .glass-panel {
-  background-color: rgba(18, 24, 38, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(148, 163, 184, 0.14);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
 }
 
-html.light .glass-panel {
-  background-color: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+.dark .glass-panel,
+html.dark .glass-panel {
+  background-color: rgba(14, 23, 38, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+html.light .glass-panel,
+html.theme-light .glass-panel {
+  background-color: rgba(255, 255, 255, 0.98);
+  background-image: none;
+  border: 1px solid #CBD5E1;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+  color: #0F172A;
 }
 
 /* Interactive hover enhancement for clickable cards & buttons */
@@ -133,8 +146,463 @@ html.light .glass-panel {
 }
 
 .glass-panel-interactive:hover {
-  border-color: rgba(16, 185, 129, 0.35);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24), 0 0 16px rgba(16, 185, 129, 0.1);
+  border-color: rgba(37, 99, 235, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24), 0 0 16px rgba(37, 99, 235, 0.15);
+}
+
+html.light .glass-panel-interactive:hover,
+html.theme-light .glass-panel-interactive:hover {
+  border-color: #2563EB;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08), 0 0 12px rgba(37, 99, 235, 0.14);
+}
+
+/* ------------------------------------------------------------- */
+/* HIGH-CONTRAST DAYLIGHT APPLICATION THEME OVERRIDES            */
+/* ------------------------------------------------------------- */
+:where(html.light, html.theme-light) .ellix-app-shell {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+/* Level 0 & Nested Sub-surfaces inside App Shell & Modals */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay, #save-status-toast) :where(
+  .bg-\[\#0A0E1A\],
+  .bg-\[\#0A0E1A\]\/95,
+  .bg-\[\#0A0E1A\]\/90,
+  .bg-\[\#0A0E1A\]\/85,
+  .bg-\[\#0A0E1A\]\/80,
+  .bg-\[\#0A0E1A\]\/75,
+  .bg-\[\#0A0E1A\]\/70,
+  .bg-\[\#0A0E1A\]\/60,
+  .bg-\[\#0A0E1A\]\/50,
+  .bg-\[\#0A0E1A\]\/40,
+  .bg-\[\#0D1322\],
+  .bg-slate-950,
+  .bg-slate-950\/98,
+  .bg-slate-950\/95,
+  .bg-slate-950\/90,
+  .bg-slate-950\/85,
+  .bg-slate-950\/80,
+  .bg-slate-950\/70,
+  .bg-slate-950\/60,
+  .bg-slate-950\/50,
+  .bg-slate-950\/40,
+  .bg-black\/30,
+  .bg-black\/20
+):not(#theme-card-dark *):not(.fixed.inset-0) {
+  background-color: #F8FAFC !important;
+  color: #0F172A;
+}
+
+/* Modal Backdrop Overlays in Light Mode */
+:where(html.light, html.theme-light) :where(
+  #settings-modal-overlay,
+  #notification-modal-overlay,
+  #account-sync-hub-overlay,
+  .ellix-app-shell .fixed.inset-0.bg-\[\#0A0E1A\]\/90,
+  .ellix-app-shell .fixed.inset-0.bg-\[\#0A0E1A\]\/85,
+  .ellix-app-shell .fixed.inset-0.bg-\[\#0A0E1A\]\/80,
+  .ellix-app-shell .fixed.inset-0.bg-slate-950\/90,
+  .ellix-app-shell .fixed.inset-0.bg-slate-950\/85,
+  .ellix-app-shell .fixed.inset-0.bg-slate-950\/80,
+  .ellix-app-shell .fixed.inset-0.bg-slate-950\/70,
+  .ellix-app-shell .fixed.inset-0.bg-black\/70,
+  .ellix-app-shell .fixed.inset-0.bg-black\/80
+) {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
+/* Neutralize internal dark -z-10 backdrop tints inside glass panels in light mode */
+:where(html.light, html.theme-light) .glass-panel > .-z-10 {
+  background-image: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(248, 250, 252, 0.5) 50%, rgba(56, 189, 248, 0.06) 100%) !important;
+}
+
+/* Level 1 Primary Card & Panel Surfaces */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay, #save-status-toast) :where(
+  .bg-\[\#121826\],
+  .bg-\[\#121826\]\/95,
+  .bg-\[\#121826\]\/90,
+  .bg-\[\#121826\]\/80,
+  .bg-slate-900,
+  .bg-slate-900\/95,
+  .bg-slate-900\/90,
+  .bg-slate-900\/80,
+  .bg-slate-900\/70,
+  .bg-slate-900\/60,
+  .bg-slate-900\/50,
+  .bg-slate-900\/40
+):not(#theme-card-dark):not(#theme-card-dark *) {
+  background-color: #FFFFFF !important;
+  color: #0F172A;
+}
+
+/* Level 2 Elevated Popovers, Dropdowns, Modals & Secondary Surfaces */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .bg-\[\#161D2C\],
+  .bg-\[\#161D2C\]\/95,
+  .bg-\[\#161D2C\]\/90,
+  .bg-\[\#161D2C\]\/80
+):not(#theme-card-dark *) {
+  background-color: #FFFFFF !important;
+  color: #0F172A;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .bg-slate-800,
+  .bg-slate-800\/90,
+  .bg-slate-800\/80,
+  .bg-slate-800\/70,
+  .bg-slate-800\/60,
+  .bg-slate-800\/50,
+  .bg-slate-800\/40,
+  .bg-slate-700,
+  .bg-slate-700\/80,
+  .bg-slate-700\/60
+):not(#theme-card-dark *) {
+  background-color: #F1F5F9 !important;
+  color: #1E293B;
+}
+
+/* Dark Semantic Tinted Surfaces -> Crisp Daylight Pastel Tints */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .bg-blue-950\/20,
+  .bg-blue-950\/30,
+  .bg-blue-950\/40,
+  .bg-blue-950\/90,
+  .bg-sky-950\/20,
+  .bg-sky-950\/30,
+  .bg-sky-500\/10,
+  .bg-sky-500\/15,
+  .bg-sky-500\/20,
+  .bg-blue-500\/10,
+  .bg-blue-500\/15,
+  .bg-blue-500\/20
+):not(#theme-card-dark *) {
+  background-color: #F0F9FF !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .bg-amber-950\/20,
+  .bg-amber-950\/30
+):not(#theme-card-dark *) {
+  background-color: #FFFBEB !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .bg-rose-950\/10,
+  .bg-rose-950\/20,
+  .bg-rose-950\/30,
+  .bg-rose-950\/40,
+  .bg-rose-950\/60,
+  .bg-red-950\/20
+):not(#theme-card-dark *) {
+  background-color: #FFF1F2 !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .bg-indigo-950\/20,
+  .bg-blue-950\/20,
+  .bg-blue-950\/30
+):not(#theme-card-dark *) {
+  background-color: #EEF2FF !important;
+}
+
+/* Gradient Header Banners & Dark Gradient Cards inside App Shell */
+:where(html.light, html.theme-light) .ellix-app-shell :where(
+  .from-\[\#121826\],
+  .from-\[\#0A0E1A\],
+  .from-slate-900,
+  .from-slate-950,
+  .from-slate-800\/40,
+  .from-blue-950,
+  .from-blue-950\/40,
+  .from-blue-950\/50,
+  .from-amber-950\/40,
+  .to-slate-900,
+  .to-slate-950,
+  .to-\[\#121826\],
+  .to-blue-950\/30,
+  .to-blue-950\/40,
+  .via-slate-900
+):not(#theme-card-dark *):not(.-z-10) {
+  background-image: linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 65%, #EFF6FF 100%) !important;
+  background-color: #FFFFFF !important;
+}
+
+/* Interactive Hover States in Light Mode */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .hover\:bg-\[\#161D2C\]:hover,
+  .hover\:bg-\[\#121826\]:hover,
+  .hover\:bg-\[\#0A0E1A\]:hover,
+  .hover\:bg-slate-900:hover,
+  .hover\:bg-slate-800:hover,
+  .hover\:bg-slate-800\/90:hover,
+  .hover\:bg-slate-800\/80:hover,
+  .hover\:bg-slate-800\/60:hover,
+  .hover\:bg-slate-800\/50:hover,
+  .hover\:bg-slate-800\/40:hover,
+  .hover\:bg-slate-800\/30:hover,
+  .hover\:bg-slate-700:hover,
+  .hover\:bg-slate-700\/80:hover,
+  .hover\:bg-slate-700\/60:hover,
+  .hover\:bg-slate-700\/50:hover
+):not(#theme-card-dark *) {
+  background-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
+/* Crisp Daylight Borders & Dividers */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay, #save-status-toast) :where(
+  .border-slate-800,
+  .border-slate-800\/90,
+  .border-slate-800\/80,
+  .border-slate-800\/70,
+  .border-slate-800\/60,
+  .border-slate-700,
+  .border-slate-700\/80,
+  .border-slate-700\/70,
+  .border-slate-700\/60,
+  .border-slate-700\/50
+):not(#theme-card-dark):not(#theme-card-dark *) {
+  border-color: #CBD5E1 !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .divide-slate-800 > :not([hidden]) ~ :not([hidden]),
+  .divide-slate-800\/80 > :not([hidden]) ~ :not([hidden]),
+  .divide-slate-800\/60 > :not([hidden]) ~ :not([hidden]),
+  .divide-slate-700 > :not([hidden]) ~ :not([hidden])
+) {
+  border-color: #E2E8F0 !important;
+}
+
+/* Clean Daylight Elevation Shadows (Prevents heavy dark-mode muddy shadows in Light Theme) */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay, #save-status-toast) :where(
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl
+):not(#theme-card-dark) {
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* High-Contrast Daylight Typography Mapping
+   Step 1: Convert all light/white text classes on surfaces to deep ink (#0F172A / #334155 / #475569) */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay, #save-status-toast) :where(
+  .text-white,
+  .text-slate-50,
+  .text-slate-100
+):not(#theme-card-dark):not(#theme-card-dark *) {
+  color: #0F172A !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay, #save-status-toast) :where(
+  .text-slate-200,
+  .text-slate-300
+):not(#theme-card-dark):not(#theme-card-dark *) {
+  color: #334155 !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay, #save-status-toast) :where(
+  .text-slate-400,
+  .text-slate-500
+):not(#theme-card-dark):not(#theme-card-dark *) {
+  color: #475569 !important;
+}
+
+/* Semantic Status & Accent Text Contrast in Daylight Mode (WCAG AA) */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay, #save-status-toast) :where(
+  .text-sky-200,
+  .text-sky-300,
+  .text-sky-300\/90,
+  .text-sky-400,
+  .text-sky-400\/80,
+  .text-sky-500
+):not(#theme-card-dark *) {
+  color: #0284C7 !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay, #save-status-toast) :where(
+  .text-amber-200,
+  .text-amber-200\/80,
+  .text-amber-300,
+  .text-amber-300\/80,
+  .text-amber-300\/90,
+  .text-amber-400,
+  .text-amber-400\/80,
+  .text-amber-400\/90
+):not(#theme-card-dark *) {
+  color: #B45309 !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .text-rose-200,
+  .text-rose-200\/90,
+  .text-rose-300,
+  .text-rose-300\/80,
+  .text-rose-300\/90,
+  .text-rose-400,
+  .text-red-300,
+  .text-red-400
+):not(#theme-card-dark *) {
+  color: #BE123C !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .text-cyan-300,
+  .text-cyan-400
+):not(#theme-card-dark *) {
+  color: #0E7490 !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .text-indigo-300,
+  .text-indigo-400
+):not(#theme-card-dark *) {
+  color: #4338CA !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .text-blue-300,
+  .text-blue-400
+):not(#theme-card-dark *) {
+  color: #1D4ED8 !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .text-purple-300,
+  .text-purple-400
+):not(#theme-card-dark *) {
+  color: #6D28D9 !important;
+}
+
+/* Step 2: Explicitly preserve crisp white (#FFFFFF) text on solid saturated brand/action buttons & badges */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .bg-blue-600,
+  .bg-sky-500,
+  .bg-blue-700,
+  .bg-sky-600,
+  .bg-sky-500,
+  .bg-indigo-600,
+  .bg-indigo-500,
+  .bg-rose-600,
+  .bg-rose-500,
+  .bg-red-600,
+  .bg-red-700,
+  .bg-amber-600,
+  .bg-amber-700,
+  .bg-amber-500,
+  .bg-blue-600,
+  .bg-blue-500,
+  .bg-sky-600,
+  .bg-sky-700,
+  .bg-sky-800,
+  .bg-sky-900,
+  .bg-cyan-600,
+  .bg-purple-600,
+  .from-blue-600,
+  .from-blue-500,
+  .from-amber-600,
+  .from-amber-500,
+  .from-indigo-600,
+  .from-indigo-500,
+  .from-rose-600,
+  .from-rose-500
+):where(.text-white, .text-slate-100),
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .bg-blue-600,
+  .bg-sky-500,
+  .bg-blue-700,
+  .bg-sky-600,
+  .bg-sky-500,
+  .bg-indigo-600,
+  .bg-indigo-500,
+  .bg-rose-600,
+  .bg-rose-500,
+  .bg-red-600,
+  .bg-red-700,
+  .bg-amber-600,
+  .bg-amber-700,
+  .bg-amber-500,
+  .bg-blue-600,
+  .bg-blue-500,
+  .bg-sky-600,
+  .bg-sky-700,
+  .bg-sky-800,
+  .bg-sky-900,
+  .bg-cyan-600,
+  .bg-purple-600,
+  .from-blue-600,
+  .from-blue-500,
+  .from-amber-600,
+  .from-amber-500,
+  .from-indigo-600,
+  .from-indigo-500,
+  .from-rose-600,
+  .from-rose-500
+) :where(.text-white, .text-slate-100, .text-slate-200),
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) .text-white[style*="background"] {
+  color: #FFFFFF !important;
+}
+
+/* Preserve white text on solid saturated hover states */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  .hover\:bg-blue-600:hover,
+  .hover\:bg-sky-500:hover,
+  .hover\:bg-rose-600:hover,
+  .hover\:bg-rose-500:hover,
+  .hover\:bg-red-600:hover,
+  .hover\:bg-indigo-600:hover,
+  .hover\:bg-indigo-500:hover,
+  .hover\:bg-amber-600:hover,
+  .hover\:bg-amber-500:hover
+):where(.hover\:text-white, .text-white) {
+  color: #FFFFFF !important;
+}
+
+/* Recharts & SVG Data Visualization Daylight Overrides */
+:where(html.light, html.theme-light) .ellix-app-shell .recharts-cartesian-grid line {
+  stroke: #E2E8F0 !important;
+}
+
+:where(html.light, html.theme-light) .ellix-app-shell .recharts-polar-grid-angle line,
+:where(html.light, html.theme-light) .ellix-app-shell .recharts-polar-grid-concentric polygon,
+:where(html.light, html.theme-light) .ellix-app-shell .recharts-polar-grid-concentric circle {
+  stroke: #CBD5E1 !important;
+}
+
+:where(html.light, html.theme-light) .ellix-app-shell .recharts-cartesian-axis-tick-value tspan,
+:where(html.light, html.theme-light) .ellix-app-shell .recharts-polar-angle-axis-tick-value tspan {
+  fill: #475569 !important;
+}
+
+:where(html.light, html.theme-light) .ellix-app-shell .recharts-default-tooltip {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1) !important;
+}
+
+:where(html.light, html.theme-light) .ellix-app-shell .recharts-tooltip-label {
+  color: #0F172A !important;
+  font-weight: 700 !important;
+}
+
+/* Inputs, Selects & Textareas inside App Shell in Light Mode */
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea
+) {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
+:where(html.light, html.theme-light) :where(.ellix-app-shell, #notification-modal-overlay, #settings-modal-overlay, #account-sync-hub-overlay) :where(
+  input::placeholder,
+  textarea::placeholder
+) {
+  color: #64748B !important;
 }
 
 /* ------------------------------------------------------------- */
@@ -149,7 +617,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid rgba(16, 185, 129, 0.65);
+  outline: 2px solid rgba(37, 99, 235, 0.65);
   outline-offset: 2px;
 }
 
@@ -249,7 +717,7 @@ html.light {
   transition: opacity var(--ellix-motion-medium) var(--ellix-motion-ease);
   background: radial-gradient(
     360px circle at var(--card-mouse-x, 50%) var(--card-mouse-y, 0%),
-    rgba(16, 185, 129, 0.07),
+    rgba(37, 99, 235, 0.07),
     transparent 70%
   );
   z-index: 0;
@@ -258,7 +726,7 @@ html.light {
 .dark .website-root .website-card-hover::before {
   background: radial-gradient(
     360px circle at var(--card-mouse-x, 50%) var(--card-mouse-y, 0%),
-    rgba(16, 185, 129, 0.11),
+    rgba(37, 99, 235, 0.11),
     transparent 70%
   );
 }
@@ -270,8 +738,8 @@ html.light {
 
 .website-root .website-card-hover:hover {
   transform: translateY(-4px);
-  border-color: rgba(16, 185, 129, 0.48);
-  box-shadow: 0 14px 30px -8px rgba(16, 185, 129, 0.14), 0 6px 16px -4px rgba(15, 23, 42, 0.06);
+  border-color: rgba(37, 99, 235, 0.48);
+  box-shadow: 0 14px 30px -8px rgba(37, 99, 235, 0.14), 0 6px 16px -4px rgba(15, 23, 42, 0.06);
 }
 
 .website-root .website-card-hover:hover::before {
@@ -279,8 +747,8 @@ html.light {
 }
 
 .dark .website-root .website-card-hover:hover {
-  border-color: rgba(52, 211, 153, 0.45);
-  box-shadow: 0 18px 36px -10px rgba(16, 185, 129, 0.18), 0 0 22px rgba(16, 185, 129, 0.08);
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 18px 36px -10px rgba(37, 99, 235, 0.18), 0 0 22px rgba(37, 99, 235, 0.08);
 }
 
 /* Feature Card Internal Icon & Supporting Content Micro-Interactions (Section 10 & 11) */
@@ -291,12 +759,12 @@ html.light {
 .website-root .website-card-hover:hover .w-10.h-10 svg.lucide,
 .website-root .website-card-hover:hover .w-11.h-11 svg.lucide {
   transform: translateY(-2.5px) scale(1.06);
-  filter: drop-shadow(0 2px 6px rgba(16, 185, 129, 0.28));
+  filter: drop-shadow(0 2px 6px rgba(37, 99, 235, 0.28));
 }
 
 .website-root .website-card-hover:hover .w-10.h-10,
 .website-root .website-card-hover:hover .w-11.h-11 {
-  border-color: rgba(16, 185, 129, 0.45);
+  border-color: rgba(37, 99, 235, 0.45);
   transition: border-color var(--ellix-motion-medium) var(--ellix-motion-ease), background-color var(--ellix-motion-medium) var(--ellix-motion-ease);
 }
 
@@ -333,7 +801,7 @@ html.light {
 .website-root .website-btn-glow:hover {
   transform: translate3d(var(--mag-x, 0px), calc(var(--mag-y, 0px) - 1.5px), 0);
   filter: brightness(1.05);
-  box-shadow: 0 10px 24px -4px rgba(16, 185, 129, 0.32), 0 0 14px rgba(16, 185, 129, 0.16);
+  box-shadow: 0 10px 24px -4px rgba(37, 99, 235, 0.32), 0 0 14px rgba(37, 99, 235, 0.16);
 }
 
 .website-root .website-btn-glow:active {
@@ -342,7 +810,7 @@ html.light {
   transition-duration: 100ms;
 }
 
-/* Website Interactive Tab & Nav Hover Glow with 0 -> 100% Emerald Indicator (Section 8) */
+/* Website Interactive Tab & Nav Hover Glow with 0 -> 100% Sapphire Indicator (Section 8) */
 .website-root .website-nav-hover {
   position: relative;
   transition: color 160ms var(--ellix-motion-ease), background-color 180ms var(--ellix-motion-ease);
@@ -356,7 +824,7 @@ html.light {
   right: 14px;
   height: 1.5px;
   border-radius: 9999px;
-  background-color: #10b981;
+  background-color: #2563EB;
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 240ms var(--ellix-motion-ease), opacity 180ms var(--ellix-motion-ease);
@@ -365,7 +833,7 @@ html.light {
 }
 
 .website-root .website-nav-hover:hover {
-  color: #10b981;
+  color: #2563EB;
 }
 
 .website-root .website-nav-hover:hover::after {
@@ -379,7 +847,7 @@ html.light {
 }
 
 .website-root main > section.ellix-section-inview {
-  border-color: rgba(16, 185, 129, 0.22);
+  border-color: rgba(37, 99, 235, 0.22);
 }
 
 /* Subtle Hero & Workflow Ambient Animations */

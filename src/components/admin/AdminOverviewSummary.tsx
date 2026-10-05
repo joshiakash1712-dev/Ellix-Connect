@@ -107,16 +107,16 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
       wholesaler_admin: {
         label: 'Wholesale Admin',
         count: 0,
-        color: 'text-teal-400',
-        border: 'border-teal-500/30',
-        bg: 'bg-teal-500/10'
+        color: 'text-sky-400',
+        border: 'border-sky-500/30',
+        bg: 'bg-sky-500/10'
       },
       owner: {
         label: 'Franchise Owner',
         count: 0,
-        color: 'text-emerald-400',
-        border: 'border-emerald-500/30',
-        bg: 'bg-emerald-500/10'
+        color: 'text-sky-400',
+        border: 'border-sky-500/30',
+        bg: 'bg-sky-500/10'
       }
     };
 
@@ -166,19 +166,19 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
       className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-6 relative overflow-hidden tabular-nums"
     >
       {/* Subtle Background Accent Gradient */}
-      <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 rounded-full bg-emerald-500/5 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/3 -mb-12 w-80 h-80 rounded-full bg-teal-500/5 blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 rounded-full bg-sky-500/5 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/3 -mb-12 w-80 h-80 rounded-full bg-sky-500/5 blur-3xl pointer-events-none" />
 
       {/* 1. Header with Title & Direct Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4 relative z-10">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-inner">
+          <div className="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 shadow-inner">
             <Activity className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-base font-black text-white tracking-tight">Admin Overview</h2>
-              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-lg bg-sky-500/15 text-sky-400 border border-sky-500/30">
                 Live Governance
               </span>
             </div>
@@ -195,16 +195,16 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
             onClick={() => onNavigateTab('users')}
             className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-colors flex items-center gap-1.5 shadow-sm"
           >
-            <Shield className="w-3.5 h-3.5 text-emerald-400" />
+            <Shield className="w-3.5 h-3.5 text-sky-400" />
             <span>Staff & RBAC</span>
             <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
           </button>
           <button
             id="btn-overview-security"
             onClick={() => onNavigateTab('security')}
-            className="px-3.5 py-2 rounded-lg bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-300 text-xs font-bold border border-emerald-500/30 transition-colors flex items-center gap-1.5 shadow-sm"
+            className="px-3.5 py-2 rounded-lg bg-blue-600/15 hover:bg-blue-600/25 text-sky-300 text-xs font-bold border border-sky-500/30 transition-colors flex items-center gap-1.5 shadow-sm"
           >
-            <Lock className="w-3.5 h-3.5 text-emerald-400" />
+            <Lock className="w-3.5 h-3.5 text-sky-400" />
             <span>Security Policy</span>
           </button>
         </div>
@@ -226,8 +226,8 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
             <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 group-hover:scale-105 transition-transform">
               <Users className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-sky-500/15 text-sky-400 border border-sky-500/30 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
               <span>{metrics.activePercentage}% Active</span>
             </span>
           </div>
@@ -239,7 +239,7 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
             </div>
             <span className="text-xs font-bold text-slate-300 block mt-0.5">Total Active Users</span>
             <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
-              <span className="text-emerald-400 font-semibold flex items-center gap-0.5">
+              <span className="text-sky-400 font-semibold flex items-center gap-0.5">
                 <CheckCircle2 className="w-3 h-3" /> {metrics.activeUsers} Active
               </span>
               <span>•</span>
@@ -258,12 +258,12 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
           onClick={() => onNavigateTab('users')}
           className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 hover:border-slate-700 transition-all cursor-pointer group shadow-md flex flex-col justify-between relative overflow-hidden"
         >
-          <div className="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none -z-10" />
+          <div className="absolute -top-10 -right-10 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none -z-10" />
           <div className="flex items-start justify-between">
-            <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-105 transition-transform">
+            <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400 group-hover:scale-105 transition-transform">
               <TrendingUp className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30 flex items-center gap-1">
               <TrendingUp className="w-3 h-3" />
               <span>{metrics.growthPercent} MoM</span>
             </span>
@@ -271,12 +271,12 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
 
           <div className="mt-3">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black text-emerald-400">{metrics.growthPercent}</span>
+              <span className="text-2xl font-black text-sky-400">{metrics.growthPercent}</span>
               <span className="text-xs font-semibold text-slate-400">Past 30 Days</span>
             </div>
             <span className="text-xs font-bold text-slate-300 block mt-0.5">Recent Account Growth</span>
             <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
-              <span className="text-emerald-300 font-semibold flex items-center gap-1">
+              <span className="text-sky-300 font-semibold flex items-center gap-1">
                 <UserPlus className="w-3 h-3" />
                 +{metrics.newAccountsPast30Days} new accounts onboarded
               </span>
@@ -324,25 +324,25 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
           onClick={() => onNavigateTab('security')}
           className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 hover:border-slate-700 transition-all cursor-pointer group shadow-md flex flex-col justify-between relative overflow-hidden"
         >
-          <div className="absolute -top-10 -right-10 w-24 h-24 bg-teal-500/10 rounded-full blur-xl pointer-events-none -z-10" />
+          <div className="absolute -top-10 -right-10 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none -z-10" />
           <div className="flex items-start justify-between">
-            <div className="p-2 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400 group-hover:scale-105 transition-transform">
+            <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400 group-hover:scale-105 transition-transform">
               <Building2 className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-teal-500/20 text-teal-300 border border-teal-500/30">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30">
               {stores.length} Outlets
             </span>
           </div>
 
           <div className="mt-3">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black text-teal-300">{stores.length}</span>
+              <span className="text-2xl font-black text-sky-300">{stores.length}</span>
               <span className="text-xs font-semibold text-slate-400">Franchise Branches</span>
             </div>
             <span className="text-xs font-bold text-slate-300 block mt-0.5">Roster Outlet Coverage</span>
             <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
               <span>Avg {(metrics.totalUsers / (stores.length || 1)).toFixed(1)} staff / branch</span>
-              <span className="text-emerald-400 font-bold">{metrics.twoFaPercentage}% 2FA</span>
+              <span className="text-sky-400 font-bold">{metrics.twoFaPercentage}% 2FA</span>
             </div>
           </div>
         </motion.div>
@@ -353,13 +353,13 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
       <div className="p-4 sm:p-5 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-4 relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+            <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400">
               <TrendingUp className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-200">Enterprise Growth Trajectory</span>
-                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30">
                   +28.6% MoM Run-rate
                 </span>
               </div>
@@ -382,7 +382,7 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
                   onClick={() => setGrowthView(v.id as any)}
                   className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all ${
                     growthView === v.id
-                      ? 'bg-emerald-600 text-white shadow-sm'
+                      ? 'bg-blue-600 text-white shadow-sm'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -418,8 +418,8 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
                     <AreaChart data={growthTrajectoryData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="adminRevenueGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.35} />
-                          <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
+                          <stop offset="5%" stopColor="#2563EB" stopOpacity={0.35} />
+                          <stop offset="95%" stopColor="#2563EB" stopOpacity={0.0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
@@ -429,14 +429,14 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
                         contentStyle={{ backgroundColor: '#161D2C', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
                         formatter={(val: any) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Network Gross Revenue']}
                       />
-                      <Area type="monotone" dataKey="networkRevenue" stroke="#10b981" strokeWidth={2.5} fill="url(#adminRevenueGrad)" />
+                      <Area type="monotone" dataKey="networkRevenue" stroke="#2563EB" strokeWidth={2.5} fill="url(#adminRevenueGrad)" />
                     </AreaChart>
                   ) : growthView === 'stores' ? (
                     <AreaChart data={growthTrajectoryData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="adminStoresGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.35} />
-                          <stop offset="95%" stopColor="#14b8a6" stopOpacity={0.0} />
+                          <stop offset="5%" stopColor="#0284C7" stopOpacity={0.35} />
+                          <stop offset="95%" stopColor="#0284C7" stopOpacity={0.0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
@@ -446,7 +446,7 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
                         contentStyle={{ backgroundColor: '#161D2C', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
                         formatter={(val: any) => [`${val} Outlets`, 'Active Franchises']}
                       />
-                      <Area type="monotone" dataKey="franchiseStores" stroke="#14b8a6" strokeWidth={2.5} fill="url(#adminStoresGrad)" />
+                      <Area type="monotone" dataKey="franchiseStores" stroke="#0284C7" strokeWidth={2.5} fill="url(#adminStoresGrad)" />
                     </AreaChart>
                   ) : (
                     <AreaChart data={growthTrajectoryData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
@@ -477,7 +477,7 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
                     <span className="font-bold text-white block">
                       {growthView === 'network_sales' ? `₹${(d.networkRevenue/1000).toFixed(0)}k` : growthView === 'stores' ? `${d.franchiseStores} hubs` : `${d.totalAccounts} users`}
                     </span>
-                    <span className="text-[10px] text-emerald-400 font-bold block">+{d.growthMoM}%</span>
+                    <span className="text-[10px] text-sky-400 font-bold block">+{d.growthMoM}%</span>
                   </div>
                 ))}
               </div>
@@ -490,7 +490,7 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
       <div className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-3 relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-emerald-400" />
+            <Layers className="w-4 h-4 text-sky-400" />
             <span className="text-xs font-bold text-slate-200">Role Assignment Breakdown</span>
             <span className="text-[10px] text-slate-400">({metrics.rolesAssignedCount} active roles across {metrics.totalUsers} accounts)</span>
           </div>
@@ -510,8 +510,8 @@ export const AdminOverviewSummary: React.FC<AdminOverviewSummaryProps> = ({
                 : roleKey === 'inventory_staff'
                 ? 'bg-amber-500'
                 : roleKey === 'wholesaler_admin'
-                ? 'bg-teal-500'
-                : 'bg-emerald-500';
+                ? 'bg-sky-500'
+                : 'bg-sky-500';
 
             return (
               <div

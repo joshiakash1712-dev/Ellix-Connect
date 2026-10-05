@@ -157,8 +157,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       label: daysRemaining !== null && daysRemaining <= 30
         ? `Subscription · Renews in ${daysRemaining} days`
         : 'Subscription · Active',
-      classes: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25 hover:bg-emerald-500/20',
-      dotClass: 'bg-emerald-400'
+      classes: 'bg-sky-500/10 text-sky-300 border-sky-500/25 hover:bg-blue-500/20',
+      dotClass: 'bg-sky-400'
     };
   }, [subscription, isClientOwner]);
 
@@ -173,7 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="sticky top-0 z-40 glass-panel border-b border-slate-800 text-slate-100 shadow-xl w-full max-w-full relative">
       {/* Subtle brand gradient backdrop BEHIND the glass navbar to give frosted refraction depth */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-emerald-600/10 via-teal-500/5 to-emerald-600/10 pointer-events-none" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600/10 via-sky-500/5 to-blue-600/10 pointer-events-none" />
       <div className="w-full max-w-7xl mx-auto px-2.5 sm:px-4 lg:px-6">
         <div className="flex items-center justify-between h-16 gap-2 sm:gap-3">
           
@@ -199,7 +199,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="sm:hidden flex items-center gap-1.5">
                 <EllixConnectLogo variant="symbol" size={26} alt="Ellix Connect" />
                 <span className="text-sm font-bold tracking-tight text-white flex items-center">
-                  Ellix<span className="text-[#2DD4A7] font-extrabold">Connect</span>
+                  Ellix<span className="text-[#38BDF8] font-extrabold">Connect</span>
                 </span>
               </div>
 
@@ -228,12 +228,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm max-w-[130px] xs:max-w-[165px] sm:max-w-[230px] ${
                   isCrew
                     ? 'bg-amber-500/10 border-amber-500/30 text-amber-200 hover:bg-amber-500/20'
-                    : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20'
+                    : 'bg-sky-500/10 border-sky-500/30 text-sky-300 hover:bg-blue-500/20'
                 }`}
                 title={isCrew ? `Current Assigned Store: ${activeStore.name}` : `Current Active Store: ${activeStore.name}`}
               >
-                <span className={`w-2 h-2 rounded-full shrink-0 ${isCrew ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
-                <StoreIcon className={`w-3.5 h-3.5 shrink-0 ${isCrew ? 'text-amber-400' : 'text-emerald-400'}`} />
+                <span className={`w-2 h-2 rounded-full shrink-0 ${isCrew ? 'bg-amber-400 animate-pulse' : 'bg-sky-400'}`} />
+                <StoreIcon className={`w-3.5 h-3.5 shrink-0 ${isCrew ? 'text-amber-400' : 'text-sky-400'}`} />
                 <span className="truncate font-extrabold text-white">
                   {activeStore.name}{activeStore.city ? ` · ${activeStore.city}` : ''}
                 </span>
@@ -258,7 +258,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         }}
                         className={`w-full text-left px-2.5 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
                           activeStore.id === store.id
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold'
+                            ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30 font-bold'
                             : 'text-slate-300 hover:bg-slate-800/80'
                         }`}
                       >
@@ -267,7 +267,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           <div className="text-[10px] text-slate-500 truncate">{store.address}</div>
                         </div>
                         {activeStore.id === store.id && (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 ml-1.5" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0 ml-1.5" />
                         )}
                       </button>
                     ))}
@@ -307,7 +307,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-[10px] font-extrabold text-white flex items-center justify-center border-2 border-slate-900 animate-pulse">
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-sky-500 text-[10px] font-extrabold text-white flex items-center justify-center border-2 border-slate-900 animate-pulse">
                   {unreadCount}
                 </span>
               )}
@@ -331,7 +331,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   id="btn-nav-sign-in"
                   onClick={() => openAuthModal('login')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 shrink-0"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/20 shrink-0"
                   title="Sign In with Google, Phone OTP or Email"
                 >
                   <LogIn className="w-3.5 h-3.5" />
@@ -353,10 +353,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <img
                     src={authUser.photoURL}
                     alt={authUser.displayName || 'User'}
-                    className="w-7 h-7 rounded-md object-cover border border-emerald-500/40 shrink-0"
+                    className="w-7 h-7 rounded-md object-cover border border-sky-500/40 shrink-0"
                   />
                 ) : (
-                  <div className="w-7 h-7 rounded-md bg-emerald-600/30 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-xs shrink-0">
+                  <div className="w-7 h-7 rounded-md bg-blue-600/30 border border-sky-500/40 flex items-center justify-center text-sky-300 font-bold text-xs shrink-0">
                     {authUser?.displayName
                       ? authUser.displayName.slice(0, 2).toUpperCase()
                       : isDemoMode && storeUser?.name
@@ -369,7 +369,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <span className="truncate">
                       {authUser?.displayName || (isDemoMode ? storeUser?.name : activeRole.replace('_', ' '))}
                     </span>
-                    {authUser && <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />}
+                    {authUser && <ShieldCheck className="w-3 h-3 text-sky-400 shrink-0" />}
                   </div>
                   <div className="text-[10px] text-slate-400 leading-tight truncate mt-0.5">
                     {authUser ? 'Verified Account' : isDemoMode ? 'Demo Workspace' : (canShowDevRoleSwitcher ? 'Dev Role & Menu' : 'Account & Menu')}
@@ -385,11 +385,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   {authUser ? (
                     <div className="p-2.5 mb-2 rounded-lg bg-[#121826] border border-slate-700/80">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1">
                           <ShieldCheck className="w-3 h-3" />
                           Verified Identity
                         </span>
-                        <span className="text-[10px] font-mono text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded uppercase">
+                        <span className="text-[10px] font-mono text-sky-300 bg-sky-500/10 border border-sky-500/30 px-1.5 py-0.5 rounded uppercase">
                           {activeRole.replace('_', ' ')}
                         </span>
                       </div>
@@ -408,17 +408,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                         }}
                         className="w-full mt-2 py-1.5 px-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors"
                       >
-                        <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                        <ShieldCheck className="w-3 h-3 text-sky-400" />
                         <span>Security & Linked Credentials</span>
                       </button>
                     </div>
                   ) : isDemoMode ? (
-                    <div className="p-2.5 mb-2 rounded-lg bg-[#121826] border border-emerald-500/30">
+                    <div className="p-2.5 mb-2 rounded-lg bg-[#121826] border border-sky-500/30">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400">
                           Interactive App Demo
                         </span>
-                        <span className="text-[10px] font-mono text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded uppercase">
+                        <span className="text-[10px] font-mono text-sky-300 bg-sky-500/10 border border-sky-500/30 px-1.5 py-0.5 rounded uppercase">
                           Sample Data
                         </span>
                       </div>
@@ -451,7 +451,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setShowRoleDropdown(false);
                           openAuthModal('login');
                         }}
-                        className="w-full py-1.5 px-2 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors shadow"
+                        className="w-full py-1.5 px-2 rounded bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors shadow"
                       >
                         <LogIn className="w-3.5 h-3.5" />
                         <span>Sign In / Register</span>
@@ -481,7 +481,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             }}
                             className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-all ${
                               activeRole === r.id
-                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold'
+                                ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30 font-bold'
                                 : 'text-slate-300 hover:bg-slate-700/50'
                             }`}
                           >
@@ -489,7 +489,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                               <div className="font-semibold text-slate-200">{r.label}</div>
                               <div className="text-[10px] text-slate-400">{r.desc}</div>
                             </div>
-                            {activeRole === r.id && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+                            {activeRole === r.id && <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />}
                           </button>
                         ))}
                       </div>
@@ -507,10 +507,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                       className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-700/60 flex items-center justify-between transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <Settings className="w-3.5 h-3.5 text-emerald-400" />
+                        <Settings className="w-3.5 h-3.5 text-sky-400" />
                         <span>Settings (Theme & Preferences)</span>
                       </span>
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-900 text-emerald-400 border border-slate-700">
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-900 text-sky-400 border border-slate-700">
                         {theme === 'dark' ? 'Dark' : 'Light'}
                       </span>
                     </button>

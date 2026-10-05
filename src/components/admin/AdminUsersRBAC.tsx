@@ -352,7 +352,7 @@ export const AdminUsersRBAC: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-base font-bold text-white flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <ShieldCheck className="w-5 h-5 text-sky-400" />
             <span>Staff Roster & Role-Based Access Control ({employees.length})</span>
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -363,7 +363,7 @@ export const AdminUsersRBAC: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleOpenAdd}
-            className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition-all"
+            className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-600/20 flex items-center justify-center gap-1.5 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>+ Add Staff Member</span>
@@ -378,15 +378,15 @@ export const AdminUsersRBAC: React.FC = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center justify-between shadow-lg"
+            className="p-3.5 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-300 text-xs font-semibold flex items-center justify-between shadow-lg"
           >
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
               <span>{batchFeedback}</span>
             </div>
             <button
               onClick={() => setBatchFeedback(null)}
-              className="text-emerald-400 hover:text-white p-1"
+              className="text-sky-400 hover:text-white p-1"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -406,7 +406,7 @@ export const AdminUsersRBAC: React.FC = () => {
               placeholder="Search staff by full name, email, phone number..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
+              className="w-full pl-10 pr-4 py-2 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-sky-500 placeholder-slate-500 shadow-sm"
             />
           </div>
 
@@ -414,7 +414,7 @@ export const AdminUsersRBAC: React.FC = () => {
           <select
             value={roleFilter}
             onChange={e => setRoleFilter(e.target.value)}
-            className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
+            className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-sky-500 shadow-sm capitalize w-full sm:w-auto"
           >
             <option value="all">All Roles</option>
             <option value="owner">Franchise Owner</option>
@@ -428,7 +428,7 @@ export const AdminUsersRBAC: React.FC = () => {
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value as any)}
-            className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm w-full sm:w-auto"
+            className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-sky-500 shadow-sm w-full sm:w-auto"
           >
             <option value="all">All Statuses</option>
             <option value="active">Active Accounts Only</option>
@@ -441,7 +441,7 @@ export const AdminUsersRBAC: React.FC = () => {
               onClick={() => setViewMode('grid')}
               className={`p-1.5 rounded-lg transition-colors ${
                 viewMode === 'grid'
-                  ? 'bg-emerald-600 text-white shadow'
+                  ? 'bg-blue-600 text-white shadow'
                   : 'text-slate-400 hover:text-white'
               }`}
               title="Card Grid View"
@@ -452,7 +452,7 @@ export const AdminUsersRBAC: React.FC = () => {
               onClick={() => setViewMode('table')}
               className={`p-1.5 rounded-lg transition-colors ${
                 viewMode === 'table'
-                  ? 'bg-emerald-600 text-white shadow'
+                  ? 'bg-blue-600 text-white shadow'
                   : 'text-slate-400 hover:text-white'
               }`}
               title="Detailed Table View"
@@ -470,7 +470,7 @@ export const AdminUsersRBAC: React.FC = () => {
               onClick={handleToggleSelectAll}
               className="flex items-center gap-2 text-slate-300 hover:text-white font-semibold cursor-pointer group select-none"
             >
-              <span className="text-emerald-400">
+              <span className="text-sky-400">
                 {isAllFilteredSelected ? (
                   <CheckSquare className="w-4 h-4" />
                 ) : isSomeFilteredSelected ? (
@@ -492,7 +492,7 @@ export const AdminUsersRBAC: React.FC = () => {
               <span>Quick Select:</span>
               <button
                 onClick={() => handleQuickSelect('active')}
-                className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 transition-colors"
+                className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-sky-400 transition-colors"
               >
                 Active
               </button>
@@ -504,7 +504,7 @@ export const AdminUsersRBAC: React.FC = () => {
               </button>
               <button
                 onClick={() => handleQuickSelect('cashiers')}
-                className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-teal-400 transition-colors"
+                className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-sky-400 transition-colors"
               >
                 Cashiers
               </button>
@@ -532,10 +532,10 @@ export const AdminUsersRBAC: React.FC = () => {
             initial={{ opacity: 0, scale: 0.96, y: -8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -8 }}
-            className="p-4 rounded-xl bg-gradient-to-r from-emerald-950 via-[#121826] to-[#121826] border-2 border-emerald-500/60 shadow-2xl shadow-emerald-950/50 flex flex-col md:flex-row md:items-center justify-between gap-4"
+            className="p-4 rounded-xl bg-gradient-to-r from-blue-950 via-[#121826] to-[#121826] border-2 border-sky-500/60 shadow-2xl shadow-blue-950/50 flex flex-col md:flex-row md:items-center justify-between gap-4"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400">
+              <div className="p-2 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-400">
                 <CheckSquare className="w-5 h-5" />
               </div>
               <div>
@@ -543,7 +543,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   <span className="text-xs font-extrabold text-white">
                     {selectedIds.length} Staff Member{selectedIds.length > 1 ? 's' : ''} Selected
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30">
                     Batch Actions Active
                   </span>
                 </div>
@@ -562,7 +562,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 shadow-sm flex items-center gap-1.5 transition-colors"
                 title="Assign role to all selected users"
               >
-                <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                <Shield className="w-3.5 h-3.5 text-sky-400" />
                 <span>Assign Role</span>
               </button>
 
@@ -579,10 +579,10 @@ export const AdminUsersRBAC: React.FC = () => {
               {/* Batch Activate */}
               <button
                 onClick={() => openBatchModal('activate')}
-                className="px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 shadow-sm flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-lg bg-sky-500/10 hover:bg-blue-500/20 text-sky-300 text-xs font-bold border border-sky-500/30 shadow-sm flex items-center gap-1.5 transition-colors"
                 title="Re-enable access for selected users"
               >
-                <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <UserCheck className="w-3.5 h-3.5 text-sky-400" />
                 <span>Activate</span>
               </button>
 
@@ -592,7 +592,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 shadow-sm flex items-center gap-1.5 transition-colors"
                 title="Reassign selected users to outlet"
               >
-                <Building2 className="w-3.5 h-3.5 text-teal-400" />
+                <Building2 className="w-3.5 h-3.5 text-sky-400" />
                 <span>Transfer Branch</span>
               </button>
 
@@ -652,7 +652,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 onClick={() => handleToggleSelectUser(emp.id)}
                 className={`p-5 rounded-xl bg-[#121826] border transition-all flex flex-col justify-between gap-4 shadow-lg cursor-pointer select-none relative ${
                   isSelected
-                    ? 'border-emerald-500 ring-2 ring-emerald-500/40 bg-emerald-950/20'
+                    ? 'border-sky-500 ring-2 ring-blue-500/40 bg-blue-950/20'
                     : emp.active
                     ? 'border-slate-800 hover:border-slate-700'
                     : 'border-rose-900/40 bg-rose-950/10 hover:border-rose-800'
@@ -666,10 +666,10 @@ export const AdminUsersRBAC: React.FC = () => {
                       <button
                         type="button"
                         onClick={(e) => handleToggleSelectUser(emp.id, e)}
-                        className="mt-0.5 p-1 rounded-lg hover:bg-slate-800 transition-colors text-emerald-400"
+                        className="mt-0.5 p-1 rounded-lg hover:bg-slate-800 transition-colors text-sky-400"
                       >
                         {isSelected ? (
-                          <CheckSquare className="w-4 h-4 text-emerald-400 fill-emerald-500/20" />
+                          <CheckSquare className="w-4 h-4 text-sky-400 fill-sky-500/20" />
                         ) : (
                           <Square className="w-4 h-4 text-slate-500 hover:text-slate-400" />
                         )}
@@ -687,7 +687,7 @@ export const AdminUsersRBAC: React.FC = () => {
                               ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
                               : emp.role === 'wholesaler_admin'
                               ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
-                              : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                              : 'bg-sky-500/20 text-sky-300 border-sky-500/30'
                           }`}>
                             {emp.role.replace('_', ' ')}
                           </span>
@@ -723,7 +723,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     <div className="p-2.5 rounded-lg bg-[#0A0E1A] border border-slate-800" onClick={e => e.stopPropagation()}>
                       <span className="text-[10px] text-slate-400 block font-semibold">Terminal PIN</span>
                       <div className="flex items-center justify-between">
-                        <span className="font-mono font-bold text-emerald-400">•••• ({emp.pin})</span>
+                        <span className="font-mono font-bold text-sky-400">•••• ({emp.pin})</span>
                         <button
                           onClick={() => handleResetPin(emp)}
                           className="text-[10px] text-slate-400 hover:text-white underline"
@@ -758,11 +758,11 @@ export const AdminUsersRBAC: React.FC = () => {
                     onClick={() => handleToggleActive(emp)}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-colors flex items-center gap-1.5 ${
                       emp.active
-                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                        ? 'bg-sky-500/10 text-sky-400 border-sky-500/30 hover:bg-blue-500/20'
                         : 'bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20'
                     }`}
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${emp.active ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full ${emp.active ? 'bg-sky-400' : 'bg-rose-400'}`} />
                     {emp.active ? 'Active & Authorized' : 'Access Suspended'}
                   </button>
 
@@ -782,7 +782,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   <th className="p-3.5 w-10">
                     <button
                       onClick={handleToggleSelectAll}
-                      className="text-emerald-400 hover:text-emerald-300"
+                      className="text-sky-400 hover:text-sky-300"
                     >
                       {isAllFilteredSelected ? (
                         <CheckSquare className="w-4 h-4" />
@@ -820,17 +820,17 @@ export const AdminUsersRBAC: React.FC = () => {
                         onClick={() => handleToggleSelectUser(emp.id)}
                         className={`transition-colors cursor-pointer ${
                           isSelected
-                            ? 'bg-emerald-950/30 hover:bg-emerald-950/40'
+                            ? 'bg-blue-950/30 hover:bg-blue-950/40'
                             : 'hover:bg-slate-800/40'
                         }`}
                       >
                         <td className="p-3.5" onClick={e => e.stopPropagation()}>
                           <button
                             onClick={() => handleToggleSelectUser(emp.id)}
-                            className="text-emerald-400 hover:text-emerald-300"
+                            className="text-sky-400 hover:text-sky-300"
                           >
                             {isSelected ? (
-                              <CheckSquare className="w-4 h-4 fill-emerald-500/20" />
+                              <CheckSquare className="w-4 h-4 fill-sky-500/20" />
                             ) : (
                               <Square className="w-4 h-4 text-slate-500" />
                             )}
@@ -850,7 +850,7 @@ export const AdminUsersRBAC: React.FC = () => {
                               ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
                               : emp.role === 'wholesaler_admin'
                               ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
-                              : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                              : 'bg-sky-500/20 text-sky-300 border-sky-500/30'
                           }`}>
                             {emp.role.replace('_', ' ')}
                           </span>
@@ -861,7 +861,7 @@ export const AdminUsersRBAC: React.FC = () => {
                         <td className="p-3.5 text-slate-300 text-[11px]">
                           {emp.shift}
                         </td>
-                        <td className="p-3.5 font-mono text-emerald-400" onClick={e => e.stopPropagation()}>
+                        <td className="p-3.5 font-mono text-sky-400" onClick={e => e.stopPropagation()}>
                           •••• ({emp.pin})
                         </td>
                         <td className="p-3.5" onClick={e => e.stopPropagation()}>
@@ -869,11 +869,11 @@ export const AdminUsersRBAC: React.FC = () => {
                             onClick={() => handleToggleActive(emp)}
                             className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-colors flex items-center gap-1.5 ${
                               emp.active
-                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                                ? 'bg-sky-500/10 text-sky-400 border-sky-500/30 hover:bg-blue-500/20'
                                 : 'bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20'
                             }`}
                           >
-                            <span className={`w-1.5 h-1.5 rounded-full ${emp.active ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+                            <span className={`w-1.5 h-1.5 rounded-full ${emp.active ? 'bg-sky-400' : 'bg-rose-400'}`} />
                             {emp.active ? 'Active' : 'Suspended'}
                           </button>
                         </td>
@@ -909,7 +909,7 @@ export const AdminUsersRBAC: React.FC = () => {
       <div className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <Lock className="w-4 h-4 text-emerald-400" />
+            <Lock className="w-4 h-4 text-sky-400" />
             <span>Role-Based Access Control (RBAC) Permission Matrix</span>
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -934,13 +934,13 @@ export const AdminUsersRBAC: React.FC = () => {
                 <tr key={idx} className="hover:bg-slate-800/40 transition-colors">
                   <td className="p-3.5 font-semibold text-slate-200">{item.module}</td>
                   <td className="p-3.5 text-center">
-                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-sky-500/20 text-sky-400">
                       ✓
                     </span>
                   </td>
                   <td className="p-3.5 text-center">
                     {item.manager ? (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-sky-500/20 text-sky-400">
                         ✓
                       </span>
                     ) : (
@@ -951,7 +951,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   </td>
                   <td className="p-3.5 text-center">
                     {item.cashier ? (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-sky-500/20 text-sky-400">
                         ✓
                       </span>
                     ) : (
@@ -962,7 +962,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   </td>
                   <td className="p-3.5 text-center">
                     {item.inventory_manager ? (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-sky-500/20 text-sky-400">
                         ✓
                       </span>
                     ) : (
@@ -973,7 +973,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   </td>
                   <td className="p-3.5 text-center">
                     {item.wholesaler_admin ? (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-sky-500/20 text-sky-400">
                         ✓
                       </span>
                     ) : (
@@ -1005,7 +1005,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   <div className={`p-2 rounded-lg border ${
                     batchRoleStep === 'confirm' 
                       ? 'bg-amber-500/20 border-amber-500/40 text-amber-400' 
-                      : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                      : 'bg-sky-500/20 border-sky-500/40 text-sky-400'
                   }`}>
                     <Shield className="w-5 h-5" />
                   </div>
@@ -1074,13 +1074,13 @@ export const AdminUsersRBAC: React.FC = () => {
                           id: 'wholesaler_admin',
                           name: 'Wholesale Admin',
                           desc: 'B2B order dispatch, trade catalogues, credit limit overrides',
-                          badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/30'
+                          badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/30'
                         },
                         {
                           id: 'owner',
                           name: 'Franchise Owner',
                           desc: 'Unrestricted administrative access to financial logs, RBAC, and all outlets',
-                          badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                          badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/30'
                         }
                       ].map(r => (
                         <label
@@ -1088,7 +1088,7 @@ export const AdminUsersRBAC: React.FC = () => {
                           onClick={() => setBatchRole(r.id as UserRole)}
                           className={`p-3 rounded-xl border flex items-start gap-3 cursor-pointer transition-all ${
                             batchRole === r.id
-                              ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-sm'
+                              ? 'bg-sky-500/15 border-sky-500 text-white shadow-sm'
                               : 'bg-[#121826] border-slate-800 text-slate-300 hover:bg-slate-800/70'
                           }`}
                         >
@@ -1097,7 +1097,7 @@ export const AdminUsersRBAC: React.FC = () => {
                             name="batchRoleRadio"
                             checked={batchRole === r.id}
                             onChange={() => setBatchRole(r.id as UserRole)}
-                            className="mt-0.5 text-emerald-600 focus:ring-emerald-500"
+                            className="mt-0.5 text-blue-600 focus:ring-blue-500"
                           />
                           <div className="flex-1">
                             <div className="flex items-center justify-between gap-2">
@@ -1146,7 +1146,7 @@ export const AdminUsersRBAC: React.FC = () => {
                               {emp.role.replace('_', ' ')}
                             </span>
                             <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/40 uppercase">
                               {batchRole.replace('_', ' ')}
                             </span>
                           </div>
@@ -1170,7 +1170,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       type="checkbox"
                       checked={batchRoleCheck}
                       onChange={e => setBatchRoleCheck(e.target.checked)}
-                      className="mt-0.5 rounded border-slate-600 text-emerald-600 focus:ring-emerald-500 bg-[#0A0E1A]"
+                      className="mt-0.5 rounded border-slate-600 text-blue-600 focus:ring-blue-500 bg-[#0A0E1A]"
                     />
                     <span className="text-[11px] text-slate-200 leading-snug">
                       I verify and approve the role update to <strong>{batchRole.replace('_', ' ').toUpperCase()}</strong> for all {selectedEmployees.length} selected accounts.
@@ -1207,7 +1207,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setBatchRoleStep('confirm')}
-                      className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
+                      className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
                     >
                       <span>Review & Confirm Role Change</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -1219,7 +1219,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       onClick={handleExecuteBatchRole}
                       className={`px-4 py-2.5 rounded-lg font-bold text-xs shadow-md transition-all flex items-center gap-1.5 ${
                         batchRoleCheck
-                          ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30'
+                          ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/30'
                           : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
                       }`}
                     >
@@ -1357,15 +1357,15 @@ export const AdminUsersRBAC: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md rounded-2xl bg-[#161D2C] border border-emerald-500/50 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
+              className="w-full max-w-md rounded-2xl bg-[#161D2C] border border-sky-500/50 shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col"
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400">
+                  <div className="p-2 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-400">
                     <UserCheck className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-emerald-400">
+                    <h3 className="text-base font-bold text-sky-400">
                       Confirm Account Activation
                     </h3>
                     <p className="text-[11px] text-slate-400">
@@ -1390,12 +1390,12 @@ export const AdminUsersRBAC: React.FC = () => {
                   {selectedEmployees.map(emp => (
                     <div key={emp.id} className="p-2 flex items-center justify-between gap-2">
                       <span className="font-bold text-slate-200 truncate">{emp.name}</span>
-                      <span className="text-[10px] text-emerald-400 font-bold capitalize">{emp.role.replace('_', ' ')}</span>
+                      <span className="text-[10px] text-sky-400 font-bold capitalize">{emp.role.replace('_', ' ')}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px]">
+                <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-300 text-[11px]">
                   Staff members will immediately be able to log in to point-of-sale terminals using their existing credentials and PINs.
                 </div>
               </div>
@@ -1409,7 +1409,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 </button>
                 <button
                   onClick={handleExecuteBatchActivate}
-                  className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/20 transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/20 transition-colors flex items-center gap-1.5"
                 >
                   <Check className="w-4 h-4" />
                   <span>Confirm & Re-Activate ({selectedEmployees.length} Accounts)</span>
@@ -1432,7 +1432,7 @@ export const AdminUsersRBAC: React.FC = () => {
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-lg bg-teal-500/20 border border-teal-500/40 text-teal-400">
+                  <div className="p-2 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-400">
                     <Building2 className="w-5 h-5" />
                   </div>
                   <div>
@@ -1457,7 +1457,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 <select
                   value={batchStoreId}
                   onChange={e => setBatchStoreId(e.target.value)}
-                  className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 text-xs"
+                  className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500 text-xs"
                 >
                   {stores.map(st => (
                     <option key={st.id} value={st.id}>
@@ -1485,7 +1485,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 </button>
                 <button
                   onClick={handleExecuteBatchStore}
-                  className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
                 >
                   <Check className="w-4 h-4" />
                   <span>Confirm Branch Reassignment</span>
@@ -1533,7 +1533,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 <select
                   value={batchShift}
                   onChange={e => setBatchShift(e.target.value)}
-                  className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 text-xs"
+                  className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500 text-xs"
                 >
                   <option value="Morning (09:00 AM - 05:00 PM)">Morning (09:00 AM - 05:00 PM)</option>
                   <option value="Evening (02:00 PM - 10:00 PM)">Evening (02:00 PM - 10:00 PM)</option>
@@ -1561,7 +1561,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 </button>
                 <button
                   onClick={handleExecuteBatchShift}
-                  className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-colors flex items-center gap-1.5"
                 >
                   <Check className="w-4 h-4" />
                   <span>Confirm Shift Schedule</span>
@@ -1744,7 +1744,7 @@ export const AdminUsersRBAC: React.FC = () => {
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Users className="w-5 h-5 text-emerald-400" />
+                  <Users className="w-5 h-5 text-sky-400" />
                   <span>Provision New Staff Account</span>
                 </h3>
                 <button
@@ -1764,7 +1764,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     placeholder="e.g. Ramesh Kulkarni"
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                   />
                 </div>
 
@@ -1774,7 +1774,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     <select
                       value={formData.role}
                       onChange={e => setFormData(prev => ({ ...prev, role: e.target.value as UserRole }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     >
                       <option value="cashier">POS Cashier</option>
                       <option value="manager">Store Manager</option>
@@ -1788,7 +1788,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     <select
                       value={formData.storeId}
                       onChange={e => setFormData(prev => ({ ...prev, storeId: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     >
                       {stores.map(st => (
                         <option key={st.id} value={st.id}>
@@ -1808,7 +1808,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       placeholder="ramesh@ellixconnect.com"
                       value={formData.email}
                       onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -1818,7 +1818,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       placeholder="+91 98000 11223"
                       value={formData.phone}
                       onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -1831,7 +1831,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       maxLength={4}
                       value={formData.pin}
                       onChange={e => setFormData(prev => ({ ...prev, pin: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono text-center tracking-widest focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono text-center tracking-widest focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -1840,7 +1840,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       type="text"
                       value={formData.shift}
                       onChange={e => setFormData(prev => ({ ...prev, shift: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -1855,7 +1855,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Provision Staff
                   </button>
@@ -1878,7 +1878,7 @@ export const AdminUsersRBAC: React.FC = () => {
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Edit className="w-5 h-5 text-emerald-400" />
+                  <Edit className="w-5 h-5 text-sky-400" />
                   <span>Edit Profile: {editingEmployee.name}</span>
                 </h3>
                 <button
@@ -1897,7 +1897,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     required
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                   />
                 </div>
 
@@ -1907,7 +1907,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     <select
                       value={formData.role}
                       onChange={e => setFormData(prev => ({ ...prev, role: e.target.value as UserRole }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     >
                       <option value="cashier">POS Cashier</option>
                       <option value="manager">Store Manager</option>
@@ -1921,7 +1921,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     <select
                       value={formData.storeId}
                       onChange={e => setFormData(prev => ({ ...prev, storeId: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     >
                       {stores.map(st => (
                         <option key={st.id} value={st.id}>
@@ -1939,7 +1939,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       type="text"
                       value={formData.shift}
                       onChange={e => setFormData(prev => ({ ...prev, shift: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -1949,7 +1949,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       maxLength={4}
                       value={formData.pin}
                       onChange={e => setFormData(prev => ({ ...prev, pin: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono text-center tracking-widest focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white font-mono text-center tracking-widest focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -1964,7 +1964,7 @@ export const AdminUsersRBAC: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Save Changes
                   </button>

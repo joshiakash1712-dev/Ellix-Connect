@@ -56,10 +56,10 @@ const LOGO_PRESETS = [
 
 const COLOR_PRESETS = [
   { name: 'Luxury Gold & Dark Slate', primary: '#0f172a', accent: '#d97706' },
-  { name: 'Emerald Fresh', primary: '#059669', accent: '#10b981' },
+  { name: 'Sapphire Electric', primary: '#1D4ED8', accent: '#2563EB' },
   { name: 'Corporate Navy', primary: '#1e3a8a', accent: '#2563eb' },
   { name: 'Global Ocean Blue', primary: '#092340', accent: '#3b82f6' },
-  { name: 'Gulf Royal Green', primary: '#064e3b', accent: '#d97706' },
+  { name: 'Cyber Cobalt', primary: '#0f172a', accent: '#38bdf8' },
   { name: 'Royal Violet', primary: '#581c87', accent: '#a855f7' }
 ];
 
@@ -397,9 +397,9 @@ export const InvoiceTemplates: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
         <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <Palette className="w-6 h-6 text-emerald-400" />
+            <Palette className="w-6 h-6 text-sky-400" />
             <h2 className="text-lg font-bold text-white">Invoice & Bill Design Templates</h2>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-sky-500/20 text-sky-300 border border-sky-500/30">
               Multi-Currency & POS
             </span>
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-1">
@@ -428,15 +428,15 @@ export const InvoiceTemplates: React.FC = () => {
 
           <button
             onClick={() => handleOpenCreateNew('wholesale')}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md"
+            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-sky-500/40 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md"
           >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            <Sparkles className="w-3.5 h-3.5 text-sky-400" />
             <span>+ Global Wholesale Template</span>
           </button>
 
           <button
             onClick={() => handleOpenCreateNew('standard')}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/25 flex items-center gap-1.5 transition-all hover:scale-105"
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white text-xs font-bold shadow-lg shadow-blue-600/25 flex items-center gap-1.5 transition-all hover:scale-105"
           >
             <Plus className="w-4 h-4" />
             <span>Create Custom Template</span>
@@ -468,7 +468,7 @@ export const InvoiceTemplates: React.FC = () => {
               onClick={() => setSelectedSegment(seg)}
               className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
                 selectedSegment === seg
-                  ? 'bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-500/20'
+                  ? 'bg-sky-500 text-white border-sky-400 shadow-md shadow-blue-500/20'
                   : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800'
               }`}
             >
@@ -479,7 +479,7 @@ export const InvoiceTemplates: React.FC = () => {
 
         {/* Real-time rates pulse info */}
         <div className="hidden md:flex items-center gap-2 text-[11px] text-slate-400 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
-          <RefreshCw className={`w-3 h-3 text-emerald-400 ${ratesState.isFetching ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3 h-3 text-sky-400 ${ratesState.isFetching ? 'animate-spin' : ''}`} />
           <span>Spot Rates: <strong className="text-white">1 USD = ₹{ratesState.rates.INR?.toFixed(2)} / AED {ratesState.rates.AED?.toFixed(2)} / €{ratesState.rates.EUR?.toFixed(2)}</strong></span>
         </div>
       </div>
@@ -518,7 +518,7 @@ export const InvoiceTemplates: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <h3 className="text-sm font-bold text-white mt-2 group-hover:text-emerald-300 transition-colors">
+                    <h3 className="text-sm font-bold text-white mt-2 group-hover:text-sky-300 transition-colors">
                       {tpl.name}
                     </h3>
                   </div>
@@ -559,14 +559,14 @@ export const InvoiceTemplates: React.FC = () => {
                   </div>
 
                   <span className="text-[10px] text-slate-400 font-semibold">
-                    Currency: <strong className="text-emerald-400">{currObj.symbol} {primaryCurr}</strong>
+                    Currency: <strong className="text-sky-400">{currObj.symbol} {primaryCurr}</strong>
                   </span>
                 </div>
 
                 {/* Variable Toggles summary */}
                 <div className="grid grid-cols-2 gap-1.5 text-[10px] bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 text-slate-400">
                   <div className="flex items-center gap-1">
-                    <Check className={`w-3 h-3 ${tpl.variableFields.showGSTIN ? 'text-emerald-400' : 'text-slate-600'}`} />
+                    <Check className={`w-3 h-3 ${tpl.variableFields.showGSTIN ? 'text-sky-400' : 'text-slate-600'}`} />
                     <span>Tax / GSTIN</span>
                   </div>
                   <div className="flex items-center gap-1">
@@ -578,7 +578,7 @@ export const InvoiceTemplates: React.FC = () => {
                     <span>SWIFT Wire</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Check className={`w-3 h-3 ${tpl.variableFields.showBarcodeQR ? 'text-emerald-400' : 'text-slate-600'}`} />
+                    <Check className={`w-3 h-3 ${tpl.variableFields.showBarcodeQR ? 'text-sky-400' : 'text-slate-600'}`} />
                     <span>Verify QR</span>
                   </div>
                 </div>
@@ -593,7 +593,7 @@ export const InvoiceTemplates: React.FC = () => {
                   }}
                   className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors"
                 >
-                  <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                  <Eye className="w-3.5 h-3.5 text-sky-400" />
                   <span>Preview</span>
                 </button>
 
@@ -607,7 +607,7 @@ export const InvoiceTemplates: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleOpenEdit(tpl)}
-                    className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-emerald-400"
+                    className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-sky-400"
                     title="Edit Design & FX Settings"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
@@ -637,7 +637,7 @@ export const InvoiceTemplates: React.FC = () => {
             {/* Modal Header */}
             <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900 shrink-0">
               <div className="flex items-center gap-2">
-                <Palette className="w-5 h-5 text-emerald-400" />
+                <Palette className="w-5 h-5 text-sky-400" />
                 <div>
                   <h3 className="text-base font-bold text-white">
                     {editingTemplate ? `Edit Template: ${editingTemplate.name}` : 'Design Custom Invoice & Multi-Currency Template'}
@@ -661,7 +661,7 @@ export const InvoiceTemplates: React.FC = () => {
                 
                 {/* Section 1: Template Info */}
                 <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-                  <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Sliders className="w-4 h-4" />
                     <span>Template Setup & Target Segment</span>
                   </h4>
@@ -675,7 +675,7 @@ export const InvoiceTemplates: React.FC = () => {
                         type="text"
                         value={templateName}
                         onChange={e => setTemplateName(e.target.value)}
-                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
                         placeholder="e.g. Global Export Wholesale Proforma"
                       />
                     </div>
@@ -687,7 +687,7 @@ export const InvoiceTemplates: React.FC = () => {
                       <select
                         value={targetSegment}
                         onChange={e => setTargetSegment(e.target.value as InvoiceTemplate['targetSegment'])}
-                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
+                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 cursor-pointer"
                       >
                         <option value="Wholesale Buyers">Wholesale Buyers</option>
                         <option value="VIP / Corporate">VIP / Corporate</option>
@@ -708,7 +708,7 @@ export const InvoiceTemplates: React.FC = () => {
                             type="button"
                             onClick={() => setPaperSize(fmt)}
                             className={`py-1 rounded text-[10px] font-extrabold uppercase transition-all ${
-                              paperSize === fmt ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'
+                              paperSize === fmt ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
                             }`}
                           >
                             {fmt}
@@ -723,7 +723,7 @@ export const InvoiceTemplates: React.FC = () => {
                           type="checkbox"
                           checked={isDefault}
                           onChange={e => setIsDefault(e.target.checked)}
-                          className="accent-emerald-500 rounded"
+                          className="accent-blue-500 rounded"
                         />
                         <span>Set as Default for {targetSegment}</span>
                       </label>
@@ -740,7 +740,7 @@ export const InvoiceTemplates: React.FC = () => {
                       <Globe className="w-4 h-4" />
                       <span>Multi-Currency & International Trade Engine</span>
                     </h4>
-                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    <span className="text-[10px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">
                       Live FX Enabled
                     </span>
                   </div>
@@ -774,12 +774,12 @@ export const InvoiceTemplates: React.FC = () => {
                         <label className="text-[11px] font-semibold text-slate-300">
                           Secondary Dual-Currency Total
                         </label>
-                        <label className="flex items-center gap-1 text-[10px] text-emerald-400 cursor-pointer">
+                        <label className="flex items-center gap-1 text-[10px] text-sky-400 cursor-pointer">
                           <input
                             type="checkbox"
                             checked={intlSettings.enableDualCurrency}
                             onChange={e => setIntlSettings(prev => ({ ...prev, enableDualCurrency: e.target.checked }))}
-                            className="accent-emerald-500 rounded"
+                            className="accent-blue-500 rounded"
                           />
                           <span>Show Dual Total</span>
                         </label>
@@ -833,13 +833,13 @@ export const InvoiceTemplates: React.FC = () => {
                   <div className="pt-3 border-t border-slate-800 space-y-3">
                     <div className="flex items-center justify-between">
                       <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-200">
-                        <Landmark className="w-4 h-4 text-emerald-400" />
+                        <Landmark className="w-4 h-4 text-sky-400" />
                         <span>Include SWIFT Wire & Bank Settlement Details</span>
                         <input
                           type="checkbox"
                           checked={intlSettings.showSwiftIban}
                           onChange={e => setIntlSettings(prev => ({ ...prev, showSwiftIban: e.target.checked }))}
-                          className="accent-emerald-500 rounded ml-1"
+                          className="accent-blue-500 rounded ml-1"
                         />
                       </label>
                     </div>
@@ -926,7 +926,7 @@ export const InvoiceTemplates: React.FC = () => {
 
                 {/* Section 3: Branding & Colors */}
                 <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-4">
-                  <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Palette className="w-4 h-4" />
                     <span>Branding, Logo & Color Styling</span>
                   </h4>
@@ -940,7 +940,7 @@ export const InvoiceTemplates: React.FC = () => {
                         type="text"
                         value={storeDisplayName}
                         onChange={e => setStoreDisplayName(e.target.value)}
-                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
                       />
                     </div>
 
@@ -952,7 +952,7 @@ export const InvoiceTemplates: React.FC = () => {
                         type="text"
                         value={headerTagline}
                         onChange={e => setHeaderTagline(e.target.value)}
-                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
                         placeholder="e.g. Cross-Border Supply & Wholesale"
                       />
                     </div>
@@ -969,7 +969,7 @@ export const InvoiceTemplates: React.FC = () => {
                         value={logoUrl}
                         onChange={e => setLogoUrl(e.target.value)}
                         placeholder="https://... logo image URL"
-                        className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500"
+                        className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-sky-500"
                       />
                       {logoUrl && (
                         <div className="w-8 h-8 rounded bg-slate-800 border border-slate-700 overflow-hidden shrink-0">
@@ -1066,7 +1066,7 @@ export const InvoiceTemplates: React.FC = () => {
                         type="text"
                         value={footerNote}
                         onChange={e => setFooterNote(e.target.value)}
-                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
                         placeholder="Certified International Trade Tax Invoice."
                       />
                     </div>
@@ -1079,7 +1079,7 @@ export const InvoiceTemplates: React.FC = () => {
                         rows={2}
                         value={termsAndConditions}
                         onChange={e => setTermsAndConditions(e.target.value)}
-                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 resize-none"
+                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 resize-none"
                         placeholder="1. Standard Incoterms apply. 2. Payments via SWIFT Wire."
                       />
                     </div>
@@ -1088,7 +1088,7 @@ export const InvoiceTemplates: React.FC = () => {
 
                 {/* Section 4: Variable Display Fields */}
                 <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-                  <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Check className="w-4 h-4" />
                     <span>Variable Display Fields</span>
                   </h4>
@@ -1106,13 +1106,13 @@ export const InvoiceTemplates: React.FC = () => {
                     ].map(field => (
                       <label
                         key={field.key}
-                        className="p-2 rounded-lg bg-slate-800/80 border border-slate-700/80 flex items-center gap-2 cursor-pointer hover:border-emerald-500/50 transition-colors"
+                        className="p-2 rounded-lg bg-slate-800/80 border border-slate-700/80 flex items-center gap-2 cursor-pointer hover:border-blue-500/50 transition-colors"
                       >
                         <input
                           type="checkbox"
                           checked={!!varFields[field.key as keyof InvoiceTemplateVariableFields]}
                           onChange={e => setVarFields(prev => ({ ...prev, [field.key]: e.target.checked }))}
-                          className="accent-emerald-500 rounded"
+                          className="accent-blue-500 rounded"
                         />
                         <span className="text-[11px] font-medium text-slate-300 line-clamp-1">{field.label}</span>
                       </label>
@@ -1153,7 +1153,7 @@ export const InvoiceTemplates: React.FC = () => {
               {/* Right Column: Live Rendered Multi-Currency Invoice Preview */}
               <div className="lg:col-span-5 space-y-3 sticky top-0">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-400 flex-wrap gap-2">
-                  <span className="flex items-center gap-1.5 text-emerald-400">
+                  <span className="flex items-center gap-1.5 text-sky-400">
                     <Sparkles className="w-4 h-4" />
                     <span>Real-Time Visual Preview</span>
                   </span>
@@ -1298,7 +1298,7 @@ export const InvoiceTemplates: React.FC = () => {
                         </div>
                         <div className="text-right">
                           <span className="text-[9px] uppercase font-bold text-slate-400 block">Payment / Settlement:</span>
-                          <span className="font-bold text-emerald-700">{SAMPLE_INVOICE_DATA.paymentMethod}</span>
+                          <span className="font-bold text-blue-700">{SAMPLE_INVOICE_DATA.paymentMethod}</span>
                           {varFields.showUPIRef && (
                             <span className="block text-[9px] text-slate-500 font-mono">{SAMPLE_INVOICE_DATA.upiRef}</span>
                           )}
@@ -1345,7 +1345,7 @@ export const InvoiceTemplates: React.FC = () => {
                             <div className="flex justify-between items-end">
                               <div>
                                 {varFields.showLoyaltyPoints && (
-                                  <span className="text-emerald-700 font-bold block">
+                                  <span className="text-blue-700 font-bold block">
                                     + {SAMPLE_INVOICE_DATA.loyaltyEarned} Rewards Credited
                                   </span>
                                 )}
@@ -1387,7 +1387,7 @@ export const InvoiceTemplates: React.FC = () => {
                         <div className="mt-3 p-2 rounded bg-slate-50 border border-slate-200 text-[9px] text-slate-700 space-y-1">
                           <div className="flex justify-between font-bold text-slate-900 border-b border-slate-200 pb-1">
                             <span>International Wire Settlement:</span>
-                            <span className="text-emerald-700 font-mono">Incoterms: {intlSettings.incoterms || 'CIF'}</span>
+                            <span className="text-blue-700 font-mono">Incoterms: {intlSettings.incoterms || 'CIF'}</span>
                           </div>
                           <div className="grid grid-cols-2 gap-1 pt-0.5">
                             <div>Bank: <strong>{intlSettings.bankName || 'Global Bank'}</strong></div>
@@ -1435,7 +1435,7 @@ export const InvoiceTemplates: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSaveTemplate}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition-all hover:scale-105"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white text-xs font-bold shadow-lg shadow-blue-600/20 flex items-center gap-2 transition-all hover:scale-105"
               >
                 <Check className="w-4 h-4" />
                 <span>Save Design Template</span>
@@ -1454,7 +1454,7 @@ export const InvoiceTemplates: React.FC = () => {
               <div>
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
                   <span>{previewTemplate.name}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">
                     {previewTemplate.targetSegment}
                   </span>
                 </h3>
@@ -1463,7 +1463,7 @@ export const InvoiceTemplates: React.FC = () => {
               {/* Dynamic Currency Switcher */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-700 text-xs">
-                  <Globe className="w-3.5 h-3.5 text-emerald-400" />
+                  <Globe className="w-3.5 h-3.5 text-sky-400" />
                   <select
                     value={standalonePreviewCurrency}
                     onChange={e => setStandalonePreviewCurrency(e.target.value)}
@@ -1511,7 +1511,7 @@ export const InvoiceTemplates: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <span className="text-[9px] uppercase font-bold text-slate-400 block">Currency:</span>
-                    <span className="font-bold text-emerald-700">{standalonePreviewCurrency}</span>
+                    <span className="font-bold text-blue-700">{standalonePreviewCurrency}</span>
                   </div>
                 </div>
 

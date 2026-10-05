@@ -323,15 +323,18 @@ export const ProductPreview: React.FC = () => {
         
         {/* Section Header */}
         <div className="max-w-3xl mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
-            Interactive Showcase
+          <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
+            <span>Interactive Showcase</span>
+            <span className="text-slate-300 dark:text-slate-700">·</span>
+            <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">Live System Simulator</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-950 dark:text-white tracking-tight">
             See Ellix Connect in action.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
             Explore realistic mockups of the platform&apos;s core retail workspaces.
-            <span className="hidden lg:inline text-emerald-600 dark:text-emerald-400 font-semibold ml-1">
+            <span className="hidden lg:inline text-blue-600 dark:text-sky-400 font-semibold ml-1">
               Hover over any workspace card below to launch its live interactive OS simulator in-place.
             </span>
           </p>
@@ -372,27 +375,27 @@ export const ProductPreview: React.FC = () => {
                     onKeyDown={(e) => handleCardKeyDown(e, mod.id, index)}
                     className={`website-card-hover p-6 rounded-2xl text-left flex flex-col justify-between cursor-pointer border transition-all duration-200 ${
                       isCurrent && !isHovered
-                        ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
-                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                        ? 'bg-white dark:bg-slate-900 border-sky-500/60 ring-2 ring-blue-500/30 shadow-md text-slate-900 dark:text-white'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 hover:shadow-lg text-slate-900 dark:text-white'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         <div
                           data-icon-box
-                          className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200"
+                          className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center transition-all duration-200"
                         >
                           <Icon className="w-5 h-5 transition-transform duration-200" />
                         </div>
                         <span
                           data-card-badge
-                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
+                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-blue-700 dark:text-sky-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
                         >
                           {mod.badge}
                         </span>
                       </div>
 
-                      <div className="text-[10px] font-bold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-1">
+                      <div className="text-[10px] font-bold tracking-wider uppercase text-blue-600 dark:text-sky-400 mb-1">
                         {mod.category}
                       </div>
                       <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">
@@ -409,7 +412,7 @@ export const ProductPreview: React.FC = () => {
                     >
                       {mod.highlights.map((item, idx) => (
                         <div key={idx} className="flex items-center gap-1.5 truncate">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                           <span className="truncate">{item}</span>
                         </div>
                       ))}
@@ -439,27 +442,27 @@ export const ProductPreview: React.FC = () => {
                     onKeyDown={(e) => handleCardKeyDown(e, mod.id, index)}
                     className={`website-card-hover p-6 rounded-2xl text-left flex flex-row justify-between gap-6 cursor-pointer border transition-all duration-200 ${
                       isCurrent && !isHovered
-                        ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
-                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                        ? 'bg-white dark:bg-slate-900 border-sky-500/60 ring-2 ring-blue-500/30 shadow-md text-slate-900 dark:text-white'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 hover:shadow-lg text-slate-900 dark:text-white'
                     }`}
                   >
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-4">
                         <div
                           data-icon-box
-                          className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200"
+                          className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center transition-all duration-200"
                         >
                           <Icon className="w-5 h-5 transition-transform duration-200" />
                         </div>
                         <span
                           data-card-badge
-                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
+                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-blue-700 dark:text-sky-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
                         >
                           {mod.badge}
                         </span>
                       </div>
 
-                      <div className="text-[10px] font-bold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-1">
+                      <div className="text-[10px] font-bold tracking-wider uppercase text-blue-600 dark:text-sky-400 mb-1">
                         {mod.category}
                       </div>
                       <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">
@@ -476,7 +479,7 @@ export const ProductPreview: React.FC = () => {
                     >
                       {mod.highlights.map((item, idx) => (
                         <div key={idx} className="flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                           <span>{item}</span>
                         </div>
                       ))}
@@ -506,7 +509,7 @@ export const ProductPreview: React.FC = () => {
                   aria-pressed={isSelected}
                   className={`snap-start shrink-0 w-[250px] sm:w-auto p-3.5 sm:p-4 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
                     isSelected
-                      ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/40 shadow-md text-slate-900 dark:text-white'
+                      ? 'bg-white dark:bg-slate-900 border-sky-500 ring-2 ring-blue-500/40 shadow-md text-slate-900 dark:text-white'
                       : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white'
                   }`}
                 >
@@ -515,18 +518,18 @@ export const ProductPreview: React.FC = () => {
                       <div
                         className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center ${
                           isSelected
-                            ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'
+                            ? 'bg-sky-50 dark:bg-blue-950 text-blue-600 dark:text-sky-400'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
                       >
                         <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
-                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400">
+                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-sky-400">
                         {mod.badge}
                       </span>
                     </div>
 
-                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-0.5">
+                    <div className="text-[10px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider mb-0.5">
                       {mod.category}
                     </div>
                     <h3 className="text-sm sm:text-base font-bold mb-1">
@@ -537,7 +540,7 @@ export const ProductPreview: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-blue-600 dark:text-sky-400">
                     <span>{isSelected ? 'Active below ↓' : 'Tap to preview'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
@@ -551,7 +554,7 @@ export const ProductPreview: React.FC = () => {
           {/* ============================================================ */}
           <div
             style={{ transformOrigin: getOrigin(originIndex) }}
-            className={`lg:col-start-1 lg:row-start-1 w-full h-full box-border overflow-hidden rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 p-3.5 sm:p-6 transition-all duration-200 ease-out ${
+            className={`lg:col-start-1 lg:row-start-1 w-full h-full box-border overflow-hidden rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-sky-500/40 dark:border-sky-500/30 shadow-2xl ring-1 ring-blue-500/20 p-3.5 sm:p-6 transition-all duration-200 ease-out ${
               isHovered
                 ? 'lg:z-20 lg:opacity-100 lg:scale-100 lg:pointer-events-auto'
                 : 'lg:z-10 lg:opacity-0 lg:scale-[0.96] lg:pointer-events-none'
@@ -560,16 +563,16 @@ export const ProductPreview: React.FC = () => {
             {/* Top Interactive Workspace Dock & Header */}
             <div className="flex items-center justify-between gap-2 pb-3 mb-3.5 sm:mb-4 border-b border-slate-200/80 dark:border-slate-800/80">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse shrink-0" />
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 truncate">
                   Ellix Connect Interactive OS Workspace
                 </span>
-                <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-mono font-bold border border-emerald-300/60 dark:border-emerald-800/60 shrink-0">
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-sky-100 dark:bg-blue-950/80 text-blue-800 dark:text-sky-300 text-[11px] font-mono font-bold border border-sky-300/60 dark:border-sky-800/60 shrink-0">
                   {activeModule.badge}
                 </span>
               </div>
               <div className="hidden lg:flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                <MousePointer2 className="w-3.5 h-3.5 text-emerald-500" />
+                <MousePointer2 className="w-3.5 h-3.5 text-sky-500" />
                 <span>Hover any module pill or click a UI hotspot</span>
               </div>
             </div>
@@ -599,11 +602,11 @@ export const ProductPreview: React.FC = () => {
                     }}
                     className={`shrink-0 sm:shrink relative py-2 px-3 sm:px-2.5 rounded-xl text-xs font-bold transition-all duration-150 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${
                       isActive
-                        ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500/50 shadow-sm ring-1 ring-emerald-500/20'
+                        ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-sky-400 border border-sky-500/50 shadow-sm ring-1 ring-blue-500/20'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-900/60 border border-transparent'
                     }`}
                   >
-                    <ModIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-emerald-500' : 'text-slate-400'}`} />
+                    <ModIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-sky-500' : 'text-slate-400'}`} />
                     <span className="truncate">{mod.shortLabel}</span>
                   </button>
                 );
@@ -614,7 +617,7 @@ export const ProductPreview: React.FC = () => {
             <div className="mb-4 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
                   <span>Interactive UI Hotspots:</span>
                 </span>
                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -626,8 +629,8 @@ export const ProductPreview: React.FC = () => {
                       onClick={() => setSelectedHotspot(selectedHotspot?.id === hotspot.id ? null : hotspot)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
                         selectedHotspot?.id === hotspot.id
-                          ? 'bg-emerald-600 text-white shadow-sm'
-                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500'
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-blue-500'
                       }`}
                     >
                       <span className="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white flex items-center justify-center text-[10px] font-bold">
@@ -646,10 +649,10 @@ export const ProductPreview: React.FC = () => {
 
             {/* Hotspot Highlight Card (If active) */}
             {selectedHotspot && (
-              <div className="mb-4 p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-950 dark:text-emerald-100 flex items-start justify-between gap-4 animate-in fade-in">
+              <div className="mb-4 p-3.5 rounded-xl bg-sky-50 dark:bg-blue-950/60 border border-sky-300 dark:border-sky-800 text-blue-950 dark:text-sky-100 flex items-start justify-between gap-4 animate-in fade-in">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-600 text-white px-2 py-0.5 rounded">
                       {selectedHotspot.badge}
                     </span>
                     <h4 className="text-sm font-bold">{selectedHotspot.title}</h4>
@@ -661,7 +664,7 @@ export const ProductPreview: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedHotspot(null)}
-                  className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 hover:underline shrink-0 cursor-pointer"
+                  className="text-xs font-semibold text-blue-800 dark:text-sky-300 hover:underline shrink-0 cursor-pointer"
                 >
                   Dismiss
                 </button>
@@ -672,19 +675,19 @@ export const ProductPreview: React.FC = () => {
             <div className="rounded-2xl border border-slate-300/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden transition-all">
               
               {/* Browser / Shell Header */}
-              <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700/80 px-4 py-2.5 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600" />
+              <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700/80 px-3.5 sm:px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600 shrink-0" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600 shrink-0" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600 shrink-0" />
                   <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-2 hidden sm:block" />
                   <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 font-mono hidden sm:inline">
                     Ellix Connect OS · Active Workspace: {activeTab.toUpperCase()}
                   </span>
                 </div>
 
-                <div className="text-xs font-medium text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-3 py-1 rounded border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <div className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-2.5 sm:px-3 py-1 rounded border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                  <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
                   <span>Demo Store · Realistic Retail Data</span>
                 </div>
               </div>
@@ -713,7 +716,7 @@ export const ProductPreview: React.FC = () => {
                         <motion.path
                           d="M 2 16 L 11 13 L 20 14 L 29 9 L 38 10 L 47 5 L 54 3"
                           fill="none"
-                          stroke="#10b981"
+                          stroke="#2563EB"
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -725,7 +728,7 @@ export const ProductPreview: React.FC = () => {
                       </svg>
                     </div>
                     <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹48,920</div>
-                    <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">↑ 14.8% vs last Tuesday</div>
+                    <div className="text-[11px] text-blue-600 dark:text-sky-400 font-semibold mt-1">↑ 14.8% vs last Tuesday</div>
                   </div>
 
                   <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -735,7 +738,7 @@ export const ProductPreview: React.FC = () => {
                         <motion.path
                           d="M 2 15 L 11 14 L 20 11 L 29 12 L 38 8 L 47 6 L 54 4"
                           fill="none"
-                          stroke="#14b8a6"
+                          stroke="#0284C7"
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -820,7 +823,7 @@ export const ProductPreview: React.FC = () => {
                           <tr>
                             <td className="py-2.5 font-mono font-semibold text-slate-900 dark:text-white">#INV-1042</td>
                             <td className="py-2.5 text-slate-700 dark:text-slate-300">Rajesh Verma</td>
-                            <td className="py-2.5"><span className="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-semibold">UPI QR</span></td>
+                            <td className="py-2.5"><span className="px-2 py-0.5 rounded bg-sky-100 dark:bg-blue-950 text-blue-800 dark:text-sky-300 text-[10px] font-semibold">UPI QR</span></td>
                             <td className="py-2.5 text-slate-600 dark:text-slate-400">3 items</td>
                             <td className="py-2.5 text-right font-bold text-slate-900 dark:text-white">₹1,120.00</td>
                           </tr>
@@ -892,7 +895,7 @@ export const ProductPreview: React.FC = () => {
 
                     <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
                       <span>Restock PO Drafted</span>
-                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Ready to Send</span>
+                      <span className="text-blue-600 dark:text-sky-400 font-semibold">Ready to Send</span>
                     </div>
                   </div>
 
@@ -920,14 +923,14 @@ export const ProductPreview: React.FC = () => {
                       />
                     </div>
                     <button type="button" className="px-3 py-2 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 shrink-0 border border-transparent dark:border-slate-700">
-                      <ScanLine className="w-3.5 h-3.5 text-emerald-400" />
+                      <ScanLine className="w-3.5 h-3.5 text-sky-400" />
                       <span>Scan [F2]</span>
                     </button>
                   </div>
 
                   {/* Category Chips */}
                   <div className="flex gap-2 overflow-x-auto pb-1 text-xs">
-                    <span className="px-3 py-1 rounded-lg bg-slate-900 dark:bg-emerald-600 text-white font-medium shrink-0">All (128)</span>
+                    <span className="px-3 py-1 rounded-lg bg-slate-900 dark:bg-blue-600 text-white font-medium shrink-0">All (128)</span>
                     <span className="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium shrink-0">Groceries</span>
                     <span className="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium shrink-0">Oils & Ghee</span>
                     <span className="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium shrink-0">Beverages</span>
@@ -936,46 +939,46 @@ export const ProductPreview: React.FC = () => {
 
                   {/* Grid of Quick-Select Items */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-colors shadow-sm">
+                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-colors shadow-sm">
                       <div className="text-[10px] text-slate-400 font-mono">GRO-102</div>
                       <div className="text-xs font-semibold text-slate-900 dark:text-white mt-1">Basmati Rice 5kg</div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white mt-2">₹540.00</div>
-                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">28 in stock</span>
+                      <span className="text-[10px] text-blue-600 dark:text-sky-400 font-medium">28 in stock</span>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-colors shadow-sm">
+                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-colors shadow-sm">
                       <div className="text-[10px] text-slate-400 font-mono">OIL-401</div>
                       <div className="text-xs font-semibold text-slate-900 dark:text-white mt-1">Groundnut Oil 1L</div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white mt-2">₹320.00</div>
-                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">14 in stock</span>
+                      <span className="text-[10px] text-blue-600 dark:text-sky-400 font-medium">14 in stock</span>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-colors shadow-sm">
+                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-colors shadow-sm">
                       <div className="text-[10px] text-slate-400 font-mono">NUT-914</div>
                       <div className="text-xs font-semibold text-slate-900 dark:text-white mt-1">Roasted Almonds 250g</div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white mt-2">₹260.00</div>
-                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">19 in stock</span>
+                      <span className="text-[10px] text-blue-600 dark:text-sky-400 font-medium">19 in stock</span>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-colors shadow-sm">
+                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-colors shadow-sm">
                       <div className="text-[10px] text-slate-400 font-mono">BEV-201</div>
                       <div className="text-xs font-semibold text-slate-900 dark:text-white mt-1">Assam Gold Tea 500g</div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white mt-2">₹290.00</div>
-                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">42 in stock</span>
+                      <span className="text-[10px] text-blue-600 dark:text-sky-400 font-medium">42 in stock</span>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-colors shadow-sm">
+                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-colors shadow-sm">
                       <div className="text-[10px] text-slate-400 font-mono">SP-109</div>
                       <div className="text-xs font-semibold text-slate-900 dark:text-white mt-1">Kashmiri Chilli 200g</div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white mt-2">₹145.00</div>
-                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">35 in stock</span>
+                      <span className="text-[10px] text-blue-600 dark:text-sky-400 font-medium">35 in stock</span>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-colors shadow-sm">
+                    <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-colors shadow-sm">
                       <div className="text-[10px] text-slate-400 font-mono">SN-552</div>
                       <div className="text-xs font-semibold text-slate-900 dark:text-white mt-1">Digestive Biscuits 1kg</div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white mt-2">₹180.00</div>
-                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">50 in stock</span>
+                      <span className="text-[10px] text-blue-600 dark:text-sky-400 font-medium">50 in stock</span>
                     </div>
                   </div>
 
@@ -989,7 +992,7 @@ export const ProductPreview: React.FC = () => {
                         <div className="text-xs font-bold text-slate-900 dark:text-white">Current Cart (3 items)</div>
                         <div className="text-[11px] text-slate-500 dark:text-slate-400">Customer: Rajesh Verma (+91 98450 11223)</div>
                       </div>
-                      <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">
+                      <span className="text-[11px] font-semibold text-blue-700 dark:text-sky-300 bg-sky-50 dark:bg-blue-950/60 px-2 py-0.5 rounded border border-sky-200 dark:border-sky-800/60">
                         120 Pts
                       </span>
                     </div>
@@ -1039,9 +1042,9 @@ export const ProductPreview: React.FC = () => {
                   </div>
 
                   {/* Payment Buttons */}
-                  <div className="space-y-2">
-                    <div className="grid grid-cols-3 gap-2 text-xs font-semibold">
-                      <button type="button" className="py-2.5 rounded-lg bg-emerald-600 text-white shadow-sm flex items-center justify-center gap-1">
+                  <div className="space-y-2.5">
+                    <div className="grid grid-cols-3 gap-2.5 sm:gap-3 text-xs font-semibold">
+                      <button type="button" className="py-2.5 rounded-lg bg-blue-600 text-white shadow-sm flex items-center justify-center gap-1">
                         <QrCode className="w-3.5 h-3.5" />
                         <span>UPI QR</span>
                       </button>
@@ -1055,8 +1058,8 @@ export const ProductPreview: React.FC = () => {
                       </button>
                     </div>
 
-                    <button type="button" className="w-full py-2.5 rounded-lg bg-slate-900 dark:bg-emerald-600 text-white font-bold text-xs tracking-wide shadow-sm flex items-center justify-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 dark:text-white" />
+                    <button type="button" className="w-full py-2.5 rounded-lg bg-slate-900 dark:bg-blue-600 text-white font-bold text-xs tracking-wide shadow-sm flex items-center justify-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-sky-400 dark:text-white" />
                       <span>Complete & Print Thermal Bill [Enter]</span>
                     </button>
                   </div>
@@ -1076,7 +1079,7 @@ export const ProductPreview: React.FC = () => {
                     <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">1,240 Total SKUs · ₹4,85,000 Inventory Value</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-semibold px-2.5 py-1 rounded border border-emerald-200 dark:border-emerald-800">
+                    <span className="text-xs bg-sky-50 dark:bg-blue-950 text-blue-700 dark:text-sky-300 font-semibold px-2.5 py-1 rounded border border-sky-200 dark:border-sky-800">
                       Auto-Restock Draft Active
                     </span>
                   </div>
@@ -1102,13 +1105,13 @@ export const ProductPreview: React.FC = () => {
                         <td className="py-3 font-semibold text-slate-900 dark:text-white">Royal Basmati Rice 5kg</td>
                         <td className="py-3 text-slate-600 dark:text-slate-400">Groceries</td>
                         <td className="py-3">
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold text-[10px]">
+                          <span className="px-2 py-0.5 rounded-full bg-sky-100 dark:bg-blue-950 text-blue-800 dark:text-sky-300 font-semibold text-[10px]">
                             28 units (Healthy)
                           </span>
                         </td>
                         <td className="py-3 text-right text-slate-600 dark:text-slate-400">₹440.00</td>
                         <td className="py-3 text-right font-bold text-slate-900 dark:text-white">₹540.00</td>
-                        <td className="py-3 text-right text-emerald-600 dark:text-emerald-400 font-semibold">18.5%</td>
+                        <td className="py-3 text-right text-blue-600 dark:text-sky-400 font-semibold">18.5%</td>
                       </tr>
                       <tr>
                         <td className="py-3 font-mono font-medium text-slate-600 dark:text-slate-400">8901234002</td>
@@ -1121,7 +1124,7 @@ export const ProductPreview: React.FC = () => {
                         </td>
                         <td className="py-3 text-right text-slate-600 dark:text-slate-400">₹250.00</td>
                         <td className="py-3 text-right font-bold text-slate-900 dark:text-white">₹320.00</td>
-                        <td className="py-3 text-right text-emerald-600 dark:text-emerald-400 font-semibold">21.8%</td>
+                        <td className="py-3 text-right text-blue-600 dark:text-sky-400 font-semibold">21.8%</td>
                       </tr>
                       <tr>
                         <td className="py-3 font-mono font-medium text-slate-600 dark:text-slate-400">8901234003</td>
@@ -1134,20 +1137,20 @@ export const ProductPreview: React.FC = () => {
                         </td>
                         <td className="py-3 text-right text-slate-600 dark:text-slate-400">₹22.00</td>
                         <td className="py-3 text-right font-bold text-slate-900 dark:text-white">₹28.00</td>
-                        <td className="py-3 text-right text-emerald-600 dark:text-emerald-400 font-semibold">21.4%</td>
+                        <td className="py-3 text-right text-blue-600 dark:text-sky-400 font-semibold">21.4%</td>
                       </tr>
                       <tr>
                         <td className="py-3 font-mono font-medium text-slate-600 dark:text-slate-400">8901234004</td>
                         <td className="py-3 font-semibold text-slate-900 dark:text-white">Roasted California Almonds 250g</td>
                         <td className="py-3 text-slate-600 dark:text-slate-400">Dry Fruits</td>
                         <td className="py-3">
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold text-[10px]">
+                          <span className="px-2 py-0.5 rounded-full bg-sky-100 dark:bg-blue-950 text-blue-800 dark:text-sky-300 font-semibold text-[10px]">
                             19 units (Healthy)
                           </span>
                         </td>
                         <td className="py-3 text-right text-slate-600 dark:text-slate-400">₹195.00</td>
                         <td className="py-3 text-right font-bold text-slate-900 dark:text-white">₹260.00</td>
-                        <td className="py-3 text-right text-emerald-600 dark:text-emerald-400 font-semibold">25.0%</td>
+                        <td className="py-3 text-right text-blue-600 dark:text-sky-400 font-semibold">25.0%</td>
                       </tr>
                     </tbody>
                   </table>
@@ -1155,7 +1158,7 @@ export const ProductPreview: React.FC = () => {
 
                 <div className="pt-2 text-xs text-slate-500 dark:text-slate-400 flex items-center justify-between">
                   <span>Batch Expiry Audits: 0 items expiring within 30 days</span>
-                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Stock Reorder Dispatch Ready</span>
+                  <span className="text-blue-700 dark:text-sky-400 font-semibold">Stock Reorder Dispatch Ready</span>
                 </div>
               </div>
             )}
@@ -1183,7 +1186,7 @@ export const ProductPreview: React.FC = () => {
                         <div className="text-slate-500 dark:text-slate-400 text-[11px]">+91 98450 11223 · 18 orders</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-emerald-600 dark:text-emerald-400 font-semibold">Clear (₹0.00)</div>
+                        <div className="text-blue-600 dark:text-sky-400 font-semibold">Clear (₹0.00)</div>
                         <div className="text-[10px] text-slate-400">120 Loyalty Points</div>
                       </div>
                     </div>
@@ -1216,7 +1219,7 @@ export const ProductPreview: React.FC = () => {
                         <div className="text-slate-500 dark:text-slate-400 text-[11px]">+91 99000 12345 · 45 orders</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-emerald-600 dark:text-emerald-400 font-semibold">Clear (₹0.00)</div>
+                        <div className="text-blue-600 dark:text-sky-400 font-semibold">Clear (₹0.00)</div>
                         <div className="text-[10px] text-slate-400">420 Loyalty Points</div>
                       </div>
                     </div>
@@ -1258,7 +1261,7 @@ export const ProductPreview: React.FC = () => {
                   </div>
 
                   <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                    <button type="button" className="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5">
+                    <button type="button" className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5">
                       <span>Send WhatsApp Payment Link</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
                     </button>
@@ -1280,7 +1283,7 @@ export const ProductPreview: React.FC = () => {
                   <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                     <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Total Monthly Revenue</span>
                     <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹9,42,850</div>
-                    <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">↑ 18.2% vs previous month</div>
+                    <div className="text-[11px] text-blue-600 dark:text-sky-400 font-semibold mt-1">↑ 18.2% vs previous month</div>
                   </div>
 
                   <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -1303,7 +1306,7 @@ export const ProductPreview: React.FC = () => {
                   <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                     <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 mb-4">
                       <h4 className="text-sm font-bold text-slate-900 dark:text-white">GST Tax Liability Summary</h4>
-                      <span className="text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded font-semibold border border-emerald-200 dark:border-emerald-800">
+                      <span className="text-xs text-blue-700 dark:text-sky-300 bg-sky-50 dark:bg-blue-950 px-2 py-0.5 rounded font-semibold border border-sky-200 dark:border-sky-800">
                         GSTR-3B Ready
                       </span>
                     </div>
@@ -1360,7 +1363,7 @@ export const ProductPreview: React.FC = () => {
                           </div>
                           <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                             <motion.div
-                              className="h-full bg-emerald-500 rounded-full w-[64%] origin-left"
+                              className="h-full bg-sky-500 rounded-full w-[64%] origin-left"
                               initial={prefersReducedMotion ? false : { scaleX: 0 }}
                               whileInView={{ scaleX: 1 }}
                               viewport={{ once: true, amount: 0.3 }}
@@ -1405,7 +1408,7 @@ export const ProductPreview: React.FC = () => {
                         <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
                           <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mb-2">
                             <span>7-Day Daily Settlement Velocity</span>
-                            <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">+18.2% WoW</span>
+                            <span className="font-mono text-blue-600 dark:text-sky-400 font-semibold">+18.2% WoW</span>
                           </div>
                           <div className="grid grid-cols-7 gap-2 items-end h-12 pt-1">
                             {[
@@ -1421,7 +1424,7 @@ export const ProductPreview: React.FC = () => {
                                 <div className="w-full h-8 bg-slate-100 dark:bg-slate-800/70 rounded-t flex items-end overflow-hidden">
                                   <motion.div
                                     style={{ height: bar.h }}
-                                    className="w-full bg-emerald-500/85 dark:bg-emerald-500 rounded-t origin-bottom"
+                                    className="w-full bg-sky-500/85 dark:bg-sky-500 rounded-t origin-bottom"
                                     initial={prefersReducedMotion ? false : { scaleY: 0, opacity: 0 }}
                                     whileInView={{ scaleY: 1, opacity: 1 }}
                                     viewport={{ once: true, amount: 0.3 }}
@@ -1442,8 +1445,8 @@ export const ProductPreview: React.FC = () => {
 
                     <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                       <span className="text-xs text-slate-500 dark:text-slate-400">Ready for accounting software</span>
-                      <button type="button" className="px-4 py-2 rounded-lg bg-slate-900 dark:bg-emerald-600 text-white font-semibold text-xs flex items-center gap-1.5 shadow-sm">
-                        <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400 dark:text-white" />
+                      <button type="button" className="px-4 py-2 rounded-lg bg-slate-900 dark:bg-blue-600 text-white font-semibold text-xs flex items-center gap-1.5 shadow-sm">
+                        <FileSpreadsheet className="w-3.5 h-3.5 text-sky-400 dark:text-white" />
                         <span>Export Excel / Tally CSV</span>
                       </button>
                     </div>

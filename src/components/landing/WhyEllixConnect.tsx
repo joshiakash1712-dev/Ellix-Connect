@@ -58,32 +58,32 @@ const benefits: BenefitItem[] = [
       statusText: 'First-shift ready without training',
       snippet: (
         <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2.5 border border-slate-800 shadow-inner">
-          <div className="flex justify-between items-center text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+          <div className="flex justify-between items-center text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
             <span className="flex items-center gap-1.5">
               <Keyboard className="w-3.5 h-3.5" />
               <span>INTUITIVE COUNTER SHORTCUTS</span>
             </span>
-            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">
+            <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">
               ACTIVE MODE
             </span>
           </div>
           <div className="grid grid-cols-3 gap-2 text-[11px]">
             <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-              <div className="text-emerald-400 font-bold">[F2] New Bill</div>
+              <div className="text-sky-400 font-bold">[F2] New Bill</div>
               <div className="text-slate-400 text-[10px] mt-0.5">Auto-focus scanner</div>
             </div>
             <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-              <div className="text-emerald-400 font-bold">[F4] Quick Cash</div>
+              <div className="text-sky-400 font-bold">[F4] Quick Cash</div>
               <div className="text-slate-400 text-[10px] mt-0.5">1-tap exact tender</div>
             </div>
             <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-              <div className="text-emerald-400 font-bold">[F8] Item Lookup</div>
+              <div className="text-sky-400 font-bold">[F8] Item Lookup</div>
               <div className="text-slate-400 text-[10px] mt-0.5">Fuzzy name/SKU</div>
             </div>
           </div>
           <div className="flex justify-between items-center text-[11px] text-slate-300 pt-1 border-t border-slate-800/80">
             <span>Cashier Prompt: &quot;Scan item or press Enter to print&quot;</span>
-            <span className="text-emerald-400 font-bold">0 Config Needed</span>
+            <span className="text-sky-400 font-bold">0 Config Needed</span>
           </div>
         </div>
       )
@@ -113,31 +113,31 @@ const benefits: BenefitItem[] = [
       statusText: 'Peak Rush-Hour Certified',
       snippet: (
         <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
-          <div className="flex justify-between items-center text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+          <div className="flex justify-between items-center text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
             <span className="flex items-center gap-1.5">
               <Terminal className="w-3.5 h-3.5" />
               <span>COUNTER LATENCY TELEMETRY</span>
             </span>
-            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">
+            <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">
               120 FPS UI
             </span>
           </div>
           <div className="space-y-1.5 text-[11px] text-slate-300">
             <div className="flex justify-between">
               <span>1. Optical Barcode Decode → Local SKU Cache</span>
-              <span className="text-emerald-400 font-bold">12 ms</span>
+              <span className="text-sky-400 font-bold">12 ms</span>
             </div>
             <div className="flex justify-between">
               <span>2. GST Slab & Cart Total Recalculation</span>
-              <span className="text-emerald-400 font-bold">4 ms</span>
+              <span className="text-sky-400 font-bold">4 ms</span>
             </div>
             <div className="flex justify-between">
               <span>3. Dynamic Exact-Amount UPI QR Payload</span>
-              <span className="text-emerald-400 font-bold">165 ms</span>
+              <span className="text-sky-400 font-bold">165 ms</span>
             </div>
             <div className="flex justify-between pt-1 border-t border-slate-800 text-white font-bold">
               <span>Total Queue Turnaround Time</span>
-              <span className="text-emerald-400">&lt; 8.5s / Customer</span>
+              <span className="text-sky-400">&lt; 8.5s / Customer</span>
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ const benefits: BenefitItem[] = [
               <div className="font-bold text-white">SHARMA SUPERMART · GSTIN 27AABCS1429B1Z</div>
               <div className="text-[10px] text-slate-400">Tax Invoice #INV-2026-4910 · HSN Verified</div>
             </div>
-            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60 font-bold">
+            <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60 font-bold">
               WHATSAPP SENT
             </span>
           </div>
@@ -188,7 +188,7 @@ const benefits: BenefitItem[] = [
             </div>
             <div className="flex justify-between pt-1 border-t border-slate-800 text-white font-bold">
               <span>Grand Total (Loyalty Earned: +13 Pts)</span>
-              <span className="text-emerald-400">₹1,302.00</span>
+              <span className="text-sky-400">₹1,302.00</span>
             </div>
           </div>
         </div>
@@ -224,7 +224,7 @@ const benefits: BenefitItem[] = [
               <WifiOff className="w-3.5 h-3.5" />
               <span>NETWORK DROP DETECTED → LOCAL MODE</span>
             </span>
-            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">
+            <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">
               POS UNINTERRUPTED
             </span>
           </div>
@@ -233,7 +233,7 @@ const benefits: BenefitItem[] = [
               <span>Local Encrypted Queue (Invoices #1042–#1048)</span>
               <span className="text-white font-bold">7 Bills Cached</span>
             </div>
-            <div className="flex justify-between items-center text-emerald-400">
+            <div className="flex justify-between items-center text-sky-400">
               <span className="flex items-center gap-1.5">
                 <RefreshCw className="w-3 h-3" />
                 <span>Connection Restored → Atomic Cloud Flush</span>
@@ -269,28 +269,28 @@ const benefits: BenefitItem[] = [
       statusText: 'All Store Modules Linked',
       snippet: (
         <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
-          <div className="flex justify-between items-center text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+          <div className="flex justify-between items-center text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
             <span>EVENT: SALE_COMMITTED (#INV-2026-884)</span>
-            <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">
+            <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">
               5/5 MODULES SYNCED
             </span>
           </div>
           <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
             <div className="bg-slate-900 p-2 rounded-lg border border-slate-800 flex justify-between">
               <span>Inventory Stock</span>
-              <span className="text-emerald-400 font-bold">-3 Units ✓</span>
+              <span className="text-sky-400 font-bold">-3 Units ✓</span>
             </div>
             <div className="bg-slate-900 p-2 rounded-lg border border-slate-800 flex justify-between">
               <span>Shift Cash Till</span>
-              <span className="text-emerald-400 font-bold">+₹880.00 ✓</span>
+              <span className="text-sky-400 font-bold">+₹880.00 ✓</span>
             </div>
             <div className="bg-slate-900 p-2 rounded-lg border border-slate-800 flex justify-between">
               <span>Customer Khata</span>
-              <span className="text-emerald-400 font-bold">Ledger Updated ✓</span>
+              <span className="text-sky-400 font-bold">Ledger Updated ✓</span>
             </div>
             <div className="bg-slate-900 p-2 rounded-lg border border-slate-800 flex justify-between">
               <span>GSTR-1 Tax P&amp;L</span>
-              <span className="text-emerald-400 font-bold">+₹40.00 GST ✓</span>
+              <span className="text-sky-400 font-bold">+₹40.00 GST ✓</span>
             </div>
           </div>
         </div>
@@ -401,15 +401,18 @@ export const WhyEllixConnect: React.FC = () => {
         
         {/* Section Header */}
         <div className="max-w-3xl mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
-            Why Ellix Connect
+          <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
+            <span>Why Ellix Connect</span>
+            <span className="text-slate-300 dark:text-slate-700">·</span>
+            <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">Built for Reliability</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight">
             Built for modern retail. Built to last.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
             Five architectural pillars engineered so store owners and counter staff can run their entire business with confidence.
-            <span className="hidden lg:inline text-emerald-600 dark:text-emerald-400 font-semibold ml-1">
+            <span className="hidden lg:inline text-blue-600 dark:text-sky-400 font-semibold ml-1">
               Hover over any pillar below to explore its live architectural deep dive in-place.
             </span>
           </p>
@@ -450,27 +453,27 @@ export const WhyEllixConnect: React.FC = () => {
                     onKeyDown={(e) => handleCardKeyDown(e, benefit.id, index)}
                     className={`website-card-hover p-6 rounded-2xl text-left flex flex-col justify-between cursor-pointer border transition-all duration-200 ${
                       isSelected && !isHovered
-                        ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
-                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                        ? 'bg-white dark:bg-slate-900 border-sky-500/60 ring-2 ring-blue-500/30 shadow-md text-slate-900 dark:text-white'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 hover:shadow-lg text-slate-900 dark:text-white'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         <div
                           data-icon-box
-                          className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200"
+                          className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center transition-all duration-200"
                         >
                           <Icon className="w-5 h-5 transition-transform duration-200" />
                         </div>
                         <span
                           data-card-badge
-                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
+                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-blue-700 dark:text-sky-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
                         >
                           {benefit.keyMetric}
                         </span>
                       </div>
 
-                      <div className="text-[10px] font-bold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-1">
+                      <div className="text-[10px] font-bold tracking-wider uppercase text-blue-600 dark:text-sky-400 mb-1">
                         {benefit.subtitle}
                       </div>
                       <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">
@@ -487,7 +490,7 @@ export const WhyEllixConnect: React.FC = () => {
                     >
                       {benefit.bullets.map((b, idx) => (
                         <div key={idx} className="flex items-center gap-1.5 truncate">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                           <span className="truncate">{b}</span>
                         </div>
                       ))}
@@ -517,27 +520,27 @@ export const WhyEllixConnect: React.FC = () => {
                     onKeyDown={(e) => handleCardKeyDown(e, benefit.id, index)}
                     className={`website-card-hover p-6 rounded-2xl text-left flex flex-row justify-between gap-6 cursor-pointer border transition-all duration-200 ${
                       isSelected && !isHovered
-                        ? 'bg-white dark:bg-slate-900 border-emerald-500/60 ring-2 ring-emerald-500/30 shadow-md text-slate-900 dark:text-white'
-                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white'
+                        ? 'bg-white dark:bg-slate-900 border-sky-500/60 ring-2 ring-blue-500/30 shadow-md text-slate-900 dark:text-white'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 hover:shadow-lg text-slate-900 dark:text-white'
                     }`}
                   >
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-4">
                         <div
                           data-icon-box
-                          className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200"
+                          className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center transition-all duration-200"
                         >
                           <Icon className="w-5 h-5 transition-transform duration-200" />
                         </div>
                         <span
                           data-card-badge
-                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
+                          className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-blue-700 dark:text-sky-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors duration-200"
                         >
                           {benefit.keyMetric}
                         </span>
                       </div>
 
-                      <div className="text-[10px] font-bold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-1">
+                      <div className="text-[10px] font-bold tracking-wider uppercase text-blue-600 dark:text-sky-400 mb-1">
                         {benefit.subtitle}
                       </div>
                       <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">
@@ -554,7 +557,7 @@ export const WhyEllixConnect: React.FC = () => {
                     >
                       {benefit.bullets.map((b, idx) => (
                         <div key={idx} className="flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                           <span>{b}</span>
                         </div>
                       ))}
@@ -601,22 +604,22 @@ export const WhyEllixConnect: React.FC = () => {
                   duration: 0.32,
                   ease: [0.16, 1, 0.3, 1]
                 }}
-                className="col-start-1 row-start-1 z-20 w-full h-full min-h-[580px] box-border overflow-hidden p-6 sm:p-8 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 flex flex-col justify-between gap-5"
+                className="col-start-1 row-start-1 z-20 w-full h-full min-h-[580px] box-border overflow-hidden p-6 sm:p-8 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-sky-500/40 dark:border-sky-500/30 shadow-2xl ring-1 ring-blue-500/20 flex flex-col justify-between gap-5"
               >
                 {/* Top Interactive Pillar Switcher Ribbon */}
                 <div>
                   <div className="flex items-center justify-between gap-2 pb-4 mb-6 border-b border-slate-200/80 dark:border-slate-800/80">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
                       <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200">
                         Architectural Deep-Dive Workspace
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-mono font-bold border border-emerald-300/60 dark:border-emerald-800/60">
+                      <span className="px-2.5 py-0.5 rounded-md bg-sky-100 dark:bg-blue-950/80 text-blue-800 dark:text-sky-300 text-[11px] font-mono font-bold border border-sky-300/60 dark:border-sky-800/60">
                         {selectedBenefit.keyMetric}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                      <MousePointer2 className="w-3.5 h-3.5 text-emerald-500" />
+                      <MousePointer2 className="w-3.5 h-3.5 text-sky-500" />
                       <span>Hover any pillar pill to transform workspace</span>
                     </div>
                   </div>
@@ -636,11 +639,11 @@ export const WhyEllixConnect: React.FC = () => {
                           onClick={() => handleCardMouseEnter(b.id, idx)}
                           className={`relative py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-150 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer ${
                             isActive
-                              ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500/50 shadow-sm ring-1 ring-emerald-500/20'
+                              ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-sky-400 border border-sky-500/50 shadow-sm ring-1 ring-blue-500/20'
                               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-900/60 border border-transparent'
                           }`}
                         >
-                          <PillarIcon className={`w-4 h-4 shrink-0 ${isActive ? 'text-emerald-500' : 'text-slate-400'}`} />
+                          <PillarIcon className={`w-4 h-4 shrink-0 ${isActive ? 'text-sky-500' : 'text-slate-400'}`} />
                           <span className="truncate">{b.title}</span>
                         </button>
                       );
@@ -658,8 +661,8 @@ export const WhyEllixConnect: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="w-full lg:w-[48%] space-y-4"
                   >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-300/60 dark:border-emerald-800/60">
-                      <SelectedIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 dark:bg-blue-950/80 text-blue-800 dark:text-sky-300 text-xs font-bold border border-sky-300/60 dark:border-sky-800/60">
+                      <SelectedIcon className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
                       <span>{selectedBenefit.subtitle}</span>
                     </div>
 
@@ -679,7 +682,7 @@ export const WhyEllixConnect: React.FC = () => {
                       <div className="grid grid-cols-1 gap-2 text-xs font-medium text-slate-700 dark:text-slate-200">
                         {selectedBenefit.bullets.map((point, idx) => (
                           <div key={idx} className="flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <CheckCircle2 className="w-4 h-4 text-sky-500 shrink-0" />
                             <span>{point}</span>
                           </div>
                         ))}
@@ -715,12 +718,12 @@ export const WhyEllixConnect: React.FC = () => {
                     <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-lg space-y-3.5">
                       <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                         <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse" />
                           <span className="text-xs font-bold text-slate-900 dark:text-white font-mono">
                             {selectedBenefit.previewData.badgeText}
                           </span>
                         </div>
-                        <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
+                        <span className="text-[11px] font-semibold text-blue-600 dark:text-sky-400 bg-sky-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-md border border-sky-200/60 dark:border-sky-800/60">
                           {selectedBenefit.keyMetric}
                         </span>
                       </div>
@@ -734,7 +737,7 @@ export const WhyEllixConnect: React.FC = () => {
 
                       <div className="pt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80">
                         <span>Key Performance Target: {selectedBenefit.keyMetric}</span>
-                        <span className="text-emerald-500 font-semibold">
+                        <span className="text-sky-500 font-semibold">
                           {selectedBenefit.previewData.statusText}
                         </span>
                       </div>
@@ -764,7 +767,7 @@ export const WhyEllixConnect: React.FC = () => {
                   aria-pressed={isSelected}
                   className={`snap-start shrink-0 w-[250px] sm:w-auto p-4 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
                     isSelected
-                      ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/40 shadow-md text-slate-900 dark:text-white'
+                      ? 'bg-white dark:bg-slate-900 border-sky-500 ring-2 ring-blue-500/40 shadow-md text-slate-900 dark:text-white'
                       : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white'
                   }`}
                 >
@@ -773,18 +776,18 @@ export const WhyEllixConnect: React.FC = () => {
                       <div
                         className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                           isSelected
-                            ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'
+                            ? 'bg-sky-50 dark:bg-blue-950 text-blue-600 dark:text-sky-400'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
                       >
                         <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
-                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400">
+                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-sky-400">
                         {benefit.keyMetric}
                       </span>
                     </div>
 
-                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-0.5">
+                    <div className="text-[10px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider mb-0.5">
                       {benefit.subtitle}
                     </div>
                     <h3 className="text-sm sm:text-base font-bold mb-1">
@@ -795,7 +798,7 @@ export const WhyEllixConnect: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-blue-600 dark:text-sky-400">
                     <span>{isSelected ? 'Viewing architectural details ↓' : 'Tap to preview'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
@@ -807,11 +810,11 @@ export const WhyEllixConnect: React.FC = () => {
           {/* Mobile Detail Panel */}
           <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
             <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-bold border border-sky-200 dark:border-sky-800">
                 <SelectedIcon className="w-3.5 h-3.5" />
                 <span>{selectedBenefit.subtitle}</span>
               </div>
-              <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
+              <span className="text-xs font-mono font-bold text-blue-600 dark:text-sky-400">
                 {selectedBenefit.keyMetric}
               </span>
             </div>
@@ -831,7 +834,7 @@ export const WhyEllixConnect: React.FC = () => {
               <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
                 {selectedBenefit.bullets.map((pt, idx) => (
                   <div key={idx} className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                     <span>{pt}</span>
                   </div>
                 ))}

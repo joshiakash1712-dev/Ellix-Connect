@@ -77,7 +77,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
     }
   }, [isOpen, initialStep]);
 
-  // Subtle emerald data ripple on Intro screen (Section 5)
+  // Subtle sapphire data ripple on Intro screen (Section 5)
   useEffect(() => {
     if (!isOpen || currentStep !== 0 || prefersReducedMotion) return;
     const timer = window.setInterval(() => {
@@ -191,15 +191,15 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
         );
       case 12:
         return (
-          <div className="rounded-2xl bg-[#121826] border border-emerald-500/35 p-4 sm:p-5 space-y-4">
+          <div className="rounded-2xl bg-[#121826] border border-sky-500/35 p-4 sm:p-5 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-emerald-400" />
+                <Sparkles className="w-4 h-4 text-sky-400" />
                 <span className="text-xs font-bold text-white">
                   Choose Your Next Step with Ellix Connect
                 </span>
               </div>
-              <span className="text-[11px] font-mono text-emerald-300 bg-emerald-500/10 px-2.5 py-0.5 rounded-md border border-emerald-500/25">
+              <span className="text-[11px] font-mono text-sky-300 bg-sky-500/10 px-2.5 py-0.5 rounded-md border border-sky-500/25">
                 STEP 12 OF 12 · ACTION HUB
               </span>
             </div>
@@ -212,16 +212,16 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                   onClose();
                   onOpenGetStarted?.();
                 }}
-                className="p-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-left transition-all cursor-pointer shadow-md shadow-emerald-600/20 flex flex-col justify-between gap-2"
+                className="p-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-left transition-all cursor-pointer shadow-md shadow-blue-600/20 flex flex-col justify-between gap-2"
               >
-                <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-100 font-bold">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-sky-100 font-bold">
                   Primary Action
                 </div>
                 <div className="text-sm font-extrabold flex items-center justify-between">
                   <span>Get Started</span>
                   <ArrowRight className="w-4 h-4" />
                 </div>
-                <p className="text-[11px] text-emerald-50">
+                <p className="text-[11px] text-sky-50">
                   Apply for your Ellix Connect business workspace and start setting up your store.
                 </p>
               </button>
@@ -229,14 +229,14 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
               <button
                 type="button"
                 onClick={() => handleExploreWebsiteSection('#product')}
-                className="p-3.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800/90 border border-slate-800 hover:border-emerald-500/40 text-left transition-all cursor-pointer flex flex-col justify-between gap-2"
+                className="p-3.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800/90 border border-slate-800 hover:border-blue-500/40 text-left transition-all cursor-pointer flex flex-col justify-between gap-2"
               >
-                <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">
                   Interactive Demo
                 </div>
                 <div className="text-sm font-bold text-white flex items-center justify-between">
                   <span>Explore Product Preview</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                  <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
                 </div>
                 <p className="text-[11px] text-slate-400">
                   Test live Dashboard, POS Billing, Inventory, Customers, and Reports previews.
@@ -246,14 +246,14 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
               <button
                 type="button"
                 onClick={() => handleExploreWebsiteSection('#features')}
-                className="p-3.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800/90 border border-slate-800 hover:border-emerald-500/40 text-left transition-all cursor-pointer flex flex-col justify-between gap-2"
+                className="p-3.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800/90 border border-slate-800 hover:border-blue-500/40 text-left transition-all cursor-pointer flex flex-col justify-between gap-2"
               >
-                <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">
                   Capabilities
                 </div>
                 <div className="text-sm font-bold text-white flex items-center justify-between">
                   <span>View Features</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                  <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
                 </div>
                 <p className="text-[11px] text-slate-400">
                   Inspect all core modules across billing, stock, Khata, and business insights.
@@ -266,14 +266,14 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                   onClose();
                   onOpenContact?.();
                 }}
-                className="p-3.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800/90 border border-slate-800 hover:border-emerald-500/40 text-left transition-all cursor-pointer flex flex-col justify-between gap-2"
+                className="p-3.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800/90 border border-slate-800 hover:border-blue-500/40 text-left transition-all cursor-pointer flex flex-col justify-between gap-2"
               >
-                <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">
                   Questions & Onboarding
                 </div>
                 <div className="text-sm font-bold text-white flex items-center justify-between">
                   <span>Contact Ellix Connect</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                  <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
                 </div>
                 <p className="text-[11px] text-slate-400">
                   Reach out to our team for store onboarding assistance or questions.
@@ -290,14 +290,14 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                     onLaunchDemo();
                   }
                 }}
-                className="p-3.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800/90 border border-slate-800 hover:border-emerald-500/40 text-left transition-all cursor-pointer flex flex-col justify-between gap-2"
+                className="p-3.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800/90 border border-slate-800 hover:border-blue-500/40 text-left transition-all cursor-pointer flex flex-col justify-between gap-2"
               >
-                <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">
                   Existing Account
                 </div>
                 <div className="text-sm font-bold text-white flex items-center justify-between">
                   <span>Sign In</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                  <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
                 </div>
                 <p className="text-[11px] text-slate-400">
                   Already have an Ellix Connect account? Sign in to your business console.
@@ -307,14 +307,14 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
               <button
                 type="button"
                 onClick={handleRestartGuide}
-                className="p-3.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800/90 border border-slate-800 hover:border-emerald-500/40 text-left transition-all cursor-pointer flex flex-col justify-between gap-2"
+                className="p-3.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800/90 border border-slate-800 hover:border-blue-500/40 text-left transition-all cursor-pointer flex flex-col justify-between gap-2"
               >
                 <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
                   Review Again
                 </div>
                 <div className="text-sm font-bold text-white flex items-center justify-between">
                   <span>Restart Guide</span>
-                  <RotateCcw className="w-3.5 h-3.5 text-emerald-400" />
+                  <RotateCcw className="w-3.5 h-3.5 text-sky-400" />
                 </div>
                 <p className="text-[11px] text-slate-400">
                   Start the 12-step interactive walkthrough again from Step 01.
@@ -372,8 +372,8 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
               <div className="flex items-center justify-between gap-2">
                 {/* Brand & Step Counter */}
                 <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 min-w-0">
-                  <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/35 text-emerald-300 text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider shrink-0">
-                    <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-400" />
+                  <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-sky-500/15 border border-sky-500/35 text-sky-300 text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider shrink-0">
+                    <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-400" />
                     <span className="hidden xs:inline">ELLIX CONNECT </span>
                     <span>GUIDE</span>
                   </span>
@@ -395,11 +395,11 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                     aria-expanded={isGuideMapOpen}
                     className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border flex items-center gap-1.5 transition-all cursor-pointer ${
                       isGuideMapOpen
-                        ? 'bg-emerald-600 border-emerald-500 text-white'
+                        ? 'bg-blue-600 border-sky-500 text-white'
                         : 'bg-[#161D2C] hover:bg-slate-800 border-slate-700 text-slate-200'
                     }`}
                   >
-                    <List className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <List className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                     <span className="hidden xs:inline">{isGuideMapOpen ? 'Hide Map' : 'All Steps'}</span>
                     <span className="xs:hidden">Steps</span>
                   </button>
@@ -424,7 +424,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                       width: `${Math.min(100, Math.max(0, (Math.min(12, currentStep) / 12) * 100))}%`,
                     }}
                     transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                    className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 rounded-full"
+                    className="h-full bg-gradient-to-r from-blue-500 via-sky-400 to-sky-200 rounded-full"
                   />
                 </div>
 
@@ -446,16 +446,16 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                           title={`Step ${ch.code}: ${ch.shortTitle}`}
                           className={`group flex items-center gap-1.5 px-1.5 py-0.5 rounded-md transition-all cursor-pointer shrink-0 ${
                             isCurrent
-                              ? 'bg-emerald-500/20 text-emerald-300'
+                              ? 'bg-sky-500/20 text-sky-300'
                               : 'hover:bg-slate-800/80 text-slate-400'
                           }`}
                         >
                           <span
                             className={`w-2.5 h-2.5 rounded-full transition-all ${
                               isCurrent
-                                ? 'bg-emerald-400 ring-4 ring-emerald-500/25 scale-110'
+                                ? 'bg-sky-400 ring-4 ring-blue-500/25 scale-110'
                                 : isCompleted
-                                ? 'bg-emerald-500'
+                                ? 'bg-sky-500'
                                 : 'bg-slate-700 group-hover:bg-slate-500'
                             }`}
                           />
@@ -466,7 +466,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                         {ch.stepNumber < 12 && (
                           <div
                             className={`h-0.5 flex-1 min-w-[8px] rounded-full transition-colors ${
-                              currentStep > ch.stepNumber ? 'bg-emerald-500/70' : 'bg-slate-800'
+                              currentStep > ch.stepNumber ? 'bg-sky-500/70' : 'bg-slate-800'
                             }`}
                           />
                         )}
@@ -482,15 +482,15 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                 className="flex flex-wrap items-center justify-between gap-2 pt-1.5 border-t border-slate-800/80 text-[11px]"
               >
                 <div className="flex flex-wrap items-center gap-1.5 text-slate-400 font-medium">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-mono font-extrabold text-emerald-300 uppercase tracking-wider">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-sky-500/15 border border-sky-500/30 text-[10px] font-mono font-extrabold text-sky-300 uppercase tracking-wider">
+                    <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
                     <span>YOU ARE HERE</span>
                   </span>
 
                   <button
                     type="button"
                     onClick={() => updateStep(0)}
-                    className="text-slate-300 hover:text-emerald-300 font-semibold transition-colors cursor-pointer"
+                    className="text-slate-300 hover:text-sky-300 font-semibold transition-colors cursor-pointer"
                   >
                     Guide
                   </button>
@@ -501,26 +501,26 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                       <button
                         type="button"
                         onClick={() => setIsGuideMapOpen(true)}
-                        className="text-slate-200 hover:text-emerald-300 font-semibold transition-colors cursor-pointer"
+                        className="text-slate-200 hover:text-sky-300 font-semibold transition-colors cursor-pointer"
                       >
                         {activeChapter.breadcrumbCategory}
                       </button>
                       <ChevronRight className="w-3 h-3 text-slate-600" />
-                      <span className="text-emerald-300 font-bold">
+                      <span className="text-sky-300 font-bold">
                         {activeChapter.breadcrumbTopic}
                       </span>
                     </>
                   ) : currentStep === 0 ? (
                     <>
                       <ChevronRight className="w-3 h-3 text-slate-600" />
-                      <span className="text-emerald-300 font-bold">
+                      <span className="text-sky-300 font-bold">
                         Welcome &amp; Connected Journey Overview
                       </span>
                     </>
                   ) : (
                     <>
                       <ChevronRight className="w-3 h-3 text-slate-600" />
-                      <span className="text-emerald-300 font-bold">
+                      <span className="text-sky-300 font-bold">
                         Guide Completed (12 / 12)
                       </span>
                     </>
@@ -547,13 +547,13 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                      <Compass className="w-4 h-4 text-emerald-400" />
+                      <Compass className="w-4 h-4 text-sky-400" />
                       <span>Guide Map — Jump to Any Chapter (12 Steps)</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => updateStep(0)}
-                      className="text-xs font-semibold text-emerald-400 hover:underline cursor-pointer"
+                      className="text-xs font-semibold text-sky-400 hover:underline cursor-pointer"
                     >
                       00 · View Introduction & Journey Map
                     </button>
@@ -569,20 +569,20 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                           onClick={() => updateStep(ch.stepNumber)}
                           className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
                             isCurrent
-                              ? 'bg-emerald-500/20 border-emerald-500 text-white'
+                              ? 'bg-sky-500/20 border-sky-500 text-white'
                               : isDone
-                              ? 'bg-[#121826] border-emerald-500/30 text-slate-200 hover:border-emerald-500/60'
+                              ? 'bg-[#121826] border-sky-500/30 text-slate-200 hover:border-blue-500/60'
                               : 'bg-[#121826] border-slate-800 text-slate-300 hover:border-slate-700'
                           }`}
                         >
                           <div className="min-w-0">
-                            <div className="text-[10px] font-mono text-emerald-400 font-bold">
+                            <div className="text-[10px] font-mono text-sky-400 font-bold">
                               STEP {ch.code}
                             </div>
                             <div className="text-xs font-bold truncate">{ch.shortTitle}</div>
                           </div>
                           {isDone && (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                           )}
                         </button>
                       );
@@ -611,8 +611,8 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                   >
                     {/* Hero Welcome Card */}
                     <div className="p-5 sm:p-6 rounded-2xl bg-[#121826] border border-slate-800 space-y-4">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 border border-sky-500/30 text-sky-300 text-xs font-bold">
+                        <Sparkles className="w-3.5 h-3.5 text-sky-400" />
                         <span>Interactive Product Walkthrough · 12 Short Chapters</span>
                       </div>
 
@@ -620,7 +620,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                         <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                           Welcome to Ellix Connect.
                         </h2>
-                        <p className="text-sm sm:text-base text-emerald-400 font-semibold mt-1">
+                        <p className="text-sm sm:text-base text-sky-400 font-semibold mt-1">
                           One connected platform for running your business.
                         </p>
                       </div>
@@ -642,9 +642,9 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                         ].map((pillar) => (
                           <span
                             key={pillar}
-                            className="px-3 py-1.5 rounded-xl bg-[#0A0E1A] border border-emerald-500/30 text-xs font-bold text-white flex items-center gap-1.5"
+                            className="px-3 py-1.5 rounded-xl bg-[#0A0E1A] border border-sky-500/30 text-xs font-bold text-white flex items-center gap-1.5"
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
                             {pillar}
                           </span>
                         ))}
@@ -664,9 +664,9 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                           ].map((item, idx) => (
                             <div
                               key={item.step}
-                              className="p-3 rounded-xl bg-[#121826] border border-emerald-500/25 relative"
+                              className="p-3 rounded-xl bg-[#121826] border border-sky-500/25 relative"
                             >
-                              <div className="text-[10px] font-mono font-bold text-emerald-400">
+                              <div className="text-[10px] font-mono font-bold text-sky-400">
                                 {item.step}
                               </div>
                               <div className="text-xs font-extrabold text-white mt-0.5">
@@ -674,7 +674,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                               </div>
                               <div className="text-[11px] text-slate-400 mt-0.5">{item.sub}</div>
                               {idx < 3 && (
-                                <ArrowRight className="hidden sm:block w-3.5 h-3.5 text-emerald-400 absolute -right-2 top-1/2 -translate-y-1/2 z-10" />
+                                <ArrowRight className="hidden sm:block w-3.5 h-3.5 text-sky-400 absolute -right-2 top-1/2 -translate-y-1/2 z-10" />
                               )}
                             </div>
                           ))}
@@ -686,15 +686,15 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                     <div className="p-5 rounded-2xl bg-[#121826] border border-slate-800 space-y-4">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div>
-                          <div className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                          <div className="text-xs font-bold uppercase tracking-wider text-sky-400">
                             The Complete Connected Journey
                           </div>
                           <p className="text-xs text-slate-300 mt-0.5">
                             These aren&apos;t separate tools. They are connected parts of the same business workflow.
                           </p>
                         </div>
-                        <span className="text-[11px] font-mono text-emerald-300 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/25">
-                          Live Emerald Data Ripple
+                        <span className="text-[11px] font-mono text-sky-300 bg-sky-500/10 px-2.5 py-1 rounded-lg border border-sky-500/25">
+                          Live Sapphire Data Ripple
                         </span>
                       </div>
 
@@ -707,14 +707,14 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                               onClick={() => setIntroRippleNode(idx)}
                               className={`p-3 rounded-xl border transition-all cursor-pointer ${
                                 isActive
-                                  ? 'bg-emerald-500/20 border-emerald-400 shadow-[0_0_18px_rgba(16,185,129,0.28)]'
+                                  ? 'bg-sky-500/20 border-sky-400 shadow-[0_0_18px_rgba(37, 99, 235,0.28)]'
                                   : 'bg-[#0A0E1A] border-slate-800 hover:border-slate-700'
                               }`}
                             >
-                              <div className="flex items-center justify-between text-[10px] font-mono font-bold text-emerald-400">
+                              <div className="flex items-center justify-between text-[10px] font-mono font-bold text-sky-400">
                                 <span>{node.code}</span>
                                 {isActive && (
-                                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                                  <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />
                                 )}
                               </div>
                               <div className="text-xs font-extrabold text-white mt-1">
@@ -738,7 +738,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                         <button
                           type="button"
                           onClick={() => updateStep(1)}
-                          className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold shadow-lg shadow-emerald-600/25 flex items-center gap-2 cursor-pointer transition-all"
+                          className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-extrabold shadow-lg shadow-blue-600/25 flex items-center gap-2 cursor-pointer transition-all"
                         >
                           <span>Start the Journey →</span>
                         </button>
@@ -762,7 +762,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                     {/* Chapter Header + Website Map Link (Section 27) */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
                       <div>
-                        <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase">
+                        <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-sky-400 uppercase">
                           <span>STEP {activeChapter.code} OF 12</span>
                           <span>·</span>
                           <span>{activeChapter.breadcrumbCategory}</span>
@@ -777,7 +777,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                         onClick={() =>
                           handleExploreWebsiteSection(activeChapter.exploreSectionHref)
                         }
-                        className="self-start sm:self-auto px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
+                        className="self-start sm:self-auto px-3.5 py-2 rounded-xl bg-sky-500/10 hover:bg-blue-500/20 border border-sky-500/30 text-sky-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
                       >
                         <span>{activeChapter.exploreSectionLabel}</span>
                       </button>
@@ -786,7 +786,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                     {/* Section 33: 4 Structured Questions (No Wall of Text) */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
                       <div className="p-2.5 sm:p-3 rounded-xl bg-[#121826] border border-slate-800">
-                        <div className="text-[10px] font-mono font-bold uppercase text-emerald-400">
+                        <div className="text-[10px] font-mono font-bold uppercase text-sky-400">
                           1. What is this?
                         </div>
                         <p className="text-[11px] sm:text-xs text-slate-200 mt-1 leading-relaxed">
@@ -794,7 +794,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                         </p>
                       </div>
                       <div className="p-2.5 sm:p-3 rounded-xl bg-[#121826] border border-slate-800">
-                        <div className="text-[10px] font-mono font-bold uppercase text-emerald-400">
+                        <div className="text-[10px] font-mono font-bold uppercase text-sky-400">
                           2. Why does it matter?
                         </div>
                         <p className="text-[11px] sm:text-xs text-slate-200 mt-1 leading-relaxed">
@@ -802,7 +802,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                         </p>
                       </div>
                       <div className="p-2.5 sm:p-3 rounded-xl bg-[#121826] border border-slate-800">
-                        <div className="text-[10px] font-mono font-bold uppercase text-emerald-400">
+                        <div className="text-[10px] font-mono font-bold uppercase text-sky-400">
                           3. How does it work?
                         </div>
                         <p className="text-[11px] sm:text-xs text-slate-200 mt-1 leading-relaxed">
@@ -810,7 +810,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                         </p>
                       </div>
                       <div className="p-2.5 sm:p-3 rounded-xl bg-[#121826] border border-slate-800">
-                        <div className="text-[10px] font-mono font-bold uppercase text-emerald-400">
+                        <div className="text-[10px] font-mono font-bold uppercase text-sky-400">
                           4. What happens next?
                         </div>
                         <p className="text-[11px] sm:text-xs text-slate-200 mt-1 leading-relaxed">
@@ -820,8 +820,8 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                     </div>
 
                     {/* Section 25: Contextual "Try this ->" Tooltip Cue */}
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300 font-medium">
-                      <span className="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-extrabold text-[10px] uppercase shrink-0">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300 font-medium">
+                      <span className="px-2 py-0.5 rounded bg-sky-500 text-slate-950 font-extrabold text-[10px] uppercase shrink-0">
                         Try this →
                       </span>
                       <span>{activeChapter.interactivePrompt}</span>
@@ -831,9 +831,9 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                     {renderStepInteractiveDemo(activeChapter.stepNumber)}
 
                     {/* Section 34: KEY TAKEAWAY Card */}
-                    <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/50 via-[#121826] to-[#121826] border border-emerald-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-blue-950/50 via-[#121826] to-[#121826] border border-sky-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="space-y-0.5">
-                        <div className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-400">
+                        <div className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-sky-400">
                           KEY TAKEAWAY · STEP {activeChapter.code}
                         </div>
                         <div className="text-xs sm:text-sm font-bold text-white">
@@ -845,7 +845,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                         onClick={() =>
                           handleExploreWebsiteSection(activeChapter.exploreSectionHref)
                         }
-                        className="text-xs font-bold text-emerald-400 hover:text-emerald-300 hover:underline shrink-0 cursor-pointer"
+                        className="text-xs font-bold text-sky-400 hover:text-sky-300 hover:underline shrink-0 cursor-pointer"
                       >
                         {activeChapter.exploreSectionLabel}
                       </button>
@@ -863,11 +863,11 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                     animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
                     exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
                     transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                    className="p-5 sm:p-7 rounded-2xl bg-[#121826] border border-emerald-500/40 space-y-6 shadow-[0_0_36px_rgba(16,185,129,0.14)]"
+                    className="p-5 sm:p-7 rounded-2xl bg-[#121826] border border-sky-500/40 space-y-6 shadow-[0_0_36px_rgba(37, 99, 235,0.14)]"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-500/40 text-sky-300 text-xs font-mono font-bold">
+                        <CheckCircle2 className="w-4 h-4 text-sky-400" />
                         <span>12 / 12 · ✓ GUIDE COMPLETED</span>
                       </span>
                       <span className="text-xs text-slate-400">
@@ -879,25 +879,25 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                       <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                         You&apos;re Ready to Explore Ellix Connect.
                       </h2>
-                      <p className="text-sm text-emerald-400 font-semibold mt-1">
+                      <p className="text-sm text-sky-400 font-semibold mt-1">
                         You now understand how Ellix Connect connects everyday business operations.
                       </p>
                     </div>
 
-                    {/* Subtle Emerald Workflow Completion Strip */}
+                    {/* Subtle Sapphire Workflow Completion Strip */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                       {WORKFLOW_SEVEN_NODES.map((node) => (
                         <div
                           key={node.code}
-                          className="p-2.5 rounded-xl bg-[#0A0E1A] border border-emerald-500/35 flex items-center justify-between"
+                          className="p-2.5 rounded-xl bg-[#0A0E1A] border border-sky-500/35 flex items-center justify-between"
                         >
                           <div>
-                            <div className="text-[10px] font-mono text-emerald-400 font-bold">
+                            <div className="text-[10px] font-mono text-sky-400 font-bold">
                               {node.code}
                             </div>
                             <div className="text-xs font-bold text-white">{node.label}</div>
                           </div>
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                         </div>
                       ))}
                     </div>
@@ -913,7 +913,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                             key={topic}
                             className="flex items-center gap-2 text-xs font-semibold text-white bg-[#121826] px-3 py-2 rounded-lg border border-slate-800"
                           >
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                             <span>{topic}</span>
                           </div>
                         ))}
@@ -946,7 +946,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                           onClose();
                           onOpenGetStarted?.();
                         }}
-                        className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
+                        className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-extrabold shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
                       >
                         <span>Get Started</span>
                         <ArrowRight className="w-4 h-4" />
@@ -998,7 +998,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                   onClick={() => setIsGuideMapOpen((v) => !v)}
                   className="px-3 py-2 rounded-xl bg-[#161D2C] hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-200 cursor-pointer transition-colors hidden sm:inline-flex items-center gap-1.5"
                 >
-                  <List className="w-3.5 h-3.5 text-emerald-400" />
+                  <List className="w-3.5 h-3.5 text-sky-400" />
                   <span>View All Steps</span>
                 </button>
 
@@ -1006,7 +1006,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-extrabold shadow-md shadow-emerald-600/25 flex items-center gap-1.5 cursor-pointer transition-all"
+                    className="px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-extrabold shadow-md shadow-blue-600/25 flex items-center gap-1.5 cursor-pointer transition-all"
                   >
                     <span>
                       {currentStep === 0

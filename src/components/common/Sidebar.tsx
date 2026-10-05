@@ -2,7 +2,7 @@ import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
-import { ActiveModule } from '../../types';
+import { ActiveModule, normalizeCanonicalRole } from '../../types';
 import { EllixConnectLogo } from '../branding/EllixConnectLogo';
 import {
   LayoutDashboard,
@@ -97,7 +97,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const [showStorePickerInDrawer, setShowStorePickerInDrawer] = React.useState(false);
 
-  const isCrew = activeRole === 'crew' || userProfile?.role === 'crew';
+  const canonicalRole = normalizeCanonicalRole(activeRole);
+  const isCrew = canonicalRole === 'crew';
+  const isPlatformAdmin = canonicalRole === 'super_admin' || canonicalRole === 'ellix_admin';
+  const isWholesaler = canonicalRole === 'wholesaler_admin';
+
   const allowedStores = isCrew
     ? stores.filter(s => (storeUser?.assignedStoreIds || [activeStore.id]).includes(s.id))
     : stores;
@@ -107,8 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const retailerItems: NavItem[] = isCrew ? [
     { id: 'pos', label: 'POS Billing', shortLabel: 'POS', icon: <Receipt className="w-5 h-5" /> },
     { id: 'inventory', label: 'Inventory & Stock', shortLabel: 'Stock', icon: <Package className="w-5 h-5" />, count: products.length },
-    { id: 'my_sales', label: 'My Sales', shortLabel: 'My Sales', icon: <Receipt className="w-5 h-5" /> },
-    { id: 'dashboard', label: 'Shift & Store Summary', shortLabel: 'Shift', icon: <LayoutDashboard className="w-5 h-5" /> }
+    { id: 'my_sales', label: 'My Sales', shortLabel: 'My Sales', icon: <Receipt className="w-5 h-5" /> }
   ] : [
     { id: 'dashboard', label: 'Dashboard', shortLabel: 'Home', icon: <LayoutDashboard className="w-5 h-5" /> },
     { id: 'pos', label: 'POS Billing', shortLabel: 'POS', icon: <Receipt className="w-5 h-5" /> },
@@ -143,11 +146,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const primaryBottomNavItems = items.slice(0, 4);
 
   const modulesList: { id: ActiveModule; label: string; icon: React.ReactNode }[] = [
-    { id: 'retailer', label: 'Store', icon: <StoreIcon className="w-3.5 h-3.5" /> },
-    ...(!isCrew ? [
-      { id: 'wholesaler' as ActiveModule, label: 'Wholesale', icon: <Truck className="w-3.5 h-3.5" /> },
-      { id: 'admin' as ActiveModule, label: 'Admin', icon: <ShieldAlert className="w-3.5 h-3.5" /> }
-    ] : [])
+    ...(!isWholesaler ? [{ id: 'retailer' as ActiveModule, label: 'Store', icon: <StoreIcon className="w-3.5 h-3.5" /> }] : []),
+    ...(!isCrew ? [{ id: 'wholesaler' as ActiveModule, label: 'Wholesale', icon: <Truck className="w-3.5 h-3.5" /> }] : []),
+    ...((isDemoMode || isPlatformAdmin) ? [{ id: 'admin' as ActiveModule, label: 'Admin', icon: <ShieldAlert className="w-3.5 h-3.5" /> }] : [])
   ];
 
   return (
@@ -157,17 +158,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* ------------------------------------------------------------- */}
       <aside className="hidden md:flex w-[280px] glass-panel border-r border-slate-800 text-slate-300 p-4 shrink-0 flex-col justify-between min-h-[calc(100vh-4rem)] relative overflow-hidden">
         {/* Subtle brand gradient backdrop BEHIND the glass sidebar */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-emerald-600/10 via-teal-500/5 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-600/10 via-sky-500/5 to-transparent pointer-events-none" />
         <div className="space-y-4">
           {/* Active Store Profile Pill (FIX 3: Clear Current Store Visibility) */}
           <div className="flex items-center gap-3 p-2.5 rounded-xl bg-[#161D2C] border border-slate-800 shadow-sm">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center font-bold text-sm shadow-md shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-sky-500 text-white flex items-center justify-center font-bold text-sm shadow-md shrink-0">
               {activeStore.name?.slice(0, 2).toUpperCase() || 'EM'}
             </div>
             <div className="min-w-0 flex-1">
               <div className="text-xs font-bold text-white truncate">{activeStore.name || 'Main Store'}</div>
-              <div className="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1 mt-0.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+              <div className="text-[10px] text-sky-400 font-semibold truncate flex items-center gap-1 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 shrink-0" />
                 <span>{isCrew ? 'Assigned Store' : 'Active Store'} · {activeStore.city || 'India'}</span>
               </div>
             </div>
@@ -184,7 +185,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     onClick={() => setActiveModule(mod.id)}
                     className={`min-h-[48px] min-w-[48px] flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-lg text-[11px] font-bold transition-all ${
                       isActive
-                        ? 'bg-emerald-600 text-white shadow-sm'
+                        ? 'bg-blue-600 text-white shadow-sm'
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                     }`}
                   >
@@ -210,7 +211,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => onSelectView(item.id)}
                   className={`w-full min-h-[48px] flex items-center justify-between px-3.5 py-3 rounded-lg text-xs font-semibold transition-all ${
                     isActive
-                      ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20 font-bold'
+                      ? 'bg-gradient-to-r from-blue-600 to-sky-600 text-white shadow-md shadow-blue-500/20 font-bold'
                       : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                   }`}
                 >
@@ -220,7 +221,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </div>
 
                   {item.badge && (
-                    <span className="text-[9px] font-black px-2 py-0.5 rounded-lg bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+                    <span className="text-[9px] font-black px-2 py-0.5 rounded-lg bg-sky-400/20 text-sky-300 border border-sky-400/30">
                       {item.badge}
                     </span>
                   )}
@@ -400,7 +401,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className="relative w-[310px] max-w-[85vw] glass-panel border-r border-slate-800 text-slate-100 shadow-2xl flex flex-col justify-between z-10 overflow-y-auto touch-pan-y"
             >
               {/* Subtle brand gradient backdrop BEHIND mobile glass drawer */}
-              <div className="absolute inset-0 -z-10 bg-gradient-to-b from-emerald-600/10 via-teal-500/5 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-600/10 via-sky-500/5 to-transparent pointer-events-none" />
 
               {/* Swipe Left Handle Affordance on drawer edge */}
               <div className="absolute right-1.5 top-1/2 -translate-y-1/2 w-1 h-12 rounded-full bg-slate-700/60 pointer-events-none" />
@@ -427,7 +428,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <div className="p-3 rounded-xl bg-[#161D2C] border border-slate-800 shadow-md space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-extrabold text-xs shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-sky-400 font-extrabold text-xs shrink-0">
                         {activeStore.name?.slice(0, 2).toUpperCase() || 'EM'}
                       </div>
                       <div className="min-w-0">
@@ -445,7 +446,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         className="w-full min-h-[48px] mt-1 py-2.5 px-3 rounded-lg bg-[#121826] hover:bg-slate-800 text-slate-300 text-[11px] font-semibold flex items-center justify-between border border-slate-700/60"
                       >
                         <span className="flex items-center gap-1.5">
-                          <Building2 className="w-3.5 h-3.5 text-emerald-400" />
+                          <Building2 className="w-3.5 h-3.5 text-sky-400" />
                           <span>Switch Active Store</span>
                         </span>
                         <ChevronRight className={`w-4 h-4 transition-transform ${showStorePickerInDrawer ? 'rotate-90' : ''}`} />
@@ -462,12 +463,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                               }}
                               className={`w-full min-h-[48px] text-left px-3 py-2.5 rounded-lg text-[11px] flex items-center justify-between transition-colors ${
                                 activeStore.id === st.id
-                                  ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30'
+                                  ? 'bg-blue-500/20 text-sky-300 font-bold border border-blue-500/30'
                                   : 'text-slate-300 hover:bg-slate-700/40'
                               }`}
                             >
                               <span className="truncate">{st.name}</span>
-                              {activeStore.id === st.id && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+                              {activeStore.id === st.id && <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />}
                             </button>
                           ))}
                         </div>
@@ -494,7 +495,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           }}
                           className={`min-h-[48px] min-w-[48px] flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-lg text-[11px] font-bold transition-all ${
                             activeModule === mod.id
-                              ? 'bg-emerald-600 text-white shadow-md'
+                              ? 'bg-blue-600 text-white shadow-md'
                               : 'text-slate-400 hover:text-slate-200'
                           }`}
                         >
@@ -524,7 +525,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         }}
                         className={`w-full min-h-[48px] flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-semibold transition-all ${
                           isActive
-                            ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-md shadow-emerald-500/20'
+                            ? 'bg-gradient-to-r from-blue-600 to-sky-600 text-white font-bold shadow-md shadow-blue-500/20'
                             : 'text-slate-300 hover:bg-slate-800/80 active:bg-slate-800'
                         }`}
                       >

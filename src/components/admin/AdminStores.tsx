@@ -159,7 +159,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-base font-bold text-white flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-emerald-400" />
+            <Building2 className="w-5 h-5 text-sky-400" />
             <span>Multi-Branch Outlet Fleet ({stores.length})</span>
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -169,7 +169,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
 
         <button
           onClick={handleOpenAdd}
-          className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition-all"
+          className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-600/20 flex items-center justify-center gap-1.5 transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>+ Provision Branch</span>
@@ -185,7 +185,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
             placeholder="Search branches by store name, GSTIN, city, manager, or address..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 placeholder-slate-500 shadow-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#0A0E1A] border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-sky-500 placeholder-slate-500 shadow-sm"
           />
         </div>
 
@@ -193,7 +193,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
           <select
             value={cityFilter}
             onChange={e => setCityFilter(e.target.value)}
-            className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 shadow-sm capitalize w-full sm:w-auto"
+            className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-sky-500 shadow-sm capitalize w-full sm:w-auto"
           >
             {cities.map(c => (
               <option key={c} value={c}>
@@ -215,7 +215,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
             <div
               key={st.id}
               className={`p-5 rounded-xl bg-[#121826] border transition-all flex flex-col justify-between gap-4 shadow-lg ${
-                isCurrent ? 'border-emerald-500/60 shadow-emerald-500/10' : 'border-slate-800 hover:border-slate-700'
+                isCurrent ? 'border-sky-500/60 shadow-blue-500/10' : 'border-slate-800 hover:border-slate-700'
               }`}
             >
               <div className="space-y-3">
@@ -225,7 +225,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="text-sm font-bold text-white tracking-tight">{st.name}</h3>
                       {isCurrent && (
-                        <span className="text-[9px] px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-400 font-extrabold border border-emerald-500/30">
+                        <span className="text-[9px] px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-400 font-extrabold border border-sky-500/30">
                           Active Branch
                         </span>
                       )}
@@ -284,7 +284,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
               {/* Bottom Card Controls */}
               <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 text-[11px]">
-                  <span className={`w-2 h-2 rounded-full ${st.isOnline ? 'bg-emerald-400' : 'bg-slate-500'}`} />
+                  <span className={`w-2 h-2 rounded-full ${st.isOnline ? 'bg-sky-400' : 'bg-slate-500'}`} />
                   <span className="text-slate-300 font-medium">{st.isOnline ? 'POS Online' : 'Offline'}</span>
                 </div>
 
@@ -298,7 +298,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                   {!isCurrent && (
                     <button
                       onClick={() => setActiveStore(st)}
-                      className="px-3 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 text-[11px] font-bold transition-all"
+                      className="px-3 py-1 rounded-lg bg-blue-600/20 hover:bg-blue-600 text-sky-300 hover:text-white border border-sky-500/30 text-[11px] font-bold transition-all"
                     >
                       Switch To
                     </button>
@@ -322,7 +322,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-emerald-400" />
+                  <Building2 className="w-5 h-5 text-sky-400" />
                   <span>Provision New Store Outlet</span>
                 </h3>
                 <button
@@ -342,7 +342,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     placeholder="e.g. Ellix Supermart - Bandra West"
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                   />
                 </div>
 
@@ -355,7 +355,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       placeholder="27AAAAA0000A1Z5"
                       value={formData.gstin}
                       onChange={e => setFormData(prev => ({ ...prev, gstin: e.target.value.toUpperCase() }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -366,7 +366,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       placeholder="e.g. Mumbai"
                       value={formData.city}
                       onChange={e => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -378,7 +378,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="text"
                       value={formData.ownerName}
                       onChange={e => setFormData(prev => ({ ...prev, ownerName: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -387,7 +387,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="text"
                       value={formData.phone}
                       onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -398,7 +398,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     type="text"
                     value={formData.address}
                     onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                   />
                 </div>
 
@@ -409,7 +409,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="text"
                       value={formData.timings}
                       onChange={e => setFormData(prev => ({ ...prev, timings: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -418,7 +418,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="email"
                       value={formData.email}
                       onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -433,7 +433,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Provision Branch
                   </button>
@@ -456,7 +456,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Edit className="w-5 h-5 text-emerald-400" />
+                  <Edit className="w-5 h-5 text-sky-400" />
                   <span>Edit Branch: {editingStore.name}</span>
                 </h3>
                 <button
@@ -475,7 +475,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     required
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                   />
                 </div>
 
@@ -487,7 +487,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       required
                       value={formData.gstin}
                       onChange={e => setFormData(prev => ({ ...prev, gstin: e.target.value.toUpperCase() }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white font-mono uppercase focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -497,7 +497,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       required
                       value={formData.city}
                       onChange={e => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -509,7 +509,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="text"
                       value={formData.ownerName}
                       onChange={e => setFormData(prev => ({ ...prev, ownerName: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                   <div>
@@ -518,7 +518,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                       type="text"
                       value={formData.phone}
                       onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     />
                   </div>
                 </div>
@@ -529,7 +529,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     type="text"
                     value={formData.address}
                     onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                   />
                 </div>
 
@@ -543,7 +543,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+                    className="px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-colors"
                   >
                     Save Changes
                   </button>
@@ -566,7 +566,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
             >
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-emerald-400" />
+                  <Building2 className="w-5 h-5 text-sky-400" />
                   <span>Branch Specs: {selectedStoreDetail.name}</span>
                 </h3>
                 <button

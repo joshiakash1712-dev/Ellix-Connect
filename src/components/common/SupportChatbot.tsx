@@ -212,7 +212,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
         const bulletText = line.substring(2);
         return (
           <div key={idx} className="flex items-start gap-1.5 ml-1 my-0.5 text-xs">
-            <span className="text-emerald-400 font-bold">•</span>
+            <span className="text-sky-400 font-bold">•</span>
             <span dangerouslySetInnerHTML={{ __html: renderInlineTokens(bulletText) }} />
           </div>
         );
@@ -238,10 +238,10 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
   const renderInlineTokens = (raw: string): string => {
     return raw
       .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
-      .replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono text-[11px]">$1</code>')
+      .replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-[11px]">$1</code>')
       .replace(
         /\[(.*?)\]\((.*?)\)/g,
-        '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-emerald-400 underline font-semibold hover:text-emerald-300">$1</a>'
+        '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-sky-400 underline font-semibold hover:text-sky-300">$1</a>'
       );
   };
 
@@ -259,9 +259,9 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.25 }}
-            className="hidden sm:flex mb-2.5 max-w-xs bg-slate-900/95 backdrop-blur-md border border-emerald-500/40 rounded-2xl p-3 shadow-2xl pointer-events-auto items-start gap-2.5 text-slate-200"
+            className="hidden sm:flex mb-2.5 max-w-xs bg-slate-900/95 backdrop-blur-md border border-sky-500/40 rounded-2xl p-3 shadow-2xl pointer-events-auto items-start gap-2.5 text-slate-200"
           >
-            <div className="w-7 h-7 rounded-xl bg-slate-900 border border-emerald-500/40 flex items-center justify-center shrink-0 p-0.5 shadow-sm">
+            <div className="w-7 h-7 rounded-xl bg-slate-900 border border-sky-500/40 flex items-center justify-center shrink-0 p-0.5 shadow-sm">
               <EllixConnectLogo variant="symbol" size={20} alt="Ellix Connect" />
             </div>
             <div className="flex-1 text-xs">
@@ -273,7 +273,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
                   setIsOpen(true);
                   setIsMinimized(false);
                 }}
-                className="mt-1.5 text-[11px] font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                className="mt-1.5 text-[11px] font-bold text-sky-400 hover:text-sky-300 flex items-center gap-1"
               >
                 <span>Ask a question &rarr;</span>
               </button>
@@ -313,15 +313,15 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
             <div className="p-3.5 sm:p-4 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-9 h-9 rounded-2xl bg-slate-900 border border-emerald-500/40 flex items-center justify-center p-1 shadow-md shadow-emerald-500/20">
+                  <div className="w-9 h-9 rounded-2xl bg-slate-900 border border-sky-500/40 flex items-center justify-center p-1 shadow-md shadow-blue-500/20">
                     <EllixConnectLogo variant="symbol" size={26} alt="Ellix Connect" />
                   </div>
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900 animate-pulse" />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-sky-400 border-2 border-slate-900 animate-pulse" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="font-bold text-white text-sm">Ellix Support</h3>
-                    <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-sky-500/20 text-sky-400 border border-sky-500/30">
                       24/7 AI
                     </span>
                   </div>
@@ -362,9 +362,9 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
             {!isMinimized && (
               <>
                 {/* Direct Human Hotline Strip */}
-                <div className="px-3.5 py-2 bg-emerald-950/40 border-b border-emerald-500/20 flex items-center justify-between text-[11px] text-emerald-300">
+                <div className="px-3.5 py-2 bg-blue-950/40 border-b border-sky-500/20 flex items-center justify-between text-[11px] text-sky-300">
                   <div className="flex items-center gap-1.5">
-                    <LifeBuoy className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <LifeBuoy className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                     <span>Hardware Helpline:</span>
                   </div>
                   <div className="flex items-center gap-2 font-semibold">
@@ -372,7 +372,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
                       href="https://wa.me/919876543210"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:underline flex items-center gap-0.5 text-emerald-300 hover:text-emerald-200"
+                      className="hover:underline flex items-center gap-0.5 text-sky-300 hover:text-sky-200"
                     >
                       <MessageCircle className="w-3 h-3" />
                       <span>WhatsApp</span>
@@ -380,7 +380,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
                     <span>•</span>
                     <a
                       href="tel:+919876543210"
-                      className="hover:underline flex items-center gap-0.5 text-emerald-300 hover:text-emerald-200"
+                      className="hover:underline flex items-center gap-0.5 text-sky-300 hover:text-sky-200"
                     >
                       <Phone className="w-3 h-3" />
                       <span>Call</span>
@@ -397,7 +397,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
                     >
                       <div className="flex items-start gap-2 max-w-[90%]">
                         {msg.role === 'assistant' && (
-                          <div className="w-6 h-6 rounded-lg bg-slate-800/90 border border-emerald-500/40 flex items-center justify-center shrink-0 mt-0.5 p-0.5 shadow-sm">
+                          <div className="w-6 h-6 rounded-lg bg-slate-800/90 border border-sky-500/40 flex items-center justify-center shrink-0 mt-0.5 p-0.5 shadow-sm">
                             <EllixConnectLogo variant="symbol" size={18} alt="Ellix Assistant" />
                           </div>
                         )}
@@ -405,7 +405,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
                         <div
                           className={`p-3 rounded-2xl relative group ${
                             msg.role === 'user'
-                              ? 'bg-emerald-600 text-white rounded-tr-xs shadow-md shadow-emerald-600/20'
+                              ? 'bg-blue-600 text-white rounded-tr-xs shadow-md shadow-blue-600/20'
                               : 'bg-slate-900 border border-slate-800/90 text-slate-300 rounded-tl-xs shadow-md'
                           }`}
                         >
@@ -426,8 +426,8 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
                               >
                                 {copiedMessageId === msg.id ? (
                                   <>
-                                    <Check className="w-3 h-3 text-emerald-400" />
-                                    <span className="text-emerald-400">Copied</span>
+                                    <Check className="w-3 h-3 text-sky-400" />
+                                    <span className="text-sky-400">Copied</span>
                                   </>
                                 ) : (
                                   <>
@@ -446,13 +446,13 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
                   {/* Loading Typing Indicator */}
                   {isLoading && (
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-slate-800/90 border border-emerald-500/40 flex items-center justify-center shrink-0 p-0.5 shadow-sm">
+                      <div className="w-6 h-6 rounded-lg bg-slate-800/90 border border-sky-500/40 flex items-center justify-center shrink-0 p-0.5 shadow-sm">
                         <EllixConnectLogo variant="symbol" size={18} className="animate-pulse" alt="Thinking" />
                       </div>
                       <div className="p-3 rounded-2xl rounded-tl-xs bg-slate-900 border border-slate-800 text-slate-400 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                        <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-bounce" style={{ animationDelay: '300ms' }} />
                         <span className="text-[11px] ml-1">Consulting knowledge base...</span>
                       </div>
                     </div>
@@ -468,7 +468,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
                       key={idx}
                       onClick={() => handleSendMessage(q)}
                       disabled={isLoading}
-                      className="px-2.5 py-1 rounded-xl bg-slate-800/80 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 border border-slate-700/60 text-[11px] font-medium whitespace-nowrap transition-all active:scale-95 disabled:opacity-50"
+                      className="px-2.5 py-1 rounded-xl bg-slate-800/80 hover:bg-blue-600/30 text-slate-300 hover:text-sky-300 border border-slate-700/60 text-[11px] font-medium whitespace-nowrap transition-all active:scale-95 disabled:opacity-50"
                     >
                       {q}
                     </button>
@@ -491,13 +491,13 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
                     onChange={e => setInputMessage(e.target.value)}
                     placeholder="Ask about POS, billing, thermal printer, GST..."
                     disabled={isLoading}
-                    className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                    className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-colors disabled:opacity-50"
                   />
                   <button
                     id="btn-send-support-message"
                     type="submit"
                     disabled={!inputMessage.trim() || isLoading}
-                    className="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white disabled:opacity-40 disabled:hover:bg-emerald-600 transition-all active:scale-95 flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/20"
+                    className="p-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-40 disabled:hover:bg-blue-600 transition-all active:scale-95 flex items-center justify-center shrink-0 shadow-md shadow-blue-600/20"
                     title="Send message"
                   >
                     <Send className="w-4 h-4" />
@@ -522,7 +522,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
         className={`pointer-events-auto h-12 sm:h-13 px-4 rounded-2xl flex items-center gap-2.5 shadow-2xl transition-colors duration-200 border shrink-0 whitespace-nowrap box-border ${
           isOpen
             ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border-slate-700'
-            : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border-emerald-400/40 shadow-emerald-900/40'
+            : 'bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white border-sky-400/40 shadow-blue-900/40'
         }`}
         title={isOpen ? 'Close Support' : 'Customer Support & Help'}
       >
@@ -533,7 +533,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
             <EllixConnectLogo variant="symbol" size={24} className="shrink-0 drop-shadow" alt="Ellix Connect" />
           )}
           {!isOpen && (
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-300 border-2 border-slate-950 animate-ping" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-sky-300 border-2 border-slate-950 animate-ping" />
           )}
         </div>
         <span className="font-bold text-xs sm:text-sm tracking-wide">

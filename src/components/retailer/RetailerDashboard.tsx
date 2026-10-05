@@ -32,7 +32,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { DashboardSkeleton } from '../common/skeletons/DashboardSkeleton';
 import { StockStatusBadge } from '../common/StockStatusBadge';
-import { EmeraldDataRipple } from './EmeraldDataRipple';
+import { SapphireDataRipple } from './SapphireDataRipple';
 import { ScrollChartReveal } from '../common/ScrollChartReveal';
 
 export interface RetailerDashboardProps {
@@ -48,7 +48,7 @@ export interface RetailerDashboardProps {
 // Crisp SVG Sparkline Component — Scroll-Triggered Left-to-Right Line Draw (Section 17)
 const Sparkline: React.FC<{ points: number[]; color?: string }> = ({
   points,
-  color = '#10b981'
+  color = '#2563EB'
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const isInView = useInView(svgRef, { once: true, amount: 0.3 });
@@ -322,9 +322,9 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
             initial={{ opacity: 0, y: -16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -16, scale: 0.96 }}
-            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-2xl shadow-emerald-600/40 flex items-center gap-2 border border-emerald-400/40"
+            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-2xl shadow-blue-600/40 flex items-center gap-2 border border-sky-400/40"
           >
-            <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+            <CheckCircle2 className="w-4 h-4 text-sky-200" />
             <span>{toastMessage}</span>
           </motion.div>
         )}
@@ -338,7 +338,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
         {/* Left Hero: Greeting, Live Status & Quick Action Buttons */}
         <div className="lg:col-span-8 p-5 sm:p-6 rounded-2xl glass-panel shadow-xl flex flex-col justify-between gap-5 relative overflow-hidden">
           {/* Subtle brand gradient backdrop BEHIND the glass hero */}
-          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-600/15 via-slate-900/60 to-teal-600/15 pointer-events-none" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-600/15 via-slate-900/60 to-sky-500/15 pointer-events-none" />
           <div className="space-y-3 z-10">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-2">
@@ -351,8 +351,8 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
 
             {/* Active Store Prominent Visibility Badge (FIX 3) */}
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-xs font-bold text-white shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sky-500/15 border border-sky-500/30 text-xs font-bold text-white shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse shrink-0" />
                 <span>{activeStore.name} · {activeStore.city || 'Nashik'}</span>
               </div>
               {lowStockProducts.length > 0 && (
@@ -369,7 +369,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
             <button
               id="btn-hero-new-bill"
               onClick={onNavigateToPOS || onNavigateToInventory}
-              className="min-h-[44px] px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-1.5 transition-all active:scale-95"
+              className="min-h-[44px] px-4 py-2.5 rounded-lg bg-sky-500 hover:bg-blue-400 text-slate-950 text-xs font-extrabold shadow-lg shadow-blue-500/20 flex items-center justify-center gap-1.5 transition-all active:scale-95"
             >
               <Plus className="w-4 h-4" />
               <span>+ New Bill (POS)</span>
@@ -398,22 +398,22 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
               onClick={onNavigateToReports || onNavigateToInventory}
               className="min-h-[44px] px-3.5 py-2.5 rounded-lg glass-panel glass-panel-interactive hover:bg-slate-800/80 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-sm"
             >
-              <BarChart3 className="w-4 h-4 text-emerald-400" />
+              <BarChart3 className="w-4 h-4 text-sky-400" />
               <span>View Reports</span>
             </button>
           </div>
 
           {/* Ambient Subtle Accent Glow */}
-          <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
         </div>
 
         {/* Right Hero: Store Date & Community Motivation Card */}
         <div className="lg:col-span-4 p-5 sm:p-6 rounded-2xl glass-panel shadow-xl flex flex-col justify-between relative overflow-hidden">
           {/* Subtle brand gradient backdrop BEHIND the glass card */}
-          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-600/10 via-transparent to-teal-600/10 pointer-events-none" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-600/10 via-transparent to-sky-500/10 pointer-events-none" />
           <div className="relative z-10 space-y-2">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-              <Calendar className="w-4 h-4 text-emerald-400" />
+              <Calendar className="w-4 h-4 text-sky-400" />
               <span>{todayDateString}</span>
             </div>
             <div className="text-sm font-semibold text-slate-400">
@@ -439,19 +439,19 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
         
         {/* Primary KPI 1: Today's Sales */}
         <div className="p-4 rounded-xl glass-panel glass-panel-interactive shadow-lg transition-all flex flex-col justify-between min-w-0 group relative overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none -z-10" />
+          <div className="absolute -top-10 -right-10 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none -z-10" />
           <div className="flex items-center justify-between gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-sm shrink-0">
               ₹
             </div>
-            <Sparkline points={[20, 24, 22, 35, 30, 42, 50]} color="#10b981" />
+            <Sparkline points={[20, 24, 22, 35, 30, 42, 50]} color="#2563EB" />
           </div>
           <div className="mt-3">
             <div className="text-[11px] font-semibold text-slate-300">Today's Sales</div>
             <div className="text-2xl font-black text-white tracking-tight mt-0.5">
               ₹{todaySales.toLocaleString()}
             </div>
-            <div className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400 mt-1">
+            <div className="flex items-center gap-1 text-[11px] font-semibold text-sky-400 mt-1">
               <ArrowUpRight className="w-3 h-3" />
               <span>18.4% vs yesterday</span>
             </div>
@@ -475,7 +475,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
             <div className="text-2xl font-black text-white tracking-tight mt-0.5">
               {billCount}
             </div>
-            <div className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400 mt-1">
+            <div className="flex items-center gap-1 text-[11px] font-semibold text-sky-400 mt-1">
               <ArrowUpRight className="w-3 h-3" />
               <span>+1 vs yesterday</span>
             </div>
@@ -510,19 +510,19 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
 
         {/* Primary KPI 4: Estimated Profit */}
         <div className="p-4 rounded-xl glass-panel glass-panel-interactive shadow-lg transition-all flex flex-col justify-between min-w-0 group relative overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none -z-10" />
+          <div className="absolute -top-10 -right-10 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none -z-10" />
           <div className="flex items-center justify-between gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0">
               <TrendingUp className="w-4 h-4" />
             </div>
-            <Sparkline points={[12, 15, 14, 20, 18, 25, 32]} color="#10b981" />
+            <Sparkline points={[12, 15, 14, 20, 18, 25, 32]} color="#2563EB" />
           </div>
           <div className="mt-3">
             <div className="text-[11px] font-semibold text-slate-300">Estimated Profit</div>
             <div className="text-2xl font-black text-white tracking-tight mt-0.5">
               ₹{estimatedProfit.toLocaleString()}
             </div>
-            <div className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400 mt-1">
+            <div className="flex items-center gap-1 text-[11px] font-semibold text-sky-400 mt-1">
               <ArrowUpRight className="w-3 h-3" />
               <span>22.0% margin</span>
             </div>
@@ -552,7 +552,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
         <div className="p-3 rounded-xl bg-[#121826] border border-slate-800 flex items-center justify-between gap-2">
           <div>
             <div className="text-[10px] uppercase font-bold text-slate-400">Out of Stock</div>
-            <div className={`text-sm font-black mt-0.5 ${outOfStockProducts.length > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+            <div className={`text-sm font-black mt-0.5 ${outOfStockProducts.length > 0 ? 'text-rose-400' : 'text-sky-400'}`}>
               {outOfStockProducts.length} Items
             </div>
             <div className="text-[10px] text-slate-500">{outOfStockProducts.length > 0 ? 'Urgent restock' : 'All stocked'}</div>
@@ -567,17 +567,17 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
             <div className="text-sm font-black text-white mt-0.5">₹{khataReceivables.toLocaleString()}</div>
             <div className="text-[10px] text-slate-500">{khataAccountsCount} store credit accts</div>
           </div>
-          <FileText className="w-4 h-4 text-teal-400 shrink-0" />
+          <FileText className="w-4 h-4 text-sky-400 shrink-0" />
         </div>
 
         {/* Op 4: Crew on Duty */}
         <div className="p-3 rounded-xl bg-[#121826] border border-slate-800 flex items-center justify-between gap-2">
           <div>
             <div className="text-[10px] uppercase font-bold text-slate-400">Crew on Duty</div>
-            <div className="text-sm font-black text-emerald-400 mt-0.5">{activeCrewCount} Crew</div>
+            <div className="text-sm font-black text-sky-400 mt-0.5">{activeCrewCount} Crew</div>
             <div className="text-[10px] text-slate-500">Active shift in store</div>
           </div>
-          <Users className="w-4 h-4 text-emerald-400 shrink-0" />
+          <Users className="w-4 h-4 text-sky-400 shrink-0" />
         </div>
 
         {/* Op 5: Inventory & Wholesale Value */}
@@ -592,9 +592,9 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* SECTION 2C: EMERALD DATA RIPPLE (PRODUCT -> BILL -> STOCK PIPELINE)       */}
+      {/* SECTION 2C: sapphire data ripple (PRODUCT -> BILL -> STOCK PIPELINE)       */}
       {/* ========================================================================= */}
-      <EmeraldDataRipple
+      <SapphireDataRipple
         totalSkus={products.length}
         billCount={billCount}
         todaySales={todaySales}
@@ -657,7 +657,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
           <div className="space-y-2.5">
             {lowStockProducts.length === 0 ? (
               <div className="py-8 text-center bg-[#0A0E1A]/80 rounded-xl border border-slate-800">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
+                <CheckCircle2 className="w-8 h-8 text-sky-400 mx-auto mb-2" />
                 <div className="text-sm font-bold text-white">All products are healthy</div>
                 <div className="text-xs text-slate-400 mt-0.5">
                   No stock dropped below minimum replenishment threshold.
@@ -714,7 +714,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
                       <button
                         id={`btn-restock-${p.id}`}
                         onClick={() => handleRestockSingle(p.id, p.name, deficit)}
-                        className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all active:scale-95 shadow-sm"
+                        className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all active:scale-95 shadow-sm"
                       >
                         Restock
                       </button>
@@ -729,7 +729,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
           <div className="pt-2 text-right">
             <button
               onClick={onNavigateToInventory}
-              className="text-xs font-bold text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1 ml-auto"
+              className="text-xs font-bold text-sky-400 hover:text-sky-300 hover:underline flex items-center gap-1 ml-auto"
             >
               <span>View All Inventory</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -742,15 +742,15 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
           <div className="space-y-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-emerald-400" />
+                <BarChart3 className="w-4 h-4 text-sky-400" />
                 <h2 className="text-sm sm:text-base font-black text-white tracking-tight">
                   Today's Sales Overview
                 </h2>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[10px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-lg border border-sky-500/20 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
                   Live
                 </span>
                 <span className="text-[10px] font-bold text-slate-300 bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700">
@@ -789,7 +789,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
                   }}
                   formatter={(val: number) => [`₹${val.toLocaleString()}`, 'Sales']}
                 />
-                <Bar dataKey="sales" fill="#10b981" radius={[4, 4, 0, 0]} isAnimationActive={false} />
+                <Bar dataKey="sales" fill="#2563EB" radius={[4, 4, 0, 0]} isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
           </ScrollChartReveal>
@@ -827,12 +827,12 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-emerald-400" />
+                <FileText className="w-4 h-4 text-sky-400" />
                 <h3 className="text-sm font-bold text-white">Recent Invoices</h3>
               </div>
               <button
                 onClick={onNavigateToReports || onNavigateToInventory}
-                className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-0.5"
+                className="text-[11px] font-bold text-sky-400 hover:text-sky-300 hover:underline flex items-center gap-0.5"
               >
                 <span>View All</span>
                 <ChevronRight className="w-3 h-3" />
@@ -870,7 +870,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
                           ₹{inv.grandTotal.toLocaleString()}
                         </td>
                         <td className="py-2.5 text-right">
-                          <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-500/30">
                             <CheckCircle2 className="w-2.5 h-2.5 shrink-0" />
                             <span>Paid</span>
                           </span>
@@ -891,7 +891,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
                             <button
                               type="button"
                               onClick={onNavigateToPOS}
-                              className="mt-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all"
+                              className="mt-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all"
                             >
                               Open POS
                             </button>
@@ -911,7 +911,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-emerald-400" />
+                <Activity className="w-4 h-4 text-sky-400" />
                 <h3 className="text-sm font-bold text-white">Business Pulse</h3>
               </div>
               <span className="text-[10px] text-slate-400 font-semibold">Real-time</span>
@@ -920,35 +920,35 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
             <div className="space-y-2.5">
               <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[#0A0E1A]/80 border border-slate-800">
                 <span className="text-slate-300 font-medium">Sales Growth</span>
-                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                <span className="text-sky-400 font-bold flex items-center gap-1">
                   +18.4% <ArrowUpRight className="w-3.5 h-3.5" />
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[#0A0E1A]/80 border border-slate-800">
                 <span className="text-slate-300 font-medium">Bill Count</span>
-                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                <span className="text-sky-400 font-bold flex items-center gap-1">
                   {billCount} generated <ArrowUpRight className="w-3.5 h-3.5" />
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[#0A0E1A]/80 border border-slate-800">
                 <span className="text-slate-300 font-medium">Average Bill Value</span>
-                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                <span className="text-sky-400 font-bold flex items-center gap-1">
                   ₹{avgBillValue} <ArrowUpRight className="w-3.5 h-3.5" />
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[#0A0E1A]/80 border border-slate-800">
                 <span className="text-slate-300 font-medium">Gross Margin</span>
-                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                <span className="text-sky-400 font-bold flex items-center gap-1">
                   22.0% <ArrowUpRight className="w-3.5 h-3.5" />
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[#0A0E1A]/80 border border-slate-800">
                 <span className="text-slate-300 font-medium">Items Sold</span>
-                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                <span className="text-sky-400 font-bold flex items-center gap-1">
                   {totalItemsSold} units <ArrowUpRight className="w-3.5 h-3.5" />
                 </span>
               </div>
@@ -961,10 +961,10 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <Wifi className="w-4 h-4 text-emerald-400" />
+                <Wifi className="w-4 h-4 text-sky-400" />
                 <h3 className="text-sm font-bold text-white">System Status</h3>
               </div>
-              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+              <span className="text-[10px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-lg border border-sky-500/20">
                 All Operational
               </span>
             </div>
@@ -972,24 +972,24 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
             <div className="space-y-2.5">
               <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[#0A0E1A]/80 border border-slate-800">
                 <span className="text-slate-300 font-medium">POS Engine</span>
-                <span className="text-emerald-400 font-semibold flex items-center gap-1.5 text-[11px]">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span className="text-sky-400 font-semibold flex items-center gap-1.5 text-[11px]">
+                  <span className="w-2 h-2 rounded-full bg-sky-400" />
                   Active & Ready
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[#0A0E1A]/80 border border-slate-800">
                 <span className="text-slate-300 font-medium">Wholesale Network</span>
-                <span className="text-emerald-400 font-semibold flex items-center gap-1.5 text-[11px] tabular-nums">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span className="text-sky-400 font-semibold flex items-center gap-1.5 text-[11px] tabular-nums">
+                  <span className="w-2 h-2 rounded-full bg-sky-400" />
                   Connected ({activeRestocks.length} Active)
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-[#0A0E1A]/80 border border-slate-800">
                 <span className="text-slate-300 font-medium">GST & Tax Engine</span>
-                <span className="text-emerald-400 font-semibold flex items-center gap-1.5 text-[11px]">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span className="text-sky-400 font-semibold flex items-center gap-1.5 text-[11px]">
+                  <span className="w-2 h-2 rounded-full bg-sky-400" />
                   Up to date
                 </span>
               </div>
@@ -1014,7 +1014,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
               </div>
               <button
                 onClick={onNavigateToWholesale || onNavigateToRestock}
-                className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-0.5"
+                className="text-[11px] font-bold text-sky-400 hover:text-sky-300 hover:underline flex items-center gap-0.5"
               >
                 <span>View All</span>
                 <ChevronRight className="w-3 h-3" />
@@ -1046,11 +1046,11 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
                     <div className="text-xs font-bold text-slate-200 truncate">
                       Wholesale orders up to date
                     </div>
-                    <div className="text-[10px] text-emerald-400 font-medium mt-0.5">
+                    <div className="text-[10px] text-sky-400 font-medium mt-0.5">
                       No pending restock confirmations
                     </div>
                   </div>
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0">
                     <Check className="w-3.5 h-3.5" />
                   </div>
                 </div>
@@ -1080,11 +1080,11 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
                     <div className="text-xs font-bold text-slate-200 truncate">
                       Stock levels healthy
                     </div>
-                    <div className="text-[10px] text-emerald-400 font-medium mt-0.5">
+                    <div className="text-[10px] text-sky-400 font-medium mt-0.5">
                       All catalog items above threshold
                     </div>
                   </div>
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0">
                     <Check className="w-3.5 h-3.5" />
                   </div>
                 </div>
@@ -1096,13 +1096,13 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
                   <div className="text-xs font-bold text-slate-200 truncate">
                     GSTR-1 Sales Register Ready
                   </div>
-                  <div className="text-[10px] text-emerald-400 font-medium mt-0.5">
+                  <div className="text-[10px] text-sky-400 font-medium mt-0.5">
                     {validInvoices.length} invoices accounted with GST breakdown
                   </div>
                 </div>
                 <button
                   onClick={onNavigateToReports || onNavigateToInventory}
-                  className="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold shrink-0 transition-all"
+                  className="px-2.5 py-1 rounded-lg bg-sky-500/10 hover:bg-blue-500/20 text-sky-300 border border-sky-500/30 text-[11px] font-bold shrink-0 transition-all"
                 >
                   Reports
                 </button>
@@ -1116,12 +1116,12 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <Boxes className="w-4 h-4 text-emerald-400" />
+                <Boxes className="w-4 h-4 text-sky-400" />
                 <h3 className="text-sm font-bold text-white">Inventory Health</h3>
               </div>
               <button
                 onClick={onNavigateToInventory}
-                className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-0.5"
+                className="text-[11px] font-bold text-sky-400 hover:text-sky-300 hover:underline flex items-center gap-0.5"
               >
                 <span>View Inventory</span>
                 <ChevronRight className="w-3 h-3" />
@@ -1140,7 +1140,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
                     cy="50"
                     r="38"
                     fill="none"
-                    stroke="#10b981"
+                    stroke="#2563EB"
                     strokeWidth="10"
                     initial={{ strokeDasharray: `0 ${circumference}` }}
                     whileInView={{ strokeDasharray: `${healthyDash} ${circumference}` }}
@@ -1177,7 +1177,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
             {/* Health Legend Breakdown */}
             <div className="grid grid-cols-2 gap-2 pt-1 text-[11px]">
               <div className="flex items-center gap-2 p-1.5 rounded-lg bg-[#0A0E1A]/80 border border-slate-800">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0" />
+                <span className="w-2.5 h-2.5 rounded-full bg-sky-400 shrink-0" />
                 <span className="text-slate-300 font-semibold">{healthyProducts.length} Healthy</span>
               </div>
               <div className="flex items-center gap-2 p-1.5 rounded-lg bg-[#0A0E1A]/80 border border-slate-800">
@@ -1206,7 +1206,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
               </div>
               <button
                 onClick={onNavigateToInventory}
-                className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-0.5"
+                className="text-[11px] font-bold text-sky-400 hover:text-sky-300 hover:underline flex items-center gap-0.5"
               >
                 <span>View All</span>
                 <ChevronRight className="w-3 h-3" />
@@ -1223,7 +1223,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
                     <div className="text-[10px] text-slate-400">{item.quantity} units sold</div>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="text-xs font-black text-emerald-400">₹{item.revenue.toLocaleString()}</div>
+                    <div className="text-xs font-black text-sky-400">₹{item.revenue.toLocaleString()}</div>
                     <div className="text-[9px] text-slate-500">{item.category}</div>
                   </div>
                 </div>

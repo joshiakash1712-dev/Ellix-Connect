@@ -482,7 +482,7 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp,
 
   if (activeLegalPageSlug) {
     return (
-      <div className="website-root min-h-screen bg-[#fafafa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-white antialiased overflow-x-hidden w-full max-w-full">
+      <div className="website-root min-h-screen bg-[#fafafa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-500 selection:text-white antialiased overflow-x-hidden w-full max-w-full">
         <WebsiteCursor />
         <Suspense fallback={<div className="min-h-screen" />}>
           <LegalComplianceHub
@@ -538,13 +538,13 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp,
   return (
     <div
       ref={rootRef}
-      className="website-root min-h-screen bg-[#fafafa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-white antialiased overflow-x-hidden w-full max-w-full transition-colors duration-200"
+      className="website-root min-h-screen bg-[#fafafa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-500 selection:text-white antialiased overflow-x-hidden w-full max-w-full transition-colors duration-200"
     >
       {/* Top ScrollTrigger Progress Indicator */}
       <div
         ref={progressBarRef}
         aria-hidden="true"
-        className="fixed top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 origin-left scale-x-0 z-[60] pointer-events-none shadow-[0_0_12px_rgba(16,185,129,0.65)]"
+        className="fixed top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-blue-500 via-sky-400 to-sky-200 origin-left scale-x-0 z-[60] pointer-events-none shadow-[0_0_12px_rgba(37, 99, 235,0.65)]"
       />
 
       {/* Website-Only Smooth Interactive Cursor */}

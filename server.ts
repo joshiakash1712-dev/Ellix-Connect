@@ -59,46 +59,125 @@ try {
   console.warn('Firebase Admin SDK initialization notice:', e?.message || e);
 }
 
+// Canonical Role Policy & Fail-Closed Normalization
+export type CanonicalRole =
+  | 'super_admin'
+  | 'ellix_admin'
+  | 'client'
+  | 'crew'
+  | 'wholesaler_admin'
+  | 'unauthorized';
+
+export function normalizeCanonicalRole(rawRole: unknown): CanonicalRole {
+  if (typeof rawRole !== 'string') return 'unauthorized';
+  const normalized = rawRole.trim().toLowerCase();
+  switch (normalized) {
+    case 'super_admin':
+      return 'super_admin';
+    case 'ellix_admin':
+    case 'admin':
+    case 'platform_admin':
+      return 'ellix_admin';
+    case 'client':
+    case 'owner':
+    case 'retailer':
+      return 'client';
+    case 'crew':
+    case 'employee':
+    case 'cashier':
+    case 'staff':
+      return 'crew';
+    case 'wholesaler_admin':
+    case 'wholesaler':
+      return 'wholesaler_admin';
+    default:
+      return 'unauthorized';
+  }
+}
+
+export function isUserRecordInactive(data: Record<string, any> | undefined | null): boolean {
+  if (!data) return false;
+  if (data.disabled === true || data.active === false || data.isActive === false) {
+    return true;
+  }
+  if (typeof data.status === 'string') {
+    const st = data.status.trim().toLowerCase();
+    if (['inactive', 'suspended', 'revoked', 'disabled', 'deactivated', 'deleted'].includes(st)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // Authentication & Identity Verification Helper
+function isWellFormedJwt(token: string): boolean {
+  if (!token || token === 'undefined' || token === 'null') return false;
+  const parts = token.split('.');
+  if (parts.length !== 3) return false;
+  return parts.every(part => part.length >= 10 && /^[A-Za-z0-9\-_]+$/.test(part));
+}
+
 async function getAuthenticatedCaller(req: express.Request) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null;
   }
-  const idToken = authHeader.split('Bearer ')[1]?.trim();
-  if (!idToken) return null;
+  const idToken = authHeader.slice(7).trim();
+  if (!isWellFormedJwt(idToken)) {
+    return null;
+  }
 
   try {
     if (adminAuth) {
       const decodedToken = await adminAuth.verifyIdToken(idToken);
-      let userRole = decodedToken.role || 'client';
-      let clientId = decodedToken.clientId || decodedToken.client_id;
-
-      if (decodedToken.email === 'joshiakash1712@gmail.com') {
-        userRole = 'super_admin';
-      }
+      let rawRole: unknown = decodedToken.role;
+      let clientId: string | undefined = decodedToken.clientId || decodedToken.client_id;
+      let assignedStoreIds: string[] = Array.isArray(decodedToken.assignedStoreIds) ? decodedToken.assignedStoreIds : [];
+      let isInactive = false;
 
       if (adminDb) {
         try {
           const userDoc = await adminDb.collection('users').doc(decodedToken.uid).get();
           if (userDoc.exists) {
             const data = userDoc.data() || {};
-            userRole = data.role || userRole;
+            if (isUserRecordInactive(data)) {
+              isInactive = true;
+            }
+            if (data.role !== undefined) {
+              rawRole = data.role;
+            }
             clientId = data.clientId || data.client_id || clientId;
+            if (Array.isArray(data.assignedStoreIds)) {
+              assignedStoreIds = data.assignedStoreIds;
+            }
           }
         } catch {
-          // ignore lookup error and use decoded token
+          // ignore lookup error and use decoded token claims
         }
       }
+
+      const isVerifiedRootAdmin =
+        decodedToken.email === 'joshiakash1712@gmail.com' &&
+        decodedToken.email_verified === true;
+
+      const canonicalRole: CanonicalRole = isVerifiedRootAdmin
+        ? 'super_admin'
+        : normalizeCanonicalRole(rawRole);
+
       return {
         uid: decodedToken.uid,
         email: decodedToken.email,
-        role: userRole,
-        clientId
+        emailVerified: decodedToken.email_verified === true,
+        role: canonicalRole,
+        rawRole: typeof rawRole === 'string' ? rawRole : undefined,
+        clientId,
+        assignedStoreIds,
+        isInactive
       };
     }
-  } catch (err: any) {
-    console.warn('Token verification error:', err?.message || err);
+  } catch {
+    // Invalid or expired Firebase ID token — reject caller cleanly
+    return null;
   }
   return null;
 }
@@ -434,9 +513,12 @@ app.post('/api/subscription/create-checkout', async (req, res) => {
     if (!caller) {
       return res.status(401).json({ error: 'Unauthorized: Valid Firebase authentication token required' });
     }
+    if (caller.isInactive) {
+      return res.status(403).json({ error: 'Forbidden: User account is deactivated, suspended, or revoked' });
+    }
 
-    if (caller.role === 'crew' || caller.role === 'employee' || caller.role === 'cashier') {
-      return res.status(403).json({ error: 'Forbidden: Crew members are not authorized to initiate subscription checkout' });
+    if (caller.role === 'crew' || caller.role === 'unauthorized') {
+      return res.status(403).json({ error: 'Forbidden: Crew members or unauthorized roles cannot initiate subscription checkout' });
     }
 
     const { clientId: reqClientId, storeId, planId = 'growth', billingCycle = 'monthly' } = req.body || {};
@@ -444,7 +526,7 @@ app.post('/api/subscription/create-checkout', async (req, res) => {
     let targetClientId: string | undefined;
     if (caller.role === 'super_admin' || caller.role === 'ellix_admin') {
       targetClientId = reqClientId || caller.clientId;
-    } else if (caller.role === 'client' || caller.role === 'retailer') {
+    } else if (caller.role === 'client') {
       if (reqClientId && caller.clientId && reqClientId !== caller.clientId) {
         return res.status(403).json({
           error: 'Forbidden: Cross-tenant subscription checkout rejected',
@@ -619,9 +701,12 @@ app.post('/api/subscription/verify-payment', async (req, res) => {
     if (!caller) {
       return res.status(401).json({ error: 'Unauthorized: Valid Firebase authentication token required' });
     }
+    if (caller.isInactive) {
+      return res.status(403).json({ error: 'Forbidden: User account is deactivated, suspended, or revoked' });
+    }
 
-    if (caller.role === 'crew' || caller.role === 'employee' || caller.role === 'cashier') {
-      return res.status(403).json({ error: 'Forbidden: Crew members are not authorized to verify subscription payments' });
+    if (caller.role === 'crew' || caller.role === 'unauthorized') {
+      return res.status(403).json({ error: 'Forbidden: Crew members or unauthorized roles cannot verify subscription payments' });
     }
 
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, clientId: reqClientId } = req.body || {};
@@ -629,7 +714,7 @@ app.post('/api/subscription/verify-payment', async (req, res) => {
     let targetClientId: string | undefined;
     if (caller.role === 'super_admin' || caller.role === 'ellix_admin') {
       targetClientId = reqClientId || caller.clientId;
-    } else if (caller.role === 'client' || caller.role === 'retailer') {
+    } else if (caller.role === 'client') {
       if (reqClientId && caller.clientId && reqClientId !== caller.clientId) {
         return res.status(403).json({
           error: 'Forbidden: Cross-tenant payment verification rejected',
@@ -711,11 +796,14 @@ app.post('/api/subscription/verify-payment', async (req, res) => {
 // 2. SECURE CLOUD TENANT DELETION & PURGE
 // ==========================================
 
-app.post('/api/admin/tenant/purge', async (req, res) => {
+async function handleTenantPurge(req: express.Request, res: express.Response) {
   try {
     const caller = await getAuthenticatedCaller(req);
     if (!caller) {
       return res.status(401).json({ error: 'Unauthorized: Valid Firebase authentication token required' });
+    }
+    if (caller.isInactive) {
+      return res.status(403).json({ error: 'Forbidden: User account is deactivated, suspended, or revoked' });
     }
 
     const { clientId: reqClientId } = req.body || {};
@@ -724,7 +812,7 @@ app.post('/api/admin/tenant/purge', async (req, res) => {
 
     if (caller.role === 'super_admin' || caller.role === 'ellix_admin') {
       targetClientId = reqClientId || caller.clientId;
-    } else if (caller.role === 'client' || caller.role === 'retailer') {
+    } else if (caller.role === 'client') {
       // Strict Tenant Boundary Check:
       // A Client can ONLY purge their own trusted caller.clientId and can never supply another clientId!
       if (reqClientId && caller.clientId && caller.clientId !== reqClientId) {
@@ -741,7 +829,7 @@ app.post('/api/admin/tenant/purge', async (req, res) => {
         });
       }
     } else {
-      // Crew, employees, cashiers, or other roles cannot purge tenants
+      // Crew, employees, cashiers, wholesalers, or unauthorized roles cannot purge tenants
       return res.status(403).json({
         error: 'Forbidden: Insufficient role authority to purge tenant data'
       });
@@ -816,6 +904,68 @@ app.post('/api/admin/tenant/purge', async (req, res) => {
     console.error('Tenant purge error:', error);
     return res.status(500).json({ error: 'Failed to securely purge tenant data', details: error?.message });
   }
+}
+
+app.post('/api/admin/tenant/purge', handleTenantPurge);
+app.post('/api/subscription/cancel-and-purge', handleTenantPurge);
+
+// ==========================================
+// 3. ADMIN SUBSCRIPTION STATUS OVERRIDE
+// ==========================================
+
+app.post('/api/admin/subscription/status', async (req, res) => {
+  try {
+    const caller = await getAuthenticatedCaller(req);
+    if (!caller) {
+      return res.status(401).json({ error: 'Unauthorized: Valid Firebase authentication token required' });
+    }
+    if (caller.isInactive) {
+      return res.status(403).json({ error: 'Forbidden: User account is deactivated, suspended, or revoked' });
+    }
+
+    const isPlatformAdmin = caller.role === 'super_admin' || caller.role === 'ellix_admin';
+    if (!isPlatformAdmin) {
+      return res.status(403).json({ error: 'Forbidden: Ellix Admin or Super Admin authority required to modify client subscriptions' });
+    }
+
+    const { clientId, status, renewalDate, gracePeriodEndsAt } = req.body || {};
+    if (!clientId || !status) {
+      return res.status(400).json({ error: 'clientId and status are required' });
+    }
+
+    const validStatuses = ['active', 'trial', 'grace_period', 'expired', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid subscription status value' });
+    }
+
+    if (!adminDb) {
+      return res.status(500).json({ error: 'Database service unavailable' });
+    }
+
+    const updatePayload: Record<string, any> = {
+      status,
+      updatedAt: new Date().toISOString(),
+      updatedBy: caller.email || caller.uid
+    };
+    if (renewalDate !== undefined) updatePayload.renewalDate = renewalDate;
+    if (gracePeriodEndsAt !== undefined) updatePayload.gracePeriodEndsAt = gracePeriodEndsAt;
+
+    await adminDb.collection('clients').doc(clientId).collection('subscription').doc('current').set(updatePayload, { merge: true });
+    await adminDb.collection('clients').doc(clientId).set({
+      subscriptionStatus: status,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+
+    return res.status(200).json({
+      status: 'ok',
+      message: `Subscription status for client ${clientId} updated to ${status}`,
+      clientId,
+      subscriptionStatus: status
+    });
+  } catch (err: any) {
+    console.error('Admin subscription status update error:', err);
+    return res.status(500).json({ error: 'Failed to update subscription status', details: err?.message });
+  }
 });
 
 // ==========================================
@@ -826,7 +976,14 @@ app.post('/api/admin/tenant/purge', async (req, res) => {
 app.get('/api/admin/team', async (req, res) => {
   try {
     const caller = await getAuthenticatedCaller(req);
-    const isSuper = caller?.role === 'super_admin' || caller?.email === 'joshiakash1712@gmail.com';
+    if (!caller) {
+      return res.status(401).json({ error: 'Unauthorized: Valid Firebase authentication token required' });
+    }
+    if (caller.isInactive) {
+      return res.status(403).json({ error: 'Forbidden: User account is deactivated, suspended, or revoked' });
+    }
+
+    const isSuper = caller.role === 'super_admin' || (caller.email === 'joshiakash1712@gmail.com' && caller.emailVerified);
 
     if (!isSuper) {
       return res.status(403).json({ error: 'Forbidden: Super Admin authority required' });
@@ -837,7 +994,7 @@ app.get('/api/admin/team', async (req, res) => {
     }
 
     const usersSnap = await adminDb.collection('users')
-      .where('role', 'in', ['ellix_admin', 'super_admin'])
+      .where('role', 'in', ['ellix_admin', 'super_admin', 'admin', 'platform_admin'])
       .get();
 
     const team = usersSnap.docs.map(doc => {
@@ -846,7 +1003,7 @@ app.get('/api/admin/team', async (req, res) => {
         uid: doc.id,
         name: data.displayName || data.name || 'Admin Member',
         email: data.email || '',
-        role: data.role || 'ellix_admin',
+        role: normalizeCanonicalRole(data.role) === 'super_admin' ? 'super_admin' : 'ellix_admin',
         status: data.status || 'active',
         department: data.department || 'Operations',
         createdAt: data.createdAt || new Date().toISOString()
@@ -864,7 +1021,14 @@ app.get('/api/admin/team', async (req, res) => {
 app.post('/api/admin/team/create', async (req, res) => {
   try {
     const caller = await getAuthenticatedCaller(req);
-    const isSuper = caller?.role === 'super_admin' || caller?.email === 'joshiakash1712@gmail.com';
+    if (!caller) {
+      return res.status(401).json({ error: 'Unauthorized: Valid Firebase authentication token required' });
+    }
+    if (caller.isInactive) {
+      return res.status(403).json({ error: 'Forbidden: User account is deactivated, suspended, or revoked' });
+    }
+
+    const isSuper = caller.role === 'super_admin' || (caller.email === 'joshiakash1712@gmail.com' && caller.emailVerified);
 
     if (!isSuper) {
       return res.status(403).json({ error: 'Forbidden: Super Admin authority required to invite Ellix Admins' });
@@ -906,7 +1070,7 @@ app.post('/api/admin/team/create', async (req, res) => {
       status: 'active',
       department: department || 'Operations',
       createdAt: new Date().toISOString(),
-      invitedBy: caller?.email || 'joshiakash1712@gmail.com'
+      invitedBy: caller.email || 'joshiakash1712@gmail.com'
     }, { merge: true });
 
     return res.status(200).json({
@@ -924,7 +1088,14 @@ app.post('/api/admin/team/create', async (req, res) => {
 app.post('/api/admin/team/revoke', async (req, res) => {
   try {
     const caller = await getAuthenticatedCaller(req);
-    const isSuper = caller?.role === 'super_admin' || caller?.email === 'joshiakash1712@gmail.com';
+    if (!caller) {
+      return res.status(401).json({ error: 'Unauthorized: Valid Firebase authentication token required' });
+    }
+    if (caller.isInactive) {
+      return res.status(403).json({ error: 'Forbidden: User account is deactivated, suspended, or revoked' });
+    }
+
+    const isSuper = caller.role === 'super_admin' || (caller.email === 'joshiakash1712@gmail.com' && caller.emailVerified);
 
     if (!isSuper) {
       return res.status(403).json({ error: 'Forbidden: Super Admin authority required to revoke admins' });
@@ -951,7 +1122,7 @@ app.post('/api/admin/team/revoke', async (req, res) => {
       role: 'client',
       status: 'revoked',
       revokedAt: new Date().toISOString(),
-      revokedBy: caller?.email || 'joshiakash1712@gmail.com'
+      revokedBy: caller.email || 'joshiakash1712@gmail.com'
     }, { merge: true });
 
     return res.status(200).json({
@@ -1067,7 +1238,11 @@ async function startServer() {
   process.on('SIGINT', () => handleShutdown('SIGINT'));
 }
 
-startServer().catch((err) => {
-  console.error('Fatal server initialization error:', err);
-  process.exit(1);
-});
+export { app };
+
+if (process.env.VITEST !== 'true') {
+  startServer().catch((err) => {
+    console.error('Fatal server initialization error:', err);
+    process.exit(1);
+  });
+}

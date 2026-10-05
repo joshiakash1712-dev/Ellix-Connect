@@ -20,21 +20,21 @@ const SHORTCUTS: ShortcutItem[] = [
     action: 'Start New Sale',
     description: 'Clears current cart, resets form, and places focus into the product search bar.',
     category: 'Billing & Checkout',
-    badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+    badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/40'
   },
   {
     key: 'F8',
     action: 'Complete Sale & Checkout',
     description: 'Finalizes the transaction, records invoice to store database, and opens the bill.',
     category: 'Billing & Checkout',
-    badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/40'
+    badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/40'
   },
   {
     key: 'F4',
     action: 'Select Cash Payment',
     description: 'Instantly sets the transaction payment method to Cash for quick customer checkout.',
     category: 'Billing & Checkout',
-    badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+    badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/40'
   },
   {
     key: 'F9',
@@ -106,13 +106,13 @@ export const POSShortcutsModal: React.FC<POSShortcutsModalProps> = ({ isOpen, on
         {/* Modal Header */}
         <div className="p-5 border-b border-slate-800 bg-[#121826] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 shadow-sm">
               <Keyboard className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-white">POS Keyboard Shortcuts</h3>
-                <span className="px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                <span className="px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30 text-[10px] font-black uppercase tracking-wider">
                   Speed Checkout
                 </span>
               </div>
@@ -136,12 +136,12 @@ export const POSShortcutsModal: React.FC<POSShortcutsModalProps> = ({ isOpen, on
         {/* Modal Body */}
         <div className="p-5 overflow-y-auto space-y-6">
           {/* Pro Cashier Tip Banner */}
-          <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/50 via-teal-950/30 to-[#121826] border border-emerald-500/30 flex items-start gap-3">
-            <Zap className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-gradient-to-r from-blue-950/50 via-blue-950/30 to-[#121826] border border-sky-500/30 flex items-start gap-3">
+            <Zap className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
             <div className="text-xs text-slate-300 space-y-1">
               <span className="font-bold text-white">Cashier Flow: </span>
               <span>
-                Press <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-emerald-300 font-mono text-[10px]">F2</kbd> for a new customer &rarr; type or scan barcode with <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-emerald-300 font-mono text-[10px]">Enter</kbd> &rarr; press <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-emerald-300 font-mono text-[10px]">F8</kbd> to complete sale!
+                Press <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-sky-300 font-mono text-[10px]">F2</kbd> for a new customer &rarr; type or scan barcode with <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-sky-300 font-mono text-[10px]">Enter</kbd> &rarr; press <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-sky-300 font-mono text-[10px]">F8</kbd> to complete sale!
               </span>
             </div>
           </div>
@@ -152,7 +152,7 @@ export const POSShortcutsModal: React.FC<POSShortcutsModalProps> = ({ isOpen, on
             return (
               <div key={cat} className="space-y-2.5">
                 <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
                   {cat}
                 </h4>
 
@@ -196,7 +196,7 @@ export const POSShortcutsModal: React.FC<POSShortcutsModalProps> = ({ isOpen, on
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors shadow-md"
+            className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors shadow-md"
           >
             Got it, return to POS
           </button>

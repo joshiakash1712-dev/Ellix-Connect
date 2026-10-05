@@ -39,26 +39,61 @@ service cloud.firestore {
       return exists(/databases/$(database)/documents/users/$(request.auth.uid));
     }
 
-    // Level 1: Super Admin (System Creator)
-    function isSuperAdmin() {
-      return isSignedIn() && hasUserDoc() && getUserDoc().role == 'super_admin';
+    // Authoritative Account Status Check: Rejects inactive, suspended, disabled, or revoked accounts
+    function isActiveUser() {
+      return isSignedIn() && hasUserDoc() &&
+        (!('status' in getUserDoc()) || getUserDoc().status == 'active') &&
+        (!('disabled' in getUserDoc()) || getUserDoc().disabled == false) &&
+        (!('isActive' in getUserDoc()) || getUserDoc().isActive == true);
     }
 
-    // Level 2: Ellix Admin (Platform Admin team)
-    function isEllixAdmin() {
-      return isSignedIn() && hasUserDoc() && (
-        getUserDoc().role == 'ellix_admin' ||
-        getUserDoc().role == 'super_admin' ||
-        getUserDoc().role == 'platform_admin'
+    // Level 1: Super Admin (System Creator)
+    function isSuperAdmin() {
+      return isSignedIn() && (
+        (hasUserDoc() && isActiveUser() && getUserDoc().role == 'super_admin') ||
+        (request.auth.token.email == 'joshiakash1712@gmail.com' && request.auth.token.email_verified == true && (!hasUserDoc() || isActiveUser()))
       );
     }
 
-    // Level 3: Client (Merchant business owner)
+    // Level 2: Ellix Admin (Platform Admin team — canonical + supported legacy aliases)
+    function isEllixAdmin() {
+      return isSignedIn() && (
+        isSuperAdmin() ||
+        (
+          isActiveUser() && (
+            getUserDoc().role == 'ellix_admin' ||
+            getUserDoc().role == 'platform_admin' ||
+            getUserDoc().role == 'admin'
+          )
+        )
+      );
+    }
+
+    // Level 3: Client (Merchant business owner — canonical + supported legacy aliases)
     function isClient() {
-      return isSignedIn() && hasUserDoc() && (
-        getUserDoc().role == 'client' ||
-        getUserDoc().role == 'retailer' ||
-        isEllixAdmin()
+      return isSignedIn() && (
+        isEllixAdmin() ||
+        (
+          isActiveUser() && (
+            getUserDoc().role == 'client' ||
+            getUserDoc().role == 'retailer' ||
+            getUserDoc().role == 'owner'
+          )
+        )
+      );
+    }
+
+    // Level 4: Crew role check (canonical + supported legacy aliases)
+    function isCrewRole() {
+      return isActiveUser() && (
+        getUserDoc().role in ['crew', 'employee', 'cashier', 'staff', 'manager', 'inventory_staff']
+      );
+    }
+
+    // B2B: Wholesaler role check
+    function isWholesalerRole() {
+      return isActiveUser() && (
+        getUserDoc().role in ['wholesaler_admin', 'wholesaler']
       );
     }
 
@@ -94,12 +129,21 @@ service cloud.firestore {
       );
     }
 
+    // Validates that a Crew member's tenant matches the target store's tenant when both are present
+    function hasMatchingCrewTenant(storeId) {
+      return (
+        (!('clientId' in getUserDoc()) || !('clientId' in getStore(storeId)) || getUserDoc().clientId == getStore(storeId).clientId) &&
+        (!('client_id' in getUserDoc()) || !('client_id' in getStore(storeId)) || getUserDoc().client_id == getStore(storeId).client_id)
+      );
+    }
+
     // Check if user is assigned to this specific store_id (as Crew / Employee / Cashier)
     function isCrewAssignedToStore(storeId) {
-      return isSignedIn() && hasUserDoc() && (
+      return isSignedIn() && (
         isEllixAdmin() ||
         (
-          getUserDoc().role in ['crew', 'employee', 'cashier'] &&
+          isCrewRole() &&
+          hasMatchingCrewTenant(storeId) &&
           (
             ('store_id' in getUserDoc() && getUserDoc().store_id == storeId) ||
             ('storeId' in getUserDoc() && getUserDoc().storeId == storeId) ||
@@ -114,8 +158,8 @@ service cloud.firestore {
       return isSignedIn() && (
         isEllixAdmin() ||
         (
-          hasUserDoc() &&
-          getUserDoc().role in ['client', 'retailer'] &&
+          isActiveUser() &&
+          getUserDoc().role in ['client', 'retailer', 'owner'] &&
           (
             getStore(storeId).ownerUid == request.auth.uid ||
             ('clientId' in getStore(storeId) && 'clientId' in getUserDoc() && getStore(storeId).clientId == getUserDoc().clientId) ||
@@ -239,7 +283,7 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------
-    // Users Collection - Role Escalation Prevention
+    // Users Collection - Role Escalation & Self-Tampering Prevention
     // -------------------------------------------------------------
     match /users/{userId} {
       allow get: if isValidId(userId) && (isOwner(userId) || isEllixAdmin());
@@ -249,10 +293,25 @@ service cloud.firestore {
         isOwner(userId) &&
         incoming().uid == request.auth.uid &&
         isValidUser(incoming()) &&
-        // Regular signups cannot grant themselves super_admin or ellix_admin
         (
-          !(incoming().role in ['super_admin', 'ellix_admin']) ||
-          isSuperAdmin()
+          isSuperAdmin() ||
+          (
+            // Normal user registration: can only register as 'client' (never super_admin, ellix_admin, platform_admin, admin, or unknown role)
+            (!('role' in incoming()) || incoming().role == 'client') &&
+            // Cannot self-assign another tenant's clientId, storeId, or assignedStoreIds
+            (!('clientId' in incoming()) || incoming().clientId == ('client-' + request.auth.uid)) &&
+            !('client_id' in incoming()) &&
+            !('storeId' in incoming()) &&
+            !('store_id' in incoming()) &&
+            (!('assignedStoreIds' in incoming()) || incoming().assignedStoreIds.size() == 0) &&
+            // Cannot self-assign elevated status, permissions, or admin flags
+            (!('status' in incoming()) || incoming().status == 'active') &&
+            (!('disabled' in incoming()) || incoming().disabled == false) &&
+            (!('isActive' in incoming()) || incoming().isActive == true) &&
+            !('permissions' in incoming()) &&
+            !('isAdmin' in incoming()) &&
+            !('ownerUid' in incoming())
+          )
         );
 
       allow update: if isValidId(userId) &&
@@ -260,15 +319,32 @@ service cloud.firestore {
         incoming().uid == existing().uid &&
         isValidUser(incoming()) &&
         (
-          // No role change: user updating own profile info (e.g. name, photo)
-          (incoming().role == existing().role) ||
-          // Super Admin can assign or elevate any role
-          (isSuperAdmin()) ||
-          // Ellix Admin can manage lower tiers (client, crew), but CANNOT assign super_admin or ellix_admin, nor edit existing super/ellix admins
+          // 1. Super Admin can assign or elevate any role or attribute
+          isSuperAdmin() ||
+          // 2. Ellix Admin can manage lower tiers (client, crew), but CANNOT assign super_admin/ellix_admin/platform_admin/admin, nor edit existing super/ellix admins
           (
             isEllixAdmin() &&
-            !(incoming().role in ['super_admin', 'ellix_admin']) &&
-            !(existing().role in ['super_admin', 'ellix_admin'])
+            !(incoming().role in ['super_admin', 'ellix_admin', 'platform_admin', 'admin']) &&
+            !(existing().role in ['super_admin', 'ellix_admin', 'platform_admin', 'admin'])
+          ) ||
+          // 3. Normal user updating own profile: strict field-level immutability on all authorization & tenant anchors
+          (
+            isOwner(userId) &&
+            isActiveUser() &&
+            incoming().role == existing().role &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'displayName',
+              'name',
+              'photoURL',
+              'phoneNumber',
+              'phoneVerified',
+              'email',
+              'emailVerified',
+              'lastLoginAt',
+              'updatedAt',
+              'linkedProviders',
+              'passwordSynchronized'
+            ])
           )
         );
 
@@ -299,8 +375,8 @@ service cloud.firestore {
         isEllixAdmin() ||
         isCrewAssignedToStore(storeId) ||
         (
-          hasUserDoc() &&
-          getUserDoc().role in ['client', 'retailer'] &&
+          isActiveUser() &&
+          getUserDoc().role in ['client', 'retailer', 'owner'] &&
           (
             resource.data.ownerUid == request.auth.uid ||
             ('clientId' in resource.data && 'clientId' in getUserDoc() && resource.data.clientId == getUserDoc().clientId) ||
@@ -309,26 +385,40 @@ service cloud.firestore {
         )
       );
 
-      // Store creation & configuration: Client owners and Admins only
+      // Store creation & configuration: Client owners (strictly bound to their own tenant) and Admins only
       allow create: if isSignedIn() && isValidId(storeId) && isValidStore(incoming()) &&
         hasValidStoreId(incoming(), storeId) &&
         (
           isEllixAdmin() ||
-          (isClient() && incoming().ownerUid == request.auth.uid)
+          (
+            isClient() &&
+            incoming().ownerUid == request.auth.uid &&
+            (!('clientId' in getUserDoc()) || ('clientId' in incoming() && incoming().clientId == getUserDoc().clientId)) &&
+            (!('client_id' in incoming()) || ('clientId' in getUserDoc() && incoming().client_id == getUserDoc().clientId))
+          )
         );
 
       allow update: if isSignedIn() && isValidId(storeId) && isValidStore(incoming()) &&
         isClientOwnerOfStore(storeId) &&
-        maintainsStoreId(storeId);
+        maintainsStoreId(storeId) &&
+        (
+          isEllixAdmin() ||
+          (
+            (!('ownerUid' in existing()) || incoming().ownerUid == existing().ownerUid) &&
+            (!('clientId' in existing()) || incoming().clientId == existing().clientId) &&
+            (!('client_id' in existing()) || incoming().client_id == existing().client_id)
+          )
+        );
 
       allow delete: if isSignedIn() && isValidId(storeId) &&
         (isEllixAdmin() || isClientOwnerOfStore(storeId));
 
       // Master Gate: Products (Isolated to storeId)
       // Crew can create new products and set initial stock / prices in their assigned store.
-      // Crew can restock, but cannot secretly alter selling price or product identity.
+      // Crew can restock, but cannot secretly alter selling price, supplier master link, wholesaler sharing, or product identity.
       match /products/{productId} {
-        allow get, list: if isStoreAuthorizedUser(storeId);
+        allow get, list: if isStoreAuthorizedUser(storeId) ||
+          (isWholesalerRole() && resource.data.sharedWithWholesalers == true);
 
         allow create: if isValidId(productId) &&
           isStoreAuthorizedUser(storeId) &&
@@ -354,29 +444,67 @@ service cloud.firestore {
         allow delete: if isValidId(productId) && isClientOwnerOfStore(storeId);
       }
 
-      // Master Gate: Customers & CRM (Isolated to storeId and tenant)
+      // Master Gate: Customers & CRM (Isolated to storeId and tenant; Crew cannot list CRM/Khata or manipulate loyalty/credit)
       match /customers/{customerId} {
-        allow get, list: if isStoreAuthorizedUser(storeId);
+        allow get: if isStoreAuthorizedUser(storeId);
+        allow list: if isClientOwnerOfStore(storeId);
 
         allow create: if isValidId(customerId) &&
           isValidCustomer(incoming()) &&
           isStoreAuthorizedUser(storeId) &&
           hasValidStoreId(incoming(), storeId) &&
-          hasValidClientId(incoming(), storeId);
+          hasValidClientId(incoming(), storeId) &&
+          (
+            isClientOwnerOfStore(storeId) ||
+            (
+              isCrewAssignedToStore(storeId) &&
+              (!('loyaltyPoints' in incoming()) || incoming().loyaltyPoints == 0) &&
+              (!('creditBalance' in incoming()) || incoming().creditBalance == 0) &&
+              (!('totalPurchases' in incoming()) || incoming().totalPurchases == 0)
+            )
+          );
 
         allow update: if isValidId(customerId) &&
           isValidCustomer(incoming()) &&
-          isStoreAuthorizedUser(storeId) &&
           maintainsStoreId(storeId) &&
-          hasValidClientId(incoming(), storeId);
+          hasValidClientId(incoming(), storeId) &&
+          (
+            isClientOwnerOfStore(storeId) ||
+            (
+              isCrewAssignedToStore(storeId) &&
+              incoming().name == existing().name &&
+              incoming().phone == existing().phone &&
+              incoming().diff(existing()).affectedKeys().hasOnly([
+                'totalPurchases',
+                'loyaltyPoints',
+                'creditBalance',
+                'updatedAt',
+                'storeId'
+              ]) &&
+              // Crew cannot redeem/reduce loyalty points or forgive/reduce creditBalance
+              (!('loyaltyPoints' in incoming()) || !('loyaltyPoints' in existing()) || (
+                incoming().loyaltyPoints is number &&
+                incoming().loyaltyPoints >= existing().loyaltyPoints &&
+                (incoming().loyaltyPoints - existing().loyaltyPoints) <= 5000
+              )) &&
+              (!('creditBalance' in incoming()) || !('creditBalance' in existing()) || (
+                incoming().creditBalance is number &&
+                incoming().creditBalance >= existing().creditBalance
+              )) &&
+              (!('totalPurchases' in incoming()) || !('totalPurchases' in existing()) || (
+                incoming().totalPurchases is number &&
+                incoming().totalPurchases >= existing().totalPurchases
+              ))
+            )
+          );
 
         allow delete: if isValidId(customerId) && isClientOwnerOfStore(storeId);
       }
 
       // Master Gate: POS Invoices (Strict Store-Level & Crew Privacy Isolation)
       // RULE: Crew members can only read their OWN invoices (resource.data.cashierId == request.auth.uid)
-      // RULE: Crew members cannot forge cashierId
-      // RULE: Crew members must NEVER be able to apply or approve discounts
+      // RULE: Crew members cannot forge cashierId or createdById
+      // RULE: Crew members must NEVER be able to apply or approve discounts or redeem loyalty points
       match /invoices/{invoiceId} {
         allow get: if isClientOwnerOfStore(storeId) ||
           (isCrewAssignedToStore(storeId) && (resource == null || resource.data.cashierId == request.auth.uid));
@@ -392,14 +520,28 @@ service cloud.firestore {
             isClientOwnerOfStore(storeId) ||
             (
               isCrewAssignedToStore(storeId) &&
-              // Enforce that Crew records their own authenticated UID
-              (
-                (('cashierId' in incoming()) && incoming().cashierId == request.auth.uid) ||
-                (('createdById' in incoming()) && incoming().createdById == request.auth.uid)
-              ) &&
-              // Strictly enforce 0 discount for crew in request payload
+              // Enforce that Crew records ONLY their own authenticated UID on both cashierId and createdById
+              ('cashierId' in incoming()) &&
+              incoming().cashierId == request.auth.uid &&
+              (!('createdById' in incoming()) || incoming().createdById == request.auth.uid) &&
+              // Strictly enforce 0 discount (bill-level & item-level) and 0 loyalty redemption for crew
+              (!('discountAmount' in incoming()) || incoming().discountAmount == 0) &&
               (!('discountTotal' in incoming()) || incoming().discountTotal == 0) &&
-              (!('discountPercent' in incoming()) || incoming().discountPercent == 0)
+              (!('discountPercent' in incoming()) || incoming().discountPercent == 0) &&
+              (!('flatDiscount' in incoming()) || incoming().flatDiscount == 0) &&
+              (!('loyaltyPointsRedeemed' in incoming()) || incoming().loyaltyPointsRedeemed == 0) &&
+              (!('subtotal' in incoming()) || !('grandTotal' in incoming()) || incoming().grandTotal >= incoming().subtotal) &&
+              (
+                !('items' in incoming()) ||
+                (
+                  incoming().items is list &&
+                  incoming().items.size() > 0 &&
+                  incoming().items.size() <= 100 &&
+                  (!('discount' in incoming().items[0]) || incoming().items[0].discount == 0) &&
+                  (!('discountPercentage' in incoming().items[0]) || incoming().items[0].discountPercentage == 0) &&
+                  (!('discountFlat' in incoming().items[0]) || incoming().items[0].discountFlat == 0)
+                )
+              )
             )
           );
 
@@ -476,31 +618,42 @@ service cloud.firestore {
             isClientOwnerOfStore(storeId) ||
             (
               isCrewAssignedToStore(storeId) &&
-              (
-                (('crewId' in incoming()) && incoming().crewId == request.auth.uid) ||
-                (('addedById' in incoming()) && incoming().addedById == request.auth.uid)
-              )
+              (('crewId' in incoming()) || ('addedById' in incoming())) &&
+              (!('crewId' in incoming()) || incoming().crewId == request.auth.uid) &&
+              (!('addedById' in incoming()) || incoming().addedById == request.auth.uid)
             )
           );
 
         allow update, delete: if isClientOwnerOfStore(storeId);
       }
 
-      // Master Gate: Restock Orders (Isolated to storeId)
+      // Master Gate: Restock Orders (Isolated to storeId; Owner/Admin creation & Wholesaler quotation/shipment updates only; Crew denied)
       match /restockOrders/{orderId} {
-        allow get, list: if isStoreAuthorizedUser(storeId);
+        allow get, list: if isClientOwnerOfStore(storeId) ||
+          (isWholesalerRole() && (!('wholesalerId' in getUserDoc()) || resource.data.wholesalerId == getUserDoc().wholesalerId));
 
         allow create: if isValidId(orderId) &&
           isValidRestockOrder(incoming()) &&
-          isStoreAuthorizedUser(storeId) &&
+          isClientOwnerOfStore(storeId) &&
           hasValidStoreId(incoming(), storeId) &&
           hasValidClientId(incoming(), storeId);
 
         allow update: if isValidId(orderId) &&
           isValidRestockOrder(incoming()) &&
-          isStoreAuthorizedUser(storeId) &&
           maintainsStoreId(storeId) &&
-          hasValidClientId(incoming(), storeId);
+          hasValidClientId(incoming(), storeId) &&
+          (
+            isClientOwnerOfStore(storeId) ||
+            (
+              isWholesalerRole() &&
+              (!('wholesalerId' in getUserDoc()) || existing().wholesalerId == getUserDoc().wholesalerId) &&
+              incoming().productId == existing().productId &&
+              (!('retailerStoreId' in existing()) || incoming().retailerStoreId == existing().retailerStoreId) &&
+              (!('wholesalerId' in existing()) || incoming().wholesalerId == existing().wholesalerId) &&
+              (!('suggestedQty' in existing()) || incoming().suggestedQty == existing().suggestedQty) &&
+              incoming().status in ['quoted', 'accepted', 'shipped', 'rejected']
+            )
+          );
 
         allow delete: if isValidId(orderId) && isClientOwnerOfStore(storeId);
       }
@@ -536,9 +689,9 @@ service cloud.firestore {
         allow delete: if isSuperAdmin();
       }
 
-      // Wholesalers linked to Store
+      // Wholesalers linked to Store (Owner/Admin only; Crew denied)
       match /wholesalers/{wholesalerId} {
-        allow get, list: if isStoreAuthorizedUser(storeId);
+        allow get, list: if isClientOwnerOfStore(storeId);
         allow create, update, delete: if isClientOwnerOfStore(storeId) && maintainsStoreId(storeId);
       }
 
@@ -571,8 +724,8 @@ service cloud.firestore {
       allow get, list: if isSignedIn() && (
         isEllixAdmin() ||
         (
-          hasUserDoc() &&
-          getUserDoc().role in ['client', 'retailer'] &&
+          isActiveUser() &&
+          getUserDoc().role in ['client', 'retailer', 'owner'] &&
           (
             ('clientId' in getUserDoc() && getUserDoc().clientId == clientId) ||
             ('client_id' in getUserDoc() && getUserDoc().client_id == clientId)
@@ -587,8 +740,8 @@ service cloud.firestore {
       allow update: if isSignedIn() && (
         isEllixAdmin() ||
         (
-          hasUserDoc() &&
-          getUserDoc().role in ['client', 'retailer'] &&
+          isActiveUser() &&
+          getUserDoc().role in ['client', 'retailer', 'owner'] &&
           (
             ('clientId' in getUserDoc() && getUserDoc().clientId == clientId) ||
             ('client_id' in getUserDoc() && getUserDoc().client_id == clientId)
@@ -617,8 +770,8 @@ service cloud.firestore {
         allow get, list: if isSignedIn() && (
           isEllixAdmin() ||
           (
-            hasUserDoc() &&
-            getUserDoc().role in ['client', 'retailer'] &&
+            isActiveUser() &&
+            getUserDoc().role in ['client', 'retailer', 'owner'] &&
             (
               ('clientId' in getUserDoc() && getUserDoc().clientId == clientId) ||
               ('client_id' in getUserDoc() && getUserDoc().client_id == clientId)
@@ -639,8 +792,8 @@ service cloud.firestore {
         allow get, list: if isSignedIn() && (
           isEllixAdmin() ||
           (
-            hasUserDoc() &&
-            getUserDoc().role in ['client', 'retailer'] &&
+            isActiveUser() &&
+            getUserDoc().role in ['client', 'retailer', 'owner'] &&
             (
               ('clientId' in getUserDoc() && getUserDoc().clientId == clientId) ||
               ('client_id' in getUserDoc() && getUserDoc().client_id == clientId)

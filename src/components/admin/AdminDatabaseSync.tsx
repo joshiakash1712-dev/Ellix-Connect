@@ -158,7 +158,7 @@ export const AdminDatabaseSync: React.FC = () => {
       {/* Header */}
       <div>
         <h2 className="text-base font-bold text-white flex items-center gap-2">
-          <Database className="w-5 h-5 text-emerald-400" />
+          <Database className="w-5 h-5 text-sky-400" />
           <span>Database Management, Sync & Backup Hub</span>
         </h2>
         <p className="text-xs text-slate-400 mt-0.5">
@@ -173,10 +173,10 @@ export const AdminDatabaseSync: React.FC = () => {
         <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
-              <HardDrive className="w-4 h-4 text-emerald-400" />
+              <HardDrive className="w-4 h-4 text-sky-400" />
               <span>Offline Database Cache</span>
             </span>
-            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+            <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-lg border border-sky-500/20">
               IndexedDB
             </span>
           </div>
@@ -188,7 +188,7 @@ export const AdminDatabaseSync: React.FC = () => {
             </div>
             <div className="w-full bg-[#0A0E1A] border border-slate-800 h-2 rounded-full overflow-hidden">
               <div
-                className="bg-emerald-500 h-full rounded-full"
+                className="bg-sky-500 h-full rounded-full"
                 style={{ width: `${Math.min(100, Math.max(5, (storageUsageKB / 5120) * 100))}%` }}
               />
             </div>
@@ -202,10 +202,10 @@ export const AdminDatabaseSync: React.FC = () => {
         <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
-              <Server className="w-4 h-4 text-teal-400" />
+              <Server className="w-4 h-4 text-sky-400" />
               <span>Multi-Region Cloud Replica</span>
             </span>
-            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+            <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-lg border border-sky-500/20">
               Healthy
             </span>
           </div>
@@ -217,11 +217,11 @@ export const AdminDatabaseSync: React.FC = () => {
             </div>
             <div className="flex justify-between text-slate-400">
               <span>Last Snapshot Sync</span>
-              <span className="font-mono text-emerald-400">Just now</span>
+              <span className="font-mono text-sky-400">Just now</span>
             </div>
             <div className="w-full mt-2 py-1.5 px-3 rounded-lg bg-[#0A0E1A] border border-slate-800 text-[11px] flex items-center justify-between text-slate-300 font-medium">
-              <span className="flex items-center gap-1.5 text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="flex items-center gap-1.5 text-sky-400">
+                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
                 <span>Live Continuous Streaming</span>
               </span>
               <span className="text-[10px] text-slate-400">Auto-persisted</span>
@@ -265,7 +265,7 @@ export const AdminDatabaseSync: React.FC = () => {
         <div className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
           <div>
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Download className="w-4 h-4 text-emerald-400" />
+              <Download className="w-4 h-4 text-sky-400" />
               <span>Export Full Database Snapshot (JSON)</span>
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
@@ -298,7 +298,7 @@ export const AdminDatabaseSync: React.FC = () => {
 
           <button
             onClick={handleExportJSON}
-            className="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2"
           >
             <Download className="w-4 h-4" />
             <span>Download Complete JSON Backup Snapshot</span>
@@ -309,7 +309,7 @@ export const AdminDatabaseSync: React.FC = () => {
         <div className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4 flex flex-col justify-between">
           <div>
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Upload className="w-4 h-4 text-teal-400" />
+              <Upload className="w-4 h-4 text-sky-400" />
               <span>Restore Database from JSON Snapshot</span>
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
@@ -326,9 +326,9 @@ export const AdminDatabaseSync: React.FC = () => {
 
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="mt-4 p-6 rounded-xl border-2 border-dashed border-slate-700 hover:border-teal-500/80 bg-[#0A0E1A] hover:bg-slate-900/80 transition-all cursor-pointer text-center space-y-2"
+              className="mt-4 p-6 rounded-xl border-2 border-dashed border-slate-700 hover:border-sky-500/80 bg-[#0A0E1A] hover:bg-slate-900/80 transition-all cursor-pointer text-center space-y-2"
             >
-              <CloudUpload className="w-8 h-8 text-teal-400 mx-auto" />
+              <CloudUpload className="w-8 h-8 text-sky-400 mx-auto" />
               <div className="text-xs font-bold text-slate-200">
                 Click to browse or drag & drop JSON backup file
               </div>
@@ -342,12 +342,12 @@ export const AdminDatabaseSync: React.FC = () => {
             <div
               className={`p-3 rounded-xl border text-xs flex items-center gap-2 ${
                 importStatus.success
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 font-semibold'
+                  ? 'bg-sky-500/10 border-sky-500/30 text-sky-300 font-semibold'
                   : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
               }`}
             >
               {importStatus.success ? (
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-sky-400" />
               ) : (
                 <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
               )}
@@ -365,7 +365,7 @@ export const AdminDatabaseSync: React.FC = () => {
         <div className="p-5 sm:p-6 rounded-xl bg-[#121826] border border-slate-800 shadow-lg space-y-4">
           <div>
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+              <FileSpreadsheet className="w-4 h-4 text-sky-400" />
               <span>Export Individual CSV Datasets</span>
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">

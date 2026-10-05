@@ -242,9 +242,11 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
         {/* 1. Section Heading Block (first child for GSAP ScrollTrigger compatibility) */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 lg:mb-12">
           <div className="max-w-3xl">
-            <div className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
               <span>Security &amp; Compliance</span>
+              <span className="text-slate-300 dark:text-slate-700">·</span>
+              <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">Enterprise Protection</span>
             </div>
             <h2
               id="security-compliance-heading"
@@ -263,10 +265,10 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                 type="button"
                 data-cursor="hover"
                 onClick={() => onOpenLegalPage('security')}
-                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-semibold border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 transition-all inline-flex items-center gap-2 cursor-pointer shadow-2xs"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-semibold border border-slate-200 dark:border-slate-800 hover:border-blue-500/40 transition-all inline-flex items-center gap-2 cursor-pointer shadow-2xs"
               >
                 <span>Open Legal, Privacy &amp; Trust Center</span>
-                <ArrowUpRight className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <ArrowUpRight className="w-4 h-4 text-blue-600 dark:text-sky-400" />
               </button>
             </div>
           )}
@@ -285,7 +287,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
             onClick={() => setSelectedCategory('all')}
             className={`min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
               selectedCategory === 'all'
-                ? 'bg-white dark:bg-slate-950 text-emerald-700 dark:text-emerald-400 shadow-xs border border-emerald-500/30'
+                ? 'bg-white dark:bg-slate-950 text-blue-700 dark:text-sky-400 shadow-xs border border-sky-500/30'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white border border-transparent'
             }`}
           >
@@ -302,11 +304,11 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`min-h-[44px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 ${
                   isActive
-                    ? 'bg-white dark:bg-slate-950 text-emerald-700 dark:text-emerald-400 shadow-xs border border-emerald-500/30'
+                    ? 'bg-white dark:bg-slate-950 text-blue-700 dark:text-sky-400 shadow-xs border border-sky-500/30'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white border border-transparent'
                 }`}
               >
-                <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
+                <span className="font-mono text-[11px] text-blue-600 dark:text-sky-400">
                   {cat.number}
                 </span>
                 <span>{cat.shortLabel}</span>
@@ -331,7 +333,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                 {/* Category Header Row */}
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 border-b border-slate-200/80 dark:border-slate-800/80">
                   <div className="flex items-baseline gap-2.5">
-                    <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                    <span className="font-mono text-xs font-bold text-blue-600 dark:text-sky-400">
                       {category.number} /
                     </span>
                     <h3
@@ -363,21 +365,21 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                         key={item.id}
                         className={`website-card-hover rounded-2xl p-5 sm:p-6 border flex flex-col justify-between gap-5 transition-all ${
                           item.isHonestDisclosure
-                            ? 'bg-white dark:bg-slate-900/95 border-slate-200/90 dark:border-slate-800 hover:border-emerald-500/40'
-                            : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50'
+                            ? 'bg-white dark:bg-slate-900/95 border-slate-200/90 dark:border-slate-800 hover:border-blue-500/40'
+                            : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50'
                         }`}
                       >
                         <div className="space-y-3">
                           {/* Quiet Unboxed Metadata Kicker & Icon */}
                           <div className="flex items-start justify-between gap-3">
                             <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                              <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                              <span className="text-blue-700 dark:text-sky-400 font-semibold">
                                 {item.categoryLabel}
                               </span>
                               <span aria-hidden="true">·</span>
                               <span>{item.scopeMeta}</span>
                             </div>
-                            <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                            <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                               <Icon className="w-4 h-4" />
                             </div>
                           </div>
@@ -403,7 +405,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                               type="button"
                               data-cursor="hover"
                               onClick={() => onOpenLegalPage(item.legalSlug)}
-                              className="min-h-[44px] sm:min-h-0 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 inline-flex items-center gap-1 text-left cursor-pointer shrink-0 group"
+                              className="min-h-[44px] sm:min-h-0 py-1.5 text-xs font-semibold text-blue-700 dark:text-sky-400 hover:text-blue-800 dark:hover:text-sky-300 inline-flex items-center gap-1 text-left cursor-pointer shrink-0 group"
                             >
                               <span>{item.referenceLabel}</span>
                               <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -429,7 +431,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
             <div className="max-w-3xl space-y-2">
               <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider">
+                <span className="text-blue-700 dark:text-sky-400 font-bold uppercase tracking-wider">
                   Data Protection Architecture
                 </span>
                 <span aria-hidden="true">·</span>
@@ -452,10 +454,10 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   type="button"
                   data-cursor="hover"
                   onClick={() => onOpenLegalPage('security')}
-                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-blue-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Review Security Practices</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
                 </button>
               </div>
             )}
@@ -464,17 +466,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           {/* Two Primary Cards: Encryption in Transit & Encryption at Rest */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Card 1: Encryption in transit */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       01 · Network Transport
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>HTTPS / TLS Connections</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <Lock className="w-4 h-4" />
                   </div>
                 </div>
@@ -495,19 +497,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-1.5">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Browser to {LEGAL_CONFIG.brandName}:</strong> Page loads and requests between your browser and our hosted application server travel over HTTPS/TLS in production.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Frontend to Backend &amp; Auth:</strong> Sign-in sessions and authenticated API calls transmit Firebase authentication tokens over encrypted HTTPS connections.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Application to Cloud Database:</strong> Live synchronization of store catalogs, GST bills, and Khata records with Google Cloud Firestore occurs over encrypted HTTPS/TLS channels.
                       </span>
@@ -518,7 +520,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
 
               {/* What this means for non-technical business owners */}
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                <div className="text-[11px] font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider font-mono">
                   What this means for your store
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -528,17 +530,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
             </article>
 
             {/* Card 2: Encryption at rest */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       02 · Cloud Infrastructure Storage
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>Provider-Managed At Rest</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                 </div>
@@ -559,19 +561,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-1.5">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Provider-Level Encryption at Rest:</strong> Google Cloud / Firebase automatically encrypts stored database documents and authentication records on its underlying cloud storage infrastructure.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">No Separate Custom App-Layer Encryption:</strong> {LEGAL_CONFIG.brandName} relies on Google Cloud’s infrastructure encryption at rest rather than applying a separate custom or end-to-end encryption layer inside the application.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Account &amp; Role Verification:</strong> When cloud records are read by the application for authorized store owners or staff, the cloud provider decrypts them for delivery over HTTPS/TLS.
                       </span>
@@ -582,7 +584,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
 
               {/* What this means for non-technical business owners */}
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                <div className="text-[11px] font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider font-mono">
                   What this means for your store
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -596,12 +598,12 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div className="flex items-start gap-3.5">
-                <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
                   <HardDrive className="w-4 h-4" />
                 </div>
                 <div className="space-y-1">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       03 · Client-Side Browser Storage Disclosure
                     </span>
                     <span aria-hidden="true">·</span>
@@ -618,7 +620,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   type="button"
                   data-cursor="hover"
                   onClick={() => onOpenLegalPage('cookie-policy')}
-                  className="min-h-[44px] sm:min-h-0 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 inline-flex items-center gap-1 text-left cursor-pointer shrink-0 group"
+                  className="min-h-[44px] sm:min-h-0 py-1.5 text-xs font-semibold text-blue-700 dark:text-sky-400 hover:text-blue-800 dark:hover:text-sky-300 inline-flex items-center gap-1 text-left cursor-pointer shrink-0 group"
                 >
                   <span>View Cookie &amp; Local Storage Policy</span>
                   <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -672,7 +674,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
             <div className="max-w-3xl space-y-2">
               <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider">
+                <span className="text-blue-700 dark:text-sky-400 font-bold uppercase tracking-wider">
                   Storage, Processing &amp; Regional Scope
                 </span>
                 <span aria-hidden="true">·</span>
@@ -695,10 +697,10 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   type="button"
                   data-cursor="hover"
                   onClick={() => onOpenLegalPage('privacy-policy')}
-                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-blue-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Read Full Privacy Policy</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
                 </button>
               </div>
             )}
@@ -707,17 +709,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           {/* Two Primary Cards: Where Data Is Stored & Where Data Is Processed */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Card 1: Where customer data is stored */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       01 · Data Storage Locations
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>Cloud Firestore, Firebase Auth &amp; Local Browser</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <HardDrive className="w-4 h-4" />
                   </div>
                 </div>
@@ -737,19 +739,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-1.5">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Google Cloud Firestore (Structured Store Records):</strong> Store profiles, product catalogs, GST invoices, customer Khata balances, supplier orders, and staff role records are stored in Google Cloud Firestore within our configured Google Cloud project. The exact Firestore database region is governed by the platform’s cloud project configuration and is not verified in the application codebase as an India-only region.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Google Firebase Authentication (Account Identity):</strong> User login credentials (email/password, Google Sign-In identifiers, and phone authentication records) are managed by Firebase Authentication on Google’s global cloud identity infrastructure.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Your Local Device &amp; Browser Storage:</strong> Active POS catalog cache, unsynchronized offline counter bills, UI preferences, and any CSV, PDF, or JSON exports you download are stored directly on your own shop computer, tablet, or phone in the physical location where you operate your device.
                       </span>
@@ -759,7 +761,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                <div className="text-[11px] font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider font-mono">
                   Honest geographic note
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -769,17 +771,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
             </article>
 
             {/* Card 2: Where data is processed */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       02 · Data Processing Locations
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>Browser POS, Application Server &amp; External APIs</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <Server className="w-4 h-4" />
                   </div>
                 </div>
@@ -799,19 +801,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-1.5">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">In Your Local Browser (Client-Side):</strong> Barcode cart calculations, GST tax splits, dynamic UPI QR code generation (standard NPCI intent links), and PDF/CSV report exports run directly in your browser on your counter device.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Application Server &amp; Cloud Sync:</strong> Authenticated API routes (such as workspace purge, admin team management, and subscription verification) run on our hosted Node.js / Express backend server deployed on Google Cloud infrastructure, communicating with Firebase Admin services.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Feature-Specific External Services:</strong> When you message the website support assistant, your chat prompt is processed via Google’s Gemini API (when configured). When paid SaaS subscription checkout is active, subscription order metadata is processed via Razorpay’s payment API. Sharing a bill or reminder on WhatsApp opens a direct link in your own WhatsApp app.
                       </span>
@@ -821,7 +823,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                <div className="text-[11px] font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider font-mono">
                   What this means for your store
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -835,12 +837,12 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div className="flex items-start gap-3.5">
-                <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
                   <Globe className="w-4 h-4" />
                 </div>
                 <div className="space-y-1">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       03 · Regional Residency Options
                     </span>
                     <span aria-hidden="true">·</span>
@@ -857,7 +859,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   type="button"
                   data-cursor="hover"
                   onClick={() => onOpenLegalPage('security')}
-                  className="min-h-[44px] sm:min-h-0 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 inline-flex items-center gap-1 text-left cursor-pointer shrink-0 group"
+                  className="min-h-[44px] sm:min-h-0 py-1.5 text-xs font-semibold text-blue-700 dark:text-sky-400 hover:text-blue-800 dark:hover:text-sky-300 inline-flex items-center gap-1 text-left cursor-pointer shrink-0 group"
                 >
                   <span>View Security &amp; Infrastructure Notice</span>
                   <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -911,7 +913,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
             <div className="max-w-3xl space-y-2">
               <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider">
+                <span className="text-blue-700 dark:text-sky-400 font-bold uppercase tracking-wider">
                   Identity, Role Hierarchy &amp; Store Isolation
                 </span>
                 <span aria-hidden="true">·</span>
@@ -934,10 +936,10 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   type="button"
                   data-cursor="hover"
                   onClick={() => onOpenLegalPage('security')}
-                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-blue-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Review Security &amp; RBAC Policy</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
                 </button>
               </div>
             )}
@@ -946,17 +948,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           {/* Two Primary Cards: Customer / Business Account Access & Internal Platform Access */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Card 1: Customer & Store Role Hierarchy */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       01 · Merchant &amp; Staff Access
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>Client Owner vs. Assigned Store Crew</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <Users className="w-4 h-4" />
                   </div>
                 </div>
@@ -976,19 +978,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Level 3 — Client / Business Owner:</strong> Manages their own store profile, full product pricing and margins, all store invoices, customer Khata ledgers, supplier profiles, staff roster, and audit logs. Firestore rules and backend checks block one Client from reading or modifying another Client’s store data.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Level 4 — Store Crew / Cashier:</strong> Restricted to their assigned store(s). Crew members can create POS bills, view only the invoices they generated themselves (<code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">cashierId == request.auth.uid</code>), add new products or log restock quantities, and handle customer checkout.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Enforced Crew Restrictions:</strong> Database security rules and server routes prevent Crew accounts from applying bill discounts, changing existing product selling prices, deleting products or invoices, managing suppliers or staff roles, viewing store audit logs, or modifying subscription billing.
                       </span>
@@ -998,7 +1000,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                <div className="text-[11px] font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider font-mono">
                   What this means for your store
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -1008,17 +1010,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
             </article>
 
             {/* Card 2: Internal Company & Platform Admin Access */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       02 · Internal Company Access
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>Super Admin &amp; Ellix Connect Admin Conditions</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <KeyRound className="w-4 h-4" />
                   </div>
                 </div>
@@ -1038,19 +1040,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Level 1 — Super Admin (System Creator):</strong> Holds root platform authority to provision or revoke Level 2 Ellix Connect Admins via authenticated server endpoints (<code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">/api/admin/team/*</code>) and oversee platform-wide database, security, and RBAC administration.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Level 2 — {LEGAL_CONFIG.brandName} Admin:</strong> Authorized for operational workflows including reviewing merchant onboarding applications, provisioning client workspaces, and managing subscription status. Firestore rules explicitly block Level 2 Admins from granting themselves or others <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">super_admin</code> or <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">ellix_admin</code> privileges or modifying Super Admin accounts.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Honest Technical Scope Disclosure:</strong> In the current database ruleset and Firebase Admin server configuration, authenticated <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">super_admin</code> and <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">ellix_admin</code> accounts hold technical read/write permissions across <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">/stores/&#123;storeId&#125;</code> and <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">/clients/&#123;clientId&#125;</code> records for platform administration, troubleshooting, and authorized tenant purge requests.
                       </span>
@@ -1060,7 +1062,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                <div className="text-[11px] font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider font-mono">
                   No unverified enterprise claims
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -1074,12 +1076,12 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div className="flex items-start gap-3.5">
-                <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div className="space-y-1">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       03 · Technical Enforcement &amp; Audit Safeguards
                     </span>
                     <span aria-hidden="true">·</span>
@@ -1096,7 +1098,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   type="button"
                   data-cursor="hover"
                   onClick={() => onOpenLegalPage('security')}
-                  className="min-h-[44px] sm:min-h-0 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 inline-flex items-center gap-1 text-left cursor-pointer shrink-0 group"
+                  className="min-h-[44px] sm:min-h-0 py-1.5 text-xs font-semibold text-blue-700 dark:text-sky-400 hover:text-blue-800 dark:hover:text-sky-300 inline-flex items-center gap-1 text-left cursor-pointer shrink-0 group"
                 >
                   <span>Inspect Full Security Practices</span>
                   <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -1159,7 +1161,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
             <div className="max-w-3xl space-y-2">
               <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider">
+                <span className="text-blue-700 dark:text-sky-400 font-bold uppercase tracking-wider">
                   Responsible Security Reporting &amp; Handling
                 </span>
                 <span aria-hidden="true">·</span>
@@ -1182,10 +1184,10 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   type="button"
                   data-cursor="hover"
                   onClick={() => onOpenLegalPage('grievance-redressal')}
-                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-blue-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Open Security &amp; Grievance Report Form</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
                 </button>
               </div>
             )}
@@ -1194,17 +1196,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           {/* Two Primary Cards: How to Report & Responsible Disclosure Guidelines */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Card 1: How to Report a Security Issue & What to Include */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       01 · Official Reporting Channels
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>How to Submit a Security Report</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <AlertTriangle className="w-4 h-4" />
                   </div>
                 </div>
@@ -1224,19 +1226,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Grievance &amp; Security Report Ticket (<code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">/grievance-redressal</code>):</strong> Use our formal ticket form and select the <strong className="text-slate-900 dark:text-white">“Security Vulnerability or Incident Report”</strong> category to generate a timestamped reference ID (<code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">GRV-…</code>).
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Website Contact &amp; Support Inquiry:</strong> You can also submit a security concern through the <strong className="text-slate-900 dark:text-white">Contact {LEGAL_CONFIG.brandName}</strong> support modal by starting your message subject or description with <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">[SECURITY REPORT]</code>.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">What to Include in Your Report:</strong> Provide the affected page, URL, or module (for example, POS billing, inventory, or login), clear step-by-step instructions to reproduce the issue, what you observed versus what you expected, and an email address or phone number where we can reach you.
                       </span>
@@ -1251,7 +1253,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                     type="button"
                     data-cursor="hover"
                     onClick={() => onOpenLegalPage('grievance-redressal')}
-                    className="min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-semibold shadow-2xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                    className="min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-semibold shadow-2xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
                   >
                     <span>Report a Security Issue</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -1271,17 +1273,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
             </article>
 
             {/* Card 2: Responsible Disclosure Guidelines */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       02 · Responsible Disclosure Expectations
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>Protecting Merchant Data &amp; Store Uptime</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                 </div>
@@ -1301,19 +1303,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Do Not Access or Modify Another Business’s Data:</strong> Never view, copy, alter, or delete live records belonging to another store or merchant. If you are testing application workflows, use the isolated public <strong className="text-slate-900 dark:text-white">Demo Mode</strong> or your own test account.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Do Not Disrupt Store Operations:</strong> Avoid automated denial-of-service (DoS) testing, high-volume request flooding, credential brute-forcing, or any action that could slow down or interrupt live merchant billing.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Report Promptly &amp; Allow Time for Remediation:</strong> Submit your findings as soon as they are identified and give our team a reasonable opportunity to investigate and deploy a fix before sharing technical details publicly.
                       </span>
@@ -1323,7 +1325,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                <div className="text-[11px] font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider font-mono">
                   Why this matters for small businesses
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -1337,12 +1339,12 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div className="flex items-start gap-3.5">
-                <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
                   <Scale className="w-4 h-4" />
                 </div>
                 <div className="space-y-1">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       03 · Report Handling &amp; Bug Bounty Status
                     </span>
                     <span aria-hidden="true">·</span>
@@ -1359,7 +1361,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   type="button"
                   data-cursor="hover"
                   onClick={() => onOpenLegalPage('security')}
-                  className="min-h-[44px] sm:min-h-0 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 inline-flex items-center gap-1 text-left cursor-pointer shrink-0 group"
+                  className="min-h-[44px] sm:min-h-0 py-1.5 text-xs font-semibold text-blue-700 dark:text-sky-400 hover:text-blue-800 dark:hover:text-sky-300 inline-flex items-center gap-1 text-left cursor-pointer shrink-0 group"
                 >
                   <span>View Security Practices Document</span>
                   <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -1422,7 +1424,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
             <div className="max-w-3xl space-y-2">
               <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider">
+                <span className="text-blue-700 dark:text-sky-400 font-bold uppercase tracking-wider">
                   06 · Public Disclosure Log &amp; Resolution Archive
                 </span>
                 <span aria-hidden="true">·</span>
@@ -1445,10 +1447,10 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   type="button"
                   data-cursor="hover"
                   onClick={() => onOpenLegalPage('security')}
-                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-blue-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>View Security Practices &amp; Notices</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
                 </button>
               </div>
             )}
@@ -1457,17 +1459,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           {/* Two Primary Cards: Current Public Incident Record & How Disclosures Are Documented */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Card 1: Verified No-Disclosed-Incident Archive State */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       01 · Public Incident Log Status
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>Status: No Disclosed Incidents Recorded</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <History className="w-4 h-4" />
                   </div>
                 </div>
@@ -1487,19 +1489,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Current Archive State:</strong> {LEGAL_CONFIG.brandName} does not currently have any past publicly disclosed data breaches, credential compromises, or customer-data exposure advisories on record.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">No Manufactured Historical Dates:</strong> Because formal commercial publication and legal entity registration fields (<code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">LEGAL_CONFIG.effectiveDate</code>) are currently in pre-launch configuration, we do not claim a multi-year historical audit window or make absolute claims beyond the current documented record.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Ongoing Record Updates:</strong> If a security incident requiring public disclosure occurs in the future, it will be added to this section with factual dates and remediation summaries.
                       </span>
@@ -1509,7 +1511,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                <div className="text-[11px] font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider font-mono">
                   Honest transparency statement
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -1519,17 +1521,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
             </article>
 
             {/* Card 2: How Future Disclosed Incidents Will Be Documented */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       02 · Disclosure Format &amp; Communication
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>What Information Will Be Published</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <FileText className="w-4 h-4" />
                   </div>
                 </div>
@@ -1549,19 +1551,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Date, Title &amp; Factual Summary:</strong> The date of the disclosed incident, a clear title, and a plain-language summary of what occurred and which system component or data category was involved.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Merchant Impact &amp; Resolution Summary:</strong> Whether store workspaces or customer records were affected, the technical remediation or configuration steps taken to resolve the issue, and the current status (<strong className="text-slate-900 dark:text-white">Resolved</strong>, <strong className="text-slate-900 dark:text-white">Monitoring</strong>, or <strong className="text-slate-900 dark:text-white">Ongoing</strong>).
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Safe Public Summaries Only:</strong> Public incident summaries never expose merchant names, personal contact details, authentication tokens, private logs, or sensitive exploit details that could put stores at risk.
                       </span>
@@ -1571,7 +1573,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                <div className="text-[11px] font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider font-mono">
                   No unverified operational claims
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -1585,7 +1587,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200/80 dark:border-slate-800/80">
               <div className="space-y-0.5">
-                <div className="text-[11px] font-mono text-emerald-700 dark:text-emerald-400 font-semibold uppercase tracking-wider">
+                <div className="text-[11px] font-mono text-blue-700 dark:text-sky-400 font-semibold uppercase tracking-wider">
                   03 · Disclosed Security Incident Log
                 </div>
                 <h4 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white">
@@ -1600,11 +1602,11 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
             <div className="p-4 sm:p-5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0" />
                   <span>No publicly disclosed incidents recorded in the current security history</span>
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl">
-                  There are currently no disclosed security incident entries to display. If a security incident is publicly disclosed in the future, its date, incident summary, affected scope, resolution details, and status will appear in this chronological log. To report a new potential vulnerability, please refer to the <a href="#vulnerability-disclosure" className="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline">Vulnerability Disclosure</a> subsection above.
+                  There are currently no disclosed security incident entries to display. If a security incident is publicly disclosed in the future, its date, incident summary, affected scope, resolution details, and status will appear in this chronological log. To report a new potential vulnerability, please refer to the <a href="#vulnerability-disclosure" className="text-blue-700 dark:text-sky-400 font-semibold hover:underline">Vulnerability Disclosure</a> subsection above.
                 </p>
               </div>
             </div>
@@ -1621,7 +1623,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
             <div className="max-w-3xl space-y-2">
               <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider">
+                <span className="text-blue-700 dark:text-sky-400 font-bold uppercase tracking-wider">
                   07 · Independent Security Assessments &amp; Audit Reports
                 </span>
                 <span aria-hidden="true">·</span>
@@ -1644,10 +1646,10 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   type="button"
                   data-cursor="hover"
                   onClick={() => onOpenLegalPage('security')}
-                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 hover:border-blue-500/40 transition-all inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Review Security Practices Document</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
                 </button>
               </div>
             )}
@@ -1656,17 +1658,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
           {/* Two Primary Cards: Third-Party Penetration Test Status & Report Availability / Scope Distinction */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Card 1: Third-Party Penetration Testing Status */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       01 · Third-Party Assessment Status
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>Most Recent External Test Date: None Documented</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                 </div>
@@ -1686,19 +1688,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">External Testing Firm &amp; Assessment Date:</strong> None documented. We do not list unverified auditor names, test dates, or assessment scopes.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Internal Checks vs. Independent Penetration Testing:</strong> Internal development reviews, static TypeScript checks, and Cloud Firestore security rule configurations are part of maintaining the codebase, but they are not represented as an independent third-party penetration test.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Cloud Provider Infrastructure Distinction:</strong> Hosting database and authentication services on Google Cloud and Firebase does not mean Google Cloud has penetration-tested or audited the {LEGAL_CONFIG.brandName} application code or business logic.
                       </span>
@@ -1708,7 +1710,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider font-mono">
+                <div className="text-[11px] font-bold text-blue-700 dark:text-sky-400 uppercase tracking-wider font-mono">
                   Important security note
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -1718,17 +1720,17 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
             </article>
 
             {/* Card 2: Penetration Test Report Availability & Future Updates */}
-            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 flex flex-col justify-between gap-5 transition-all">
+            <article className="website-card-hover rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 flex flex-col justify-between gap-5 transition-all">
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-1.5">
-                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    <span className="text-blue-700 dark:text-sky-400 font-semibold">
                       02 · Report Availability &amp; Inquiries
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>Status: No External Report Available</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <FileText className="w-4 h-4" />
                   </div>
                 </div>
@@ -1748,19 +1750,19 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   </div>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">No Unverified Report-Request Portal:</strong> We do not provide a synthetic “Request Penetration Test Report” button because no third-party assessment report currently exists.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">When a Third-Party Assessment Is Completed:</strong> Once an independent security assessment is commissioned and completed, this section will be updated with the testing organization, assessment date, high-level scope, remediation status, and instructions for requesting the summary report.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
                         <strong className="text-slate-900 dark:text-white">Architecture &amp; Security Questions:</strong> If your business has questions about our current technical controls or future security assessment plans, you can reach out through our existing Contact Support channel.
                       </span>
@@ -1791,7 +1793,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
         {/* 7. Bottom Plain-Language Merchant Transparency Callout */}
         <div className="mt-10 p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/70 dark:border-emerald-800/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+            <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-blue-950/70 border border-sky-200/70 dark:border-sky-800/70 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
               <HelpCircle className="w-5 h-5" />
             </div>
             <div className="space-y-1">
@@ -1809,7 +1811,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
               type="button"
               data-cursor="hover"
               onClick={onOpenContact}
-              className="min-h-[44px] px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-semibold shadow-2xs transition-all shrink-0 cursor-pointer"
+              className="min-h-[44px] px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-semibold shadow-2xs transition-all shrink-0 cursor-pointer"
             >
               Ask a Compliance Question
             </button>

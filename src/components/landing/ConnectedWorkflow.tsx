@@ -57,15 +57,15 @@ const steps: WorkflowStep[] = [
     ],
     demoSnippet: (
       <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
-        <div className="flex justify-between text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+        <div className="flex justify-between text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
           <span>CATALOG REPOSITORY</span>
-          <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">STATUS: ACTIVE</span>
+          <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">STATUS: ACTIVE</span>
         </div>
         <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
           <div>Item: Basmati Rice Superior 5kg</div>
           <div>Barcode: 8901234567890</div>
           <div>Purchase: ₹380.00</div>
-          <div className="text-emerald-400 font-bold">Selling Price: ₹480.00 (+26.3%)</div>
+          <div className="text-sky-400 font-bold">Selling Price: ₹480.00 (+26.3%)</div>
         </div>
       </div>
     )
@@ -94,9 +94,9 @@ const steps: WorkflowStep[] = [
     ],
     demoSnippet: (
       <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
-        <div className="flex justify-between text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+        <div className="flex justify-between text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
           <span>SCANNER LISTENER</span>
-          <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">MATCH VERIFIED</span>
+          <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">MATCH VERIFIED</span>
         </div>
         <div className="flex items-center justify-between text-[11px] text-slate-300">
           <span>Scanned: [8901234567890]</span>
@@ -104,7 +104,7 @@ const steps: WorkflowStep[] = [
         </div>
         <div className="flex justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-800">
           <span>Unit Qty: 1</span>
-          <span className="text-emerald-400">Added to current cart</span>
+          <span className="text-sky-400">Added to current cart</span>
         </div>
       </div>
     )
@@ -133,9 +133,9 @@ const steps: WorkflowStep[] = [
     ],
     demoSnippet: (
       <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
-        <div className="flex justify-between text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+        <div className="flex justify-between text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
           <span>INVOICE #INV-2026-1049</span>
-          <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">TAX SUMMARY</span>
+          <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">TAX SUMMARY</span>
         </div>
         <div className="space-y-1 text-[11px] text-slate-300">
           <div className="flex justify-between">
@@ -148,7 +148,7 @@ const steps: WorkflowStep[] = [
           </div>
           <div className="flex justify-between text-white font-bold pt-1 border-t border-slate-800">
             <span>Net Payable</span>
-            <span className="text-emerald-400">₹1,302.00</span>
+            <span className="text-sky-400">₹1,302.00</span>
           </div>
         </div>
       </div>
@@ -178,15 +178,15 @@ const steps: WorkflowStep[] = [
     ],
     demoSnippet: (
       <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
-        <div className="flex justify-between text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+        <div className="flex justify-between text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
           <span>ATOMIC STOCK SYNC</span>
-          <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">0 DISCREPANCY</span>
+          <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">0 DISCREPANCY</span>
         </div>
         <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
           <div>SKU: Rice-Bas-5kg</div>
           <div>Previous Count: 84</div>
           <div>Deducted: -1 Unit</div>
-          <div className="text-emerald-400 font-bold">Current Balance: 83 Units</div>
+          <div className="text-sky-400 font-bold">Current Balance: 83 Units</div>
         </div>
       </div>
     )
@@ -215,9 +215,9 @@ const steps: WorkflowStep[] = [
     ],
     demoSnippet: (
       <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
-        <div className="flex justify-between text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+        <div className="flex justify-between text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
           <span>PAYMENT VERIFICATION</span>
-          <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">SUCCESS</span>
+          <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">SUCCESS</span>
         </div>
         <div className="space-y-1 text-[11px] text-slate-300">
           <div className="flex justify-between">
@@ -226,7 +226,7 @@ const steps: WorkflowStep[] = [
           </div>
           <div className="flex justify-between text-slate-400">
             <span>VPA: customer@okhdfcbank</span>
-            <span className="text-emerald-400">Instant Credit</span>
+            <span className="text-sky-400">Instant Credit</span>
           </div>
         </div>
       </div>
@@ -256,14 +256,14 @@ const steps: WorkflowStep[] = [
     ],
     demoSnippet: (
       <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
-        <div className="flex justify-between text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+        <div className="flex justify-between text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
           <span>CUSTOMER KHATA PROFILE</span>
           <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-blue-300 border border-blue-800/60">WHATSAPP SENT</span>
         </div>
         <div className="space-y-1 text-[11px] text-slate-300">
           <div>Customer: Vikram Mehta (+91 98450 11234)</div>
           <div>New Loyalty Balance: 245 pts (+13 earned)</div>
-          <div className="text-emerald-400 font-bold">Outstanding Credit: ₹0.00 (Fully Paid)</div>
+          <div className="text-sky-400 font-bold">Outstanding Credit: ₹0.00 (Fully Paid)</div>
         </div>
       </div>
     )
@@ -292,15 +292,15 @@ const steps: WorkflowStep[] = [
     ],
     demoSnippet: (
       <div className="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs space-y-2 border border-slate-800 shadow-inner">
-        <div className="flex justify-between text-emerald-400 border-b border-slate-800 pb-1.5 font-bold">
+        <div className="flex justify-between text-sky-400 border-b border-slate-800 pb-1.5 font-bold">
           <span>LIVE EXECUTIVE DASHBOARD</span>
-          <span className="text-[10px] bg-emerald-950/80 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800/60">UPDATED</span>
+          <span className="text-[10px] bg-blue-950/80 px-2 py-0.5 rounded text-sky-300 border border-sky-800/60">UPDATED</span>
         </div>
         <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
           <div>Daily Revenue: ₹48,950 (+12%)</div>
           <div>Net Gross Margin: 24.2%</div>
           <div>Orders Today: 142</div>
-          <div className="text-emerald-400 font-bold">GSTR-1 Liability: ₹3,916</div>
+          <div className="text-sky-400 font-bold">GSTR-1 Liability: ₹3,916</div>
         </div>
       </div>
     )
@@ -341,7 +341,7 @@ export const ConnectedWorkflow: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Smoothly advance the emerald data-flow signal through steps 01 -> 07 while in viewport & not hovered
+  // Smoothly advance the sapphire data-flow signal through steps 01 -> 07 while in viewport & not hovered
   useEffect(() => {
     if (prefersReducedMotion || !isInViewport || isHovered) return;
 
@@ -431,15 +431,18 @@ export const ConnectedWorkflow: React.FC = () => {
         
         {/* Section Header */}
         <div className="max-w-3xl mb-10 lg:mb-12">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-md mb-3 border border-emerald-200/60 dark:border-emerald-800/60">
-            Connected Workflow
+          <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
+            <span>Connected Workflow</span>
+            <span className="text-slate-300 dark:text-slate-700">·</span>
+            <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">7-Step Atomic Signal</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-950 dark:text-white tracking-tight">
             One business action. Everything stays connected.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
             In traditional setups, billing doesn&apos;t talk to inventory or paper Khata. In Ellix Connect, a single sale ripples through all 7 operational steps automatically.
-            <span className="hidden lg:inline text-emerald-600 dark:text-emerald-400 font-semibold ml-1">
+            <span className="hidden lg:inline text-blue-600 dark:text-sky-400 font-semibold ml-1">
               Hover over any workflow step below to inspect its live data ripple in-place.
             </span>
           </p>
@@ -450,10 +453,10 @@ export const ConnectedWorkflow: React.FC = () => {
         {/* ============================================================ */}
         <div className="hidden lg:block mb-5">
           <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400 mb-2 px-1">
-            <span className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold">
+            <span className="flex items-center gap-1.5 text-blue-700 dark:text-sky-400 font-semibold">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500" />
               </span>
               <span>ONE ACTION → CONNECTED CONSEQUENCES → BUSINESS INSIGHT</span>
             </span>
@@ -466,17 +469,17 @@ export const ConnectedWorkflow: React.FC = () => {
           <div className="relative h-2 rounded-full bg-slate-200/90 dark:bg-slate-800/90 overflow-visible">
             {/* Illuminated Connected Path up to Active Step */}
             <motion.div
-              className="absolute top-0 left-0 bottom-0 rounded-full bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.55)]"
+              className="absolute top-0 left-0 bottom-0 rounded-full bg-gradient-to-r from-blue-600 via-sky-500 to-sky-400 shadow-[0_0_12px_rgba(37, 99, 235,0.55)]"
               animate={{ width: `${signalProgressPct}%` }}
               transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
             />
-            {/* Traveling Emerald Signal Pulse Head */}
+            {/* Traveling Sapphire Signal Pulse Head */}
             <motion.div
-              className="absolute top-1/2 -translate-y-1/2 -ml-2 w-4 h-4 rounded-full bg-emerald-400/30 dark:bg-emerald-400/40 flex items-center justify-center pointer-events-none"
+              className="absolute top-1/2 -translate-y-1/2 -ml-2 w-4 h-4 rounded-full bg-sky-400/30 dark:bg-sky-400/40 flex items-center justify-center pointer-events-none"
               animate={{ left: `${signalProgressPct}%` }}
               transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.95)]" />
+              <span className="w-2 h-2 rounded-full bg-sky-500 dark:bg-sky-300 shadow-[0_0_10px_rgba(37, 99, 235,0.95)]" />
             </motion.div>
 
             {/* 7 Step Anchor Dots */}
@@ -489,9 +492,9 @@ export const ConnectedWorkflow: React.FC = () => {
                     <span
                       className={`w-2 h-2 rounded-full transition-all duration-300 ${
                         isCurrentNode
-                          ? 'bg-white ring-2 ring-emerald-500 scale-125'
+                          ? 'bg-white ring-2 ring-blue-500 scale-125'
                           : isReached
-                          ? 'bg-emerald-300 dark:bg-emerald-400'
+                          ? 'bg-sky-300 dark:bg-sky-400'
                           : 'bg-slate-300 dark:bg-slate-700'
                       }`}
                     />
@@ -537,10 +540,10 @@ export const ConnectedWorkflow: React.FC = () => {
                   onKeyDown={(e) => handleStepKeyDown(e, idx)}
                   className={`website-card-hover p-4 rounded-2xl text-left flex flex-col justify-between cursor-pointer border transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] min-w-0 box-border ${
                     isCurrent && !isHovered
-                      ? 'bg-white dark:bg-slate-900 border-emerald-500/80 ring-2 ring-emerald-500/25 shadow-[0_12px_28px_-6px_rgba(16,185,129,0.2)] -translate-y-1 text-slate-900 dark:text-white'
+                      ? 'bg-white dark:bg-slate-900 border-sky-500/80 ring-2 ring-blue-500/25 shadow-[0_12px_28px_-6px_rgba(37, 99, 235,0.2)] -translate-y-1 text-slate-900 dark:text-white'
                       : isConnectedPath && !isHovered
-                      ? 'bg-white dark:bg-slate-900/95 border-emerald-500/30 dark:border-emerald-500/25 text-slate-900 dark:text-white'
-                      : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/50 hover:shadow-lg text-slate-900 dark:text-white opacity-90 hover:opacity-100'
+                      ? 'bg-white dark:bg-slate-900/95 border-sky-500/30 dark:border-sky-500/25 text-slate-900 dark:text-white'
+                      : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800/90 hover:border-blue-500/50 hover:shadow-lg text-slate-900 dark:text-white opacity-90 hover:opacity-100'
                   }`}
                 >
                   <div>
@@ -549,9 +552,9 @@ export const ConnectedWorkflow: React.FC = () => {
                       <span
                         className={`text-xs font-mono font-bold px-2 py-0.5 rounded-md border transition-colors duration-300 ${
                           isCurrent && !isHovered
-                            ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/40'
+                            ? 'bg-sky-500/15 text-blue-700 dark:text-sky-300 border-sky-500/40'
                             : isConnectedPath && !isHovered
-                            ? 'bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
+                            ? 'bg-sky-50/70 dark:bg-blue-950/40 text-blue-700 dark:text-sky-400 border-sky-500/20'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60'
                         }`}
                       >
@@ -562,16 +565,16 @@ export const ConnectedWorkflow: React.FC = () => {
                         <ArrowRight
                           className={`w-3.5 h-3.5 transition-all duration-300 ${
                             isCurrent
-                              ? 'text-emerald-500 dark:text-emerald-400 translate-x-0.5'
+                              ? 'text-sky-500 dark:text-sky-400 translate-x-0.5'
                               : isConnectedPath
-                              ? 'text-emerald-500/60 dark:text-emerald-400/60'
+                              ? 'text-sky-500/60 dark:text-sky-400/60'
                               : 'text-slate-300 dark:text-slate-600'
                           }`}
                         />
                       ) : (
                         <CheckCircle2
                           className={`w-3.5 h-3.5 transition-transform duration-300 ${
-                            isCurrent ? 'text-emerald-500 dark:text-emerald-400 scale-110' : 'text-emerald-500/70 dark:text-emerald-400/70'
+                            isCurrent ? 'text-sky-500 dark:text-sky-400 scale-110' : 'text-sky-500/70 dark:text-sky-400/70'
                           }`}
                         />
                       )}
@@ -581,15 +584,15 @@ export const ConnectedWorkflow: React.FC = () => {
                     <div
                       className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-4 transition-all duration-300 ${
                         isCurrent && !isHovered
-                          ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-500/50 text-emerald-600 dark:text-emerald-300 shadow-[0_0_14px_rgba(16,185,129,0.25)] scale-105'
-                          : 'bg-slate-50 dark:bg-slate-800 border-slate-200/90 dark:border-slate-700/80 text-emerald-600 dark:text-emerald-400'
+                          ? 'bg-sky-50 dark:bg-blue-950/80 border-sky-500/50 text-blue-600 dark:text-sky-300 shadow-[0_0_14px_rgba(37, 99, 235,0.25)] scale-105'
+                          : 'bg-slate-50 dark:bg-slate-800 border-slate-200/90 dark:border-slate-700/80 text-blue-600 dark:text-sky-400'
                       }`}
                     >
                       <Icon className="w-5 h-5" />
                     </div>
 
                     {/* Category Subtitle & Step Title */}
-                    <div className="text-[10px] font-bold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-1">
+                    <div className="text-[10px] font-bold tracking-wider uppercase text-blue-600 dark:text-sky-400 mb-1">
                       {step.subtitle}
                     </div>
                     <h3 className="text-sm font-bold text-slate-950 dark:text-white mb-2 leading-snug">
@@ -608,9 +611,9 @@ export const ConnectedWorkflow: React.FC = () => {
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60">
                         {step.badge}
                       </span>
-                      <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                      <span className="text-[10px] font-mono text-blue-600 dark:text-sky-400 font-semibold flex items-center gap-1">
                         {isCurrent && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-ping" />
                         )}
                         <span>Live Sync</span>
                       </span>
@@ -618,7 +621,7 @@ export const ConnectedWorkflow: React.FC = () => {
                     <div className="space-y-1 text-[11px] text-slate-500 dark:text-slate-400">
                       {step.checklist.slice(0, 2).map((point, pIdx) => (
                         <div key={pIdx} className="flex items-center gap-1.5 truncate">
-                          <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                          <CheckCircle2 className="w-3 h-3 text-sky-500 shrink-0" />
                           <span className="truncate">{point}</span>
                         </div>
                       ))}
@@ -666,22 +669,22 @@ export const ConnectedWorkflow: React.FC = () => {
                   duration: 0.28,
                   ease: [0.16, 1, 0.3, 1]
                 }}
-                className="col-start-1 row-start-1 z-20 w-full h-full min-h-[560px] box-border overflow-hidden p-6 lg:p-7 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-500/40 dark:border-emerald-500/30 shadow-2xl ring-1 ring-emerald-500/20 flex flex-col justify-between gap-5"
+                className="col-start-1 row-start-1 z-20 w-full h-full min-h-[560px] box-border overflow-hidden p-6 lg:p-7 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-sky-500/40 dark:border-sky-500/30 shadow-2xl ring-1 ring-blue-500/20 flex flex-col justify-between gap-5"
               >
                 {/* Top Interactive Workflow Switcher Ribbon */}
                 <div className="w-full min-w-0">
                   <div className="flex items-center justify-between gap-2 pb-3.5 mb-4 border-b border-slate-200/80 dark:border-slate-800/80">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                      <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse shrink-0" />
                       <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 truncate">
                         Connected Workflow Live Workspace
                       </span>
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-mono font-bold border border-emerald-300/60 dark:border-emerald-800/60 shrink-0">
+                      <span className="px-2 py-0.5 rounded-md bg-sky-100 dark:bg-blue-950/80 text-blue-800 dark:text-sky-300 text-[11px] font-mono font-bold border border-sky-300/60 dark:border-sky-800/60 shrink-0">
                         Step {currentStep.stepNumber} of 07
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 shrink-0">
-                      <MousePointer2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <MousePointer2 className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                       <span>Hover any step pill to trace the live data ripple</span>
                     </div>
                   </div>
@@ -708,18 +711,18 @@ export const ConnectedWorkflow: React.FC = () => {
                           }}
                           className={`relative py-2 px-1.5 rounded-xl text-xs font-bold transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer min-w-0 ${
                             isActive
-                              ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500/60 shadow-sm ring-2 ring-emerald-500/20'
+                              ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-sky-400 border border-sky-500/60 shadow-sm ring-2 ring-blue-500/20'
                               : isConnected
-                              ? 'bg-emerald-50/60 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 opacity-95'
+                              ? 'bg-sky-50/60 dark:bg-blue-950/30 text-blue-700 dark:text-sky-300 border border-sky-500/25 opacity-95'
                               : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-900/60 border border-transparent opacity-75 hover:opacity-100'
                           }`}
                         >
                           <StepIcon
                             className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
                               isActive
-                                ? 'text-emerald-500 scale-110'
+                                ? 'text-sky-500 scale-110'
                                 : isConnected
-                                ? 'text-emerald-500/80'
+                                ? 'text-sky-500/80'
                                 : 'text-slate-400'
                             }`}
                           />
@@ -728,11 +731,11 @@ export const ConnectedWorkflow: React.FC = () => {
                       );
                     })}
                   </div>
-                  {/* Traveling Emerald Signal Path toward active step */}
+                  {/* Traveling Sapphire Signal Path toward active step */}
                   <div className="mt-2 px-3">
                     <div className="relative h-1 w-full rounded-full bg-slate-200/80 dark:bg-slate-800 overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-emerald-500/40 via-emerald-500 to-emerald-400 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                        className="h-full rounded-full bg-gradient-to-r from-blue-500/40 via-sky-400 to-sky-400 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_8px_rgba(37, 99, 235,0.5)]"
                         style={{ width: `${((activeStepIndex + 0.5) / steps.length) * 100}%` }}
                       />
                     </div>
@@ -750,8 +753,8 @@ export const ConnectedWorkflow: React.FC = () => {
                     className="lg:col-span-6 flex flex-col justify-between gap-3.5 min-w-0"
                   >
                     <div className="space-y-3 min-w-0">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-300/60 dark:border-emerald-800/60">
-                        <CurrentIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 dark:bg-blue-950/80 text-blue-800 dark:text-sky-300 text-xs font-bold border border-sky-300/60 dark:border-sky-800/60">
+                        <CurrentIcon className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
                         <span>
                           Step {currentStep.stepNumber} · {currentStep.subtitle}
                         </span>
@@ -773,7 +776,7 @@ export const ConnectedWorkflow: React.FC = () => {
                         <div className="grid grid-cols-1 gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-200">
                           {currentStep.checklist.map((point, idx) => (
                             <div key={idx} className="flex items-center gap-2 min-w-0">
-                              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                              <CheckCircle2 className="w-4 h-4 text-sky-500 shrink-0" />
                               <span className="truncate sm:whitespace-normal">{point}</span>
                             </div>
                           ))}
@@ -811,12 +814,12 @@ export const ConnectedWorkflow: React.FC = () => {
                       <div className="space-y-3.5 min-w-0">
                         <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
                           <div className="flex items-center gap-2 min-w-0">
-                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                            <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse shrink-0" />
                             <span className="text-xs font-bold text-slate-900 dark:text-white font-mono truncate">
                               Live Data Ripple Demonstration
                             </span>
                           </div>
-                          <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">
+                          <span className="text-[11px] font-semibold text-blue-600 dark:text-sky-400 bg-sky-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-md border border-sky-200/60 dark:border-sky-800/60 shrink-0">
                             All 7 Steps Synced
                           </span>
                         </div>
@@ -830,7 +833,7 @@ export const ConnectedWorkflow: React.FC = () => {
 
                         {/* System Activity Telemetry Strip */}
                         <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs font-mono text-slate-700 dark:text-slate-300 flex items-center gap-2 min-w-0 box-border">
-                          <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
                           <span className="truncate">{currentStep.systemActivity}</span>
                         </div>
                       </div>
@@ -860,12 +863,12 @@ export const ConnectedWorkflow: React.FC = () => {
                               setActiveStepIndex(next);
                               setOriginIndex(next);
                             }}
-                            className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                            className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                           >
                             Next Step →
                           </button>
                         </div>
-                        <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold shrink-0">
+                        <span className="text-[11px] text-blue-600 dark:text-sky-400 font-semibold shrink-0">
                           Zero latency cloud sync
                         </span>
                       </div>
@@ -895,7 +898,7 @@ export const ConnectedWorkflow: React.FC = () => {
                   aria-pressed={isSelected}
                   className={`snap-start shrink-0 w-[235px] sm:w-auto p-4 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
                     isSelected
-                      ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-2 ring-emerald-500/40 shadow-md text-slate-900 dark:text-white'
+                      ? 'bg-white dark:bg-slate-900 border-sky-500 ring-2 ring-blue-500/40 shadow-md text-slate-900 dark:text-white'
                       : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white'
                   }`}
                 >
@@ -904,7 +907,7 @@ export const ConnectedWorkflow: React.FC = () => {
                       <div
                         className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                           isSelected
-                            ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'
+                            ? 'bg-sky-50 dark:bg-blue-950 text-blue-600 dark:text-sky-400'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
                       >
@@ -915,7 +918,7 @@ export const ConnectedWorkflow: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-0.5">
+                    <div className="text-[10px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider mb-0.5">
                       {step.subtitle}
                     </div>
                     <h3 className="text-sm sm:text-base font-bold mb-1">
@@ -926,7 +929,7 @@ export const ConnectedWorkflow: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-blue-600 dark:text-sky-400">
                     <span>{isSelected ? 'Viewing step details ↓' : 'Tap to preview'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
@@ -938,7 +941,7 @@ export const ConnectedWorkflow: React.FC = () => {
           {/* Mobile Step Detail Workspace */}
           <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md space-y-4">
             <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-bold border border-sky-200 dark:border-sky-800">
                 <CurrentIcon className="w-3.5 h-3.5" />
                 <span>
                   Step {currentStep.stepNumber} of 07 · {currentStep.subtitle}
@@ -956,7 +959,7 @@ export const ConnectedWorkflow: React.FC = () => {
             </p>
 
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 text-xs font-mono text-slate-700 dark:text-slate-300 flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
               <span>{currentStep.systemActivity}</span>
             </div>
 
@@ -967,7 +970,7 @@ export const ConnectedWorkflow: React.FC = () => {
               <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
                 {currentStep.checklist.map((pt, idx) => (
                   <div key={idx} className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                     <span>{pt}</span>
                   </div>
                 ))}
@@ -991,7 +994,7 @@ export const ConnectedWorkflow: React.FC = () => {
                 type="button"
                 disabled={activeStepIndex === steps.length - 1}
                 onClick={() => setActiveStepIndex((prev) => Math.min(steps.length - 1, prev + 1))}
-                className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Next Step →
               </button>
@@ -1032,9 +1035,9 @@ export const ConnectedWorkflow: React.FC = () => {
           </div>
 
           {/* The Ellix Connect Way */}
-          <div data-cursor="card" className="website-card-hover p-6 rounded-2xl bg-emerald-50/40 dark:bg-emerald-950/30 border border-emerald-300/80 dark:border-emerald-800/80 shadow-sm">
-            <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider mb-3">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          <div data-cursor="card" className="website-card-hover p-6 rounded-2xl bg-sky-50/40 dark:bg-blue-950/30 border border-sky-300/80 dark:border-sky-800/80 shadow-sm">
+            <div className="flex items-center gap-2 text-blue-800 dark:text-sky-300 text-xs font-bold uppercase tracking-wider mb-3">
+              <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-sky-400" />
               <span>The Connected Ellix Approach</span>
             </div>
             <h4 className="text-lg font-bold text-slate-950 dark:text-white mb-3">
@@ -1042,19 +1045,19 @@ export const ConnectedWorkflow: React.FC = () => {
             </h4>
             <ul className="space-y-2.5 text-sm text-slate-700 dark:text-slate-300">
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓</span>
+                <span className="text-blue-600 dark:text-sky-400 font-bold">✓</span>
                 <span>Each barcode scan automatically reserves and decrements live stock.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓</span>
+                <span className="text-blue-600 dark:text-sky-400 font-bold">✓</span>
                 <span>Instant digital Khata ledger with automated WhatsApp payment links.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓</span>
+                <span className="text-blue-600 dark:text-sky-400 font-bold">✓</span>
                 <span>Zero post-closing data entry. Shift drawer and sales close in 60 seconds.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓</span>
+                <span className="text-blue-600 dark:text-sky-400 font-bold">✓</span>
                 <span>Audit-ready GST tax breakdowns and profit margins generated in real time.</span>
               </li>
             </ul>

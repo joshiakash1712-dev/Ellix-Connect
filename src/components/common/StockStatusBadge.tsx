@@ -50,10 +50,10 @@ export function getSystemStatusInfo(status: SystemStatusType): SystemStatusInfo 
       return {
         status,
         label: 'Active',
-        badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-        textClass: 'text-emerald-400',
-        dotClass: 'bg-emerald-400',
-        icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+        badgeClass: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
+        textClass: 'text-sky-400',
+        dotClass: 'bg-sky-400',
+        icon: <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
       };
     case 'inactive':
       return {
@@ -68,10 +68,10 @@ export function getSystemStatusInfo(status: SystemStatusType): SystemStatusInfo 
       return {
         status,
         label: 'Normal',
-        badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-        textClass: 'text-emerald-400',
-        dotClass: 'bg-emerald-400',
-        icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+        badgeClass: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
+        textClass: 'text-sky-400',
+        dotClass: 'bg-sky-400',
+        icon: <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
       };
     case 'low_stock':
       return {
@@ -104,10 +104,10 @@ export function getSystemStatusInfo(status: SystemStatusType): SystemStatusInfo 
       return {
         status,
         label: 'Paid',
-        badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-        textClass: 'text-emerald-400',
-        dotClass: 'bg-emerald-400',
-        icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+        badgeClass: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
+        textClass: 'text-sky-400',
+        dotClass: 'bg-sky-400',
+        icon: <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
       };
     case 'pending':
       return {
@@ -178,7 +178,7 @@ export const SystemStatusBadge: React.FC<{
 
 /**
  * Returns structured stock status according to Ellix Connect thresholds:
- * - Stock > 10: Normal (CheckCircle2, emerald)
+ * - Stock > 10: Normal (CheckCircle2, sapphire/sky)
  * - Stock 4-10: Low Stock (AlertCircle, amber)
  * - Stock 1-3: Critical (AlertTriangle, rose)
  * - Stock = 0: Out of Stock (XCircle, red)
@@ -222,10 +222,10 @@ export function getStockStatus(stock: number): StockStatusInfo {
   return {
     level: 'normal',
     label: 'Normal',
-    badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/35',
-    textClass: 'text-emerald-400',
-    dotClass: 'bg-emerald-500',
-    icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+    badgeClass: 'bg-sky-500/20 text-sky-300 border-sky-500/35',
+    textClass: 'text-sky-400',
+    dotClass: 'bg-sky-500',
+    icon: <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
   };
 }
 

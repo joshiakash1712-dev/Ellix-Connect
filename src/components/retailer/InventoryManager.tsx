@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
-import { Product } from '../../types';
+import { Product, normalizeCanonicalRole } from '../../types';
 import { BarcodeGeneratorModal } from '../common/BarcodeGeneratorModal';
 import { RestockModal } from './RestockModal';
 import { InventorySkeleton } from '../common/skeletons/InventorySkeleton';
@@ -52,8 +52,9 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({ isLoading })
   const { userProfile, currentUser: authUser } = useAuth();
 
   const isActuallyLoading = isLoading ?? isDataLoading;
-  const isCrew = userProfile?.role === 'crew' || currentUser?.role === 'crew';
-  const isOwnerOrAdmin = !isCrew;
+  const canonicalRole = normalizeCanonicalRole(currentUser?.role || userProfile?.role);
+  const isCrew = canonicalRole === 'crew';
+  const isOwnerOrAdmin = canonicalRole === 'super_admin' || canonicalRole === 'ellix_admin' || canonicalRole === 'client';
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -518,12 +519,13 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({ isLoading })
 
                 <div className="flex items-center justify-between pt-1 border-t border-slate-800/80 gap-2">
                   <button
-                    onClick={() => toggleProductSharing(prod.id)}
+                    onClick={() => isOwnerOrAdmin && toggleProductSharing(prod.id)}
+                    disabled={!isOwnerOrAdmin}
                     className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border flex items-center gap-1.5 transition-colors ${
                       prod.sharedWithWholesalers
                         ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
                         : 'bg-slate-800 text-slate-400 border-slate-700'
-                    }`}
+                    } ${!isOwnerOrAdmin ? 'opacity-60 cursor-not-allowed' : ''}`}
                   >
                     {prod.sharedWithWholesalers ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
                     <span>{prod.sharedWithWholesalers ? 'Shared' : 'Private'}</span>
@@ -637,13 +639,14 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({ isLoading })
 
                     <td className="py-3">
                       <button
-                        onClick={() => toggleProductSharing(prod.id)}
+                        onClick={() => isOwnerOrAdmin && toggleProductSharing(prod.id)}
+                        disabled={!isOwnerOrAdmin}
                         className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border flex items-center gap-1 transition-colors ${
                           prod.sharedWithWholesalers
                             ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
                             : 'bg-slate-800 text-slate-400 border-slate-700'
-                        }`}
-                        title="Click to toggle sharing stock visibility with connected Wholesalers"
+                        } ${!isOwnerOrAdmin ? 'opacity-60 cursor-not-allowed' : ''}`}
+                        title={isOwnerOrAdmin ? 'Click to toggle sharing stock visibility with connected Wholesalers' : 'Only store owner can change wholesaler sharing'}
                       >
                         {prod.sharedWithWholesalers ? <Eye className="w-3 h-3 text-emerald-400" /> : <EyeOff className="w-3 h-3 text-slate-500" />}
                         <span>{prod.sharedWithWholesalers ? 'Shared' : 'Private'}</span>

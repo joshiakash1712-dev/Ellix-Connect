@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
-import { Product } from '../../types';
+import { Product, normalizeCanonicalRole } from '../../types';
 import {
   PackagePlus,
   Truck,
@@ -36,7 +36,10 @@ export const RestockModal: React.FC<RestockModalProps> = ({
   const { suppliers, activeStore, updateProduct, addRestockLog, currentUser, activeRole, addSupplier } = useStore();
   const { userProfile, currentUser: authUser } = useAuth();
 
-  const isCrew = activeRole === 'crew' || userProfile?.role === 'crew' || currentUser?.role === 'crew';
+  const isCrew =
+    normalizeCanonicalRole(activeRole) === 'crew' ||
+    normalizeCanonicalRole(userProfile?.role) === 'crew' ||
+    normalizeCanonicalRole(currentUser?.role) === 'crew';
 
   // Current store suppliers only
   const storeSuppliers = suppliers.filter(
