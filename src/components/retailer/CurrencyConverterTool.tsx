@@ -161,7 +161,7 @@ ${wholesaleDiscountPercent > 0 ? `• Wholesale Discount (${wholesaleDiscountPer
 • Converted Net Total: ${formatCurrency(convertedNet, targetCurrency, true)}
 ${includeTax && appliedTaxRate > 0 ? `• ${targetCurrInfo.taxLabel || 'VAT/GST'} (${appliedTaxRate}%): +${formatCurrency(convertedTaxAmount, targetCurrency, true)}\n` : ''}★ FINAL PAYABLE TOTAL: ${formatCurrency(convertedGrandTotal, targetCurrency, true)}
 =========================================
-Generated via Ellix Connect Global Wholesale Engine
+Generated via Ellic Global Wholesale Engine
 Rates synced at: ${new Date(ratesState.lastUpdated).toLocaleDateString()} ${new Date(ratesState.lastUpdated).toLocaleTimeString()}`;
 
     navigator.clipboard.writeText(text);

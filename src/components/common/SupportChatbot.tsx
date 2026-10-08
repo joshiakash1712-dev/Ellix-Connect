@@ -51,7 +51,7 @@ export const SupportChatbot: React.FC = () => {
 
   const initialWelcomeText = `Hello${
     currentUser?.displayName ? ` ${currentUser.displayName}` : ''
-  }! 👋 I am **Ellix Assistant**, your 24/7 retail specialist.
+  }! 👋 I am **Ellic Assistant**, your 24/7 retail specialist.
 
 How can I help you today? You can ask me about:
 - **POS & Billing:** Barcode scanning, receipt printing (58mm/80mm), split payments.
@@ -154,7 +154,7 @@ How can I help you today? You can ask me about:
       const botMsg: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        text: data.reply || 'I am ready to help you with Ellix Connect. Could you clarify what you need assistance with?',
+        text: data.reply || 'I am ready to help you with Ellic. Could you clarify what you need assistance with?',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
@@ -169,7 +169,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
 
 - **WhatsApp Helpline:** [+91 98765 43210](https://wa.me/919876543210) *(Fastest response)*
 - **Toll-Free Phone:** +91 98765 43210
-- **Email:** support@ellixconnect.com`,
+- **Email:** support@ellic.com`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, fallbackMsg]);
@@ -262,11 +262,11 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
             className="hidden sm:flex mb-2.5 max-w-xs bg-slate-900/95 backdrop-blur-md border border-sky-500/40 rounded-2xl p-3 shadow-2xl pointer-events-auto items-start gap-2.5 text-slate-200"
           >
             <div className="w-7 h-7 rounded-xl bg-slate-900 border border-sky-500/40 flex items-center justify-center shrink-0 p-0.5 shadow-sm">
-              <EllixConnectLogo variant="symbol" size={20} alt="Ellix Connect" />
+              <EllixConnectLogo variant="symbol" size={20} alt="Ellic" />
             </div>
             <div className="flex-1 text-xs">
               <p className="font-semibold text-white">Need help with POS or billing?</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">Chat with Ellix Assistant 24/7 for instant support.</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">Chat with Ellic Assistant 24/7 for instant support.</p>
               <button
                 id="btn-prompt-open-chat"
                 onClick={() => {
@@ -314,13 +314,13 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-9 h-9 rounded-2xl bg-slate-900 border border-sky-500/40 flex items-center justify-center p-1 shadow-md shadow-blue-500/20">
-                    <EllixConnectLogo variant="symbol" size={26} alt="Ellix Connect" />
+                    <EllixConnectLogo variant="symbol" size={26} alt="Ellic" />
                   </div>
                   <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-sky-400 border-2 border-slate-900 animate-pulse" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-white text-sm">Ellix Support</h3>
+                    <h3 className="font-bold text-white text-sm">Ellic Support</h3>
                     <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-sky-500/20 text-sky-400 border border-sky-500/30">
                       24/7 AI
                     </span>
@@ -398,7 +398,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
                       <div className="flex items-start gap-2 max-w-[90%]">
                         {msg.role === 'assistant' && (
                           <div className="w-6 h-6 rounded-lg bg-slate-800/90 border border-sky-500/40 flex items-center justify-center shrink-0 mt-0.5 p-0.5 shadow-sm">
-                            <EllixConnectLogo variant="symbol" size={18} alt="Ellix Assistant" />
+                            <EllixConnectLogo variant="symbol" size={18} alt="Ellic Assistant" />
                           </div>
                         )}
 
@@ -530,7 +530,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
           {isOpen ? (
             <X className="w-5 h-5" />
           ) : (
-            <EllixConnectLogo variant="symbol" size={24} className="shrink-0 drop-shadow" alt="Ellix Connect" />
+            <EllixConnectLogo variant="symbol" size={24} className="shrink-0 drop-shadow" alt="Ellic" />
           )}
           {!isOpen && (
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-sky-300 border-2 border-slate-950 animate-ping" />

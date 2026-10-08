@@ -303,7 +303,7 @@ export const AuthModal: React.FC = () => {
           </button>
 
           <div className="flex items-center gap-3">
-            <EllixConnectLogo variant="symbol" size={40} alt="Ellix Connect" />
+            <EllixConnectLogo variant="symbol" size={40} alt="Ellic" />
             <div>
               <div className="flex items-center gap-2">
                 <EllixConnectLogo variant="text" size={24} />
@@ -513,7 +513,7 @@ export const AuthModal: React.FC = () => {
                   <RefreshCw className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
-                    <span>Sign In to Ellix Connect</span>
+                    <span>Sign In to Ellic</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}

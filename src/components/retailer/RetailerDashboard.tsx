@@ -426,7 +426,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
               “Small Stores Build Bigger Communities”
             </blockquote>
             <p className="text-[11px] text-slate-400 mt-1">
-              Ellix Connect Hyperlocal Engine
+              Ellic Hyperlocal Engine
             </p>
           </div>
         </div>
@@ -1239,7 +1239,7 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
       {/* ========================================================================= */}
       <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-center gap-2 text-xs text-slate-500">
         <div className="flex items-center gap-2">
-          <span className="font-semibold text-slate-400">Ellix Connect</span>
+          <span className="font-semibold text-slate-400">Ellic</span>
           <span>|</span>
           <span>Hyperlocal Retail Cloud</span>
           <span>|</span>

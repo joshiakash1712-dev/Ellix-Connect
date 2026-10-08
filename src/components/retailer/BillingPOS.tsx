@@ -507,7 +507,7 @@ export const BillingPOS: React.FC<BillingPOSProps> = ({ isLoading }) => {
         const targetPhone = inv.customerPhone || '+91 99999 00000';
         const cleanDigits = targetPhone.replace(/[^0-9]/g, '');
         const formattedPhone = cleanDigits.length === 10 ? `91${cleanDigits}` : cleanDigits;
-        const pdfInvoiceUrl = `https://ellixconnect.com/invoices/pdf/${inv.invoiceNumber}.pdf`;
+        const pdfInvoiceUrl = `https://ellic.com/invoices/pdf/${inv.invoiceNumber}.pdf`;
 
         const cashierName = inv.cashierName || userProfile?.name || 'Staff Cashier';
         const whatsappText = `*TAX INVOICE / OFFICIAL BILL* 🧾
@@ -578,7 +578,7 @@ Thank you for shopping with ${inv.storeName}!`;
   // F8: Complete Sale / Checkout
   const handleCompleteSaleShortcut = () => {
     if (cart.length === 0) {
-      triggerShortcutNotice('Cart is empty — add items first');
+      triggerShortcutNotice('Cart is empty: add items first');
       return;
     }
     triggerShortcutNotice('Completing Transaction (F8)...');
@@ -1364,11 +1364,11 @@ Thank you for shopping with ${inv.storeName}!`;
               <select
                 value={selectedTemplateId}
                 onChange={e => setSelectedTemplateId(e.target.value)}
-                className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3 py-2 text-xs text-white font-medium focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3 py-2 text-xs text-white font-medium focus:outline-none focus:border-blue-500"
               >
                 {invoiceTemplates.map(tpl => (
                   <option key={tpl.id} value={tpl.id}>
-                    {tpl.name} — [{tpl.targetSegment}] ({tpl.paperSize.toUpperCase()})
+                    {tpl.name} : [{tpl.targetSegment}] ({tpl.paperSize.toUpperCase()})
                   </option>
                 ))}
               </select>

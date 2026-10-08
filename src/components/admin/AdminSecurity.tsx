@@ -56,14 +56,14 @@ export const AdminSecurity: React.FC = () => {
     {
       id: 'wh-1',
       event: 'invoice.created',
-      targetUrl: 'https://api.ellixconnect.com/webhooks/whatsapp-invoice',
+      targetUrl: 'https://api.ellic.com/webhooks/whatsapp-invoice',
       status: 'healthy',
       secret: `wh_demo_${'8899aabb'}_placeholder`
     },
     {
       id: 'wh-2',
       event: 'inventory.low_stock',
-      targetUrl: 'https://api.ellixconnect.com/webhooks/restock-alert',
+      targetUrl: 'https://api.ellic.com/webhooks/restock-alert',
       status: 'healthy',
       secret: `wh_demo_${'55667788'}_placeholder`
     }

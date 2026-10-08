@@ -52,7 +52,7 @@ const guides: GuideItem[] = [
     icon: BookOpen,
     keyTopics: ['USB & Bluetooth scanner pairing', 'Thermal bill printer configuration', 'Role-based cashier permissions'],
     docContent: {
-      overview: 'Ellix Connect connects directly with your existing POS peripherals without proprietary drivers or specialized bridge software.',
+      overview: 'Ellic connects directly with your existing POS peripherals without proprietary drivers or specialized bridge software.',
       steps: [
         {
           title: '1. Store Profile & Tax Initialization',
@@ -60,7 +60,7 @@ const guides: GuideItem[] = [
         },
         {
           title: '2. Connect Thermal Receipt Printer',
-          detail: 'Connect any standard 58mm or 80mm ESC/POS thermal printer via USB or Bluetooth. Ellix Connect natively detects standard print services.'
+          detail: 'Connect any standard 58mm or 80mm ESC/POS thermal printer via USB or Bluetooth. Ellic natively detects standard print services.'
         },
         {
           title: '3. Test Barcode Scanner',
@@ -87,7 +87,7 @@ const guides: GuideItem[] = [
         },
         {
           title: '2. Dynamic QR Payment Generation',
-          detail: 'When the customer chooses UPI, Ellix Connect renders a dynamic NPCI-compliant QR code with the exact bill amount locked, eliminating manual typing errors.'
+          detail: 'When the customer chooses UPI, Ellic renders a dynamic NPCI-compliant QR code with the exact bill amount locked, eliminating manual typing errors.'
         },
         {
           title: '3. Instant Invoice Dispatch',
@@ -186,12 +186,12 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
           <div className="max-w-3xl">
             <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-3">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
-              <span>Ellix Guidebook</span>
+              <span>Ellic Guidebook</span>
               <span className="text-slate-300 dark:text-slate-700">·</span>
               <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">12 Interactive Chapters</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-950 dark:text-white tracking-tight">
-              Learn Ellix Connect, step by step.
+              Learn Ellic, step by step.
             </h2>
             <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
               We believe business software should be intuitive. Launch the 12-step interactive platform tour or search topics below to view quick documentation walkthroughs.
@@ -505,7 +505,7 @@ export const GuidebookPreview: React.FC<GuidebookPreviewProps> = ({
 
               {/* Footer */}
               <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
-                <span className="text-xs text-slate-500">Ellix Connect Official Documentation</span>
+                <span className="text-xs text-slate-500">Ellic Official Documentation</span>
                 <button
                   type="button"
                   onClick={() => setActiveGuideModal(null)}

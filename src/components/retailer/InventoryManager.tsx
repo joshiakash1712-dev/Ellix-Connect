@@ -201,7 +201,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({ isLoading })
       stock: 40,
       minThreshold: 10,
       barcode: `890${Math.floor(1000000000 + Math.random() * 9000000000)}`,
-      qrCode: `ELLIX-P-${Math.floor(100 + Math.random() * 900)}`,
+      qrCode: `ELLIC-P-${Math.floor(100 + Math.random() * 900)}`,
       expiryDate: '2027-12-31',
       batchNumber: `BT-${Math.floor(1000 + Math.random() * 9000)}`,
       warehouseLocation: 'Shelf A-02',

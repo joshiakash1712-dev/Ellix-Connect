@@ -56,7 +56,7 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
   href,
   onClick,
   className = '',
-  alt = 'Ellix Connect - Business management, without the complexity',
+  alt = 'Ellic - Business management, without the complexity',
   interactive = false
 }) => {
   // Resolve dimensions
@@ -245,14 +245,14 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
             />
           </span>
           <span style={{ fontSize: `${height * 0.72}px` }}>
-            <span className="text-white">x</span>
+            <span className="text-white">c</span>
           </span>
         </div>
         <div
           className="font-bold text-[#38BDF8] tracking-[0.38em] uppercase"
           style={{ fontSize: `${height * 0.28}px`, marginTop: `${height * 0.08}px` }}
         >
-          CONNECT
+          BUSINESS OS
         </div>
       </div>
     );
@@ -364,16 +364,20 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
           <circle cx="103.25" cy="22" r="5.2" fill="url(#ec-fl-i-dot)" />
           <circle cx="101.8" cy="20.5" r="1.5" fill="#FFFFFF" opacity="0.8" />
 
-          {/* 'x' main white stroke (top-left to bottom-right) */}
-          <path className="ellix-logo-wordmark" d="M 115 32 L 124 32 L 143.5 66.5 L 134.5 66.5 Z" fill="#FFFFFF" />
+          {/* 'c' main body */}
+          <path
+            className="ellix-logo-wordmark"
+            d="M 148 42 C 145.5 35 139 31 130 31 C 118 31 111 39 111 49 C 111 59 118 67.5 130 67.5 C 139 67.5 145.5 63.5 148 56.5 L 139.5 53 C 138 56.5 134.5 59.5 130 59.5 C 123 59.5 119 54.5 119 49 C 119 43.5 123 38.5 130 38.5 C 134.5 38.5 138 41.5 139.5 45 Z"
+            fill="#FFFFFF"
+          />
 
-          {/* 'x' bottom-left white segment */}
-          <path className="ellix-logo-wordmark" d="M 115 66.5 L 123.5 66.5 L 129.5 56 L 125 48 Z" fill="#FFFFFF" />
+          {/* 'c' sapphire top accent */}
+          <path
+            d="M 139.5 34 C 143 36 146 38.5 148 42 L 140 45 C 139 43 137.5 41 135 39.5 Z"
+            fill="#38BDF8"
+          />
 
-          {/* 'x' top-right mint accent slash */}
-          <path d="M 129 49 L 134.5 40 L 144 32 L 135 32 L 127 44.5 Z" fill="#38BDF8" />
-
-          {/* Tracked Tagline: CONNECT */}
+          {/* Tracked Tagline: BUSINESS OS */}
           <text
             x="24"
             y="82"
@@ -385,7 +389,7 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
               letterSpacing: '0.38em'
             }}
           >
-            CONNECT
+            BUSINESS OS
           </text>
         </g>
       </svg>
@@ -415,3 +419,6 @@ export const EllixConnectLogo: React.FC<EllixConnectLogoProps> = ({
 
   return <div className="inline-flex items-center shrink-0">{content}</div>;
 };
+
+export const EllicLogo = EllixConnectLogo;
+export type EllicLogoProps = EllixConnectLogoProps;

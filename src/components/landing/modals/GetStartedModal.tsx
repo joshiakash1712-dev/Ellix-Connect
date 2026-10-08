@@ -50,8 +50,8 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({
     <MarketingModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Get Started with Ellix Connect"
-      subtitle="Ellix Connect access is designed for retail stores, supermarkets, and wholesalers in India (excluding restaurants)."
+      title="Get Started with Ellic"
+      subtitle="Ellic access is designed for retail stores, supermarkets, and wholesalers in India (excluding restaurants)."
     >
       {submitted ? (
         <div className="py-6 text-center space-y-4">
@@ -84,8 +84,8 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({
           {/* Informational Hero Banner */}
           <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
             <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
-              <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span>Merchant Onboarding (Retail &amp; Wholesale — Excluding Restaurants)</span>
+              <Sparkles className="w-4 h-4 text-blue-600 dark:text-sky-400" />
+              <span>Merchant Onboarding (Retail &amp; Wholesale, Excluding Restaurants)</span>
             </div>
             <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
               We onboard retail stores and wholesalers with catalog setup, barcode billing configuration, and staff role onboarding.

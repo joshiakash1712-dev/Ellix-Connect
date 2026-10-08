@@ -149,7 +149,7 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ template, invo
   const invoiceDate = invoice.date || '2026-08-01';
   const invoiceTime = (invoice as any).time || (invoice.date?.includes(' ') ? invoice.date.split(' ')[1] : '') || '14:30 PM';
   const cashierName = invoice.cashierName || (invoice as any).crewName || invoice.createdBy || 'Staff Cashier';
-  const storeName = invoice.storeName || branding.storeDisplayName || 'Ellix Store';
+  const storeName = invoice.storeName || branding.storeDisplayName || 'Ellic Store';
 
   const previousBalance = additionalInfo?.previousBalance ?? 0;
   const receivedAmount = additionalInfo?.receivedAmount ?? (paymentMethod === 'CASH' || paymentMethod === 'UPI' ? grandTotal : 0);

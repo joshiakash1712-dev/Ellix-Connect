@@ -75,7 +75,7 @@ export const SapphireDataRipple: React.FC<SapphireDataRippleProps> = ({
       icon: Package,
       primaryMetric: latestItemName,
       secondaryMetric: `Qty × ${latestItemQty} · Instant SKU lookup (<0.2s)`,
-      causeEffectText: `Barcode scanned for ${latestItemName} (×${latestItemQty}) — pricing & GST slab fetched automatically from ${totalSkus} catalog SKUs.`,
+      causeEffectText: `Barcode scanned for ${latestItemName} (×${latestItemQty}): pricing & GST slab fetched automatically from ${totalSkus} catalog SKUs.`,
       actionLabel: 'Catalog',
       onAction: onNavigateToInventory
     },
@@ -88,7 +88,7 @@ export const SapphireDataRipple: React.FC<SapphireDataRippleProps> = ({
       icon: FileText,
       primaryMetric: `${latestInvoiceNumber} · ₹${latestBillAmount.toLocaleString()}`,
       secondaryMetric: `${latestCustomerName} · Today ₹${todaySales.toLocaleString()}`,
-      causeEffectText: `Invoice ${latestInvoiceNumber} (₹${latestBillAmount.toLocaleString()}) committed at counter — GST ledger & daily revenue (₹${todaySales.toLocaleString()}) updated live.`,
+      causeEffectText: `Invoice ${latestInvoiceNumber} (₹${latestBillAmount.toLocaleString()}) committed at counter: GST ledger & daily revenue (₹${todaySales.toLocaleString()}) updated live.`,
       actionLabel: 'Open POS',
       onAction: onNavigateToPOS || onNavigateToReports
     },
@@ -104,7 +104,7 @@ export const SapphireDataRipple: React.FC<SapphireDataRippleProps> = ({
         lowStockCount > 0
           ? `${lowStockCount} low-stock threshold alert${lowStockCount > 1 ? 's' : ''} active`
           : 'All batches above safety threshold',
-      causeEffectText: `Inventory decremented by ${latestItemQty} unit${latestItemQty === 1 ? '' : 's'} in real time (${totalItemsSold} total units sold today) — reorder watch updated.`,
+      causeEffectText: `Inventory decremented by ${latestItemQty} unit${latestItemQty === 1 ? '' : 's'} in real time (${totalItemsSold} total units sold today): reorder watch updated.`,
       actionLabel: 'View Stock',
       onAction: onNavigateToInventory
     }

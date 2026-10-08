@@ -90,7 +90,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
       name: '',
       ownerName: 'Vikram Patel',
       phone: '+91 98200 11223',
-      email: 'branch@ellix.in',
+      email: 'branch@ellic.in',
       address: 'Main Commercial High Street',
       city: 'Mumbai',
       gstin: '27AAAAA0000A1Z5',
@@ -339,7 +339,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Ellix Supermart - Bandra West"
+                    placeholder="e.g. Ellic Supermart - Bandra West"
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
                     className="w-full bg-[#0A0E1A] border border-slate-700/80 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"

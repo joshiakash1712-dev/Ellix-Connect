@@ -31,7 +31,7 @@ export interface LegalConfigType {
 
 export const LEGAL_CONFIG: LegalConfigType = {
   legalBusinessName: "[REPLACE WITH LEGAL ENTITY NAME]",
-  brandName: "Ellix Connect",
+  brandName: "Ellic",
   businessAddress: "[REPLACE WITH REGISTERED/BUSINESS ADDRESS]",
   supportEmail: "[REPLACE WITH SUPPORT EMAIL]",
   supportPhone: "[REPLACE WITH SUPPORT PHONE]",
@@ -119,28 +119,28 @@ export const LEGAL_PAGE_ROUTES: Record<
     title: "Privacy Policy",
     shortLabel: "Privacy Policy",
     description:
-      "Read the Ellix Connect Privacy Policy covering personal and business data collection, Cloud Firestore storage, local browser caching, and India DPDPA 2023 disclosures.",
+      "Read the Ellic Privacy Policy covering personal and business data collection, Cloud Firestore storage, local browser caching, and India DPDPA 2023 disclosures.",
   },
   "terms-of-service": {
     path: "/terms-of-service",
     title: "Terms of Service",
     shortLabel: "Terms of Service",
     description:
-      "Review the Ellix Connect Terms of Service governing retail billing, GST invoice formatting, direct UPI QR settlement, and merchant responsibilities.",
+      "Review the Ellic Terms of Service governing retail billing, GST invoice formatting, direct UPI QR settlement, and merchant responsibilities.",
   },
   "cancellation-refund-policy": {
     path: "/cancellation-refund-policy",
     title: "Cancellation & Refund Policy",
     shortLabel: "Cancellation & Refund Policy",
     description:
-      "Understand Ellix Connect subscription cancellation terms, data export retention windows, and refund eligibility for retail merchants.",
+      "Understand Ellic subscription cancellation terms, data export retention windows, and refund eligibility for retail merchants.",
   },
   "cookie-policy": {
     path: "/cookie-policy",
     title: "Cookie & Local Storage Policy",
     shortLabel: "Cookie Policy",
     description:
-      "Learn how Ellix Connect uses essential cookies and browser local storage for authentication, offline POS continuity, and user preference controls.",
+      "Learn how Ellic uses essential cookies and browser local storage for authentication, offline POS continuity, and user preference controls.",
   },
   "data-privacy-rights": {
     path: "/data-privacy-rights",
@@ -154,7 +154,7 @@ export const LEGAL_PAGE_ROUTES: Record<
     title: "Security & Data Protection Practices",
     shortLabel: "Security",
     description:
-      "Explore Ellix Connect security practices, HTTPS/TLS transport encryption, Google Cloud Firestore storage, role-based access control, and transparent compliance disclosures.",
+      "Explore Ellic security practices, HTTPS/TLS transport encryption, Google Cloud Firestore storage, role-based access control, and transparent compliance disclosures.",
   },
   "grievance-redressal": {
     path: "/grievance-redressal",
@@ -168,7 +168,7 @@ export const LEGAL_PAGE_ROUTES: Record<
     title: "Help, Support & Contact Center",
     shortLabel: "Help / Support",
     description:
-      "Get help with Ellix Connect retail billing, inventory management, customer Khata ledgers, and account support for local retailers and small businesses.",
+      "Get help with Ellic retail billing, inventory management, customer Khata ledgers, and account support for local retailers and small businesses.",
   },
 };
 

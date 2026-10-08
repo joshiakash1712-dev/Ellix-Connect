@@ -240,7 +240,7 @@ export const WhoItsFor: React.FC = () => {
               Hover over any retail category card below to expand its live operational adaptation workspace.
             </span>
             <span className="lg:hidden ml-1">
-              Tap any category below to discover the exact operational pain points solved and how Ellix Connect adapts.
+              Tap any category below to discover the exact operational pain points solved and how Ellic adapts.
             </span>
           </p>
         </div>
@@ -561,11 +561,11 @@ export const WhoItsFor: React.FC = () => {
                           </div>
                         </div>
 
-                        {/* How Ellix Connect Adapts */}
+                        {/* How Ellic Adapts */}
                         <div className="p-4 rounded-2xl bg-sky-50/40 dark:bg-blue-950/20 border border-sky-200/70 dark:border-blue-900/40 space-y-3">
                           <div className="flex items-center gap-2 text-blue-700 dark:text-sky-400 font-bold text-xs uppercase tracking-wider">
                             <Sparkles className="w-4 h-4 shrink-0" />
-                            <span>How Ellix Connect Adapts</span>
+                            <span>How Ellic Adapts</span>
                           </div>
                           <div className="space-y-2.5">
                             {selectedVertical.howEllixAdapts.map((solution, idx) => (
@@ -716,7 +716,7 @@ export const WhoItsFor: React.FC = () => {
               <div className="space-y-2.5">
                 <div className="flex items-center gap-2 text-blue-700 dark:text-sky-400 font-bold text-xs uppercase tracking-wider">
                   <Sparkles className="w-4 h-4" />
-                  <span>How Ellix Connect Adapts</span>
+                  <span>How Ellic Adapts</span>
                 </div>
                 {selectedVertical.howEllixAdapts.map((solution, idx) => (
                   <div

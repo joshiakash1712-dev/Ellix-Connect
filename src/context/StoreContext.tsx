@@ -656,7 +656,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
       isDemoMode
         ? (
             activeRole === 'super_admin' ? 'Akash Joshi (Super Admin)' :
-            activeRole === 'ellix_admin' ? 'Siddharth Admin (Ellix Connect)' :
+            activeRole === 'ellix_admin' ? 'Siddharth Admin (Ellic)' :
             activeRole === 'crew' ? 'Rahul Sharma' :
             activeRole === 'wholesaler_admin' ? 'Metro Wholesaler Admin' :
             'Vikram Malhotra'
@@ -666,11 +666,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
     email: userProfile?.email || authUser?.email || (
       isDemoMode
         ? (
-            activeRole === 'super_admin' ? 'superadmin@ellixconnect.com' :
-            activeRole === 'ellix_admin' ? 'admin@ellixconnect.com' :
-            activeRole === 'crew' ? 'crew@ellixconnect.com' :
-            activeRole === 'wholesaler_admin' ? 'wholesaler@ellixconnect.com' :
-            'client@ellixconnect.com'
+            activeRole === 'super_admin' ? 'superadmin@ellic.com' :
+            activeRole === 'ellix_admin' ? 'admin@ellic.com' :
+            activeRole === 'crew' ? 'crew@ellic.com' :
+            activeRole === 'wholesaler_admin' ? 'wholesaler@ellic.com' :
+            'client@ellic.com'
           )
         : ''
     ),
@@ -1500,7 +1500,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
 
   // Customer Orders & Reservations
   const createCustomerOrder = (orderData: Omit<CustomerOrder, 'id' | 'orderNumber' | 'createdAt' | 'pickupQrCode'>): CustomerOrder => {
-    const ordNumber = `ORD-ELLIX-${Math.floor(1000 + Math.random() * 9000)}`;
+    const ordNumber = `ORD-ELLIC-${Math.floor(1000 + Math.random() * 9000)}`;
     const qrCode = `QR-PICKUP-${ordNumber}`;
 
     const newOrder: CustomerOrder = {
@@ -1895,7 +1895,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
     addAuditLog('New Client Application', `Application submitted by ${newApp.businessName} (${newApp.ownerName})`);
     addNotification({
       title: 'New Client Application',
-      message: `${newApp.businessName} has applied for Ellix Connect partnership. Review required.`,
+      message: `${newApp.businessName} has applied for Ellic partnership. Review required.`,
       category: 'system',
       linkModule: 'admin',
       targetRole: 'ellix_admin'
@@ -1905,7 +1905,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
 
   const approveBusinessApplication = async (id: string, notes?: string) => {
     if (!isDemoMode && authUser && !isPlatformAdminRole) {
-      console.warn('[RBAC] Forbidden: Only Ellix Admin or Super Admin can approve business applications');
+      console.warn('[RBAC] Forbidden: Only Ellic Admin or Super Admin can approve business applications');
       return;
     }
     const targetApp = businessApplications.find(a => a.id === id);
@@ -2030,7 +2030,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
 
   const rejectBusinessApplication = (id: string, notes?: string) => {
     if (!isDemoMode && authUser && !isPlatformAdminRole) {
-      console.warn('[RBAC] Forbidden: Only Ellix Admin or Super Admin can reject business applications');
+      console.warn('[RBAC] Forbidden: Only Ellic Admin or Super Admin can reject business applications');
       return;
     }
     setBusinessApplications(prev => prev.map(app => {
@@ -2092,7 +2092,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
             key: data.keyId,
             amount: data.amount,
             currency: data.currency || 'INR',
-            name: 'Ellix Connect Retail OS',
+            name: 'Ellic Retail OS',
             description: `Subscription Renewal - ${activeStore.name}`,
             order_id: data.orderId,
             handler: async function (razorpayResponse: any) {

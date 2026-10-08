@@ -164,7 +164,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const roles: { id: AppRole | UserRole; label: string; desc: string; badge?: string }[] = [
     { id: 'super_admin', label: 'Super Admin (Level 1)', desc: 'Creator & Owner: Platform Admins, Clients & System Controls', badge: 'L1' },
-    { id: 'ellix_admin', label: 'Ellix Admin (Level 2)', desc: 'Operational Admin: Client approvals & subscriptions', badge: 'L2' },
+    { id: 'ellix_admin', label: 'Ellic Admin (Level 2)', desc: 'Operational Admin: Client approvals & subscriptions', badge: 'L2' },
     { id: 'client', label: 'Store Owner (Level 3)', desc: 'Store Owner: Multi-store inventory, crew & billing', badge: 'L3' },
     { id: 'crew', label: 'Store Crew (Level 4)', desc: 'Assigned store crew: POS billing & stock lookup', badge: 'L4' },
     { id: 'wholesaler_admin', label: 'Wholesale Partner', desc: 'B2B Catalog & Bulk Restock Orders', badge: 'B2B' }
@@ -193,13 +193,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center gap-2">
               {/* Full logo on sm and larger screens */}
               <div className="hidden sm:flex items-center">
-                <EllixConnectLogo size="sm" alt="Ellix Connect" />
+                <EllixConnectLogo size="sm" alt="Ellic" />
               </div>
               {/* Symbol on mobile screens */}
               <div className="sm:hidden flex items-center gap-1.5">
-                <EllixConnectLogo variant="symbol" size={26} alt="Ellix Connect" />
+                <EllixConnectLogo variant="symbol" size={26} alt="Ellic" />
                 <span className="text-sm font-bold tracking-tight text-white flex items-center">
-                  Ellix<span className="text-[#38BDF8] font-extrabold">Connect</span>
+                  Ellic
                 </span>
               </div>
 

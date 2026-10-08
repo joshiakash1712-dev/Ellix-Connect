@@ -272,7 +272,7 @@ export const AdminUsersRBAC: React.FC = () => {
       name: '',
       role: 'cashier',
       phone: '+91 98111 22334',
-      email: 'staff@ellixconnect.com',
+      email: 'staff@ellic.com',
       pin: '2580',
       shift: 'General (10:00 AM - 07:00 PM)',
       storeId: stores[0]?.id || 'store-101',
@@ -945,7 +945,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       </span>
                     ) : (
                       <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-slate-800 text-slate-500">
-                        —
+                        -
                       </span>
                     )}
                   </td>
@@ -956,7 +956,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       </span>
                     ) : (
                       <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-slate-800 text-slate-500">
-                        —
+                        -
                       </span>
                     )}
                   </td>
@@ -967,7 +967,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       </span>
                     ) : (
                       <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-slate-800 text-slate-500">
-                        —
+                        -
                       </span>
                     )}
                   </td>
@@ -978,7 +978,7 @@ export const AdminUsersRBAC: React.FC = () => {
                       </span>
                     ) : (
                       <span className="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-slate-800 text-slate-500">
-                        —
+                        -
                       </span>
                     )}
                   </td>
@@ -1461,7 +1461,7 @@ export const AdminUsersRBAC: React.FC = () => {
                 >
                   {stores.map(st => (
                     <option key={st.id} value={st.id}>
-                      {st.name} — {st.city} ({st.type})
+                      {st.name} ({st.city}, {st.type})
                     </option>
                   ))}
                 </select>
@@ -1805,7 +1805,7 @@ export const AdminUsersRBAC: React.FC = () => {
                     <input
                       type="email"
                       required
-                      placeholder="ramesh@ellixconnect.com"
+                      placeholder="ramesh@ellic.com"
                       value={formData.email}
                       onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
                       className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"

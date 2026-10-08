@@ -106,21 +106,21 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
   {
     stepNumber: 1,
     code: '01',
-    shortTitle: 'Meet Ellix Connect',
-    title: 'Meet Ellix Connect',
+    shortTitle: 'Meet Ellic',
+    title: 'Meet Ellic',
     breadcrumbCategory: 'Overview',
     breadcrumbTopic: 'Connected Business Platform',
     whatIsIt:
       'Many everyday businesses manage bills, stock, customer records, payments, credit/Khata, and daily summaries across separate notebooks, calculators, or disconnected tools.',
     whyItMatters:
-      'When records are separated, a single sale requires updating multiple places manually—leading to missed stock updates, unrecorded credit, or hours spent reconciling at night.',
+      'When records are separated, a single sale requires updating multiple places manually, leading to missed stock updates, unrecorded credit, or hours spent reconciling at night.',
     howItWorks:
-      'Ellix Connect brings billing, inventory, payments, customers, Khata, and business insights together into one connected workflow.',
+      'Ellic brings billing, inventory, payments, customers, Khata, and business insights together into one connected workflow.',
     whatHappensNext:
-      'Next, see how a Business Owner sets up their store environment inside Ellix Connect.',
+      'Next, see how a Business Owner sets up their store environment inside Ellic.',
     keyTakeaway:
-      'Instead of juggling disconnected methods for bills, stock, and customer credit, Ellix Connect links them into one connected business workflow.',
-    interactivePrompt: 'Click between "Before" and "With Ellix Connect" to see how everyday operations connect →',
+      'Instead of juggling disconnected methods for bills, stock, and customer credit, Ellic links them into one connected business workflow.',
+    interactivePrompt: 'Click between "Before" and "With Ellic" to see how everyday operations connect →',
     exploreSectionHref: '#connected-workflow',
     exploreSectionLabel: 'Explore Connected Workflow →',
   },
@@ -132,7 +132,7 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
     breadcrumbCategory: 'Onboarding',
     breadcrumbTopic: 'Store & Operational Setup',
     whatIsIt:
-      'The Client / Business Owner establishes and controls their own dedicated business environment inside Ellix Connect.',
+      'The Client / Business Owner establishes and controls their own dedicated business environment inside Ellic.',
     whyItMatters:
       'Every store has its own catalog, staff members, suppliers, and customers. Keeping these structured from day one ensures clean daily operations.',
     howItWorks:
@@ -174,7 +174,7 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
     breadcrumbCategory: 'Billing',
     breadcrumbTopic: 'Create a Bill',
     whatIsIt:
-      'Creating a bill is where everyday counter activity begins—turning selected products and quantities into a clear, itemized invoice.',
+      'Creating a bill is where everyday counter activity begins: turning selected products and quantities into a clear, itemized invoice.',
     whyItMatters:
       'Automatic calculation of line totals, applicable tax rules, and discounts reduces manual calculation mistakes at checkout.',
     howItWorks:
@@ -199,7 +199,7 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
     whyItMatters:
       'Recording the exact payment mode keeps your cash drawer, digital collections, and transaction history clear at the end of the day.',
     howItWorks:
-      'Select the payment method used by the customer—Cash, Card, UPI, or Split Payment—and confirm to move the bill from Pending to Completed.',
+      'Select the payment method used by the customer (Cash, Card, UPI, or Split Payment) and confirm to move the bill from Pending to Completed.',
     whatHappensNext:
       'If a regular customer buys on store credit or builds purchase history, it connects to Customers & Khata.',
     keyTakeaway:
@@ -243,7 +243,7 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
     howItWorks:
       'As sales reduce stock (e.g., 10 → 9), items reaching their threshold are flagged as Low Stock until a Business Owner or authorized team member records a restock (9 → 19).',
     whatHappensNext:
-      'Next, see how different people in the ecosystem—from platform admins to store crew—have structured roles.',
+      'Next, see how different people in the ecosystem, from platform admins to store crew, have structured roles.',
     keyTakeaway:
       'Because inventory connects to billing, sales automatically reflect in stock counts and surface low-stock restock needs.',
     interactivePrompt: 'Step through the Sale → Low Stock Alert → Restock sequence in the interactive demo below →',
@@ -258,11 +258,11 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
     breadcrumbCategory: 'Roles & Access',
     breadcrumbTopic: 'Platform & Store Permission Levels',
     whatIsIt:
-      'Ellix Connect separates platform administration from individual store management and counter crew operations.',
+      'Ellic separates platform administration from individual store management and counter crew operations.',
     whyItMatters:
       'Business owners can let counter staff create bills and record payments without giving them permission to delete business records or access platform settings.',
     howItWorks:
-      'Roles are structured across 4 distinct levels: Level 1 Super Admin & Level 2 Ellix Connect Admin (platform operations), and Level 3 Client / Business Owner & Level 4 Crew (store operations).',
+      'Roles are structured across 4 distinct levels: Level 1 Super Admin & Level 2 Ellic Admin (platform operations), and Level 3 Client / Business Owner & Level 4 Crew (store operations).',
     whatHappensNext:
       'With your team operating daily billing and stock, their activity generates useful business insights.',
     keyTakeaway:
@@ -300,7 +300,7 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
     breadcrumbCategory: 'Connected System',
     breadcrumbTopic: '01 Product → 07 Insights',
     whatIsIt:
-      'This is the core of Ellix Connect: Product, Scanned, Bill, Stock, Payment, Khata, and Insights operating as one continuous chain.',
+      'This is the core of Ellic: Product, Scanned, Bill, Stock, Payment, Khata, and Insights operating as one continuous chain.',
     whyItMatters:
       'A single customer checkout at the counter updates multiple parts of the business workflow without duplicate data entry.',
     howItWorks:
@@ -308,7 +308,7 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
     whatHappensNext:
       'Next, understand how security, privacy, and access controls protect your business environment.',
     keyTakeaway:
-      'One transaction can update multiple parts of the business workflow—connecting counter actions to business insights.',
+      'One transaction can update multiple parts of the business workflow, connecting counter actions to business insights.',
     interactivePrompt: 'Click "Trigger Purchase Ripple" or select any node to trace one transaction across all 7 stages →',
     exploreSectionHref: '#connected-workflow',
     exploreSectionLabel: 'Explore Connected Workflow Section →',
@@ -321,7 +321,7 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
     breadcrumbCategory: 'Trust & Lifecycle',
     breadcrumbTopic: 'Subscriptions, Security & Data',
     whatIsIt:
-      'Ellix Connect combines a transparent subscription lifecycle (Onboarding → Active → Renewal → Grace Period → Restricted if unresolved) with role-based security, store separation, and data privacy controls.',
+      'Ellic combines a transparent subscription lifecycle (Onboarding → Active → Renewal → Grace Period → Restricted if unresolved) with role-based security, store separation, and data privacy controls.',
     whyItMatters:
       'Business owners need clear rules on how their account stays active and how their store invoices, inventory, and customer records are protected.',
     howItWorks:
@@ -329,10 +329,10 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
     whatHappensNext:
       'Finally, move to Step 12 to review everything you have learned and choose your next step.',
     keyTakeaway:
-      'Ellix Connect is designed with role-based permissions, business separation, transparent subscription stages, and documented privacy and security policies.',
+      'Ellic is designed with role-based permissions, business separation, transparent subscription stages, and documented privacy and security policies.',
     interactivePrompt: 'Inspect the security pillars, subscription lifecycle stages, and official legal documents below →',
     exploreSectionHref: '#why-ellix',
-    exploreSectionLabel: 'Explore Why Ellix Connect →',
+    exploreSectionLabel: 'Explore Why Ellic →',
   },
   {
     stepNumber: 12,
@@ -342,16 +342,16 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
     breadcrumbCategory: 'Completion',
     breadcrumbTopic: 'Your Next Step',
     whatIsIt:
-      'You have walked through the complete Ellix Connect ecosystem—from setting up products and creating bills to recording payments, managing Khata, tracking stock, and viewing insights.',
+      'You have walked through the complete Ellic ecosystem: from setting up products and creating bills to recording payments, managing Khata, tracking stock, and viewing insights.',
     whyItMatters:
-      'Now that you see how one business action connects across your entire store workflow, you can choose how to experience Ellix Connect next.',
+      'Now that you see how one business action connects across your entire store workflow, you can choose how to experience Ellic next.',
     howItWorks:
-      'Explore the interactive Product Preview on the website, apply to get started with your business account, sign in to an existing workspace, or contact the Ellix Connect team.',
+      'Explore the interactive Product Preview on the website, apply to get started with your business account, sign in to an existing workspace, or contact the Ellic team.',
     whatHappensNext:
       'Choose any action below or click "Finish Guide" to mark your guided tour as completed.',
     keyTakeaway:
-      'You now understand how Ellix Connect connects everyday business operations into one unified platform.',
-    interactivePrompt: 'Select how you would like to continue exploring Ellix Connect below →',
+      'You now understand how Ellic connects everyday business operations into one unified platform.',
+    interactivePrompt: 'Select how you would like to continue exploring Ellic below →',
     exploreSectionHref: '#product',
     exploreSectionLabel: 'Explore Product Preview →',
   },

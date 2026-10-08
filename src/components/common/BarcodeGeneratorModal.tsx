@@ -51,7 +51,7 @@ export const BarcodeGeneratorModal: React.FC<BarcodeGeneratorModalProps> = ({
         <div className="p-6 flex flex-col items-center text-center bg-slate-950">
           <div className="w-full bg-white p-6 rounded-xl text-slate-900 shadow-inner flex flex-col items-center border-2 border-slate-300">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-              Ellix Retail Tag
+              Ellic Retail Tag
             </span>
             <h4 className="text-sm font-extrabold text-slate-900 mb-1 max-w-[240px] truncate">
               {product.name}

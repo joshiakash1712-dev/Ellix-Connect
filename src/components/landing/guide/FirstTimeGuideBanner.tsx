@@ -78,7 +78,7 @@ export const FirstTimeGuideBanner: React.FC<FirstTimeGuideBannerProps> = ({
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-mono font-bold uppercase tracking-wider">
               <Sparkles className="w-3 h-3 text-emerald-400" />
-              <span>{isResuming ? 'CONTINUE YOUR GUIDE' : 'NEW TO ELLIX CONNECT?'}</span>
+              <span>{isResuming ? 'CONTINUE YOUR GUIDE' : 'NEW TO ELLIC?'}</span>
             </div>
             <button
               type="button"
@@ -96,7 +96,7 @@ export const FirstTimeGuideBanner: React.FC<FirstTimeGuideBannerProps> = ({
                 You&apos;re on Step {guideProgressStep} of 12.
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Pick up right where you left off in the interactive Ellix Connect platform walkthrough.
+                Pick up right where you left off in the interactive Ellic platform walkthrough.
               </p>
             </div>
           ) : (

@@ -367,22 +367,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let demoName = '';
 
     if (role === 'super_admin') {
-      demoEmail = 'superadmin@ellixconnect.com';
+      demoEmail = 'superadmin@ellic.com';
       demoName = 'Akash Joshi (Super Admin)';
     } else if (role === 'ellix_admin' || role === 'admin') {
-      demoEmail = 'admin@ellixconnect.com';
-      demoName = 'Siddharth Admin (Ellix Connect)';
+      demoEmail = 'admin@ellic.com';
+      demoName = 'Siddharth Admin (Ellic)';
     } else if (role === 'client' || role === 'retailer') {
-      demoEmail = 'client@ellixconnect.com';
+      demoEmail = 'client@ellic.com';
       demoName = 'Vikram Malhotra (Client Owner)';
     } else if (role === 'crew' || role === 'employee') {
-      demoEmail = 'crew@ellixconnect.com';
+      demoEmail = 'crew@ellic.com';
       demoName = 'Rahul Sharma (Store Crew)';
     } else if (role === 'wholesaler') {
-      demoEmail = 'wholesaler@ellixconnect.com';
+      demoEmail = 'wholesaler@ellic.com';
       demoName = 'Metro Wholesaler (Supplier)';
     } else {
-      demoEmail = 'client@ellixconnect.com';
+      demoEmail = 'client@ellic.com';
       demoName = 'Vikram Malhotra (Client Owner)';
     }
 

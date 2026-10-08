@@ -196,7 +196,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-sky-400" />
                 <span className="text-xs font-bold text-white">
-                  Choose Your Next Step with Ellix Connect
+                  Choose Your Next Step with Ellic
                 </span>
               </div>
               <span className="text-[11px] font-mono text-sky-300 bg-sky-500/10 px-2.5 py-0.5 rounded-md border border-sky-500/25">
@@ -222,7 +222,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                   <ArrowRight className="w-4 h-4" />
                 </div>
                 <p className="text-[11px] text-sky-50">
-                  Apply for your Ellix Connect business workspace and start setting up your store.
+                  Apply for your Ellic business workspace and start setting up your store.
                 </p>
               </button>
 
@@ -272,7 +272,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                   Questions & Onboarding
                 </div>
                 <div className="text-sm font-bold text-white flex items-center justify-between">
-                  <span>Contact Ellix Connect</span>
+                  <span>Contact Ellic</span>
                   <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
                 </div>
                 <p className="text-[11px] text-slate-400">
@@ -300,7 +300,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                   <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
                 </div>
                 <p className="text-[11px] text-slate-400">
-                  Already have an Ellix Connect account? Sign in to your business console.
+                  Already have an Ellic account? Sign in to your business console.
                 </p>
               </button>
 
@@ -349,7 +349,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
         <motion.div
           role="dialog"
           aria-modal="true"
-          aria-label="Ellix Connect Interactive User Guide"
+          aria-label="Ellic Interactive User Guide"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -374,7 +374,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                 <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 min-w-0">
                   <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-sky-500/15 border border-sky-500/35 text-sky-300 text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider shrink-0">
                     <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-400" />
-                    <span className="hidden xs:inline">ELLIX CONNECT </span>
+                    <span className="hidden xs:inline">ELLIC </span>
                     <span>GUIDE</span>
                   </span>
 
@@ -548,7 +548,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                   <div className="flex items-center justify-between mb-3">
                     <div className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
                       <Compass className="w-4 h-4 text-sky-400" />
-                      <span>Guide Map — Jump to Any Chapter (12 Steps)</span>
+                      <span>Guide Map: Jump to Any Chapter (12 Steps)</span>
                     </div>
                     <button
                       type="button"
@@ -618,7 +618,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
 
                       <div>
                         <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                          Welcome to Ellix Connect.
+                          Welcome to Ellic.
                         </h2>
                         <p className="text-sm sm:text-base text-sky-400 font-semibold mt-1">
                           One connected platform for running your business.
@@ -626,7 +626,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                       </div>
 
                       <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-3xl">
-                        Even if you have never used POS or business-management software before, this guided tour shows how Ellix Connect brings together your everyday operations into one connected workflow:
+                        Even if you have never used POS or business-management software before, this guided tour shows how Ellic brings together your everyday operations into one connected workflow:
                       </p>
 
                       {/* 7 Core Pillars */}
@@ -871,16 +871,16 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                         <span>12 / 12 · ✓ GUIDE COMPLETED</span>
                       </span>
                       <span className="text-xs text-slate-400">
-                        Ellix Connect Onboarding Tour
+                        Ellic Onboarding Tour
                       </span>
                     </div>
 
                     <div>
                       <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                        You&apos;re Ready to Explore Ellix Connect.
+                        You&apos;re Ready to Explore Ellic.
                       </h2>
                       <p className="text-sm text-sky-400 font-semibold mt-1">
-                        You now understand how Ellix Connect connects everyday business operations.
+                        You now understand how Ellic connects everyday business operations.
                       </p>
                     </div>
 
@@ -920,7 +920,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                       </div>
                     </div>
 
-                    {/* Three Final Choices: [Explore Ellix Connect] [Restart Guide] [Get Started] */}
+                    {/* Three Final Choices: [Explore Ellic] [Restart Guide] [Get Started] */}
                     <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                       <div className="flex flex-col sm:flex-row gap-2.5">
                         <button
@@ -928,7 +928,7 @@ export const InteractiveUserGuideModal: React.FC<InteractiveUserGuideModalProps>
                           onClick={onClose}
                           className="px-5 py-2.5 rounded-xl bg-[#0A0E1A] hover:bg-slate-800 border border-slate-700 text-xs sm:text-sm font-bold text-white cursor-pointer transition-colors"
                         >
-                          Explore Ellix Connect
+                          Explore Ellic
                         </button>
                         <button
                           type="button"

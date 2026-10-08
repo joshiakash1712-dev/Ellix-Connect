@@ -153,7 +153,7 @@ export const InvoiceTemplates: React.FC = () => {
     swiftCode: 'ELLXUS33NYC',
     ibanNumber: 'US89 3000 1234 5678 9012 34',
     bankName: 'Global International Trade Bank NA',
-    beneficiaryName: 'Ellix Global Supply Corp.',
+    beneficiaryName: 'Ellic Global Supply Corp.',
     incoterms: 'CIF',
     portOfLoadingOrDischarge: 'Port of Nhava Sheva / Port of Rotterdam',
     countryOfOrigin: 'India',
@@ -190,7 +190,7 @@ export const InvoiceTemplates: React.FC = () => {
       setTargetSegment('Wholesale Buyers');
       setPaperSize('a4');
       setIsDefault(false);
-      setStoreDisplayName('Ellix Global Trade & Wholesale Supply');
+      setStoreDisplayName('Ellic Global Trade & Wholesale Supply');
       setHeaderTagline('Cross-Border Supply Chain & International Distribution');
       setLogoUrl(LOGO_PRESETS[2].url);
       setPrimaryColor('#092340');
@@ -221,7 +221,7 @@ export const InvoiceTemplates: React.FC = () => {
         swiftCode: 'ELLXUS33NYC',
         ibanNumber: 'US89 3000 1234 5678 9012 34',
         bankName: 'Global International Trade Bank NA',
-        beneficiaryName: 'Ellix Global Supply Corp.',
+        beneficiaryName: 'Ellic Global Supply Corp.',
         incoterms: 'CIF',
         portOfLoadingOrDischarge: 'Port of Nhava Sheva / Port of Rotterdam',
         countryOfOrigin: 'India',

@@ -695,12 +695,12 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                   className={`w-full bg-[#0A0E1A] border rounded-lg px-3.5 py-2.5 text-white text-xs focus:outline-none transition-colors ${
                     errors.selectedProductId
                       ? 'border-rose-500 focus:border-rose-500 ring-1 ring-rose-500/20'
-                      : 'border-slate-700 focus:border-emerald-500'
+                      : 'border-slate-700 focus:border-blue-500'
                   }`}
                 >
                   {products.map(p => (
                     <option key={p.id} value={p.id}>
-                      {p.name} — ₹{p.sellingPrice} (Stock: {p.stock} {p.unit})
+                      {p.name} : ₹{p.sellingPrice} (Stock: {p.stock} {p.unit})
                     </option>
                   ))}
                 </select>

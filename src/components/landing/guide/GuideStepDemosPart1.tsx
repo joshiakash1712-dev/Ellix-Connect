@@ -25,14 +25,14 @@ import {
 } from 'lucide-react';
 
 const DemoBadge: React.FC<{ label?: string }> = ({ label = 'DEMO · SAMPLE DATA' }) => (
-  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[10px] font-mono font-bold uppercase tracking-wider">
-    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/30 text-sky-300 text-[10px] font-mono font-bold uppercase tracking-wider">
+    <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
     {label}
   </span>
 );
 
 /* ========================================================================== */
-/* STEP 01 DEMO — MEET ELLIX CONNECT (BEFORE -> ELLIX CONNECT -> CONNECTED)   */
+/* STEP 01 DEMO: MEET ELLIX CONNECT (BEFORE -> ELLIX CONNECT -> CONNECTED)   */
 /* ========================================================================== */
 export const Step01MeetDemo: React.FC = () => {
   const [viewMode, setViewMode] = useState<'before' | 'connected'>('connected');
@@ -79,16 +79,16 @@ export const Step01MeetDemo: React.FC = () => {
             onClick={() => setViewMode('connected')}
             className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
               viewMode === 'connected'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                ? 'bg-blue-500/20 text-sky-300 border border-blue-500/40'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            With Ellix Connect
+            With Ellic
           </button>
         </div>
       </div>
 
-      {/* Transformation Diagram: BEFORE -> ELLIX CONNECT -> CONNECTED WORKFLOW */}
+      {/* Transformation Diagram: BEFORE -> ELLIC -> CONNECTED WORKFLOW */}
       <div className="grid grid-cols-1 lg:grid-cols-11 gap-3 items-center">
         {/* BEFORE Column */}
         <div
@@ -117,19 +117,19 @@ export const Step01MeetDemo: React.FC = () => {
           </div>
         </div>
 
-        {/* Center Bridge: ELLIX CONNECT */}
+        {/* Center Bridge: ELLIC */}
         <div className="lg:col-span-3 flex flex-col items-center justify-center py-2 text-center">
           <div className="hidden lg:flex items-center justify-center w-full mb-2">
-            <div className="h-px flex-1 bg-gradient-to-r from-rose-500/30 via-emerald-500/60 to-emerald-400" />
+            <div className="h-px flex-1 bg-gradient-to-r from-rose-500/30 via-blue-500/60 to-sky-400" />
           </div>
-          <ArrowDown className="w-4 h-4 text-emerald-400 lg:hidden mb-1" />
-          <div className="px-3.5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.18)]">
-            <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-300">
-              ELLIX CONNECT
+          <ArrowDown className="w-4 h-4 text-sky-400 lg:hidden mb-1" />
+          <div className="px-3.5 py-2.5 rounded-xl bg-blue-500/15 border border-blue-500/40 shadow-[0_0_20px_rgba(37,99,235,0.18)]">
+            <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-sky-300">
+              ELLIC
             </div>
             <div className="text-xs font-bold text-white mt-0.5">Unified Platform</div>
           </div>
-          <ArrowDown className="w-4 h-4 text-emerald-400 lg:hidden mt-1" />
+          <ArrowDown className="w-4 h-4 text-sky-400 lg:hidden mt-1" />
           <div className="text-[10px] text-slate-400 mt-1.5">
             Links everyday operations together
           </div>
@@ -140,23 +140,23 @@ export const Step01MeetDemo: React.FC = () => {
           onClick={() => setViewMode('connected')}
           className={`lg:col-span-4 p-4 rounded-xl border transition-all cursor-pointer ${
             viewMode === 'connected'
-              ? 'bg-emerald-950/25 border-emerald-500/50 shadow-[0_0_24px_rgba(16,185,129,0.12)]'
+              ? 'bg-blue-950/25 border-blue-500/50 shadow-[0_0_24px_rgba(37,99,235,0.12)]'
               : 'bg-[#0A0E1A]/80 border-slate-800/80 opacity-80 hover:opacity-100'
           }`}
         >
-          <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-2 flex items-center justify-between">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-sky-400 mb-2 flex items-center justify-between">
             <span>CONNECTED BUSINESS WORKFLOW</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
           </div>
           <div className="grid grid-cols-2 gap-2">
             {connectedNodes.map((node, idx) => (
               <div
                 key={idx}
-                className="p-2.5 rounded-lg bg-[#121826] border border-emerald-500/25 flex flex-col justify-between"
+                className="p-2.5 rounded-lg bg-[#121826] border border-blue-500/25 flex flex-col justify-between"
               >
                 <div className="text-xs font-bold text-white flex items-center justify-between">
                   <span>{node.label}</span>
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-3 h-3 text-sky-400 shrink-0" />
                 </div>
                 <div className="text-[10px] text-slate-400 mt-0.5">{node.sub}</div>
               </div>
@@ -169,7 +169,7 @@ export const Step01MeetDemo: React.FC = () => {
 };
 
 /* ========================================================================== */
-/* STEP 02 DEMO — SET UP YOUR BUSINESS (7-STAGE CONCEPTUAL SETUP FLOW)        */
+/* STEP 02 DEMO: SET UP YOUR BUSINESS (7-STAGE CONCEPTUAL SETUP FLOW)        */
 /* ========================================================================== */
 export const Step02SetupDemo: React.FC = () => {
   const setupStages = [
@@ -235,7 +235,7 @@ export const Step02SetupDemo: React.FC = () => {
             Business Owner Environment Setup Sequence
           </div>
           <div className="text-[11px] text-slate-400">
-            Representative demonstration — actual private onboarding forms are only shown during client setup.
+            Representative demonstration: actual private onboarding forms are only shown during client setup.
           </div>
         </div>
         <DemoBadge />
@@ -254,17 +254,17 @@ export const Step02SetupDemo: React.FC = () => {
               onClick={() => setSelectedIdx(idx)}
               className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                 isSelected
-                  ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-[0_0_16px_rgba(16,185,129,0.2)]'
+                  ? 'bg-blue-500/15 border-blue-500 text-white shadow-[0_0_16px_rgba(37,99,235,0.2)]'
                   : isPassed
-                  ? 'bg-[#0A0E1A] border-emerald-500/30 text-slate-200 hover:border-emerald-500/50'
+                  ? 'bg-[#0A0E1A] border-blue-500/30 text-slate-200 hover:border-blue-500/50'
                   : 'bg-[#0A0E1A]/70 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-mono font-bold text-emerald-400">
+                <span className="text-[10px] font-mono font-bold text-sky-400">
                   0{idx + 1}
                 </span>
-                <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-emerald-400' : 'text-slate-400'}`} />
+                <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-sky-400' : 'text-slate-400'}`} />
               </div>
               <div className="text-xs font-bold truncate">{stage.label}</div>
             </button>
@@ -276,13 +276,13 @@ export const Step02SetupDemo: React.FC = () => {
       <div className="p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold">
+            <span className="px-2 py-0.5 rounded bg-blue-500/20 text-sky-300 text-[10px] font-mono font-bold">
               STAGE 0{selectedIdx + 1} OF 07
             </span>
             <h4 className="text-sm font-bold text-white">{activeStage.label}</h4>
           </div>
           <p className="text-xs text-slate-300 leading-relaxed">{activeStage.summary}</p>
-          <div className="text-[11px] font-mono text-emerald-400 pt-1">{activeStage.sample}</div>
+          <div className="text-[11px] font-mono text-sky-400 pt-1">{activeStage.sample}</div>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
@@ -297,7 +297,7 @@ export const Step02SetupDemo: React.FC = () => {
           <button
             type="button"
             onClick={() => setSelectedIdx((prev) => (prev + 1) % setupStages.length)}
-            className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white cursor-pointer flex items-center gap-1"
+            className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white cursor-pointer flex items-center gap-1"
           >
             <span>{selectedIdx === setupStages.length - 1 ? 'Restart Flow' : 'Next Stage'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -309,7 +309,7 @@ export const Step02SetupDemo: React.FC = () => {
 };
 
 /* ========================================================================== */
-/* STEP 03 DEMO — PRODUCTS & INVENTORY (SALE 10 -> 9, RESTOCK 9 -> 19)        */
+/* STEP 03 DEMO: PRODUCTS & INVENTORY (SALE 10 -> 9, RESTOCK 9 -> 19)        */
 /* ========================================================================== */
 export const Step03ProductsInventoryDemo: React.FC = () => {
   const [stock, setStock] = useState<number>(10);
@@ -342,7 +342,7 @@ export const Step03ProductsInventoryDemo: React.FC = () => {
     <div className="rounded-2xl bg-[#121826] border border-slate-800 p-4 sm:p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Package className="w-4 h-4 text-emerald-400" />
+          <Package className="w-4 h-4 text-sky-400" />
           <span className="text-xs font-bold text-white">
             Interactive Product & Stock Demonstration
           </span>
@@ -367,7 +367,7 @@ export const Step03ProductsInventoryDemo: React.FC = () => {
               className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border ${
                 isLowStock
                   ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
-                  : 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+                  : 'bg-blue-500/15 border-blue-500/40 text-sky-300'
               }`}
             >
               {isLowStock ? 'Low Stock Alert' : 'In Stock (Healthy)'}
@@ -378,7 +378,7 @@ export const Step03ProductsInventoryDemo: React.FC = () => {
           <div className="p-3 rounded-lg bg-[#121826] border border-slate-800 flex items-center justify-between">
             <div>
               <div className="text-[11px] text-slate-400">Current Available Stock</div>
-              <div className="text-xs font-mono text-emerald-400 mt-0.5">{lastAction}</div>
+              <div className="text-xs font-mono text-sky-400 mt-0.5">{lastAction}</div>
             </div>
             <motion.div
               key={stock}
@@ -412,7 +412,7 @@ export const Step03ProductsInventoryDemo: React.FC = () => {
           <button
             type="button"
             onClick={handleSimulateRestock}
-            className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-between transition-all cursor-pointer shadow-md shadow-emerald-600/20 active:scale-[0.99]"
+            className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold flex items-center justify-between transition-all cursor-pointer shadow-md shadow-blue-600/20 active:scale-[0.99]"
           >
             <span className="flex items-center gap-2">
               <Plus className="w-3.5 h-3.5" />
@@ -438,7 +438,7 @@ export const Step03ProductsInventoryDemo: React.FC = () => {
 };
 
 /* ========================================================================== */
-/* STEP 04 DEMO — CREATE A BILL & DIGITAL BILL DELIVERY                       */
+/* STEP 04 DEMO: CREATE A BILL & DIGITAL BILL DELIVERY                       */
 /* ========================================================================== */
 export const Step04CreateBillDemo: React.FC = () => {
   const [quantity, setQuantity] = useState<number>(1);
@@ -457,7 +457,7 @@ export const Step04CreateBillDemo: React.FC = () => {
     <div className="rounded-2xl bg-[#121826] border border-slate-800 p-4 sm:p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Receipt className="w-4 h-4 text-emerald-400" />
+          <Receipt className="w-4 h-4 text-sky-400" />
           <span className="text-xs font-bold text-white">
             Interactive Bill Calculation & Delivery Preview
           </span>
@@ -488,7 +488,7 @@ export const Step04CreateBillDemo: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setQuantity((q) => Math.min(10, q + 1))}
-                className="w-7 h-7 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center text-xs font-bold cursor-pointer"
+                className="w-7 h-7 rounded-lg bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center text-xs font-bold cursor-pointer"
               >
                 +
               </button>
@@ -502,7 +502,7 @@ export const Step04CreateBillDemo: React.FC = () => {
               onClick={() => setApplyDemoTax((v) => !v)}
               className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors cursor-pointer ${
                 applyDemoTax
-                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+                  ? 'bg-blue-500/15 border-blue-500/40 text-sky-300'
                   : 'bg-slate-900 border-slate-800 text-slate-400'
               }`}
             >
@@ -513,7 +513,7 @@ export const Step04CreateBillDemo: React.FC = () => {
               onClick={() => setApplyDiscount((v) => !v)}
               className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors cursor-pointer ${
                 applyDiscount
-                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+                  ? 'bg-blue-500/15 border-blue-500/40 text-sky-300'
                   : 'bg-slate-900 border-slate-800 text-slate-400'
               }`}
             >
@@ -528,7 +528,7 @@ export const Step04CreateBillDemo: React.FC = () => {
               <span className="font-bold text-white">₹{lineSubtotal.toLocaleString('en-IN')}</span>
             </div>
             {applyDiscount && (
-              <div className="flex justify-between text-emerald-400">
+              <div className="flex justify-between text-sky-400">
                 <span>5. Sample Discount (5%)</span>
                 <span>- ₹{discountAmount.toLocaleString('en-IN')}</span>
               </div>
@@ -539,7 +539,7 @@ export const Step04CreateBillDemo: React.FC = () => {
             </div>
             <div className="pt-2 border-t border-slate-800 flex justify-between items-baseline text-sm font-black text-white">
               <span>6. Total Generated</span>
-              <span className="text-lg text-emerald-400">₹{grandTotal.toLocaleString('en-IN')}</span>
+              <span className="text-lg text-sky-400">₹{grandTotal.toLocaleString('en-IN')}</span>
             </div>
           </div>
 
@@ -553,7 +553,7 @@ export const Step04CreateBillDemo: React.FC = () => {
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-white">7. Bill / Invoice Ready</span>
-              <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded bg-blue-500/15 text-sky-300 text-[10px] font-bold">
                 BILL CREATED
               </span>
             </div>
@@ -565,11 +565,11 @@ export const Step04CreateBillDemo: React.FC = () => {
                 onClick={() => setDeliveryMode('print')}
                 className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                   deliveryMode === 'print'
-                    ? 'bg-emerald-500/15 border-emerald-500 text-white'
+                    ? 'bg-blue-500/15 border-blue-500 text-white'
                     : 'bg-[#121826] border-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                <Printer className="w-4 h-4 text-emerald-400 mb-1" />
+                <Printer className="w-4 h-4 text-sky-400 mb-1" />
                 <div className="text-xs font-bold">Print Bill</div>
                 <div className="text-[10px] text-slate-400">Thermal / standard print</div>
               </button>
@@ -579,19 +579,19 @@ export const Step04CreateBillDemo: React.FC = () => {
                 onClick={() => setDeliveryMode('digital')}
                 className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                   deliveryMode === 'digital'
-                    ? 'bg-emerald-500/15 border-emerald-500 text-white'
+                    ? 'bg-blue-500/15 border-blue-500 text-white'
                     : 'bg-[#121826] border-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                <MessageSquare className="w-4 h-4 text-emerald-400 mb-1" />
+                <MessageSquare className="w-4 h-4 text-sky-400 mb-1" />
                 <div className="text-xs font-bold">Digital Delivery</div>
                 <div className="text-[10px] text-slate-400">Digital / WhatsApp*</div>
               </button>
             </div>
           </div>
 
-          <div className="p-3 rounded-lg bg-[#121826] border border-emerald-500/30 text-xs space-y-1">
-            <div className="font-bold text-emerald-300 flex items-center gap-1.5">
+          <div className="p-3 rounded-lg bg-[#121826] border border-blue-500/30 text-xs space-y-1">
+            <div className="font-bold text-sky-300 flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
               <span>
                 {deliveryMode === 'print'
@@ -612,7 +612,7 @@ export const Step04CreateBillDemo: React.FC = () => {
 };
 
 /* ========================================================================== */
-/* STEP 05 DEMO — PAYMENTS (PENDING -> PAYMENT RECORDED -> COMPLETED)         */
+/* STEP 05 DEMO: PAYMENTS (PENDING -> PAYMENT RECORDED -> COMPLETED)         */
 /* ========================================================================== */
 export const Step05PaymentsDemo: React.FC = () => {
   const paymentMethods = [
@@ -637,7 +637,7 @@ export const Step05PaymentsDemo: React.FC = () => {
     <div className="rounded-2xl bg-[#121826] border border-slate-800 p-4 sm:p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Wallet className="w-4 h-4 text-emerald-400" />
+          <Wallet className="w-4 h-4 text-sky-400" />
           <span className="text-xs font-bold text-white">
             Payment Method & Transaction Status Demonstration
           </span>
@@ -657,13 +657,13 @@ export const Step05PaymentsDemo: React.FC = () => {
               onClick={() => handleRecordPayment(pm.id)}
               className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                 isSelected
-                  ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+                  ? 'bg-blue-500/15 border-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.2)]'
                   : 'bg-[#0A0E1A] border-slate-800 text-slate-300 hover:border-slate-700'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
-                <Icon className="w-4 h-4 text-emerald-400" />
-                {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                <Icon className="w-4 h-4 text-sky-400" />
+                {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />}
               </div>
               <div className="text-xs font-bold">{pm.label}</div>
               <div className="text-[10px] text-slate-400 mt-0.5">{pm.desc}</div>
@@ -690,7 +690,7 @@ export const Step05PaymentsDemo: React.FC = () => {
           <span
             className={`px-2.5 py-1 rounded-lg font-semibold border transition-colors ${
               status === 'recorded'
-                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
+                ? 'bg-blue-500/20 border-blue-500/50 text-sky-300'
                 : 'bg-[#121826] border-slate-800 text-slate-400'
             }`}
           >
@@ -700,17 +700,17 @@ export const Step05PaymentsDemo: React.FC = () => {
           <span
             className={`px-2.5 py-1 rounded-lg font-bold border flex items-center gap-1.5 transition-all ${
               status === 'completed'
-                ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                ? 'bg-blue-500/20 border-blue-500 text-sky-300 shadow-[0_0_12px_rgba(37,99,235,0.25)]'
                 : 'bg-[#121826] border-slate-800 text-slate-400'
             }`}
           >
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />
             <span>3. Completed</span>
           </span>
         </div>
 
         <div className="text-[11px] font-mono text-slate-400">
-          Sample Bill ₹1,180 · Mode: <strong className="text-emerald-400">{selectedMethod}</strong>
+          Sample Bill ₹1,180 · Mode: <strong className="text-sky-400">{selectedMethod}</strong>
         </div>
       </div>
     </div>
@@ -718,7 +718,7 @@ export const Step05PaymentsDemo: React.FC = () => {
 };
 
 /* ========================================================================== */
-/* STEP 06 DEMO — CUSTOMERS & KHATA (PREV ₹2,000 + ₹500 = ₹2,500)             */
+/* STEP 06 DEMO: CUSTOMERS & KHATA (PREV ₹2,000 + ₹500 = ₹2,500)             */
 /* ========================================================================== */
 export const Step06CustomersKhataDemo: React.FC = () => {
   const [previousBalance, setPreviousBalance] = useState<number>(2000);
@@ -734,7 +734,7 @@ export const Step06CustomersKhataDemo: React.FC = () => {
     <div className="rounded-2xl bg-[#121826] border border-slate-800 p-4 sm:p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4 text-emerald-400" />
+          <Users className="w-4 h-4 text-sky-400" />
           <span className="text-xs font-bold text-white">
             Customer Record & Khata Balance Demonstration
           </span>
@@ -747,13 +747,13 @@ export const Step06CustomersKhataDemo: React.FC = () => {
         <div className="md:col-span-7 p-4 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-3">
           <div className="flex items-center justify-between pb-2 border-b border-slate-800">
             <div>
-              <div className="text-[10px] font-mono text-emerald-400 uppercase">
+              <div className="text-[10px] font-mono text-sky-400 uppercase">
                 SAMPLE CUSTOMER RECORD
               </div>
               <div className="text-sm font-bold text-white">Example Customer</div>
             </div>
             <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] text-slate-300 flex items-center gap-1">
-              <Lock className="w-3 h-3 text-emerald-400" />
+              <Lock className="w-3 h-3 text-sky-400" />
               Role-Scoped Access
             </span>
           </div>
@@ -771,14 +771,14 @@ export const Step06CustomersKhataDemo: React.FC = () => {
               </div>
               <div
                 className={`text-sm sm:text-base font-bold mt-0.5 ${
-                  txType === 'credit' ? 'text-amber-400' : 'text-emerald-400'
+                  txType === 'credit' ? 'text-amber-400' : 'text-sky-400'
                 }`}
               >
                 {txType === 'credit' ? '+' : '-'}₹{transactionAmount.toLocaleString('en-IN')}
               </div>
             </div>
-            <div className="p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-500/40">
-              <div className="text-[10px] text-emerald-300 font-semibold">Updated Balance</div>
+            <div className="p-2.5 rounded-lg bg-blue-950/30 border border-blue-500/40">
+              <div className="text-[10px] text-sky-300 font-semibold">Updated Balance</div>
               <motion.div
                 key={updatedBalance}
                 initial={{ scale: 1.1 }}
@@ -817,7 +817,7 @@ export const Step06CustomersKhataDemo: React.FC = () => {
               }}
               className={`p-2.5 rounded-lg border text-xs font-bold cursor-pointer transition-all ${
                 txType === 'repayment'
-                  ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-300'
+                  ? 'bg-blue-500/15 border-blue-500/50 text-sky-300'
                   : 'bg-[#121826] border-slate-800 text-slate-400 hover:text-white'
               }`}
             >

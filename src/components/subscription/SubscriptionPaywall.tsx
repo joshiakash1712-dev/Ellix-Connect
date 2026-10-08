@@ -59,7 +59,7 @@ export const SubscriptionPaywall: React.FC = () => {
               <ShieldAlert className="w-3.5 h-3.5" />
               <span>
                 {isBlocked
-                  ? 'Access Blocked — Payment Past Due'
+                  ? 'Access Blocked: Payment Past Due'
                   : isCancelled
                   ? 'Subscription Cancelled'
                   : isGracePeriod
@@ -130,7 +130,7 @@ export const SubscriptionPaywall: React.FC = () => {
 
             <div className="flex items-center gap-4">
               <a
-                href="mailto:support@ellixconnect.com"
+                href="mailto:support@ellic.com"
                 className="text-slate-400 hover:text-slate-300 flex items-center gap-1.5"
               >
                 <HelpCircle className="w-4 h-4" />

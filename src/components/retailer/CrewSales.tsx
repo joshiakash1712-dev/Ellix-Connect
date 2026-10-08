@@ -93,7 +93,7 @@ export const CrewSales: React.FC = () => {
     const targetPhone = inv.customerPhone || '';
     const cleanDigits = targetPhone.replace(/[^0-9]/g, '');
     const formattedPhone = cleanDigits.length === 10 ? `91${cleanDigits}` : cleanDigits;
-    const pdfInvoiceUrl = `https://ellixconnect.com/invoices/pdf/${inv.invoiceNumber}.pdf`;
+    const pdfInvoiceUrl = `https://ellic.com/invoices/pdf/${inv.invoiceNumber}.pdf`;
 
     const text = `*OFFICIAL TAX RECEIPT* 🧾\n*Store:* ${inv.storeName || activeStore.name}\n*Cashier:* ${inv.cashierName || crewName}\n*Invoice No:* #${inv.invoiceNumber}\n*Date:* ${inv.date}\n*Customer:* ${inv.customerName}\n\n*Items:*\n${inv.items.map(it => `• ${it.productName} (${it.quantity}x) = ₹${it.total}`).join('\n')}\n\n*Grand Total:* ₹${inv.grandTotal} (${(inv.paymentMethod || 'cash').toUpperCase()})\n\n*Download PDF:*\n${pdfInvoiceUrl}\n\nThank you for shopping with us!`;
 
@@ -239,7 +239,7 @@ export const CrewSales: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="font-semibold text-white">{inv.customerName || 'Walk-in'}</div>
-                      <div className="text-[10px] text-slate-500">{inv.customerPhone || '—'}</div>
+                      <div className="text-[10px] text-slate-500">{inv.customerPhone || '-'}</div>
                     </td>
                     <td className="py-3.5 px-4 tabular-nums">
                       <div className="flex items-center gap-1.5">

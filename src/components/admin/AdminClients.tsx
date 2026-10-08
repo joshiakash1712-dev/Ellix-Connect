@@ -64,7 +64,7 @@ export const AdminClients: React.FC = () => {
   const [adminTeam, setAdminTeam] = useState<AdminMember[]>([
     {
       uid: 'sa-root',
-      name: 'Ellix Connect Creator',
+      name: 'Ellic Creator',
       email: 'joshiakash1712@gmail.com',
       role: 'super_admin',
       status: 'active',
@@ -74,7 +74,7 @@ export const AdminClients: React.FC = () => {
     {
       uid: 'ea-ops-1',
       name: 'Platform Operations Admin',
-      email: 'ops.admin@ellixconnect.com',
+      email: 'ops.admin@ellic.com',
       role: 'ellix_admin',
       status: 'active',
       department: 'Client Onboarding & Subscriptions',
@@ -146,27 +146,27 @@ export const AdminClients: React.FC = () => {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to provision Ellix Admin');
+        throw new Error(data.error || 'Failed to provision Ellic Admin');
       }
 
       setAdminTeam(prev => [
         ...prev.filter(m => m.email !== inviteEmail.trim()),
         data.admin
       ]);
-      setFeedbackMsg({ type: 'success', text: `Ellix Admin authority successfully provisioned for ${inviteName}.` });
+      setFeedbackMsg({ type: 'success', text: `Ellic Admin authority successfully provisioned for ${inviteName}.` });
       setShowInviteModal(false);
       setInviteName('');
       setInviteEmail('');
       setTimeout(() => setFeedbackMsg(null), 4000);
     } catch (err: any) {
-      setFeedbackMsg({ type: 'error', text: err?.message || 'Failed to create Ellix Admin.' });
+      setFeedbackMsg({ type: 'error', text: err?.message || 'Failed to create Ellic Admin.' });
     } finally {
       setIsSubmittingInvite(false);
     }
   };
 
   const handleRevokeAdmin = async (uid: string, name: string) => {
-    if (!window.confirm(`Are you sure you want to revoke Ellix Admin authority for ${name}?`)) {
+    if (!window.confirm(`Are you sure you want to revoke Ellic Admin authority for ${name}?`)) {
       return;
     }
     try {
@@ -210,7 +210,7 @@ export const AdminClients: React.FC = () => {
     if (!appToApprove) return;
     setIsApproving(true);
     try {
-      await approveBusinessApplication(appToApprove.id, reviewNotes || 'Application verified and approved by Ellix Admin');
+      await approveBusinessApplication(appToApprove.id, reviewNotes || 'Application verified and approved by Ellic Admin');
       setFeedbackMsg({ type: 'success', text: 'Application approved! Business workspace and initial store setup activated.' });
       setSelectedApp(null);
       setAppToApprove(null);
@@ -298,7 +298,7 @@ export const AdminClients: React.FC = () => {
               }`}
             >
               <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Ellix Admins</span>
+              <span>Ellic Admins</span>
             </button>
           )}
         </div>
@@ -431,7 +431,7 @@ export const AdminClients: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-black text-white">Active Tenant Accounts</h3>
-                <p className="text-xs text-slate-400">Total client organizations operating on Ellix Connect.</p>
+                <p className="text-xs text-slate-400">Total client organizations operating on Ellic.</p>
               </div>
               <div className="px-3 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-extrabold">
                 {stores.length} Retail Stores Deployed
@@ -523,14 +523,14 @@ export const AdminClients: React.FC = () => {
         </div>
       )}
 
-      {/* 4. ELLIX ADMINS (SUPER ADMIN ONLY) */}
+      {/* 4. ELLIC ADMINS (SUPER ADMIN ONLY) */}
       {activeSubTab === 'admins' && isSuperAdmin && (
         <div className="p-5 rounded-xl bg-[#121826] border border-slate-800 space-y-5 shadow-md">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-indigo-400" />
-                <h3 className="text-sm font-black text-white">Ellix Connect Admin Team Governance</h3>
+                <h3 className="text-sm font-black text-white">Ellic Admin Team Governance</h3>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
                 Super Admin exclusive controls to provision and govern Level 2 Operations Admins.
@@ -542,7 +542,7 @@ export const AdminClients: React.FC = () => {
                 className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-indigo-600/20 transition-all"
               >
                 <UserPlus className="w-3.5 h-3.5" />
-                <span>Invite / Add Ellix Admin</span>
+                <span>Invite / Add Ellic Admin</span>
               </button>
             </div>
           </div>
@@ -591,7 +591,7 @@ export const AdminClients: React.FC = () => {
                           )}
                           {!isRoot && !isRevoked && (
                             <span className="px-1.5 py-0.2 rounded-md text-[9px] font-extrabold uppercase bg-sky-500/20 text-sky-300 border border-sky-500/40">
-                              Ellix Admin
+                              Ellic Admin
                             </span>
                           )}
                           {isRevoked && (
@@ -621,7 +621,7 @@ export const AdminClients: React.FC = () => {
                         <button
                           onClick={() => handleRevokeAdmin(member.uid, member.name)}
                           className="px-3 py-1 rounded-lg text-xs font-bold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all flex items-center gap-1.5"
-                          title="Revoke Ellix Admin authority"
+                          title="Revoke Ellic Admin authority"
                         >
                           <Trash2 className="w-3 h-3" />
                           <span>Revoke Access</span>
@@ -638,20 +638,20 @@ export const AdminClients: React.FC = () => {
           <div className="p-3.5 rounded-xl bg-[#0A0E1A] border border-slate-800 text-[11px] text-slate-400 flex items-start gap-2">
             <Shield className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
             <div>
-              <strong className="text-slate-200">Security Architecture:</strong> Super Admin is the sole authority permitted to provision and revoke Ellix Admin roles. Ellix Admins cannot invite, elevate, or modify other administrators.
+              <strong className="text-slate-200">Security Architecture:</strong> Super Admin is the sole authority permitted to provision and revoke Ellic Admin roles. Ellic Admins cannot invite, elevate, or modify other administrators.
             </div>
           </div>
         </div>
       )}
 
-      {/* Invite Ellix Admin Modal */}
+      {/* Invite Ellic Admin Modal */}
       {showInviteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0E1A]/80 backdrop-blur-md animate-in fade-in duration-200">
           <div className="w-full max-w-md bg-[#161D2C] border border-slate-700/80 rounded-2xl p-5 space-y-4 shadow-2xl animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2">
                 <UserPlus className="w-4 h-4 text-indigo-400" />
-                <h4 className="text-sm font-black text-white">Provision New Ellix Admin</h4>
+                <h4 className="text-sm font-black text-white">Provision New Ellic Admin</h4>
               </div>
               <button
                 onClick={() => setShowInviteModal(false)}
@@ -681,7 +681,7 @@ export const AdminClients: React.FC = () => {
                   required
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="e.g. priya.admin@ellixconnect.com"
+                  placeholder="e.g. priya.admin@ellic.com"
                   className="w-full px-3 py-2 rounded-lg bg-[#0A0E1A] border border-slate-700/80 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                 />
               </div>
@@ -725,7 +725,7 @@ export const AdminClients: React.FC = () => {
                   ) : (
                     <>
                       <UserPlus className="w-3.5 h-3.5" />
-                      <span>Provision Ellix Admin</span>
+                      <span>Provision Ellic Admin</span>
                     </>
                   )}
                 </button>

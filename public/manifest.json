@@ -1,6 +1,6 @@
 {
-  "short_name": "Ellix Connect",
-  "name": "Ellix Connect — Business Management, Without the Complexity",
+  "short_name": "Ellic",
+  "name": "Ellic — Business Management, Without the Complexity",
   "icons": [
     {
       "src": "/icon.svg",
@@ -27,5 +27,5 @@
   "display": "standalone",
   "orientation": "portrait",
   "categories": ["business", "shopping", "productivity"],
-  "description": "Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses."
+  "description": "Business management, without the complexity. Ellic brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses."
 }

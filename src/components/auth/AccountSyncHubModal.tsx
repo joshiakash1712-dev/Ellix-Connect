@@ -779,7 +779,7 @@ export const AccountSyncHubModal: React.FC = () => {
               <span>How Identity Synchronization Works:</span>
             </div>
             <p className="leading-relaxed">
-              When Google, Phone Number, and Email/Password are linked, they share the exact same user account, permissions, and data in Ellix Connect. Setting a synchronized password enables you to sign in with your email address using that same password at any time.
+              When Google, Phone Number, and Email/Password are linked, they share the exact same user account, permissions, and data in Ellic. Setting a synchronized password enables you to sign in with your email address using that same password at any time.
             </p>
           </div>
 
@@ -819,7 +819,7 @@ export const AccountSyncHubModal: React.FC = () => {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `ellix-account-privacy-summary-${new Date().toISOString().slice(0, 10)}.json`;
+                    a.download = `ellic-account-privacy-summary-${new Date().toISOString().slice(0, 10)}.json`;
                     a.click();
                     URL.revokeObjectURL(url);
                     setSuccessMessage('Account & privacy data summary downloaded as JSON.');

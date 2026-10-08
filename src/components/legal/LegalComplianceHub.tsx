@@ -150,7 +150,7 @@ export const LegalComplianceHub: React.FC<LegalComplianceHubProps> = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ellix-connect-privacy-records-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `ellic-privacy-records-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -416,7 +416,7 @@ export const LegalComplianceHub: React.FC<LegalComplianceHubProps> = ({
                   <ul className="list-disc pl-5 space-y-1.5">
                     <li><strong>Google Cloud Firestore &amp; Firebase Authentication:</strong> Structured store records (profiles, product catalogs, GST invoices, customer Khata ledgers, and staff roles) are stored in Google Cloud Firestore, and login credentials are managed by Firebase Authentication on Google&apos;s cloud infrastructure. The exact Firestore database region is governed by the platform&apos;s cloud project configuration; we do not claim India-only or single-country cloud data residency.</li>
                     <li><strong>Local Browser &amp; Device Storage:</strong> Active POS catalog cache, unsynchronized offline counter transactions, UI preferences, and downloaded CSV/PDF/JSON exports are stored locally on your own shop computer, tablet, or mobile device.</li>
-                    <li><strong>Application Server &amp; Feature-Specific External APIs:</strong> Server-side API routes run on our hosted Node.js / Express application server on Google Cloud infrastructure. When you voluntarily interact with the website support chatbot, your chat prompt is processed via Google Generative AI (Gemini API) when configured—do not submit sensitive personal, banking, or confidential customer data in support chat prompts. Where paid SaaS subscription checkout is configured, subscription order metadata is processed via Razorpay&apos;s payment API.</li>
+                    <li><strong>Application Server &amp; Feature-Specific External APIs:</strong> Server-side API routes run on our hosted Node.js / Express application server on Google Cloud infrastructure. When you voluntarily interact with the website support chatbot, your chat prompt is processed via Google Generative AI (Gemini API) when configured (do not submit sensitive personal, banking, or confidential customer data in support chat prompts). Where paid SaaS subscription checkout is configured, subscription order metadata is processed via Razorpay&apos;s payment API.</li>
                     <li><strong>Regional Data Residency Options:</strong> {LEGAL_CONFIG.brandName} does not currently offer customer-selectable regional data residency options (such as choosing between India, EU, or US regions per merchant account).</li>
                   </ul>
                 </section>
@@ -717,7 +717,7 @@ export const LegalComplianceHub: React.FC<LegalComplianceHubProps> = ({
                 <div className="border-b border-slate-200 dark:border-slate-800 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="space-y-1">
                     <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                      Digital Personal Data Protection Act, 2023 — Data Principal Rights
+                      Digital Personal Data Protection Act, 2023: Data Principal Rights
                     </div>
                     <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight">
                       Data &amp; Privacy Rights Center

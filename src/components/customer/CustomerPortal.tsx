@@ -116,7 +116,7 @@ export const CustomerPortal: React.FC = () => {
         <div className="space-y-2 z-10 max-w-xl">
           <div className="flex items-center gap-2">
             <span className="text-xs font-black uppercase tracking-wider text-sky-300 bg-sky-500/20 px-2.5 py-0.5 rounded-full border border-sky-400/30">
-              Ellix Customer Hub
+              Ellic Customer Hub
             </span>
             <span className="text-xs text-sky-200/80">Real-Time Store Inventory Search</span>
           </div>

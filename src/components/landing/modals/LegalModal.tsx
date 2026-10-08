@@ -34,7 +34,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
             <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-900 dark:text-emerald-300 flex items-start gap-2.5">
               <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
               <span>
-                <strong>Your Business Data Belongs to You:</strong> Ellix Connect does not sell, monetize, or share merchant customer lists, transaction ledgers, or inventory margins with third parties.
+                <strong>Your Business Data Belongs to You:</strong> Ellic does not sell, monetize, or share merchant customer lists, transaction ledgers, or inventory margins with third parties.
               </span>
             </div>
 
@@ -43,7 +43,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
                 1. Information We Collect
               </h4>
               <p>
-                When you use Ellix Connect, we collect information necessary to operate your retail workspace, including store name, business identification, user account credentials, inventory catalog items, and sales transaction metadata.
+                When you use Ellic, we collect information necessary to operate your retail workspace, including store name, business identification, user account credentials, inventory catalog items, and sales transaction metadata.
               </p>
             </section>
 
@@ -52,7 +52,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
                 2. Data Storage, Residency &amp; Security
               </h4>
               <p>
-                Data in transit between your device and Ellix Connect services is protected using encrypted HTTPS/TLS connections, and cloud records stored in Google Cloud Firestore and Firebase Authentication are protected at rest by Google Cloud’s infrastructure-level encryption. Cloud storage and processing occur on Google Cloud infrastructure under the platform’s project configuration (without customer-selectable regional residency options or an India-only storage guarantee), while offline counter transactions, preferences, and downloaded CSV/PDF exports remain on your local device.
+                Data in transit between your device and Ellic services is protected using encrypted HTTPS/TLS connections, and cloud records stored in Google Cloud Firestore and Firebase Authentication are protected at rest by Google Cloud’s infrastructure-level encryption. Cloud storage and processing occur on Google Cloud infrastructure under the platform’s project configuration (without customer-selectable regional residency options or an India-only storage guarantee), while offline counter transactions, preferences, and downloaded CSV/PDF exports remain on your local device.
               </p>
             </section>
 
@@ -88,7 +88,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
                 1. Acceptance of Terms
               </h4>
               <p>
-                By enrolling your store in Ellix Connect or accessing the counter register software, you agree to these commercial terms governing multi-register licensing, support commitments, and operational policies.
+                By enrolling your store in Ellic or accessing the counter register software, you agree to these commercial terms governing multi-register licensing, support commitments, and operational policies.
               </p>
             </section>
 
@@ -97,7 +97,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
                 2. Subscription & Counter Licensing
               </h4>
               <p>
-                Ellix Connect is provided on a flexible month-to-month or annual store license. Each license allows unlimited product catalog entries, digital bills, and offline register caching.
+                Ellic is provided on a flexible month-to-month or annual store license. Each license allows unlimited product catalog entries, digital bills, and offline register caching.
               </p>
             </section>
 
@@ -106,7 +106,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
                 3. Operational Reliability & Offline Mode
               </h4>
               <p>
-                While Ellix Connect operates resilience mechanisms enabling continued billing during local network outages, merchants are responsible for maintaining compliant hardware (scanners, printers, power backup) at physical store counters.
+                While Ellic operates resilience mechanisms enabling continued billing during local network outages, merchants are responsible for maintaining compliant hardware (scanners, printers, power backup) at physical store counters.
               </p>
             </section>
 
@@ -115,7 +115,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
                 4. Tax Calculation Disclaimer
               </h4>
               <p>
-                Ellix Connect generates tax summaries according to the rates configured by the store owner. Merchants remain legally responsible for the final audit and submission of their local statutory tax filings.
+                Ellic generates tax summaries according to the rates configured by the store owner. Merchants remain legally responsible for the final audit and submission of their local statutory tax filings.
               </p>
             </section>
           </>

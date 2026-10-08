@@ -216,17 +216,17 @@ app.get(['/api/about', '/api/metadata', '/.well-known/ai-plugin.json'], (_req, r
   res.setHeader('Cache-Control', 'public, max-age=3600');
   res.status(200).json({
     schema_version: 'v1',
-    name_for_human: 'Ellix Connect',
-    name_for_model: 'ellix_connect',
-    url: 'https://ellix-connect.ai.studio/',
-    description_for_human: 'Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.',
-    description_for_model: 'Ellix Connect is a web-based business management platform for local retailers, supermarkets, and wholesalers in India (excluding restaurants). It unifies billing and GST invoice generation, inventory and stock management, customer ledger (Khata) tracking, multi-tender payment recording, transaction history, and business insights.',
+    name_for_human: 'Ellic',
+    name_for_model: 'ellic',
+    url: 'https://ellic.ai.studio/',
+    description_for_human: 'Business management, without the complexity. Ellic brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.',
+    description_for_model: 'Ellic is a web-based business management platform for local retailers, supermarkets, and wholesalers in India (excluding restaurants). It unifies billing and GST invoice generation, inventory and stock management, customer ledger (Khata) tracking, multi-tender payment recording, transaction history, and business insights.',
     auth: {
       type: 'none'
     },
     api: {
       type: 'openapi',
-      url: 'https://ellix-connect.ai.studio/api/about',
+      url: 'https://ellic.ai.studio/api/about',
       is_user_authenticated: false
     },
     platform: ['Web'],
@@ -266,9 +266,9 @@ app.get(['/api/about', '/api/metadata', '/.well-known/ai-plugin.json'], (_req, r
     specifications: {
       offline_capability: 'Browser local storage cache for offline billing continuity with Google Cloud Firestore synchronization',
       tax_invoicing_scope: 'Generates GST-formatted invoices and tax summary sheets from merchant inputs; merchants remain responsible for statutory filings',
-      llm_documentation_url: 'https://ellix-connect.ai.studio/llms.txt',
-      full_reference_url: 'https://ellix-connect.ai.studio/llms-full.txt',
-      sitemap_url: 'https://ellix-connect.ai.studio/sitemap.xml'
+      llm_documentation_url: 'https://ellic.ai.studio/llms.txt',
+      full_reference_url: 'https://ellic.ai.studio/llms-full.txt',
+      sitemap_url: 'https://ellic.ai.studio/sitemap.xml'
     }
   });
 });
@@ -278,8 +278,8 @@ app.get(['/api/about', '/api/metadata', '/.well-known/ai-plugin.json'], (_req, r
 // ==========================================
 
 const SUPPORT_SYSTEM_INSTRUCTION = `
-You are "Ellix Assistant", the dedicated 24/7 Customer Support and Technical Specialist for Ellix Connect.
-Ellix Connect is an offline-first enterprise retail operating system covering Billing POS, Real-Time Inventory, Digital Khata CRM, Statutory GST Reports, Wholesale Network, and Multi-Store Fleet Management.
+You are "Ellic Assistant", the dedicated 24/7 Customer Support and Technical Specialist for Ellic.
+Ellic is an offline-first enterprise retail operating system covering Billing POS, Real-Time Inventory, Digital Khata CRM, Statutory GST Reports, Wholesale Network, and Multi-Store Fleet Management.
 
 Your goal is to provide clear, friendly, empathetic, and highly actionable answers to help retailers, cashiers, store owners, and wholesalers.
 
@@ -322,14 +322,14 @@ KEY PRODUCT CAPABILITIES:
 
 8. Escalation to Human Support:
    - WhatsApp Support: +91 98765 43210 (Mon-Sat, 9 AM - 9 PM IST)
-   - Email: support@ellixconnect.com
+   - Email: support@ellic.com
    - Phone Helpline: +91 98765 43210
 
 FORMATTING GUIDELINES:
 - Be concise, professional, empathetic, and actionable.
 - Use bold text for key UI terms, buttons, or navigation paths (e.g., 'Go to **Billing POS** in the sidebar', 'Tap **New Bill**').
 - Use bullet points for multi-step instructions.
-- If the user asks something outside retail/POS or Ellix Connect, politely guide them back to Ellix Connect capabilities.
+- If the user asks something outside retail/POS or Ellic, politely guide them back to Ellic capabilities.
 `;
 
 function getFallbackSupportResponse(userQuery: string): string {
@@ -337,12 +337,12 @@ function getFallbackSupportResponse(userQuery: string): string {
 
   if (q.includes('printer') || q.includes('thermal') || q.includes('print')) {
     return `### 🖨️ Thermal Printer Setup & Troubleshooting
-Ellix Connect supports standard ESC/POS thermal receipt printers (both **58mm** and **80mm** width) across USB and Bluetooth connections.
+Ellic supports standard ESC/POS thermal receipt printers (both **58mm** and **80mm** width) across USB and Bluetooth connections.
 
 **Steps to Configure:**
 1. **Physical Connection:** Connect your thermal printer via USB to your POS terminal or pair it over Bluetooth in Android/system settings.
 2. **Printer Driver / Raw Mode:** Ensure your printer is set to standard ESC/POS command emulation with 203 DPI density.
-3. **Print Test:** In Ellix Connect, go to **Billing POS**, complete any test bill, and click **Print Receipt** (or press \`Ctrl + P\` / \`Cmd + P\`).
+3. **Print Test:** In Ellic, go to **Billing POS**, complete any test bill, and click **Print Receipt** (or press \`Ctrl + P\` / \`Cmd + P\`).
 4. **Paper Feed / Jams:** Ensure thermal paper roll is placed with the coated side facing the print head.
 
 *Need immediate help? Reach our hardware support line on WhatsApp at **+91 98765 43210**.*`;
@@ -350,7 +350,7 @@ Ellix Connect supports standard ESC/POS thermal receipt printers (both **58mm** 
 
   if (q.includes('scanner') || q.includes('barcode') || q.includes('scan')) {
     return `### 🔍 Barcode Scanner Setup & Management
-Ellix Connect works out-of-the-box with any USB or Wireless 1D/2D Barcode Scanner in **HID Keyboard Emulation Mode**.
+Ellic works out-of-the-box with any USB or Wireless 1D/2D Barcode Scanner in **HID Keyboard Emulation Mode**.
 
 **Tips for Fast Scanning:**
 1. **Sub-second Recognition:** Ensure your scanner is programmed to append a **Carriage Return (Enter)** suffix after each scan (standard factory default barcode in your scanner's manual).
@@ -361,18 +361,18 @@ Ellix Connect works out-of-the-box with any USB or Wireless 1D/2D Barcode Scanne
 
   if (q.includes('khata') || q.includes('credit') || q.includes('due') || q.includes('customer')) {
     return `### 💳 Digital Customer Khata & Credit Ledger
-Ellix Connect provides a built-in zero-paper credit book with automated payment recovery.
+Ellic provides a built-in zero-paper credit book with automated payment recovery.
 
 **How to Use Khata:**
 1. **Billing to Khata:** At the POS checkout screen, select **Credit (Khata)** as the tender payment method and choose or add the customer's phone number.
 2. **Credit Limits:** Set safety credit limits per customer in **B2B & Clients** to prevent overdue exposure.
-3. **WhatsApp Balance Reminders:** Open **B2B & Clients**, select the customer with outstanding balance, and click **Send WhatsApp Reminder**. Ellix Connect generates an instant message containing their invoice breakdown and your direct UPI payment QR link!
+3. **WhatsApp Balance Reminders:** Open **B2B & Clients**, select the customer with outstanding balance, and click **Send WhatsApp Reminder**. Ellic generates an instant message containing their invoice breakdown and your direct UPI payment QR link!
 4. **Receiving Due Payments:** Click **Receive Payment** on the customer profile to record partial or full settlements.`;
   }
 
   if (q.includes('gst') || q.includes('tax') || q.includes('report') || q.includes('gstr')) {
     return `### 📊 Statutory GST Reports & Tax Accounting
-Ellix Connect automates tax accounting according to Indian GST standards (CGST, SGST, IGST, and HSN/SAC codes).
+Ellic automates tax accounting according to Indian GST standards (CGST, SGST, IGST, and HSN/SAC codes).
 
 **Exporting Tax Reports:**
 1. Open **Reports & GST** from the sidebar.
@@ -384,7 +384,7 @@ Ellix Connect automates tax accounting according to Indian GST standards (CGST, 
 
   if (q.includes('inventory') || q.includes('stock') || q.includes('batch') || q.includes('expiry') || q.includes('dead')) {
     return `### 📦 Real-Time Inventory & Batch Tracking
-Ellix Connect keeps inventory synchronized across all registers and warehouses.
+Ellic keeps inventory synchronized across all registers and warehouses.
 
 **Key Features:**
 - **Add Products:** Go to **Inventory & Stock** > click **Add Product**. Set cost price, selling price, GST slab, and minimum stock alert threshold.
@@ -395,12 +395,12 @@ Ellix Connect keeps inventory synchronized across all registers and warehouses.
 
   if (q.includes('offline') || q.includes('sync') || q.includes('internet') || q.includes('cloud')) {
     return `### ⚡ Offline-First Architecture & Cloud Sync
-Ellix Connect is engineered to operate seamlessly even when internet connectivity drops completely.
+Ellic is engineered to operate seamlessly even when internet connectivity drops completely.
 
 **How Offline Mode Works:**
 1. **Uninterrupted Billing:** You can continue scanning barcodes, generating bills, adding customers, and printing receipts without internet.
 2. **Local Data Persistence:** All transactions are instantly saved to secure local client storage.
-3. **Auto-Sync:** As soon as internet is restored, Ellix Connect background workers automatically synchronize pending transactions with Google Cloud Firestore.
+3. **Auto-Sync:** As soon as internet is restored, Ellic background workers automatically synchronize pending transactions with Google Cloud Firestore.
 4. **Manual Sync Check:** You can tap the **Cloud Sync Status** icon in the top navigation bar at any time to verify sync health.`;
   }
 
@@ -416,19 +416,19 @@ Protect financial margins, discount thresholds, and cash drawers with role-based
   }
 
   if (q.includes('contact') || q.includes('human') || q.includes('call') || q.includes('agent') || q.includes('phone') || q.includes('help')) {
-    return `### 📞 Reach Ellix Connect Human Support Team
+    return `### 📞 Reach Ellic Human Support Team
 Our dedicated customer success and hardware engineering team is available to assist you 7 days a week.
 
 - **WhatsApp Live Chat:** [+91 98765 43210](https://wa.me/919876543210) *(Fastest response, 9 AM - 9 PM IST)*
 - **Toll-Free Phone Helpline:** +91 98765 43210
-- **Email Support:** [support@ellixconnect.com](mailto:support@ellixconnect.com)
-- **Enterprise Escalations:** [enterprise@ellixconnect.com](mailto:enterprise@ellixconnect.com)
+- **Email Support:** [support@ellic.com](mailto:support@ellic.com)
+- **Enterprise Escalations:** [enterprise@ellic.com](mailto:enterprise@ellic.com)
 
 *We typically respond within 5-15 minutes on WhatsApp during business hours.*`;
   }
 
-  return `### 👋 Welcome to Ellix Support!
-I am your 24/7 AI assistant for **Ellix Connect**. I can assist you with:
+  return `### 👋 Welcome to Ellic Support!
+I am your 24/7 AI assistant for **Ellic**. I can assist you with:
 
 - **Billing & POS:** Barcode scanners, thermal printer setup (58mm/80mm), split payments, WhatsApp digital receipts.
 - **Inventory & Stock:** Batch tracking, low stock alerts, barcode label generation, CSV import/export.
@@ -497,7 +497,7 @@ app.post('/api/support/chat', async (req, res) => {
     console.error('Support chat API error:', error);
     return res.status(500).json({
       error: 'Failed to process support request',
-      reply: 'Our support service is momentarily reconnecting. Please contact our 24/7 WhatsApp helpline at +91 98765 43210 or email support@ellixconnect.com.'
+      reply: 'Our support service is momentarily reconnecting. Please contact our 24/7 WhatsApp helpline at +91 98765 43210 or email support@ellic.com.'
     });
   }
 });
@@ -925,7 +925,7 @@ app.post('/api/admin/subscription/status', async (req, res) => {
 
     const isPlatformAdmin = caller.role === 'super_admin' || caller.role === 'ellix_admin';
     if (!isPlatformAdmin) {
-      return res.status(403).json({ error: 'Forbidden: Ellix Admin or Super Admin authority required to modify client subscriptions' });
+      return res.status(403).json({ error: 'Forbidden: Ellic Admin or Super Admin authority required to modify client subscriptions' });
     }
 
     const { clientId, status, renewalDate, gracePeriodEndsAt } = req.body || {};
@@ -969,10 +969,10 @@ app.post('/api/admin/subscription/status', async (req, res) => {
 });
 
 // ==========================================
-// 4. SUPER ADMIN ELLIX ADMIN MANAGEMENT
+// 4. SUPER ADMIN ELLIC ADMIN MANAGEMENT
 // ==========================================
 
-// List Ellix Admins (Super Admin Only)
+// List Ellic Admins (Super Admin Only)
 app.get('/api/admin/team', async (req, res) => {
   try {
     const caller = await getAuthenticatedCaller(req);
@@ -1017,7 +1017,7 @@ app.get('/api/admin/team', async (req, res) => {
   }
 });
 
-// Create/Invite Ellix Admin (Super Admin Only)
+// Create/Invite Ellic Admin (Super Admin Only)
 app.post('/api/admin/team/create', async (req, res) => {
   try {
     const caller = await getAuthenticatedCaller(req);
@@ -1031,7 +1031,7 @@ app.post('/api/admin/team/create', async (req, res) => {
     const isSuper = caller.role === 'super_admin' || (caller.email === 'joshiakash1712@gmail.com' && caller.emailVerified);
 
     if (!isSuper) {
-      return res.status(403).json({ error: 'Forbidden: Super Admin authority required to invite Ellix Admins' });
+      return res.status(403).json({ error: 'Forbidden: Super Admin authority required to invite Ellic Admins' });
     }
 
     const { name, email, department } = req.body || {};
@@ -1075,16 +1075,16 @@ app.post('/api/admin/team/create', async (req, res) => {
 
     return res.status(200).json({
       status: 'ok',
-      message: `Ellix Admin ${name} (${email}) provisioned successfully`,
+      message: `Ellic Admin ${name} (${email}) provisioned successfully`,
       admin: { uid, name, email, role: 'ellix_admin', status: 'active', department: department || 'Operations' }
     });
   } catch (err: any) {
     console.error('Create admin error:', err);
-    return res.status(500).json({ error: 'Failed to create Ellix Admin', details: err?.message });
+    return res.status(500).json({ error: 'Failed to create Ellic Admin', details: err?.message });
   }
 });
 
-// Revoke Ellix Admin Access (Super Admin Only)
+// Revoke Ellic Admin Access (Super Admin Only)
 app.post('/api/admin/team/revoke', async (req, res) => {
   try {
     const caller = await getAuthenticatedCaller(req);
@@ -1218,7 +1218,7 @@ async function startServer() {
   });
 
   const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Ellix Connect Enterprise Server running on http://0.0.0.0:${PORT} [mode: ${isProduction ? 'production' : 'development'}]`);
+    console.log(`Ellic Enterprise Server running on http://0.0.0.0:${PORT} [mode: ${isProduction ? 'production' : 'development'}]`);
   });
 
   server.on('error', (err: any) => {

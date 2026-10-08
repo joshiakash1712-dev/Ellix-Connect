@@ -19,7 +19,7 @@ export const journeyStagesData: JourneyStage[] = [
         title: 'Wholesale Distributor Referral',
         channel: 'Peer Network',
         actor: 'Connected Wholesaler Sales Rep',
-        description: 'Wholesaler recommends Ellix to retailer for instant digital restock POs and credit ledger sync.',
+        description: 'Wholesaler recommends Ellic to retailer for instant digital restock POs and credit ledger sync.',
         deliverable: 'SMS / WhatsApp invite with free trial link',
         effectivenessScore: 4.8,
         isCriticalMilestone: true
@@ -28,7 +28,7 @@ export const journeyStagesData: JourneyStage[] = [
         id: 'tp-aw-2',
         title: 'Field Agent Counter Demo',
         channel: 'Field Visit',
-        actor: 'Ellix Merchant Growth Partner',
+        actor: 'Ellic Merchant Growth Partner',
         description: '5-minute hands-on mobile barcode scan demonstration during afternoon non-rush hours.',
         deliverable: 'Laminated feature tear-sheet & sample QR bill',
         effectivenessScore: 4.5
@@ -131,7 +131,7 @@ export const journeyStagesData: JourneyStage[] = [
         id: 'tp-ev-2',
         title: '1-on-1 Specialist Video / Voice Consultation',
         channel: 'Phone / Video',
-        actor: 'Ellix Solutions Onboarding Engineer',
+        actor: 'Ellic Solutions Onboarding Engineer',
         description: 'Dedicated call addressing retailer specific product categories (loose grains, expiry batching, HSN codes).',
         deliverable: 'Customized store setup roadmap',
         effectivenessScore: 4.7
@@ -150,7 +150,7 @@ export const journeyStagesData: JourneyStage[] = [
         id: 'tp-ev-4',
         title: 'Hardware Compatibility Test (Printer & Scanner)',
         channel: 'Hardware Box',
-        actor: 'Ellix Field Technician / Courier',
+        actor: 'Ellic Field Technician / Courier',
         description: 'Testing Bluetooth pairing with merchant existing thermal printer or delivery of trial test printer.',
         deliverable: 'Diagnostic test bill printout with shop name & QR code',
         effectivenessScore: 4.4
@@ -239,7 +239,7 @@ export const journeyStagesData: JourneyStage[] = [
         id: 'tp-ob-1',
         title: 'Welcome Concierge Call & Dedicated Onboarding Manager',
         channel: 'Phone / Video',
-        actor: 'Dedicated Ellix Onboarding Specialist',
+        actor: 'Dedicated Ellic Onboarding Specialist',
         description: 'Structured 30-minute kickoff verifying hardware arrival, store branches, and target go-live date.',
         deliverable: 'Go-live checklist & WhatsApp direct support channel',
         effectivenessScore: 4.9,
@@ -249,7 +249,7 @@ export const journeyStagesData: JourneyStage[] = [
         id: 'tp-ob-2',
         title: 'Automated Wholesaler Catalog Link-up',
         channel: 'Digital / Web',
-        actor: 'Ellix B2B Network Router',
+        actor: 'Ellic B2B Network Router',
         description: 'Instant synchronization of 1,000+ FMCG SKUs directly from the retailer linked wholesale distributor.',
         deliverable: 'Populated wholesale catalog with negotiated buying prices',
         effectivenessScore: 4.8,
@@ -259,7 +259,7 @@ export const journeyStagesData: JourneyStage[] = [
         id: 'tp-ob-3',
         title: '20-Minute Staff Training & Fast-Billing Drill',
         channel: 'Field Visit',
-        actor: 'Ellix Field Trainer or Video Simulator',
+        actor: 'Ellic Field Trainer or Video Simulator',
         description: 'Hands-on practice with cashiers: barcode scanning, handling change, applying discounts, and split payments.',
         deliverable: 'Cashier Quick-Reference Counter Card',
         effectivenessScore: 4.7
@@ -334,7 +334,7 @@ export const journeyStagesData: JourneyStage[] = [
     stepNumber: 4,
     timeframe: 'Day 22 - 60',
     mindset: 'We are completely live! Billing lines move twice as fast, stock-outs are flagged automatically, and day-end cash balancing takes 5 minutes.',
-    primaryGoal: '100% live customer transactions processed through Ellix; daily cash register reconciliation; automated wholesale replenishment.',
+    primaryGoal: '100% live customer transactions processed through Ellic; daily cash register reconciliation; automated wholesale replenishment.',
     sentimentScore: 4, // High Confidence
     sentimentLabel: 'High Confidence & Operational Mastery',
     sentimentTrend: 'peak',
@@ -374,7 +374,7 @@ export const journeyStagesData: JourneyStage[] = [
         id: 'tp-ad-4',
         title: 'Automated Nightly WhatsApp Business Summary',
         channel: 'WhatsApp',
-        actor: 'Ellix System Bot',
+        actor: 'Ellic System Bot',
         description: 'Pushed at 10:30 PM to store owner: Total Sales, Cash in Drawer, UPI receipts, Top 5 fast-movers, Low stock warnings.',
         deliverable: 'Executive daily summary PDF & WhatsApp message',
         effectivenessScore: 4.9
@@ -438,7 +438,7 @@ export const journeyStagesData: JourneyStage[] = [
     label: 'Advocacy & Expansion',
     stepNumber: 5,
     timeframe: 'Day 61+',
-    mindset: 'Ellix has transformed our retail margins and inventory turnover. We are opening a 2nd outlet and referring our wholesale merchant circle.',
+    mindset: 'Ellic has transformed our retail margins and inventory turnover. We are opening a 2nd outlet and referring our wholesale merchant circle.',
     primaryGoal: 'Multi-outlet expansion; wholesale trade credit line access; referral rewards; advanced margin analytics.',
     sentimentScore: 5, // Champion / Maximum Delight
     sentimentLabel: 'Brand Champion & Expanding Enterprise',
@@ -478,7 +478,7 @@ export const journeyStagesData: JourneyStage[] = [
         id: 'tp-av-4',
         title: 'Wholesale Trade Credit Line Activation',
         channel: 'Digital / Web',
-        actor: 'Ellix Capital & Wholesale Partner',
+        actor: 'Ellic Capital & Wholesale Partner',
         description: 'Unlocking $5,000 - $25,000 revolving 30-day inventory credit line based on verified transaction track record.',
         deliverable: 'Pre-approved wholesale credit facility',
         effectivenessScore: 4.9,
@@ -516,7 +516,7 @@ export const journeyStagesData: JourneyStage[] = [
     milestoneChecklist: [
       { id: 'ms-av-1', label: 'Active Daily Usage for 60+ Consecutive Days', description: 'Store operated seamlessly with zero rollback to paper', isRequired: true },
       { id: 'ms-av-2', label: 'Wholesale Digital Replenishment Established', description: '> 80% of restock orders routed digitally', isRequired: true },
-      { id: 'ms-av-3', label: 'Referred at Least 1 Peer Retailer', description: 'Invited fellow shopkeeper to try Ellix platform', isRequired: false },
+      { id: 'ms-av-3', label: 'Referred at Least 1 Peer Retailer', description: 'Invited fellow shopkeeper to try Ellic platform', isRequired: false },
       { id: 'ms-av-4', label: 'Unlocked Multi-Store or Trade Credit Facility', description: 'Expanded scale or accessed working capital', isRequired: false }
     ],
     kpiMetrics: [

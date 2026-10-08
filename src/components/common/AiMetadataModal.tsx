@@ -39,28 +39,28 @@ export const AiMetadataModal: React.FC<AiMetadataModalProps> = ({ isOpen, onClos
       "@graph": [
         {
           "@type": "Organization",
-          "@id": "https://ellix-connect.ai.studio/#organization",
-          "name": "Ellix Connect",
-          "url": "https://ellix-connect.ai.studio/",
-          "logo": "https://ellix-connect.ai.studio/logo.svg",
-          "image": "https://ellix-connect.ai.studio/og-image.png",
+          "@id": "https://ellic.ai.studio/#organization",
+          "name": "Ellic",
+          "url": "https://ellic.ai.studio/",
+          "logo": "https://ellic.ai.studio/logo.svg",
+          "image": "https://ellic.ai.studio/og-image.png",
           "description": "A modern business management platform for local retailers and small businesses."
         },
         {
           "@type": "WebSite",
-          "@id": "https://ellix-connect.ai.studio/#website",
-          "url": "https://ellix-connect.ai.studio/",
-          "name": "Ellix Connect",
-          "description": "Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.",
+          "@id": "https://ellic.ai.studio/#website",
+          "url": "https://ellic.ai.studio/",
+          "name": "Ellic",
+          "description": "Business management, without the complexity. Ellic brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.",
           "publisher": {
-            "@id": "https://ellix-connect.ai.studio/#organization"
+            "@id": "https://ellic.ai.studio/#organization"
           }
         },
         {
           "@type": "SoftwareApplication",
-          "@id": "https://ellix-connect.ai.studio/#software",
-          "name": "Ellix Connect",
-          "url": "https://ellix-connect.ai.studio/",
+          "@id": "https://ellic.ai.studio/#software",
+          "name": "Ellic",
+          "url": "https://ellic.ai.studio/",
           "applicationCategory": "BusinessApplication",
           "operatingSystem": "Web",
           "description": "Business management, without the complexity. A modern business management platform for local retailers and small businesses (excluding restaurants) that unifies billing, inventory, customers, payments, transactions, and business insights.",
@@ -73,7 +73,7 @@ export const AiMetadataModal: React.FC<AiMetadataModalProps> = ({ isOpen, onClos
             "Business insights and sales analytics"
           ],
           "publisher": {
-            "@id": "https://ellix-connect.ai.studio/#organization"
+            "@id": "https://ellic.ai.studio/#organization"
           }
         }
       ]
@@ -82,12 +82,12 @@ export const AiMetadataModal: React.FC<AiMetadataModalProps> = ({ isOpen, onClos
     2
   );
 
-  const llmsTxtContent = `# Ellix Connect
+  const llmsTxtContent = `# Ellic
 
-> Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.
+> Business management, without the complexity. Ellic brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.
 
 ## Project Summary
-Ellix Connect is a modern web-based business management platform designed for local retailers, supermarkets, and wholesalers in India (excluding restaurants).
+Ellic is a modern web-based business management platform designed for local retailers, supermarkets, and wholesalers in India (excluding restaurants).
 
 ## Core Capabilities & Modules
 - Billing & GST Invoice Generation (Itemized CGST/SGST/IGST breakdowns, printable/downloadable invoices)
@@ -273,11 +273,11 @@ Ellix Connect is a modern web-based business management platform designed for lo
                 <div className="space-y-2 text-xs divide-y divide-slate-100 dark:divide-slate-800">
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                     <span className="font-medium text-slate-500 dark:text-slate-400">App Name:</span>
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">Ellix Connect</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">Ellic</span>
                   </div>
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                     <span className="font-medium text-slate-500 dark:text-slate-400">Canonical Origin:</span>
-                    <span className="font-mono text-slate-900 dark:text-slate-100">https://ellix-connect.ai.studio/</span>
+                    <span className="font-mono text-slate-900 dark:text-slate-100">https://ellic.ai.studio/</span>
                   </div>
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                     <span className="font-medium text-slate-500 dark:text-slate-400">Primary Category:</span>

@@ -330,7 +330,7 @@ export const ProductPreview: React.FC = () => {
             <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">Live System Simulator</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-950 dark:text-white tracking-tight">
-            See Ellix Connect in action.
+            See Ellic in action.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
             Explore realistic mockups of the platform&apos;s core retail workspaces.
@@ -565,7 +565,7 @@ export const ProductPreview: React.FC = () => {
               <div className="flex items-center gap-2 min-w-0">
                 <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse shrink-0" />
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 truncate">
-                  Ellix Connect Interactive OS Workspace
+                  Ellic Interactive OS Workspace
                 </span>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-sky-100 dark:bg-blue-950/80 text-blue-800 dark:text-sky-300 text-[11px] font-mono font-bold border border-sky-300/60 dark:border-sky-800/60 shrink-0">
                   {activeModule.badge}
@@ -682,7 +682,7 @@ export const ProductPreview: React.FC = () => {
                   <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600 shrink-0" />
                   <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-2 hidden sm:block" />
                   <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 font-mono hidden sm:inline">
-                    Ellix Connect OS · Active Workspace: {activeTab.toUpperCase()}
+                    Ellic OS · Active Workspace: {activeTab.toUpperCase()}
                   </span>
                 </div>
 

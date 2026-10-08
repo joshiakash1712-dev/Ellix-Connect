@@ -46,7 +46,7 @@ export const AdminAuditTrail: React.FC = () => {
     const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(headers + rows.join('\n'));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute('href', csvContent);
-    downloadAnchor.setAttribute('download', `ellix-audit-trail-${new Date().toISOString().slice(0, 10)}.csv`);
+    downloadAnchor.setAttribute('download', `ellic-audit-trail-${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();

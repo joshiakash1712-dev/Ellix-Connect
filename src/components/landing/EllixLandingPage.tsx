@@ -115,13 +115,13 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp,
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    const baseOrigin = 'https://ellix-connect.ai.studio';
+    const baseOrigin = 'https://ellic.ai.studio';
     const defaultDescription =
-      'Business management, without the complexity. Ellix Connect brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.';
+      'Business management, without the complexity. Ellic brings billing, inventory, customers, payments, transactions, and business insights into one connected platform for local retailers and small businesses.';
     const routeInfo = activeLegalPageSlug ? LEGAL_PAGE_ROUTES[activeLegalPageSlug] : null;
     const pageTitle = routeInfo
-      ? `${routeInfo.title} — Ellix Connect`
-      : 'Ellix Connect — Business Management, Without the Complexity';
+      ? `${routeInfo.title} | Ellic`
+      : 'Ellic: Business Management, Without the Complexity';
     const pageDescription = routeInfo ? routeInfo.description : defaultDescription;
     document.title = pageTitle;
 
@@ -540,6 +540,14 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp,
       ref={rootRef}
       className="website-root min-h-screen bg-[#fafafa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-500 selection:text-white antialiased overflow-x-hidden w-full max-w-full transition-colors duration-200"
     >
+      {/* Accessible Skip to Content Link for Keyboard Users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2.5 focus:bg-blue-600 focus:text-white focus:rounded-xl focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-white text-xs font-bold"
+      >
+        Skip to main content
+      </a>
+
       {/* Top ScrollTrigger Progress Indicator */}
       <div
         ref={progressBarRef}
@@ -561,7 +569,7 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp,
       />
 
       {/* Main Content Sections */}
-      <main className="flex-1 w-full max-w-full overflow-x-hidden">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full max-w-full overflow-x-hidden focus:outline-none">
         
         {/* 2. Hero */}
         <HeroSection

@@ -43,7 +43,7 @@ const steps: WorkflowStep[] = [
     actionDetail: 'Item saved with SKU, tax slab, cost price, and retail MRP.',
     icon: Tag,
     demoHeadline: 'SKU Creation & Barcode Encoding',
-    demoExplanation: 'Products are added via quick manual entry, mobile camera scan, or bulk CSV upload. Ellix Connect assigns or reads standard EAN/UPC barcodes and calculates profit margins automatically.',
+    demoExplanation: 'Products are added via quick manual entry, mobile camera scan, or bulk CSV upload. Ellic assigns or reads standard EAN/UPC barcodes and calculates profit margins automatically.',
     systemActivity: 'Catalog DB · Indexed SKU #SKU-89241 · Barcode linked',
     checklist: [
       'Assign or scan standard EAN/UPC barcode',
@@ -119,7 +119,7 @@ const steps: WorkflowStep[] = [
     actionDetail: 'GST rates, item discounts, and grand totals generated live.',
     icon: FileText,
     demoHeadline: 'Automated GST Calculation & Digital Bill',
-    demoExplanation: 'Ellix Connect applies tax slabs (5%, 12%, 18%, 28%) and calculates discounts in real time. Instant receipt preview is ready for thermal printing or WhatsApp delivery.',
+    demoExplanation: 'Ellic applies tax slabs (5%, 12%, 18%, 28%) and calculates discounts in real time. Instant receipt preview is ready for thermal printing or WhatsApp delivery.',
     systemActivity: 'Billing Engine · Invoice #INV-2026-1049 generated',
     checklist: [
       'Real-time CGST + SGST split across mixed tax slabs',
@@ -201,7 +201,7 @@ const steps: WorkflowStep[] = [
     actionDetail: 'Multi-tender verified and cash drawer automatically balanced.',
     icon: CreditCard,
     demoHeadline: 'Instant Multi-Tender Settlement',
-    demoExplanation: 'Customers pay using Dynamic UPI QR codes on their phone, cash, or card. Ellix Connect registers the exact payment method and logs the till cash amount without manual balancing.',
+    demoExplanation: 'Customers pay using Dynamic UPI QR codes on their phone, cash, or card. Ellic registers the exact payment method and logs the till cash amount without manual balancing.',
     systemActivity: 'Payment Gateway · UPI Txn #UPI-849204 settled',
     checklist: [
       'Dynamic exact-amount UPI QR generation on screen',
@@ -441,7 +441,7 @@ export const ConnectedWorkflow: React.FC = () => {
             One business action. Everything stays connected.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-            In traditional setups, billing doesn&apos;t talk to inventory or paper Khata. In Ellix Connect, a single sale ripples through all 7 operational steps automatically.
+            In traditional setups, billing doesn&apos;t talk to inventory or paper Khata. In Ellic, a single sale ripples through all 7 operational steps automatically.
             <span className="hidden lg:inline text-blue-600 dark:text-sky-400 font-semibold ml-1">
               Hover over any workflow step below to inspect its live data ripple in-place.
             </span>
@@ -1034,11 +1034,11 @@ export const ConnectedWorkflow: React.FC = () => {
             </ul>
           </div>
 
-          {/* The Ellix Connect Way */}
+          {/* The Ellic Way */}
           <div data-cursor="card" className="website-card-hover p-6 rounded-2xl bg-sky-50/40 dark:bg-blue-950/30 border border-sky-300/80 dark:border-sky-800/80 shadow-sm">
             <div className="flex items-center gap-2 text-blue-800 dark:text-sky-300 text-xs font-bold uppercase tracking-wider mb-3">
               <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-sky-400" />
-              <span>The Connected Ellix Approach</span>
+              <span>The Connected Ellic Approach</span>
             </div>
             <h4 className="text-lg font-bold text-slate-950 dark:text-white mb-3">
               One Connected Platform. Everything In Sync.

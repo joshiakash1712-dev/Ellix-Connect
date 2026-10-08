@@ -420,7 +420,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                   </h4>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Switch Ellix Connect to any Indian regional language or global language. Your choice is saved automatically.
+                  Switch Ellic to any Indian regional language or global language. Your choice is saved automatically.
                 </p>
                 <div
                   className={`p-4 rounded-xl border ${
@@ -445,7 +445,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                   Tenant Subscription & Cloud Billing
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
-                  Manage your Ellix Connect monthly SaaS subscription, renewal schedules, and tenant data safety.
+                  Manage your Ellic monthly SaaS subscription, renewal schedules, and tenant data safety.
                 </p>
               </div>
 
@@ -454,7 +454,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                   <div className="text-xs">
-                    <div className="font-bold text-amber-300">Renewal Overdue — Grace Period Active</div>
+                    <div className="font-bold text-amber-300">Renewal Overdue: Grace Period Active</div>
                     <div className="text-slate-300 mt-0.5">
                       Your monthly subscription payment was due on {subscription.renewalDate}. Please renew immediately to avoid suspension of store operations.
                     </div>
@@ -466,7 +466,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-start gap-3">
                   <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
                   <div className="text-xs">
-                    <div className="font-bold text-rose-300">Account Blocked — Renewal Required</div>
+                    <div className="font-bold text-rose-300">Account Blocked: Renewal Required</div>
                     <div className="text-slate-300 mt-0.5">
                       The 7-day grace period has expired. Platform POS, inventory adjustments, and reports are locked until the subscription is renewed.
                     </div>
@@ -483,7 +483,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/60">
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-sky-500">Current Plan</span>
-                    <h4 className="text-base font-extrabold text-white">Ellix Connect — Growth Tier</h4>
+                    <h4 className="text-base font-extrabold text-white">Ellic: Growth Tier</h4>
                     <p className="text-xs text-slate-400 mt-0.5">Full POS, inventory sync, multi-store & crew access</p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -658,7 +658,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                   Local Ledger & State Diagnostics
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
-                  Ellix Connect maintains instant offline persistence for inventory, invoices, and B2B orders.
+                  Ellic maintains instant offline persistence for inventory, invoices, and B2B orders.
                 </p>
               </div>
 
@@ -767,9 +767,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                   theme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'
                 }`}
               >
-                <EllixConnectLogo variant="symbol" size={40} alt="Ellix Connect" />
+                <EllixConnectLogo variant="symbol" size={40} alt="Ellic" />
                 <div>
-                  <h4 className="text-sm font-extrabold">Ellix Connect Business OS</h4>
+                  <h4 className="text-sm font-extrabold">Ellic Business OS</h4>
                   <p className="text-xs text-slate-500">Version 2.4.0 • Enterprise Edition</p>
                 </div>
               </div>

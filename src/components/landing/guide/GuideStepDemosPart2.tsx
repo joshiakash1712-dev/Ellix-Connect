@@ -19,14 +19,14 @@ import { GuideLegalLinkProps, WORKFLOW_SEVEN_NODES } from './guideData';
 import { LegalPageSlug } from '../../../config/legal.config';
 
 const DemoBadge: React.FC<{ label?: string }> = ({ label = 'DEMO · SAMPLE DATA' }) => (
-  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[10px] font-mono font-bold uppercase tracking-wider">
-    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/30 text-sky-300 text-[10px] font-mono font-bold uppercase tracking-wider">
+    <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
     {label}
   </span>
 );
 
 /* ========================================================================== */
-/* STEP 07 DEMO — STOCK & RESTOCKING (10 -> SALE -1 -> 9 LOW STOCK -> 19)     */
+/* STEP 07 DEMO: STOCK & RESTOCKING (10 -> SALE -1 -> 9 LOW STOCK -> 19)     */
 /* ========================================================================== */
 export const Step07StockRestockDemo: React.FC = () => {
   const [stage, setStage] = useState<'initial' | 'sold' | 'restocked'>('sold');
@@ -37,7 +37,7 @@ export const Step07StockRestockDemo: React.FC = () => {
     <div className="rounded-2xl bg-[#121826] border border-slate-800 p-4 sm:p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Package className="w-4 h-4 text-emerald-400" />
+          <Package className="w-4 h-4 text-sky-400" />
           <span className="text-xs font-bold text-white">
             Connected Stock & Restocking Demonstration
           </span>
@@ -52,13 +52,13 @@ export const Step07StockRestockDemo: React.FC = () => {
           onClick={() => setStage('initial')}
           className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
             stage === 'initial'
-              ? 'bg-emerald-500/15 border-emerald-500 text-white'
+              ? 'bg-blue-500/15 border-blue-500 text-white'
               : 'bg-[#0A0E1A] border-slate-800 text-slate-300 hover:border-slate-700'
           }`}
         >
           <div className="text-[10px] font-mono text-slate-400 uppercase">1. Starting Stock</div>
           <div className="text-2xl font-black text-white mt-1 tabular-nums">10 units</div>
-          <div className="text-[11px] text-emerald-400 mt-1">Ready at counter</div>
+          <div className="text-[11px] text-sky-400 mt-1">Ready at counter</div>
         </button>
 
         <button
@@ -87,17 +87,17 @@ export const Step07StockRestockDemo: React.FC = () => {
           onClick={() => setStage('restocked')}
           className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
             stage === 'restocked'
-              ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-[0_0_16px_rgba(16,185,129,0.22)]'
+              ? 'bg-blue-500/15 border-blue-500 text-white shadow-[0_0_16px_rgba(37,99,235,0.22)]'
               : 'bg-[#0A0E1A] border-slate-800 text-slate-300 hover:border-slate-700'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono text-emerald-300 uppercase">3. Restock (+10)</span>
-            <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold">
+            <span className="text-[10px] font-mono text-sky-300 uppercase">3. Restock (+10)</span>
+            <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-sky-300 text-[9px] font-bold">
               REPLENISHED
             </span>
           </div>
-          <div className="text-2xl font-black text-emerald-400 mt-1 tabular-nums">
+          <div className="text-2xl font-black text-sky-400 mt-1 tabular-nums">
             9 → 19 units
           </div>
           <div className="text-[11px] text-slate-300 mt-1">Authorized restock recorded</div>
@@ -114,7 +114,7 @@ export const Step07StockRestockDemo: React.FC = () => {
 };
 
 /* ========================================================================== */
-/* STEP 08 DEMO — TEAM & ROLES + CREW PERMISSION INSPECTOR                    */
+/* STEP 08 DEMO: TEAM & ROLES + CREW PERMISSION INSPECTOR                    */
 /* ========================================================================== */
 export const Step08TeamRolesDemo: React.FC = () => {
   const roles = [
@@ -122,11 +122,11 @@ export const Step08TeamRolesDemo: React.FC = () => {
       level: 'LEVEL 1',
       name: 'SUPER ADMIN',
       scope: 'Platform Level',
-      desc: 'Runs the Ellix Connect platform.',
+      desc: 'Runs the Ellic platform.',
     },
     {
       level: 'LEVEL 2',
-      name: 'ELLIX CONNECT ADMIN',
+      name: 'ELLIC ADMIN',
       scope: 'Platform Level',
       desc: 'Helps manage clients and platform operations according to assigned authority.',
     },
@@ -161,7 +161,7 @@ export const Step08TeamRolesDemo: React.FC = () => {
     <div className="rounded-2xl bg-[#121826] border border-slate-800 p-4 sm:p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4 text-emerald-400" />
+          <Users className="w-4 h-4 text-sky-400" />
           <span className="text-xs font-bold text-white">
             4-Level Role Hierarchy & Crew Permission Matrix
           </span>
@@ -184,12 +184,12 @@ export const Step08TeamRolesDemo: React.FC = () => {
                 onClick={() => setSelectedRoleIdx(idx)}
                 className={`w-full p-3 rounded-xl border text-left transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-[0_0_16px_rgba(16,185,129,0.18)]'
+                    ? 'bg-blue-500/15 border-blue-500 text-white shadow-[0_0_16px_rgba(37,99,235,0.18)]'
                     : 'bg-[#0A0E1A] border-slate-800 text-slate-300 hover:border-slate-700'
                 }`}
               >
                 <div className="flex items-center justify-between text-[10px] font-mono">
-                  <span className="text-emerald-400 font-bold">{r.level}</span>
+                  <span className="text-sky-400 font-bold">{r.level}</span>
                   <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300">
                     {r.scope}
                   </span>
@@ -206,13 +206,13 @@ export const Step08TeamRolesDemo: React.FC = () => {
           <div className="flex items-center justify-between pb-2 border-b border-slate-800">
             <div>
               <div className="text-xs font-bold text-white">
-                Crew Experience — Available vs. Restricted Actions
+                Crew Experience: Available vs. Restricted Actions
               </div>
               <div className="text-[11px] text-slate-400">
                 Visualizing what a store Crew member can and cannot do
               </div>
             </div>
-            <span className="px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-mono font-bold">
+            <span className="px-2 py-0.5 rounded bg-blue-500/15 border border-blue-500/30 text-sky-300 text-[10px] font-mono font-bold">
               LEVEL 4 · CREW
             </span>
           </div>
@@ -223,14 +223,14 @@ export const Step08TeamRolesDemo: React.FC = () => {
                 key={perm.action}
                 className={`p-2.5 rounded-lg border flex flex-col justify-between ${
                   perm.allowed
-                    ? 'bg-emerald-950/20 border-emerald-500/35'
+                    ? 'bg-blue-950/20 border-blue-500/35'
                     : 'bg-rose-950/15 border-rose-500/30'
                 }`}
               >
                 <div className="flex items-center justify-between gap-1.5">
                   <span className="text-[11px] font-bold text-white">{perm.action}</span>
                   {perm.allowed ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 shrink-0">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-sky-400 shrink-0">
                       <CheckCircle2 className="w-3 h-3" /> Available
                     </span>
                   ) : (
@@ -250,7 +250,7 @@ export const Step08TeamRolesDemo: React.FC = () => {
 };
 
 /* ========================================================================== */
-/* STEP 09 DEMO — BUSINESS INSIGHTS (ACTIVITY -> DATA -> INSIGHTS)            */
+/* STEP 09 DEMO: BUSINESS INSIGHTS (ACTIVITY -> DATA -> INSIGHTS)            */
 /* ========================================================================== */
 export const Step09InsightsDemo: React.FC = () => {
   const [activityCount, setActivityCount] = useState<number>(0);
@@ -268,7 +268,7 @@ export const Step09InsightsDemo: React.FC = () => {
     <div className="rounded-2xl bg-[#121826] border border-slate-800 p-4 sm:p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <BarChart3 className="w-4 h-4 text-emerald-400" />
+          <BarChart3 className="w-4 h-4 text-sky-400" />
           <span className="text-xs font-bold text-white">
             How Store Activity Becomes Business Insights (Sample Visualization)
           </span>
@@ -289,14 +289,14 @@ export const Step09InsightsDemo: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className="text-center text-emerald-400 text-xs font-mono">↓</div>
-          <div className="p-2.5 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-center text-xs font-extrabold text-emerald-300">
+          <div className="text-center text-sky-400 text-xs font-mono">↓</div>
+          <div className="p-2.5 rounded-lg bg-blue-500/15 border border-blue-500/40 text-center text-xs font-extrabold text-sky-300">
             BUSINESS DATA → INSIGHTS
           </div>
           <button
             type="button"
             onClick={() => setActivityCount((c) => (c + 1) % 4)}
-            className="w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+            className="w-full py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all"
           >
             <Zap className="w-3.5 h-3.5" />
             <span>Simulate New Counter Activity</span>
@@ -320,7 +320,7 @@ export const Step09InsightsDemo: React.FC = () => {
                     initial={{ height: 0 }}
                     animate={{ height: `${bar.pct}%` }}
                     transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-full bg-gradient-to-t from-emerald-600 to-teal-400 rounded-t"
+                    className="w-full bg-gradient-to-t from-blue-600 to-sky-300 rounded-t"
                   />
                 </div>
                 <span className="text-[10px] font-mono text-slate-400">{bar.day}</span>
@@ -335,7 +335,7 @@ export const Step09InsightsDemo: React.FC = () => {
             </div>
             <div className="p-2 rounded-lg bg-[#121826] border border-slate-800">
               <div className="text-slate-400">Sample Transactions</div>
-              <div className="font-bold text-emerald-400">{18 + activityCount} recorded</div>
+              <div className="font-bold text-sky-400">{18 + activityCount} recorded</div>
             </div>
             <div className="p-2 rounded-lg bg-[#121826] border border-slate-800">
               <div className="text-slate-400">Inventory Status</div>
@@ -349,7 +349,7 @@ export const Step09InsightsDemo: React.FC = () => {
 };
 
 /* ========================================================================== */
-/* STEP 10 DEMO — THE CONNECTED WORKFLOW (01 PRODUCT -> 07 INSIGHTS RIPPLE)   */
+/* STEP 10 DEMO: THE CONNECTED WORKFLOW (01 PRODUCT -> 07 INSIGHTS RIPPLE)   */
 /* ========================================================================== */
 export const Step10ConnectedWorkflowDemo: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
@@ -376,10 +376,10 @@ export const Step10ConnectedWorkflowDemo: React.FC = () => {
   const currentConsequence = transactionConsequences[activeIndex];
 
   return (
-    <div className="rounded-2xl bg-[#121826] border border-emerald-500/30 p-4 sm:p-5 space-y-4 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
+    <div className="rounded-2xl bg-[#121826] border border-blue-500/30 p-4 sm:p-5 space-y-4 shadow-[0_0_30px_rgba(37,99,235,0.1)]">
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-emerald-400" />
+          <Sparkles className="w-4 h-4 text-sky-400" />
           <span className="text-xs font-bold text-white">
             One Customer Purchase Moving Through All 07 Connected Stages
           </span>
@@ -399,15 +399,15 @@ export const Step10ConnectedWorkflowDemo: React.FC = () => {
               onClick={() => setActiveIndex(idx)}
               className={`relative p-2.5 rounded-xl border text-left transition-all cursor-pointer overflow-hidden ${
                 isCurrent
-                  ? 'bg-emerald-500/20 border-emerald-400 text-white shadow-[0_0_18px_rgba(16,185,129,0.3)]'
+                  ? 'bg-blue-500/20 border-sky-400 text-white shadow-[0_0_18px_rgba(37,99,235,0.3)]'
                   : isPassed
-                  ? 'bg-[#0A0E1A] border-emerald-500/35 text-slate-200'
+                  ? 'bg-[#0A0E1A] border-blue-500/35 text-slate-200'
                   : 'bg-[#0A0E1A]/70 border-slate-800 text-slate-400'
               }`}
             >
               <div className="flex items-center justify-between text-[10px] font-mono font-bold">
-                <span className="text-emerald-400">{node.code}</span>
-                {isCurrent && <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />}
+                <span className="text-sky-400">{node.code}</span>
+                {isCurrent && <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />}
               </div>
               <div className="text-xs font-extrabold text-white mt-1">{node.label}</div>
               <div className="text-[10px] text-slate-400 truncate">{node.sub}</div>
@@ -417,9 +417,9 @@ export const Step10ConnectedWorkflowDemo: React.FC = () => {
       </div>
 
       {/* Live Consequence Readout */}
-      <div className="p-4 rounded-xl bg-[#0A0E1A] border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="p-4 rounded-xl bg-[#0A0E1A] border border-blue-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <div className="text-[10px] font-mono font-bold text-emerald-400 uppercase">
+          <div className="text-[10px] font-mono font-bold text-sky-400 uppercase">
             {currentConsequence.step} → {currentConsequence.action}
           </div>
           <div className="text-sm font-bold text-white mt-0.5">{currentConsequence.detail}</div>
@@ -427,7 +427,7 @@ export const Step10ConnectedWorkflowDemo: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveIndex((prev) => (prev + 1) % WORKFLOW_SEVEN_NODES.length)}
-          className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shrink-0 cursor-pointer flex items-center gap-1.5"
+          className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shrink-0 cursor-pointer flex items-center gap-1.5"
         >
           <span>Step Ripple Forward</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -438,7 +438,7 @@ export const Step10ConnectedWorkflowDemo: React.FC = () => {
 };
 
 /* ========================================================================== */
-/* STEP 11 DEMO — SECURITY, PRIVACY & CONTROL (WITH LEGAL LINKS)              */
+/* STEP 11 DEMO: SECURITY, PRIVACY & CONTROL (WITH LEGAL LINKS)              */
 /* ========================================================================== */
 export const Step11SecurityPrivacyDemo: React.FC<GuideLegalLinkProps> = ({ onOpenLegalPage }) => {
   const pillars = [
@@ -462,9 +462,9 @@ export const Step11SecurityPrivacyDemo: React.FC<GuideLegalLinkProps> = ({ onOpe
     <div className="rounded-2xl bg-[#121826] border border-slate-800 p-4 sm:p-5 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <ShieldCheck className="w-4 h-4 text-sky-400" />
           <span className="text-xs font-bold text-white">
-            Ellix Connect is designed with role-based access and security controls
+            Ellic is designed with role-based access and security controls
           </span>
         </div>
       </div>
@@ -473,7 +473,7 @@ export const Step11SecurityPrivacyDemo: React.FC<GuideLegalLinkProps> = ({ onOpe
         {pillars.map((p) => (
           <div key={p.title} className="p-3 rounded-xl bg-[#0A0E1A] border border-slate-800">
             <div className="text-xs font-bold text-white flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
               <span>{p.title}</span>
             </div>
             <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{p.desc}</p>
@@ -492,7 +492,7 @@ export const Step11SecurityPrivacyDemo: React.FC<GuideLegalLinkProps> = ({ onOpe
               key={link.slug}
               type="button"
               onClick={() => onOpenLegalPage?.(link.slug)}
-              className="px-2.5 py-1 rounded-lg bg-[#0A0E1A] hover:bg-slate-800 border border-slate-700 text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 cursor-pointer transition-colors"
+              className="px-2.5 py-1 rounded-lg bg-[#0A0E1A] hover:bg-slate-800 border border-slate-700 text-[11px] font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <span>{link.label}</span>
               <ExternalLink className="w-3 h-3" />
@@ -505,7 +505,7 @@ export const Step11SecurityPrivacyDemo: React.FC<GuideLegalLinkProps> = ({ onOpe
 };
 
 /* ========================================================================== */
-/* STEP 12 DEMO — SUBSCRIPTION & ACCOUNT LIFECYCLE                            */
+/* STEP 12 DEMO: SUBSCRIPTION & ACCOUNT LIFECYCLE                            */
 /* ========================================================================== */
 export const Step12SubscriptionLifecycleDemo: React.FC<GuideLegalLinkProps> = ({
   onOpenLegalPage,
@@ -514,7 +514,7 @@ export const Step12SubscriptionLifecycleDemo: React.FC<GuideLegalLinkProps> = ({
     {
       title: '1. Application / Approval',
       status: 'Onboarding',
-      detail: 'Submit your business details to apply for an Ellix Connect merchant account.',
+      detail: 'Submit your business details to apply for an Ellic merchant account.',
     },
     {
       title: '2. Subscription',
@@ -569,11 +569,11 @@ export const Step12SubscriptionLifecycleDemo: React.FC<GuideLegalLinkProps> = ({
                 isSelected
                   ? isWarn
                     ? 'bg-amber-500/15 border-amber-500 text-white'
-                    : 'bg-emerald-500/15 border-emerald-500 text-white'
+                    : 'bg-blue-500/15 border-blue-500 text-white'
                   : 'bg-[#0A0E1A] border-slate-800 text-slate-300 hover:border-slate-700'
               }`}
             >
-              <div className="text-[10px] font-mono text-emerald-400">{st.status}</div>
+              <div className="text-[10px] font-mono text-sky-400">{st.status}</div>
               <div className="text-xs font-bold text-white mt-0.5">{st.title}</div>
             </button>
           );
@@ -582,8 +582,8 @@ export const Step12SubscriptionLifecycleDemo: React.FC<GuideLegalLinkProps> = ({
 
       <div className="p-3.5 rounded-xl bg-[#0A0E1A] border border-slate-800 space-y-2">
         <div className="text-xs font-bold text-white">
-          {lifecycleStages[selectedStage].title} —{' '}
-          <span className="text-emerald-400">{lifecycleStages[selectedStage].status}</span>
+          {lifecycleStages[selectedStage].title}:{' '}
+          <span className="text-sky-400">{lifecycleStages[selectedStage].status}</span>
         </div>
         <p className="text-xs text-slate-300">{lifecycleStages[selectedStage].detail}</p>
         <p className="text-[11px] text-slate-400">
@@ -597,7 +597,7 @@ export const Step12SubscriptionLifecycleDemo: React.FC<GuideLegalLinkProps> = ({
           <button
             type="button"
             onClick={() => onOpenLegalPage?.('terms-of-service')}
-            className="px-2.5 py-1 rounded-lg bg-[#0A0E1A] hover:bg-slate-800 border border-slate-700 text-[11px] font-semibold text-emerald-400 flex items-center gap-1 cursor-pointer"
+            className="px-2.5 py-1 rounded-lg bg-[#0A0E1A] hover:bg-slate-800 border border-slate-700 text-[11px] font-semibold text-sky-400 flex items-center gap-1 cursor-pointer"
           >
             <span>Terms of Service</span>
             <ExternalLink className="w-3 h-3" />
@@ -605,7 +605,7 @@ export const Step12SubscriptionLifecycleDemo: React.FC<GuideLegalLinkProps> = ({
           <button
             type="button"
             onClick={() => onOpenLegalPage?.('cancellation-refund-policy')}
-            className="px-2.5 py-1 rounded-lg bg-[#0A0E1A] hover:bg-slate-800 border border-slate-700 text-[11px] font-semibold text-emerald-400 flex items-center gap-1 cursor-pointer"
+            className="px-2.5 py-1 rounded-lg bg-[#0A0E1A] hover:bg-slate-800 border border-slate-700 text-[11px] font-semibold text-sky-400 flex items-center gap-1 cursor-pointer"
           >
             <span>Cancellation & Refund Policy</span>
             <ExternalLink className="w-3 h-3" />
@@ -613,7 +613,7 @@ export const Step12SubscriptionLifecycleDemo: React.FC<GuideLegalLinkProps> = ({
           <button
             type="button"
             onClick={() => onOpenLegalPage?.('privacy-policy')}
-            className="px-2.5 py-1 rounded-lg bg-[#0A0E1A] hover:bg-slate-800 border border-slate-700 text-[11px] font-semibold text-emerald-400 flex items-center gap-1 cursor-pointer"
+            className="px-2.5 py-1 rounded-lg bg-[#0A0E1A] hover:bg-slate-800 border border-slate-700 text-[11px] font-semibold text-sky-400 flex items-center gap-1 cursor-pointer"
           >
             <span>Privacy Policy</span>
             <ExternalLink className="w-3 h-3" />

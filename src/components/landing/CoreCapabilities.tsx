@@ -257,7 +257,7 @@ const capabilities: CapabilityItem[] = [
             <div className="space-y-1 text-[11px]">
               <div className="text-slate-300">Bill Total: <strong className="text-white">₹1,450.00</strong></div>
               <div className="text-sky-400">Scan via GPay / PhonePe / Paytm</div>
-              <div className="text-[10px] text-slate-400">Merchant VPA: ellix.store@icici</div>
+              <div className="text-[10px] text-slate-400">Merchant VPA: ellic.store@icici</div>
             </div>
           </div>
         </div>

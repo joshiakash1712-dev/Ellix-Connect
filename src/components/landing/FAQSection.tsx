@@ -12,24 +12,24 @@ interface FAQItem {
 const faqData: FAQItem[] = [
   {
     id: 'what-is-ellix',
-    question: 'What is Ellix Connect?',
+    question: 'What is Ellic?',
     category: 'General',
     answer:
-      'Ellix Connect is a modern, unified business management platform engineered for local retailers, specialized merchants, and wholesalers. It replaces clunky legacy billing software and fragmented paper books with a calm, connected solution that handles counter billing, live inventory sync, customer Khata, multi-tender payments, and instant business intelligence.'
+      'Ellic is a modern, unified business management platform engineered for local retailers, specialized merchants, and wholesalers. It replaces clunky legacy billing software and fragmented paper books with a calm, connected solution that handles counter billing, live inventory sync, customer Khata, multi-tender payments, and instant business intelligence.'
   },
   {
     id: 'who-is-it-for',
-    question: 'Who is Ellix Connect for?',
+    question: 'Who is Ellic for?',
     category: 'General',
     answer:
-      'Ellix Connect is designed specifically for grocery stores, supermarkets, electronics and mobile shops, apparel boutiques, hardware distributors, and general retail merchants. Whether you operate a single counter or a busy multi-register store, Ellix Connect scales effortlessly.'
+      'Ellic is designed specifically for grocery stores, supermarkets, electronics and mobile shops, apparel boutiques, hardware distributors, and general retail merchants. Whether you operate a single counter or a busy multi-register store, Ellic scales effortlessly.'
   },
   {
     id: 'only-for-billing',
-    question: 'Is Ellix Connect only for billing?',
+    question: 'Is Ellic only for billing?',
     category: 'Features',
     answer:
-      'No. While high-speed billing and counter checkout are core capabilities, Ellix Connect is a comprehensive operations platform. Every sale automatically updates inventory stock levels, logs customer loyalty and credit (Khata), verifies register drawer cash, and updates day-end profit reports in real time without manual reconciliation.'
+      'No. While high-speed billing and counter checkout are core capabilities, Ellic is a comprehensive operations platform. Every sale automatically updates inventory stock levels, logs customer loyalty and credit (Khata), verifies register drawer cash, and updates day-end profit reports in real time without manual reconciliation.'
   },
   {
     id: 'auto-inventory',
@@ -43,14 +43,14 @@ const faqData: FAQItem[] = [
     question: 'Can I manage customers?',
     category: 'Customers',
     answer:
-      'Yes. Ellix Connect includes a built-in digital Khata and customer CRM. You can track customer purchase histories, assign loyalty reward points, manage credit ledgers with partial repayment records, and send automated WhatsApp billing receipts and gentle payment reminders.'
+      'Yes. Ellic includes a built-in digital Khata and customer CRM. You can track customer purchase histories, assign loyalty reward points, manage credit ledgers with partial repayment records, and send automated WhatsApp billing receipts and gentle payment reminders.'
   },
   {
     id: 'track-payments',
     question: 'Can I track payments?',
     category: 'Payments',
     answer:
-      'Absolutely. Ellix Connect supports multi-tender checkout including Dynamic UPI QR codes (scanned directly from customer smartphones), debit/credit cards, cash drawer management, and split-payment transactions. At closing, your register cash matches digital records to the exact cent.'
+      'Absolutely. Ellic supports multi-tender checkout including Dynamic UPI QR codes (scanned directly from customer smartphones), debit/credit cards, cash drawer management, and split-payment transactions. At closing, your register cash matches digital records to the exact cent.'
   },
   {
     id: 'view-reports',
@@ -61,10 +61,10 @@ const faqData: FAQItem[] = [
   },
   {
     id: 'web-application',
-    question: 'Is Ellix Connect a web application?',
+    question: 'Is Ellic a web application?',
     category: 'Technology',
     answer:
-      'Ellix Connect is built as a progressive, offline-first web and desktop platform. It works on any modern laptop, desktop PC, tablet, or POS terminal without expensive proprietary hardware. Crucially, it continues to bill customers smoothly even if your internet connection drops, syncing seamlessly once back online.'
+      'Ellic is built as a progressive, offline-first web and desktop platform. It works on any modern laptop, desktop PC, tablet, or POS terminal without expensive proprietary hardware. Crucially, it continues to bill customers smoothly even if your internet connection drops, syncing seamlessly once back online.'
   }
 ];
 
@@ -125,7 +125,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onOpenContact }) => {
             Clear answers to common questions.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-            Everything you need to know about adopting Ellix Connect for your store operations.
+            Everything you need to know about adopting Ellic for your store operations.
           </p>
         </div>
 

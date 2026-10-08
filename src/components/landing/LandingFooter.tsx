@@ -59,7 +59,7 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
           {/* Col 1 & 2: Brand & Tagline */}
           <div className="col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <EllixConnectLogo size="sm" alt="Ellix Connect Official Logo" />
+              <EllixConnectLogo size="sm" alt="Ellic Official Logo" />
             </div>
 
             <div className="space-y-1.5">

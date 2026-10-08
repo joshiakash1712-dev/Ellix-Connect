@@ -109,7 +109,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-xl font-black text-white tracking-tight">
-                  {isSuperAdmin ? 'Superadmin Control Center' : 'Ellix Admin Operations Console'}
+                  {isSuperAdmin ? 'Superadmin Control Center' : 'Ellic Admin Operations Console'}
                 </h1>
                 <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30">
                   {isSuperAdmin ? 'Tenant Superuser' : 'Operational Admin (L2)'}

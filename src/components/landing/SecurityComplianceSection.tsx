@@ -102,7 +102,7 @@ const TRUST_POSTURE_ITEMS: TrustPostureItem[] = [
     name: 'Third-Party Security Certifications & External Audits',
     scopeMeta: 'Status: Not Claimed · No External Audit Badges',
     explanation:
-      'Ellix Connect does not currently hold or claim formal third-party certifications such as SOC 2, ISO/IEC 27001, ISO/IEC 27701, PCI DSS, HIPAA, or GDPR certification, nor do we claim government accreditation. Rather than displaying unverified badges, we openly publish the exact data-handling practices and privacy tools available in the product today.',
+      'Ellic does not currently hold or claim formal third-party certifications such as SOC 2, ISO/IEC 27001, ISO/IEC 27701, PCI DSS, HIPAA, or GDPR certification, nor do we claim government accreditation. Rather than displaying unverified badges, we openly publish the exact data-handling practices and privacy tools available in the product today.',
     referenceLabel: 'View Security & Data Protection Notice',
     referenceDetail: 'Published in Legal & Trust Center (/security)',
     legalSlug: 'security',
@@ -115,7 +115,7 @@ const TRUST_POSTURE_ITEMS: TrustPostureItem[] = [
     id: 'dpdpa-2023-framework',
     categoryId: 'regulatory-frameworks',
     categoryLabel: 'Regulatory & Privacy Frameworks',
-    name: 'India DPDPA, 2023 — Data Principal Rights & Notice',
+    name: 'India DPDPA, 2023: Data Principal Rights & Notice',
     scopeMeta: `India Statutory Privacy Alignment · Policy v${LEGAL_CONFIG.privacyPolicyVersion}`,
     explanation:
       'Our privacy disclosures and self-service tools are built around India’s Digital Personal Data Protection Act, 2023 principles. Store owners, staff, and visitors can review clear data collection notices and submit tracked requests for data access summaries, correction, erasure, consent withdrawal, or nominee registration.',
@@ -128,10 +128,10 @@ const TRUST_POSTURE_ITEMS: TrustPostureItem[] = [
     id: 'it-act-grievance-framework',
     categoryId: 'regulatory-frameworks',
     categoryLabel: 'Regulatory & Privacy Frameworks',
-    name: 'Information Technology Act, 2000 — Grievance Redressal',
+    name: 'Information Technology Act, 2000: Grievance Redressal',
     scopeMeta: `${COMPLIANCE_APPLICABILITY_CONFIG.timelines.grievanceAcknowledgeHours}h Acknowledgment · ${COMPLIANCE_APPLICABILITY_CONFIG.timelines.grievanceResolutionDays}-Day Resolution Target`,
     explanation:
-      'Structured in accordance with Indian Information Technology rules, Ellix Connect provides a dedicated Grievance Redressal mechanism where merchants and users can submit formal privacy, billing, or account complaints and receive a timestamped ticket ID.',
+      'Structured in accordance with Indian Information Technology rules, Ellic provides a dedicated Grievance Redressal mechanism where merchants and users can submit formal privacy, billing, or account complaints and receive a timestamped ticket ID.',
     referenceLabel: 'View Grievance Redressal Mechanism',
     referenceDetail: 'Published officer particulars & ticket form (/grievance-redressal)',
     legalSlug: 'grievance-redressal',
@@ -144,7 +144,7 @@ const TRUST_POSTURE_ITEMS: TrustPostureItem[] = [
     name: 'GST Invoice & Tax Schedule Formatting Scope',
     scopeMeta: `Merchant-Configured Tax Slabs · Terms v${LEGAL_CONFIG.termsVersion}`,
     explanation:
-      'Ellix Connect generates itemized CGST, SGST, and IGST breakdowns and downloadable GSTR-1/GSTR-3B summary sheets based on the product prices, HSN codes, and tax rates you enter. Ellix Connect is business software—not a Chartered Accountant or GST Suvidha Provider (GSP)—so merchants remain responsible for verifying tax rates and filing official returns.',
+      'Ellic generates itemized CGST, SGST, and IGST breakdowns and downloadable GSTR-1/GSTR-3B summary sheets based on the product prices, HSN codes, and tax rates you enter. Ellic is business software (not a Chartered Accountant or GST Suvidha Provider, GSP), so merchants remain responsible for verifying tax rates and filing official returns.',
     referenceLabel: 'Read Tax & Invoicing Disclaimer',
     referenceDetail: 'Terms of Service, Section 2 (/terms-of-service)',
     legalSlug: 'terms-of-service',
@@ -159,7 +159,7 @@ const TRUST_POSTURE_ITEMS: TrustPostureItem[] = [
     name: 'Direct Merchant UPI QR Settlement (Zero Fund Custody)',
     scopeMeta: 'Direct Customer-to-Bank UPI · No Intermediary Holding',
     explanation:
-      'Dynamic UPI QR codes generated at the billing counter encode standard NPCI UPI intent links using your store’s own configured UPI ID (VPA). Customer payments settle directly between the customer’s UPI app and your bank account—Ellix Connect does not hold, pool, or route your sales funds.',
+      'Dynamic UPI QR codes generated at the billing counter encode standard NPCI UPI intent links using your store’s own configured UPI ID (VPA). Customer payments settle directly between the customer’s UPI app and your bank account; Ellic does not hold, pool, or route your sales funds.',
     referenceLabel: 'Read Electronic Payments Scope',
     referenceDetail: 'Terms of Service, Section 3 (/terms-of-service)',
     legalSlug: 'terms-of-service',
@@ -185,7 +185,7 @@ const TRUST_POSTURE_ITEMS: TrustPostureItem[] = [
     name: 'Verifiable Consent & Privacy Request Audit Trail',
     scopeMeta: 'Timestamped Local Records · One-Click JSON Export',
     explanation:
-      'When you record cookie choices, submit an onboarding or support inquiry, or file a privacy request, Ellix Connect logs a timestamped consent and request record with the active policy version so you can inspect or export your privacy history whenever needed.',
+      'When you record cookie choices, submit an onboarding or support inquiry, or file a privacy request, Ellic logs a timestamped consent and request record with the active policy version so you can inspect or export your privacy history whenever needed.',
     referenceLabel: 'Inspect or Export Consent Log',
     referenceDetail: 'Data & Privacy Rights Center (/data-privacy-rights)',
     legalSlug: 'data-privacy-rights',
@@ -255,7 +255,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
               We’re building {LEGAL_CONFIG.brandName} with security and responsible data handling as core principles.
             </h2>
             <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-              Small-business owners deserve clear, honest answers about how their store records are handled—without confusing legal jargon or unverified badges. Below is our straightforward breakdown separating formal certifications, Indian regulatory frameworks, internal product practices, and core merchant commitments.
+              Small-business owners deserve clear, honest answers about how their store records are handled, without confusing legal jargon or unverified badges. Below is our straightforward breakdown separating formal certifications, Indian regulatory frameworks, internal product practices, and core merchant commitments.
             </p>
           </div>
 
@@ -550,7 +550,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                     Encryption at rest
                   </h4>
                   <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Cloud records stored by {LEGAL_CONFIG.brandName}—including your store profile, product inventory, invoices, customer Khata ledgers, and user accounts—are hosted in Google Cloud Firestore and Firebase Authentication, where stored data is encrypted at rest by default at the cloud provider level.
+                    Cloud records stored by {LEGAL_CONFIG.brandName} (including your store profile, product inventory, invoices, customer Khata ledgers, and user accounts) are hosted in Google Cloud Firestore and Firebase Authentication, where stored data is encrypted at rest by default at the cloud provider level.
                   </p>
                 </div>
 
@@ -588,7 +588,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   What this means for your store
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                  Once your store’s bills, inventory, and customer balances sync to the cloud, they are protected on disk by Google Cloud’s storage infrastructure—while remaining accessible to your authorized account whenever you sign in.
+                  Once your store’s bills, inventory, and customer balances sync to the cloud, they are protected on disk by Google Cloud’s storage infrastructure, while remaining accessible to your authorized account whenever you sign in.
                 </p>
               </div>
             </article>
@@ -629,7 +629,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Because {LEGAL_CONFIG.brandName} is built to keep billing during internet drops, the web application stores active store catalog data, unsynchronized offline counter transactions, and UI preferences (such as dark/light theme and cookie choices) in your browser’s local storage. Unlike cloud records or HTTPS network traffic, <strong className="text-slate-900 dark:text-white">data cached locally in the browser is not encrypted by the application itself</strong>—its protection on your computer or tablet depends on your device login password, operating-system security, and signing out when using shared counter terminals.
+              Because {LEGAL_CONFIG.brandName} is built to keep billing during internet drops, the web application stores active store catalog data, unsynchronized offline counter transactions, and UI preferences (such as dark/light theme and cookie choices) in your browser’s local storage. Unlike cloud records or HTTPS network traffic, <strong className="text-slate-900 dark:text-white">data cached locally in the browser is not encrypted by the application itself</strong>; its protection on your computer or tablet depends on your device login password, operating-system security, and signing out when using shared counter terminals.
             </p>
 
             {/* 3-Column Summary Comparison */}
@@ -687,7 +687,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                 Data Residency
               </h3>
               <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-                Where your business and customer information is stored and processed—and whether regional data location options are available—explained in plain language without unverified geographic claims.
+                Where your business and customer information is stored and processed (and whether regional data location options are available), explained in plain language without unverified geographic claims.
               </p>
             </div>
 
@@ -827,7 +827,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                   What this means for your store
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                  Routine counter billing, UPI QR generation, and CSV/PDF exports happen locally on your device and sync to Google Cloud Firestore—your store’s product catalog and customer Khata ledgers are never sent to the website support chatbot or third-party ad networks.
+                  Routine counter billing, UPI QR generation, and CSV/PDF exports happen locally on your device and sync to Google Cloud Firestore; your store’s product catalog and customer Khata ledgers are never sent to the website support chatbot or third-party ad networks.
                 </p>
               </div>
             </article>
@@ -980,13 +980,13 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
-                        <strong className="text-slate-900 dark:text-white">Level 3 — Client / Business Owner:</strong> Manages their own store profile, full product pricing and margins, all store invoices, customer Khata ledgers, supplier profiles, staff roster, and audit logs. Firestore rules and backend checks block one Client from reading or modifying another Client’s store data.
+                        <strong className="text-slate-900 dark:text-white">Level 3: Client / Business Owner:</strong> Manages their own store profile, full product pricing and margins, all store invoices, customer Khata ledgers, supplier profiles, staff roster, and audit logs. Firestore rules and backend checks block one Client from reading or modifying another Client’s store data.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
-                        <strong className="text-slate-900 dark:text-white">Level 4 — Store Crew / Cashier:</strong> Restricted to their assigned store(s). Crew members can create POS bills, view only the invoices they generated themselves (<code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">cashierId == request.auth.uid</code>), add new products or log restock quantities, and handle customer checkout.
+                        <strong className="text-slate-900 dark:text-white">Level 4: Store Crew / Cashier:</strong> Restricted to their assigned store(s). Crew members can create POS bills, view only the invoices they generated themselves (<code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">cashierId == request.auth.uid</code>), add new products or log restock quantities, and handle customer checkout.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -1018,7 +1018,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                       02 · Internal Company Access
                     </span>
                     <span aria-hidden="true">·</span>
-                    <span>Super Admin &amp; Ellix Connect Admin Conditions</span>
+                    <span>Super Admin &amp; Ellic Admin Conditions</span>
                   </div>
                   <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-blue-600 dark:text-sky-400 flex items-center justify-center shrink-0">
                     <KeyRound className="w-4 h-4" />
@@ -1042,13 +1042,13 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
-                        <strong className="text-slate-900 dark:text-white">Level 1 — Super Admin (System Creator):</strong> Holds root platform authority to provision or revoke Level 2 Ellix Connect Admins via authenticated server endpoints (<code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">/api/admin/team/*</code>) and oversee platform-wide database, security, and RBAC administration.
+                        <strong className="text-slate-900 dark:text-white">Level 1: Super Admin (System Creator):</strong> Holds root platform authority to provision or revoke Level 2 Ellic Admins via authenticated server endpoints (<code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">/api/admin/team/*</code>) and oversee platform-wide database, security, and RBAC administration.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
-                        <strong className="text-slate-900 dark:text-white">Level 2 — {LEGAL_CONFIG.brandName} Admin:</strong> Authorized for operational workflows including reviewing merchant onboarding applications, provisioning client workspaces, and managing subscription status. Firestore rules explicitly block Level 2 Admins from granting themselves or others <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">super_admin</code> or <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">ellix_admin</code> privileges or modifying Super Admin accounts.
+                        <strong className="text-slate-900 dark:text-white">Level 2: {LEGAL_CONFIG.brandName} Admin:</strong> Authorized for operational workflows including reviewing merchant onboarding applications, provisioning client workspaces, and managing subscription status. Firestore rules explicitly block Level 2 Admins from granting themselves or others <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">super_admin</code> or <code className="font-mono text-[11px] text-slate-800 dark:text-slate-200">ellix_admin</code> privileges or modifying Super Admin accounts.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -1107,7 +1107,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Rather than relying only on hidden buttons in the user interface, {LEGAL_CONFIG.brandName} enforces access limits across authentication, cloud database security rules, and backend API verification—while providing an isolated public Demo Mode that never connects to live merchant records.
+              Rather than relying only on hidden buttons in the user interface, {LEGAL_CONFIG.brandName} enforces access limits across authentication, cloud database security rules, and backend API verification, while providing an isolated public Demo Mode that never connects to live merchant records.
             </p>
 
             {/* 4-Column Technical Control Breakdown */}

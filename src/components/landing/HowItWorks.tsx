@@ -44,7 +44,7 @@ const steps: StepDetail[] = [
     title: 'Set up your catalog',
     subtitle: 'Under 5 Minutes',
     shortDescription: 'Add your business name, import or scan your product inventory with standard barcodes, set your local tax rates, and invite your counter staff.',
-    expandedExplanation: 'Get started effortlessly with our guided CSV import wizard or quick-scan mobile camera helper. Ellix Connect automatically maps standard GS1/EAN barcodes, configures GST slabs (5%, 12%, 18%, 28%), and organizes your catalog into intuitive departments with multi-unit packaging support.',
+    expandedExplanation: 'Get started effortlessly with our guided CSV import wizard or quick-scan mobile camera helper. Ellic automatically maps standard GS1/EAN barcodes, configures GST slabs (5%, 12%, 18%, 28%), and organizes your catalog into intuitive departments with multi-unit packaging support.',
     icon: Store,
     keyPoints: [
       'Store profile & tax rate setup',
@@ -384,7 +384,7 @@ export const HowItWorks: React.FC = () => {
             Three simple steps to running a calmer store.
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-            No bulky enterprise installation, no IT consultants, no long manuals. Ellix Connect is ready the moment you open your browser or tablet.
+            No bulky enterprise installation, no IT consultants, no long manuals. Ellic is ready the moment you open your browser or tablet.
             <span className="hidden lg:inline text-blue-600 dark:text-sky-400 font-semibold ml-1">
               Hover over any step below to explore its live onboarding &amp; operating workspace in-place.
             </span>

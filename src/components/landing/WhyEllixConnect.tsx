@@ -38,7 +38,7 @@ const benefits: BenefitItem[] = [
     id: 'simple',
     title: 'Simple',
     subtitle: 'Zero Learning Curve',
-    description: 'Designed for everyday business owners and staff, not software engineers. If you know how to use a smartphone, you already know how to run Ellix Connect.',
+    description: 'Designed for everyday business owners and staff, not software engineers. If you know how to use a smartphone, you already know how to run Ellic.',
     expandedDetails: 'Every workflow has been trimmed down to the minimum necessary taps. With intuitive search, standard keyboard shortcuts (F2 for bill, F4 for cash, F8 for barcode search), and zero obscure database settings, new cashiers become fully productive on their very first shift.',
     icon: Sparkles,
     keyMetric: '< 2 min onboarding',
@@ -200,7 +200,7 @@ const benefits: BenefitItem[] = [
     title: 'Reliable',
     subtitle: 'Offline-First Resilience',
     description: 'Your business cannot afford downtime. Built with local data caching and automatic cloud sync, sales continue smoothly even during power or internet drops.',
-    expandedDetails: 'The cash register never halts. If your broadband or mobile hotspot drops, Ellix Connect seamlessly switches to local IndexedDB caching. Invoices, cash receipts, and inventory deductions continue locally and reconcile the second connectivity returns.',
+    expandedDetails: 'The cash register never halts. If your broadband or mobile hotspot drops, Ellic seamlessly switches to local IndexedDB caching. Invoices, cash receipts, and inventory deductions continue locally and reconcile the second connectivity returns.',
     icon: ShieldCheck,
     keyMetric: '99.99% Uptime Guarantee',
     bullets: [
@@ -403,7 +403,7 @@ export const WhyEllixConnect: React.FC = () => {
         <div className="max-w-3xl mb-12 lg:mb-16">
           <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
-            <span>Why Ellix Connect</span>
+            <span>Why Ellic</span>
             <span className="text-slate-300 dark:text-slate-700">·</span>
             <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">Built for Reliability</span>
           </div>
@@ -667,7 +667,7 @@ export const WhyEllixConnect: React.FC = () => {
                     </div>
 
                     <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight">
-                      How &ldquo;{selectedBenefit.title}&rdquo; is engineered in Ellix Connect
+                      How &ldquo;{selectedBenefit.title}&rdquo; is engineered in Ellic
                     </h3>
 
                     <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
@@ -820,7 +820,7 @@ export const WhyEllixConnect: React.FC = () => {
             </div>
 
             <h3 className="text-xl font-extrabold text-slate-950 dark:text-white">
-              How &ldquo;{selectedBenefit.title}&rdquo; is engineered in Ellix Connect
+              How &ldquo;{selectedBenefit.title}&rdquo; is engineered in Ellic
             </h3>
 
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">

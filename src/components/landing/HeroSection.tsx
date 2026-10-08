@@ -135,7 +135,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             transition={{ duration: 0.55, ease: smoothEase, delay: 0.18 }}
             className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto"
           >
-            Ellix Connect brings billing, inventory, customer khata, payments, and multi-batch stock control into one seamless platform built specifically for growing merchants and retail teams.
+            Ellic brings billing, inventory, customer khata, payments, and multi-batch stock control into one seamless platform built specifically for growing merchants and retail teams.
           </motion.p>
 
           {/* 4. Primary & Secondary CTA Action Buttons (Section 6 & 7) */}
@@ -179,8 +179,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             >
               <span className="text-slate-600 dark:text-slate-400 font-medium">
                 {guideProgressStep >= 1 && guideProgressStep <= 12 && !guideCompleted
-                  ? `Continue your guide — You're on Step ${guideProgressStep} of 12.`
-                  : 'New to Ellix Connect? Take the guided tour.'}
+                  ? `Continue your guide: You're on Step ${guideProgressStep} of 12.`
+                  : 'New to Ellic? Take the guided tour.'}
               </span>
               <button
                 id="btn-hero-start-guide"
@@ -254,7 +254,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <div className="h-4 w-px bg-slate-300 dark:bg-slate-600 mx-2 hidden sm:block" />
                 <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 hidden sm:inline-flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-                  Ellix Connect · Central Retail Store
+                  Ellic · Central Retail Store
                 </span>
               </div>
 

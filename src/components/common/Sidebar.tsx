@@ -411,7 +411,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {/* Drawer Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
                   <div className="flex items-center gap-2">
-                    <EllixConnectLogo size="sm" alt="Ellix Connect Android Business OS" />
+                    <EllixConnectLogo size="sm" alt="Ellic Android Business OS" />
                   </div>
 
                   <button

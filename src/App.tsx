@@ -169,7 +169,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
           <AlertCircle className="w-12 h-12 text-rose-400 mb-3" />
           <h2 className="text-xl font-bold text-white mb-2">Access Restricted</h2>
           <p className="text-sm text-slate-400 max-w-md">
-            Your account is currently deactivated, suspended, or has an unrecognized role. Please contact your store administrator or Ellix Connect support.
+            Your account is currently deactivated, suspended, or has an unrecognized role. Please contact your store administrator or Ellic support.
           </p>
         </div>
       );
@@ -521,12 +521,12 @@ const AppContent: React.FC = () => {
       const legalRoute = legalSlug ? LEGAL_PAGE_ROUTES[legalSlug] : null;
       document.title =
         currentPage === 'app'
-          ? 'Ellix Connect OS — Retail & POS Application'
+          ? 'Ellic OS: Retail & POS Application'
           : currentPage === 'demo'
-            ? 'Ellix Connect OS — Interactive App Demo'
+            ? 'Ellic OS: Interactive App Demo'
             : legalRoute
-              ? `${legalRoute.title} — Ellix Connect`
-              : 'Ellix Connect — Business Management, Without the Complexity';
+              ? `${legalRoute.title} | Ellic`
+              : 'Ellic: Business Management, Without the Complexity';
 
       const robotsValue = isPublicWebsite
         ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
@@ -546,11 +546,11 @@ const AppContent: React.FC = () => {
       if (!isPublicWebsite) {
         const canonicalLink = document.querySelector('link[rel="canonical"]');
         if (canonicalLink) {
-          canonicalLink.setAttribute('href', 'https://ellix-connect.ai.studio/');
+          canonicalLink.setAttribute('href', 'https://ellic.ai.studio/');
         }
         const ogUrlMeta = document.querySelector('meta[property="og:url"]');
         if (ogUrlMeta) {
-          ogUrlMeta.setAttribute('content', 'https://ellix-connect.ai.studio/');
+          ogUrlMeta.setAttribute('content', 'https://ellic.ai.studio/');
         }
       }
     }

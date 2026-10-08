@@ -161,7 +161,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           className="flex items-center gap-3 group cursor-pointer"
-          aria-label="Ellix Connect - Business management, without the complexity"
+          aria-label="Ellic - Business management, without the complexity"
         >
           {/* Official Full Logo for desktop & tablet */}
           <div className="hidden sm:block">
@@ -171,7 +171,7 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
           <div className="sm:hidden flex items-center gap-2">
             <EllixConnectLogo variant="symbol" size={34} />
             <span className="font-extrabold text-base tracking-tight text-slate-950 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]">
-              Ellix <span className="text-[#2DD4A7]">Connect</span>
+              Ellic
             </span>
           </div>
         </a>

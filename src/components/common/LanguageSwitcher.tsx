@@ -222,7 +222,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                     {t('settings.selectLanguage', 'Select Language')}
                   </h4>
                   <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                    Use Ellix Connect in any Indian or Global language
+                    Use Ellic in any Indian or Global language
                   </p>
                 </div>
               </div>

@@ -96,7 +96,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
     invoiceTemplates[0];
 
   const intlSettings: InternationalTradeSettings | undefined = matchedTemplate?.internationalSettings;
-  const storeDisplayName = matchedTemplate?.branding?.storeDisplayName || invoice.storeName || 'Ellix Store';
+  const storeDisplayName = matchedTemplate?.branding?.storeDisplayName || invoice.storeName || 'Ellic Store';
 
   // Convert amounts from base INR to displayCurrency
   const rateToDisplay = getExchangeRate('INR', displayCurrency, ratesState.rates, 0);
@@ -123,7 +123,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
   const currentPhone = mobileNumber || invoice.customerPhone || '+91 99999 00000';
   const cleanDigits = currentPhone.replace(/[^0-9]/g, '');
   const formattedPhone = cleanDigits.length === 10 ? `91${cleanDigits}` : cleanDigits;
-  const pdfInvoiceUrl = `https://ellixconnect.com/invoices/pdf/${invoiceNumber}.pdf`;
+  const pdfInvoiceUrl = `https://ellic.com/invoices/pdf/${invoiceNumber}.pdf`;
 
   const cashierName = invoice.cashierName || (invoice as any).crewName || invoice.createdBy || 'Staff Cashier';
   const whatsappMessageText = `*OFFICIAL TAX & COMMERCIAL INVOICE* 🧾

@@ -139,7 +139,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
         <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border border-emerald-500/30 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-slate-900 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-sm p-1">
-              <EllixConnectLogo variant="symbol" size={24} alt="Ellix Assistant" />
+              <EllixConnectLogo variant="symbol" size={24} alt="Ellic Assistant" />
             </div>
             <div>
               <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
