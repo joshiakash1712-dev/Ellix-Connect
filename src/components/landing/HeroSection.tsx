@@ -103,9 +103,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, ease: smoothEase, delay: 0.04 }}
-            className="flex items-center justify-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none"
+            className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-bold tracking-wider sm:tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none text-center"
           >
-            <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)] animate-pulse" />
+            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)] animate-pulse shrink-0" />
             <span>Retail &amp; Commerce Operating System</span>
             <span className="text-slate-300 dark:text-slate-700">·</span>
             <span className="text-slate-500 dark:text-slate-400 normal-case tracking-normal font-semibold">Zero Complexity</span>
@@ -120,7 +120,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             }
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.65, ease: smoothEase, delay: 0.1 }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-950 dark:text-white tracking-tight leading-[1.12]"
+            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-950 dark:text-white tracking-tight leading-[1.18] sm:leading-[1.12] break-words"
           >
             Run your store operations. <br className="hidden sm:inline" />
             <span className="bg-gradient-to-r from-blue-600 via-sky-500 to-sky-400 bg-clip-text text-transparent">
@@ -133,17 +133,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: smoothEase, delay: 0.18 }}
-            className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto"
+            className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto"
           >
             Ellic brings billing, inventory, customer khata, payments, and multi-batch stock control into one seamless platform built specifically for growing merchants and retail teams.
           </motion.p>
 
-          {/* 4. Primary & Secondary CTA Action Buttons (Section 6 & 7) */}
+          {/* 4. Primary & Secondary CTA Action Buttons */}
           <motion.div
             initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.52, ease: smoothEase, delay: 0.25 }}
-            className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+            className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full"
           >
             <button
               id="btn-hero-getstarted"
@@ -151,7 +151,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               data-cursor="hover"
               data-magnetic="cta"
               onClick={onOpenGetStarted}
-              className="website-btn-glow w-full sm:w-auto px-7 py-3.5 rounded-xl bg-slate-950 hover:bg-slate-800 active:bg-black dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-base font-semibold shadow-md hover:shadow-xl hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+              className="website-btn-glow w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-slate-950 hover:bg-slate-800 active:bg-black dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-base font-semibold shadow-md hover:shadow-xl hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 group cursor-pointer"
             >
               <span>Get Started</span>
               <ArrowRight className="w-4 h-4 text-sky-400 dark:text-sky-100 group-hover:translate-x-1 transition-transform duration-200" />
@@ -159,69 +159,34 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
             <a
               id="btn-hero-seehowitworks"
-              href="#how-it-works"
+              href="#problem"
               data-cursor="hover"
               data-magnetic="cta"
-              className="website-btn-glow w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 active:bg-slate-100 text-slate-800 dark:text-slate-200 text-base font-semibold border border-slate-300 dark:border-slate-700 shadow-sm hover:border-blue-500/40 hover:shadow-md transition-all flex items-center justify-center gap-2 group"
+              className="website-btn-glow w-full sm:w-auto px-6 py-3 sm:py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 active:bg-slate-100 text-slate-800 dark:text-slate-200 text-base font-semibold border border-slate-300 dark:border-slate-700 shadow-sm hover:border-blue-500/40 hover:shadow-md transition-all flex items-center justify-center gap-2 group"
             >
               <Play className="w-4 h-4 text-slate-600 dark:text-slate-400 fill-slate-600 dark:fill-slate-400 group-hover:scale-110 group-hover:text-blue-600 dark:group-hover:text-sky-400 transition-all duration-200" />
               <span>See How It Works</span>
             </a>
           </motion.div>
 
-          {/* 4B. First-Time Visitor Guided Tour Callout (Section 2 & 30) */}
-          {onOpenGuide && (
-            <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.48, ease: smoothEase, delay: 0.29 }}
-              className="pt-1 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-xs"
-            >
-              <span className="text-slate-600 dark:text-slate-400 font-medium">
-                {guideProgressStep >= 1 && guideProgressStep <= 12 && !guideCompleted
-                  ? `Continue your guide: You're on Step ${guideProgressStep} of 12.`
-                  : 'New to Ellic? Take the guided tour.'}
-              </span>
-              <button
-                id="btn-hero-start-guide"
-                type="button"
-                data-cursor="hover"
-                onClick={() =>
-                  onOpenGuide(
-                    guideProgressStep >= 1 && guideProgressStep <= 12 && !guideCompleted
-                      ? guideProgressStep
-                      : 0
-                  )
-                }
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-sky-50 dark:bg-blue-950/70 hover:bg-sky-100 dark:hover:bg-blue-900/70 border border-sky-300/80 dark:border-blue-700/80 text-blue-800 dark:text-sky-300 font-bold transition-all cursor-pointer shadow-2xs hover:border-blue-500"
-              >
-                <span>
-                  {guideProgressStep >= 1 && guideProgressStep <= 12 && !guideCompleted
-                    ? 'Continue Guide →'
-                    : 'Start the Guide →'}
-                </span>
-              </button>
-            </motion.div>
-          )}
-
           {/* 5. Trust Value Props */}
           <motion.div
             initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: smoothEase, delay: 0.32 }}
-            className="pt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-500 dark:text-slate-400"
+            className="pt-3 sm:pt-4 flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-6 gap-y-2 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400"
           >
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" /> No complex setup
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" /> No complex setup
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" /> Works on any device
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" /> Works on any device
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" /> Offline resilient
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" /> Offline resilient
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" /> Instant digital bills
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" /> Instant digital bills
             </span>
           </motion.div>
 
@@ -246,24 +211,30 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <div className="rounded-2xl border border-slate-300/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden transition-colors">
             
             {/* macOS / SaaS Window Header */}
-            <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 px-3.5 sm:px-4 py-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-rose-400 shrink-0" />
-                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-400 shrink-0" />
-                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-sky-400 shrink-0" />
-                <div className="h-4 w-px bg-slate-300 dark:bg-slate-600 mx-2 hidden sm:block" />
-                <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 hidden sm:inline-flex items-center gap-1.5">
+            <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 px-3 sm:px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+              <div className="flex items-center justify-between sm:justify-start gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-rose-400 shrink-0" />
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-400 shrink-0" />
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-sky-400 shrink-0" />
+                  <div className="h-4 w-px bg-slate-300 dark:bg-slate-600 mx-2 hidden sm:block" />
+                </div>
+                <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-                  Ellic · Central Retail Store
+                  Ellic POS
                 </span>
+                <div className="flex sm:hidden items-center gap-1 text-[10px] font-medium text-blue-700 dark:text-sky-300 bg-sky-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-sky-200/60 dark:border-sky-800/60 shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+                  <span>Live Sync</span>
+                </div>
               </div>
 
               {/* Interactive Workspace Mode Segmented Control */}
-              <div className="flex items-center p-0.5 rounded-lg bg-slate-200/90 dark:bg-slate-900 border border-slate-300/80 dark:border-slate-700 text-xs font-semibold">
+              <div className="flex items-center p-0.5 rounded-lg bg-slate-200/90 dark:bg-slate-900 border border-slate-300/80 dark:border-slate-700 text-xs font-semibold w-full sm:w-auto justify-between sm:justify-center">
                 <button
                   type="button"
                   onClick={() => setActiveWorkspaceMode('pos')}
-                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                  className={`flex-1 sm:flex-initial px-2 sm:px-3 py-1 rounded-md transition-all cursor-pointer text-center text-[11px] sm:text-xs truncate ${
                     activeWorkspaceMode === 'pos'
                       ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 shadow-2xs font-bold'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -274,7 +245,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveWorkspaceMode('inventory')}
-                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                  className={`flex-1 sm:flex-initial px-2 sm:px-3 py-1 rounded-md transition-all cursor-pointer text-center text-[11px] sm:text-xs truncate ${
                     activeWorkspaceMode === 'inventory'
                       ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 shadow-2xs font-bold'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -285,7 +256,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveWorkspaceMode('finance')}
-                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                  className={`flex-1 sm:flex-initial px-2 sm:px-3 py-1 rounded-md transition-all cursor-pointer text-center text-[11px] sm:text-xs truncate ${
                     activeWorkspaceMode === 'finance'
                       ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 shadow-2xs font-bold'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -295,8 +266,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 </button>
               </div>
 
-              {/* Status Indicator & Interactive Launch Button */}
-              <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+              {/* Status Indicator & Interactive Launch Button (Tablet/Desktop) */}
+              <div className="hidden sm:flex items-center gap-2.5 sm:gap-3 shrink-0">
                 {onLaunchApp && (
                   <button
                     id="btn-hero-try-live-console"
@@ -318,126 +289,126 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
 
             {/* Inner Dashboard & POS Workspace Mockup */}
-            <div className="p-4 sm:p-6 bg-slate-50/50 dark:bg-slate-950/50 space-y-5">
+            <div className="p-3 sm:p-6 bg-slate-50/50 dark:bg-slate-950/50 space-y-3.5 sm:space-y-5">
               
               {/* Dynamic Quick Stats Row according to activeWorkspaceMode */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
                 {activeWorkspaceMode === 'pos' && (
                   <>
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Today&apos;s Sales</span>
-                        <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Today&apos;s Sales</span>
+                        <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹42,850</div>
-                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">+16.4% from yesterday</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">₹42,850</div>
+                      <div className="text-[10px] sm:text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5 truncate">+16.4% from yesterday</div>
                     </div>
 
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Invoices Issued</span>
-                        <ShoppingBag className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Invoices Issued</span>
+                        <ShoppingBag className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 group-hover:-translate-y-0.5 transition-transform duration-200 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">38</div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Avg. ₹1,127 / bill</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">38 Bills</div>
+                      <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Avg. ₹1,127 / bill</div>
                     </div>
 
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Inventory Health</span>
-                        <Package className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Inventory Health</span>
+                        <Package className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover:-translate-y-0.5 transition-transform duration-200 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">99.2%</div>
-                      <div className="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">2 items low on stock</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">99.2%</div>
+                      <div className="text-[10px] sm:text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5 truncate">2 items low on stock</div>
                     </div>
 
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Cash in Drawer</span>
-                        <CreditCard className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 group-hover:scale-105 transition-transform duration-200" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Cash in Drawer</span>
+                        <CreditCard className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 group-hover:scale-105 transition-transform duration-200 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹14,600</div>
-                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">Reconciled &amp; balanced</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">₹14,600</div>
+                      <div className="text-[10px] sm:text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5 truncate">Reconciled &amp; balanced</div>
                     </div>
                   </>
                 )}
 
                 {activeWorkspaceMode === 'inventory' && (
                   <>
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Total SKUs</span>
-                        <Package className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Total SKUs</span>
+                        <Package className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">248 items</div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Across 8 categories</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">248 items</div>
+                      <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Across 8 categories</div>
                     </div>
 
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Stock Valuation</span>
-                        <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Stock Valuation</span>
+                        <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹4,82,400</div>
-                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">FIFO purchase cost</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">₹4,82,400</div>
+                      <div className="text-[10px] sm:text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5 truncate">FIFO purchase cost</div>
                     </div>
 
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Reorder Triggers</span>
-                        <Zap className="w-3.5 h-3.5 text-amber-500" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Reorder Triggers</span>
+                        <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-amber-500 tabular-nums">2 Low Items</div>
-                      <div className="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">Automatic draft ready</div>
+                      <div className="text-lg sm:text-2xl font-bold text-amber-500 tabular-nums truncate">2 Low Items</div>
+                      <div className="text-[10px] sm:text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5 truncate">Automatic draft ready</div>
                     </div>
 
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Batch Expiry Shield</span>
-                        <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Batch Shield</span>
+                        <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">0 Expired</div>
-                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">Zero dead inventory</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">0 Expired</div>
+                      <div className="text-[10px] sm:text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5 truncate">Zero dead inventory</div>
                     </div>
                   </>
                 )}
 
                 {activeWorkspaceMode === 'finance' && (
                   <>
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Gross Revenue</span>
-                        <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Gross Revenue</span>
+                        <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹42,850</div>
-                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">38 Invoices settled</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">₹42,850</div>
+                      <div className="text-[10px] sm:text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5 truncate">38 Invoices settled</div>
                     </div>
 
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Estimated Net Margin</span>
-                        <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Net Margin</span>
+                        <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹11,920</div>
-                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">27.8% Realized margin</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">₹11,920</div>
+                      <div className="text-[10px] sm:text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5 truncate">27.8% Realized margin</div>
                     </div>
 
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">GSTR-1 Tax Output</span>
-                        <ShieldCheck className="w-3.5 h-3.5 text-sky-500" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Tax Output</span>
+                        <ShieldCheck className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">₹2,040</div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">CGST ₹1,020 + SGST ₹1,020</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">₹2,040</div>
+                      <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">CGST + SGST (5%)</div>
                     </div>
 
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1">
-                        <span className="text-xs font-medium">Cash vs UPI Settlement</span>
-                        <CreditCard className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
+                        <span className="text-[11px] sm:text-xs font-medium truncate">Settlement Split</span>
+                        <CreditCard className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums">66% Digital</div>
-                      <div className="text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5">₹28,250 UPI · ₹14,600 Cash</div>
+                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">66% Digital</div>
+                      <div className="text-[10px] sm:text-[11px] text-blue-600 dark:text-sky-400 font-medium mt-0.5 truncate">UPI + Cash settled</div>
                     </div>
                   </>
                 )}
@@ -447,42 +418,42 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               {activeWorkspaceMode === 'pos' && (
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 relative animate-in fade-in duration-200">
                   {/* Left: Active Billing Terminal (7 Cols) */}
-                  <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-blue-500/30">
+                  <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-3 sm:p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-blue-500/30">
                     <div>
-                      <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
-                        <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex items-center justify-between gap-2 pb-2.5 sm:pb-3 mb-2.5 sm:mb-3 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
                           <span className="relative flex h-2 w-2 shrink-0">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75" />
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500" />
                           </span>
-                          <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">
-                            Live Counter · POS Invoice #1042
+                          <span className="text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide truncate">
+                            Live Counter · POS #1042
                           </span>
                         </div>
-                        <span className="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 whitespace-nowrap shrink-0">
+                        <span className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 whitespace-nowrap shrink-0">
                           <Clock className="w-3 h-3 text-sky-500 shrink-0" /> Just now
                         </span>
                       </div>
 
                       {/* Customer Info Chip */}
-                      <div className="bg-slate-50 dark:bg-slate-800/60 rounded-lg p-2.5 mb-3 border border-slate-200/80 dark:border-slate-700 flex items-center justify-between gap-3 text-xs transition-colors hover:border-blue-500/30">
+                      <div className="bg-slate-50 dark:bg-slate-800/60 rounded-lg p-2 sm:p-2.5 mb-2.5 sm:mb-3 border border-slate-200/80 dark:border-slate-700 flex items-center justify-between gap-2 text-xs transition-colors hover:border-blue-500/30">
                         <div className="flex items-center gap-2 min-w-0">
                           <Users className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 shrink-0" />
-                          <div className="min-w-0">
+                          <div className="min-w-0 truncate">
                             <span className="font-semibold text-slate-900 dark:text-white">Rajesh Verma</span>
-                            <span className="text-slate-500 dark:text-slate-400 ml-1.5">(+91 98450 11223)</span>
+                            <span className="text-slate-500 dark:text-slate-400 ml-1 hidden xs:inline">(+91 98450 11223)</span>
                           </div>
                         </div>
-                        <span className="text-[11px] font-semibold text-blue-700 dark:text-sky-300 bg-sky-100/70 dark:bg-blue-950/60 px-2.5 py-1 rounded-md whitespace-nowrap shrink-0">
-                          120 Loyalty Pts
+                        <span className="text-[10px] sm:text-[11px] font-semibold text-blue-700 dark:text-sky-300 bg-sky-100/70 dark:bg-blue-950/60 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md whitespace-nowrap shrink-0">
+                          120 Pts
                         </span>
                       </div>
 
                       {/* Itemized Cart List */}
-                      <div className="space-y-2.5">
-                        <div className="flex items-center justify-between gap-3 text-xs py-2 px-3 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:bg-sky-50/20 dark:hover:bg-blue-950/20 transition-all duration-150">
+                      <div className="space-y-2 sm:space-y-2.5">
+                        <div className="flex items-center justify-between gap-2 text-xs py-1.5 sm:py-2 px-2.5 sm:px-3 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:bg-sky-50/20 dark:hover:bg-blue-950/20 transition-all duration-150">
                           <div className="min-w-0">
-                            <div className="font-medium text-slate-900 dark:text-white">Royal Basmati Rice 5kg</div>
+                            <div className="font-medium text-slate-900 dark:text-white truncate">Royal Basmati Rice 5kg</div>
                             <div className="text-[10px] text-slate-500 dark:text-slate-400">SKU: GRO-8821 · GST 5%</div>
                           </div>
                           <div className="text-right tabular-nums shrink-0">
@@ -491,9 +462,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between gap-3 text-xs py-2 px-3 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:bg-sky-50/20 dark:hover:bg-blue-950/20 transition-all duration-150">
+                        <div className="flex items-center justify-between gap-2 text-xs py-1.5 sm:py-2 px-2.5 sm:px-3 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:bg-sky-50/20 dark:hover:bg-blue-950/20 transition-all duration-150">
                           <div className="min-w-0">
-                            <div className="font-medium text-slate-900 dark:text-white">Cold Pressed Groundnut Oil 1L</div>
+                            <div className="font-medium text-slate-900 dark:text-white truncate">Cold Pressed Groundnut Oil 1L</div>
                             <div className="text-[10px] text-slate-500 dark:text-slate-400">SKU: OIL-4102 · GST 5%</div>
                           </div>
                           <div className="text-right tabular-nums shrink-0">
@@ -502,9 +473,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between gap-3 text-xs py-2 px-3 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:bg-sky-50/20 dark:hover:bg-blue-950/20 transition-all duration-150">
+                        <div className="flex items-center justify-between gap-2 text-xs py-1.5 sm:py-2 px-2.5 sm:px-3 bg-slate-50/70 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-blue-500/40 hover:bg-sky-50/20 dark:hover:bg-blue-950/20 transition-all duration-150">
                           <div className="min-w-0">
-                            <div className="font-medium text-slate-900 dark:text-white">Organic Roasted Almonds 250g</div>
+                            <div className="font-medium text-slate-900 dark:text-white truncate">Organic Roasted Almonds 250g</div>
                             <div className="text-[10px] text-slate-500 dark:text-slate-400">SKU: NUT-0914 · GST 12%</div>
                           </div>
                           <div className="text-right tabular-nums shrink-0">
@@ -516,19 +487,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     </div>
 
                     {/* Bill Total & Instant Actions */}
-                    <div className="pt-4 mt-3 border-t border-slate-100 dark:border-slate-800">
-                      <div className="flex items-center justify-between gap-3 mb-3">
-                        <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">Grand Total (Incl. GST)</span>
-                        <span className="text-lg font-bold text-slate-950 dark:text-white tabular-nums shrink-0">₹1,120.00</span>
+                    <div className="pt-3 sm:pt-4 mt-2.5 sm:mt-3 border-t border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
+                        <span className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 font-medium">Grand Total (Incl. GST)</span>
+                        <span className="text-base sm:text-lg font-bold text-slate-950 dark:text-white tabular-nums shrink-0">₹1,120.00</span>
                       </div>
-                      <div className="grid grid-cols-3 gap-2.5 sm:gap-3 text-[11px] sm:text-xs">
-                        <div className="py-2.5 px-2 text-center font-semibold bg-sky-50 dark:bg-blue-950/60 text-blue-800 dark:text-sky-300 rounded-lg border border-sky-200 dark:border-sky-800/80 transition-all duration-200 hover:border-blue-500 flex items-center justify-center leading-snug">
-                          ✓ UPI QR Paid
+                      <div className="grid grid-cols-3 gap-1.5 sm:gap-3 text-[10px] sm:text-xs">
+                        <div className="py-2 sm:py-2.5 px-1 sm:px-2 text-center font-semibold bg-sky-50 dark:bg-blue-950/60 text-blue-800 dark:text-sky-300 rounded-lg border border-sky-200 dark:border-sky-800/80 transition-all duration-200 hover:border-blue-500 flex items-center justify-center leading-tight">
+                          ✓ UPI Paid
                         </div>
-                        <div className="py-2.5 px-2 text-center font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all duration-200 hover:border-blue-500/40 flex items-center justify-center leading-snug">
+                        <div className="py-2 sm:py-2.5 px-1 sm:px-2 text-center font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all duration-200 hover:border-blue-500/40 flex items-center justify-center leading-tight">
                           WhatsApp Sent
                         </div>
-                        <div className="py-2.5 px-2 text-center font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all duration-200 hover:border-blue-500/40 flex items-center justify-center leading-snug">
+                        <div className="py-2 sm:py-2.5 px-1 sm:px-2 text-center font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all duration-200 hover:border-blue-500/40 flex items-center justify-center leading-tight">
                           Stock Deducted
                         </div>
                       </div>
@@ -537,21 +508,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
                   {/* Right: Connected System Flow Stream (5 Cols) — Live Active Sync Pulse */}
                   <div
-                    className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-blue-500/30"
+                    className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-3 sm:p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-blue-500/30"
                     onMouseLeave={() => setHoveredSyncStep(null)}
                   >
                     <div>
-                      <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center justify-between gap-2 pb-2.5 sm:pb-3 mb-2.5 sm:mb-3 border-b border-slate-100 dark:border-slate-800">
                         <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-1.5 min-w-0">
                           <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse shrink-0" />
-                          <span>Connected Sync Engine</span>
+                          <span className="truncate">Connected Sync Engine</span>
                         </span>
-                        <span className="text-[11px] font-mono text-blue-600 dark:text-sky-400 bg-sky-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-md border border-sky-200/60 dark:border-sky-800/60 whitespace-nowrap shrink-0">
+                        <span className="text-[10px] sm:text-[11px] font-mono text-blue-600 dark:text-sky-400 bg-sky-50 dark:bg-blue-950/60 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md border border-sky-200/60 dark:border-sky-800/60 whitespace-nowrap shrink-0">
                           0.04s latency
                         </span>
                       </div>
 
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
+                      <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 mb-2.5 sm:mb-3">
                         One counter checkout automatically updates every corner of your business:
                       </p>
 
@@ -645,11 +616,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       </div>
                     </div>
 
-                    <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-between gap-2">
-                      <span className="whitespace-nowrap">Cloud Backup: Synced 2s ago</span>
-                      <span className="text-blue-600 dark:text-sky-400 font-medium flex items-center gap-1 whitespace-nowrap">
+                    <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between gap-1">
+                      <span className="truncate">Cloud: Synced 2s ago</span>
+                      <span className="text-blue-600 dark:text-sky-400 font-medium flex items-center gap-1 shrink-0">
                         <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-                        <span>100% Data Integrity</span>
+                        <span>100% Integrity</span>
                       </span>
                     </div>
                   </div>

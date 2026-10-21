@@ -51,28 +51,28 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
 
   return (
     <footer className="bg-white dark:bg-slate-950 border-t border-slate-200/90 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-xs transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-16">
         
         {/* Main Footer Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-8 sm:gap-6 lg:gap-10">
           
           {/* Col 1 & 2: Brand & Tagline */}
-          <div className="col-span-2 space-y-4">
+          <div className="sm:col-span-2 space-y-3 sm:space-y-4">
             <div className="flex items-center gap-3">
               <EllixConnectLogo size="sm" alt="Ellic Official Logo" />
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1 sm:space-y-1.5">
               <div className="font-bold text-slate-950 dark:text-white text-sm">
                 {LEGAL_CONFIG.brandName}
               </div>
-              <p className="text-slate-600 dark:text-slate-400 max-w-sm leading-relaxed text-sm">
+              <p className="text-slate-600 dark:text-slate-400 max-w-sm leading-relaxed text-xs sm:text-sm">
                 Business management, without the complexity.
               </p>
             </div>
 
-            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs pt-1">
-              <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0" />
+            <div className="flex items-start sm:items-center gap-2 text-slate-500 dark:text-slate-400 text-[11px] sm:text-xs pt-1">
+              <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5 sm:mt-0" />
               <span>Designed for retail stores, supermarkets &amp; wholesalers in India (excluding restaurants).</span>
             </div>
           </div>
@@ -307,11 +307,11 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({
         </div>
 
         {/* Bottom Copyright & Legal Links Row */}
-        <div className="pt-8 mt-12 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 dark:text-slate-400">
+        <div className="pt-6 sm:pt-8 mt-8 sm:mt-12 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-[11px] text-slate-500 dark:text-slate-400 text-center sm:text-left">
           <div>
             © 2026 {LEGAL_CONFIG.brandName}. All rights reserved.
           </div>
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-4 gap-y-2 sm:gap-6">
             <button
               type="button"
               data-cursor="hover"

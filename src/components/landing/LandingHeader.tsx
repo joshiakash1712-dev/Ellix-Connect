@@ -13,10 +13,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { name: 'Product', href: '#product', id: 'product' },
-  { name: 'Features', href: '#features', id: 'features' },
+  { name: 'Problem', href: '#problem', id: 'problem' },
+  { name: 'Workflow', href: '#workflow', id: 'workflow' },
+  { name: 'Capabilities', href: '#features', id: 'features' },
   { name: 'How It Works', href: '#how-it-works', id: 'how-it-works' },
-  { name: 'Guide', href: '#guide', id: 'guide' }
+  { name: 'Preview', href: '#product', id: 'product' },
 ];
 
 interface LandingHeaderProps {

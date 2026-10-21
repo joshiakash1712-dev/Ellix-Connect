@@ -4,15 +4,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useMotionValue, useSpring, useReducedMotion } from 'motion/react';
 import { LandingHeader } from './LandingHeader';
 import { HeroSection } from './HeroSection';
-import { CoreCapabilities } from './CoreCapabilities';
+import { ProblemSection } from './ProblemSection';
 import { ConnectedWorkflow } from './ConnectedWorkflow';
-import { WhyEllixConnect } from './WhyEllixConnect';
+import { CoreCapabilities } from './CoreCapabilities';
 import { HowItWorks } from './HowItWorks';
-import { ProductPreview } from './ProductPreview';
 import { WhoItsFor } from './WhoItsFor';
-import { GuidebookPreview } from './GuidebookPreview';
-import { SecurityComplianceSection } from './SecurityComplianceSection';
-import { FAQSection } from './FAQSection';
+import { ProductPreview } from './ProductPreview';
 import { FinalCTA } from './FinalCTA';
 import { LandingFooter } from './LandingFooter';
 import { BackToTop } from './BackToTop';
@@ -571,7 +568,7 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp,
       {/* Main Content Sections */}
       <main id="main-content" tabIndex={-1} className="flex-1 w-full max-w-full overflow-x-hidden focus:outline-none">
         
-        {/* 2. Hero */}
+        {/* 1. Hero */}
         <HeroSection
           onOpenGetStarted={handleOpenGetStarted}
           onLaunchApp={onLaunchDemo}
@@ -580,41 +577,25 @@ export const EllixLandingPage: React.FC<EllixLandingPageProps> = ({ onLaunchApp,
           guideCompleted={guideProgressState.completed}
         />
 
-        {/* 3. Core Capabilities */}
-        <CoreCapabilities />
+        {/* 2. Problem */}
+        <ProblemSection />
 
-        {/* 4. Connected Workflow */}
+        {/* 3. Connected Workflow */}
         <ConnectedWorkflow />
 
-        {/* 5. Why Ellix Connect */}
-        <WhyEllixConnect />
+        {/* 4. Core Capabilities */}
+        <CoreCapabilities />
 
-        {/* 6. How It Works */}
+        {/* 5. How It Works */}
         <HowItWorks />
+
+        {/* 6. Who It's For */}
+        <WhoItsFor />
 
         {/* 7. Product Preview */}
         <ProductPreview />
 
-        {/* 8. Who It's For */}
-        <WhoItsFor />
-
-        {/* 9. Guidebook Preview */}
-        <GuidebookPreview
-          onOpenInteractiveGuide={(step) => handleOpenGuide(step)}
-          guideProgressStep={guideProgressState.currentStep}
-          guideCompleted={guideProgressState.completed}
-        />
-
-        {/* 10. Security & Compliance (Checklist Design #1: Certifications and compliance) */}
-        <SecurityComplianceSection
-          onOpenLegalPage={handleNavigateToLegalPage}
-          onOpenContact={() => setIsContactOpen(true)}
-        />
-
-        {/* 11. FAQ Section */}
-        <FAQSection onOpenContact={() => setIsContactOpen(true)} />
-
-        {/* 12. Final CTA */}
+        {/* 8. Final CTA */}
         <FinalCTA onOpenGetStarted={handleOpenGetStarted} />
 
       </main>
