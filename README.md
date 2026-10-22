@@ -157,7 +157,7 @@ graph TD
 
 ### Prerequisites
 
-- **Node.js** `>= 22.0.0`
+- **Node.js** `>= 22.18.0`
 - **npm** `>= 10.0.0`
 - A **Google Firebase** project with **Authentication** and **Cloud Firestore** enabled
 
@@ -171,7 +171,7 @@ cd ellix-connect
 ### 2. Install Dependencies
 
 ```bash
-npm install
+npm ci
 ```
 
 ### 3. Configure Environment Variables
@@ -200,6 +200,48 @@ npm run dev
 ```
 
 The full-stack Express + Vite development server starts on `http://localhost:3000`.
+
+### 5. Run Tests and Lint
+
+```bash
+npm test
+npm run lint
+```
+
+### 6. Local Emulators
+
+Use Firebase emulators for Functions/Firestore/Hosting when testing the Firebase deployment path:
+
+```bash
+# Build frontend and Functions
+npm run build
+npm --prefix functions run build
+
+# Start emulators (from repo root with firebase.json)
+firebase emulators:start
+```
+
+The emulator UI is available at `http://localhost:4000` by default. Update rewrites/ports as needed via `firebase.json`.
+
+### 7. Deploy to Firebase (Hosting + Functions)
+
+Prerequisites: `firebase login`, project selected in `.firebaserc` (default `nice-unity-1mbw7`).
+
+```bash
+# Build first (predeploy also runs builds)
+npm run build
+npm --prefix functions run build
+
+# Deploy everything configured
+firebase deploy
+
+# Or deploy selectively
+firebase deploy --only hosting
+firebase deploy --only functions
+firebase deploy --only firestore:rules,firestore:indexes
+```
+
+Hosting rewrites `/api/**`, `/healthz`, `/health`, `/.well-known/**` to the `api` Cloud Function; all other routes fall back to `/index.html`. Functions run on Node 22 with CommonJS output from `functions/lib/`.
 
 ---
 

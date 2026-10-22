@@ -1,8 +1,13 @@
 {
-  "name": "react-example",
+  "name": "ellix-connect",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Ellix Connect - Business management platform for retailers",
+  "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
   "scripts": {
     "dev": "tsx server.ts",
     "build": "vite build",
