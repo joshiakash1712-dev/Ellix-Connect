@@ -44,7 +44,9 @@ describe('Ellix Connect - Cloud Functions Runtime Guard', () => {
     const address = httpServer.address();
     const port = typeof address === 'object' && address ? address.port : 0;
     baseUrl = `http://127.0.0.1:${port}`;
-  });
+    // The first import of server.ts loads the firebase-admin module tree, which
+    // can exceed Vitest's 10s default hook timeout on a cold cache.
+  }, 60_000);
 
   afterAll(async () => {
     await new Promise<void>((resolve) => httpServer.close(() => resolve()));
