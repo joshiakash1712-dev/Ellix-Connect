@@ -72,7 +72,6 @@ graph TD
     subgraph Cloud ["Google Cloud & External Services"]
         FBAuth["Firebase Authentication"]
         Firestore[("Cloud Firestore (Multi-Tenant RBAC)")]
-        Gemini["Google Gemini API (@google/genai)"]
         Razorpay["Razorpay Orders & HMAC Webhooks"]
     end
 
@@ -83,7 +82,7 @@ graph TD
     SyncMgr <-->|"Real-time onSnapshot (Authenticated)"| Firestore
     AppUI <-->|"ID Token (Bearer)"| FBAuth
     AppUI <-->|"Bearer Auth"| API
-    API --> SupportAI --> Gemini
+    API --> SupportAI
     API --> SubGateway --> Razorpay
     SubGateway -->|"Firebase Admin SDK"| Firestore
     API --> AdminAPI -->|"Firebase Admin SDK"| Firestore
@@ -185,10 +184,11 @@ cp .env.example .env
 
 | Variable | Required | Description |
 | :--- | :---: | :--- |
-| `GEMINI_API_KEY` | Optional | Google Gemini API key used by the server-side `/api/support/chat` endpoint (falls back to built-in knowledge base if omitted). |
-| `APP_URL` | Optional | Public canonical URL of the deployment (e.g., `https://ellix-connect.ai.studio/`). |
+| `PORT` | Optional | Port the local/standalone server listens on (defaults to `3000`; ignored in Cloud Functions). |
+| `APP_URL` | Optional | Public canonical URL of the deployment (e.g., `https://<your-project>.web.app`). |
 | `FIREBASE_PROJECT_ID` | Optional | Overrides the Firebase project ID from `firebase-applet-config.json`. |
 | `FIRESTORE_DATABASE_ID` | Optional | Overrides the Firestore database ID from `firebase-applet-config.json`. |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Optional | Path to a service account JSON key; only needed when the Admin SDK runs outside Google Cloud. |
 | `RAZORPAY_KEY_ID` | Optional | Razorpay API Key ID for live subscription order creation. |
 | `RAZORPAY_KEY_SECRET` | Optional | Razorpay API Key Secret for order creation & payment verification. |
 | `RAZORPAY_WEBHOOK_SECRET` | Optional | Secret for verifying `x-razorpay-signature` via HMAC-SHA256. |
@@ -221,7 +221,7 @@ The full-stack Express + Vite development server starts on `http://localhost:300
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/health`, `/healthz` | Public | Liveness and readiness health check for Cloud Run / load balancers. |
 | `GET` | `/api/about`, `/api/metadata` | Public | Machine-readable platform capabilities and metadata JSON. |
-| `POST` | `/api/support/chat` | Public | 24/7 customer support assistant powered by Gemini with local fallback. |
+| `POST` | `/api/support/chat` | Public | 24/7 customer support assistant powered by the built-in knowledge base. |
 | `POST` | `/api/subscription/create-checkout` | Bearer Token | Initiates a tenant-scoped Razorpay subscription checkout order. |
 | `POST` | `/api/subscription/verify-payment` | Bearer Token | Cryptographically verifies Razorpay checkout signatures (`HMAC-SHA256`). |
 | `POST` | `/api/subscription/webhook` | Webhook HMAC | Verifies raw-body `x-razorpay-signature` and updates tenant subscription state. |

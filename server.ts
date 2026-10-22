@@ -3,7 +3,6 @@ import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/genai';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import type { Firestore, CollectionReference } from 'firebase-admin/firestore';
@@ -183,26 +182,6 @@ async function getAuthenticatedCaller(req: express.Request) {
 }
 
 // ==========================================
-// GEMINI CLIENT LAZY INITIALIZATION
-// ==========================================
-let genaiClient: GoogleGenAI | null = null;
-function getGenAI(): GoogleGenAI | null {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return null;
-  if (!genaiClient) {
-    genaiClient = new GoogleGenAI({
-      apiKey,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build'
-        }
-      }
-    });
-  }
-  return genaiClient;
-}
-
-// ==========================================
 // HEALTH CHECKS & API ROUTES
 // ==========================================
 
@@ -276,61 +255,6 @@ app.get(['/api/about', '/api/metadata', '/.well-known/ai-plugin.json'], (_req, r
 // ==========================================
 // CUSTOMER SUPPORT CHATBOT API ENDPOINT
 // ==========================================
-
-const SUPPORT_SYSTEM_INSTRUCTION = `
-You are "Ellic Assistant", the dedicated 24/7 Customer Support and Technical Specialist for Ellic.
-Ellic is an offline-first enterprise retail operating system covering Billing POS, Real-Time Inventory, Digital Khata CRM, Statutory GST Reports, Wholesale Network, and Multi-Store Fleet Management.
-
-Your goal is to provide clear, friendly, empathetic, and highly actionable answers to help retailers, cashiers, store owners, and wholesalers.
-
-KEY PRODUCT CAPABILITIES:
-1. Sub-Second Barcode Billing (POS):
-   - Fast checkout with barcode scanning (USB/Bluetooth 1D/2D scanners) or search.
-   - Thermal receipt printing supports standard 58mm and 80mm ESC/POS printers.
-   - Dynamic UPI QR codes generated per invoice for contactless scan-to-pay.
-   - Digital WhatsApp invoices sent directly to customer phones with a single click.
-   - Split-tender payment settlements (Cash, Card, UPI, Credit Khata).
-
-2. Real-Time Batch Inventory:
-   - Multi-batch tracking with expiration date alerts and minimum stock thresholds.
-   - Automatic barcode generator and thermal sticker printing.
-   - Instant restock orders dispatched to connected wholesalers.
-   - CSV bulk export and import for inventory data.
-
-3. Digital Khata & Customer CRM:
-   - Credit tracking with custom credit limits.
-   - Automated WhatsApp payment reminders with instant UPI payment links.
-   - Customer loyalty points, tier badges (VIP, B2B, Retail), and transaction history.
-
-4. Statutory GST Reports & Tax Accounting:
-   - Automated GSTR-1 (sales schedule with HSN summary) and GSTR-3B tax schedules.
-   - End-of-day Z-report summaries, gross margins, and dead stock analysis (>30 days zero sales).
-   - One-click PDF and CSV tax exports.
-
-5. Cashier Shift Management & Audit Security:
-   - Shift opening/closing drawer tally with cash reconciliation.
-   - Role-Based Access Control (Admin, Store Manager, Cashier, Inventory Lead) secured by 4-digit PINs.
-   - Tamper-evident audit trail logging every discount, refund, stock adjustment, and price edit.
-
-6. Offline-First & Cloud Sync:
-   - Works 100% offline using high-performance local IndexedDB/browser caching.
-   - Automatically synchronizes with Google Cloud Firestore as soon as internet connectivity is restored.
-
-7. Hardware Troubleshooting:
-   - Thermal Printer: Ensure ESC/POS mode is set; check paper roll orientation; check USB/Bluetooth pairing.
-   - Barcode Scanner: Plug-and-play HID mode; ensure Enter/CR suffix is enabled in scanner manual.
-
-8. Escalation to Human Support:
-   - WhatsApp Support: +91 98765 43210 (Mon-Sat, 9 AM - 9 PM IST)
-   - Email: support@ellic.com
-   - Phone Helpline: +91 98765 43210
-
-FORMATTING GUIDELINES:
-- Be concise, professional, empathetic, and actionable.
-- Use bold text for key UI terms, buttons, or navigation paths (e.g., 'Go to **Billing POS** in the sidebar', 'Tap **New Bill**').
-- Use bullet points for multi-step instructions.
-- If the user asks something outside retail/POS or Ellic, politely guide them back to Ellic capabilities.
-`;
 
 function getFallbackSupportResponse(userQuery: string): string {
   const q = userQuery.toLowerCase();
@@ -439,57 +363,15 @@ I am your 24/7 AI assistant for **Ellic**. I can assist you with:
 Feel free to ask a specific question above or reach our helpline at **+91 98765 43210**.`;
 }
 
-app.post('/api/support/chat', async (req, res) => {
+app.post('/api/support/chat', (req, res) => {
   try {
-    const { message, history } = req.body || {};
+    const { message } = req.body || {};
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message text is required' });
     }
 
-    const ai = getGenAI();
-    if (ai) {
-      try {
-        const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
-
-        if (Array.isArray(history)) {
-          for (const item of history.slice(-6)) {
-            if (item && item.text) {
-              contents.push({
-                role: item.role === 'assistant' || item.role === 'model' ? 'model' : 'user',
-                parts: [{ text: String(item.text) }]
-              });
-            }
-          }
-        }
-
-        contents.push({
-          role: 'user',
-          parts: [{ text: message }]
-        });
-
-        const response = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
-          contents,
-          config: {
-            systemInstruction: SUPPORT_SYSTEM_INSTRUCTION,
-            temperature: 0.7
-          }
-        });
-
-        const replyText = response.text || getFallbackSupportResponse(message);
-        return res.status(200).json({
-          reply: replyText,
-          source: 'gemini',
-          timestamp: new Date().toISOString()
-        });
-      } catch (geminiError: any) {
-        console.warn('Gemini generateContent error, falling back to local support knowledge:', geminiError?.message || geminiError);
-      }
-    }
-
-    const fallbackReply = getFallbackSupportResponse(message);
     return res.status(200).json({
-      reply: fallbackReply,
+      reply: getFallbackSupportResponse(message),
       source: 'knowledge_base',
       timestamp: new Date().toISOString()
     });
