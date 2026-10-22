@@ -56,16 +56,7 @@ export default defineConfig(({ command }) => {
       emptyOutDir: true,
       sourcemap: false,
       target: 'es2022',
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_debugger: true,
-          passes: 2,
-        },
-        format: {
-          comments: false,
-        },
-      },
+      minify: 'esbuild',
       cssCodeSplit: true,
       chunkSizeWarningLimit: 2500,
       commonjsOptions: {
