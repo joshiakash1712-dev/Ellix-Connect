@@ -32,3 +32,6 @@ jobs:
 
       - name: Build production bundle
         run: npm run build
+
+      - name: Build Cloud Functions bundle
+        run: npm run build:functions

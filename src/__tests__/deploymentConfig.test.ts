@@ -47,13 +47,26 @@ describe('Firebase deployment configuration', () => {
     const rootPkg = readJson('package.json');
     const functionsPkg = readJson('functions/package.json');
 
-    for (const command of firebase.functions.predeploy) {
+    const commands = [...firebase.hosting.predeploy, ...firebase.functions.predeploy];
+    for (const command of commands) {
       const match = /^npm(?: --prefix (\S+))? run (\S+)$/.exec(command);
       expect(match, `unsupported predeploy command: ${command}`).not.toBeNull();
       const [, prefix, script] = match as RegExpExecArray;
       const pkg = prefix ? functionsPkg : rootPkg;
       expect(Object.keys(pkg.scripts ?? {}), `missing script for: ${command}`).toContain(script);
     }
+  });
+
+  it('deploys Firestore rules to the database the app actually uses', () => {
+    const firebase = readJson('firebase.json');
+    const appConfig = readJson('firebase-applet-config.json');
+
+    // The object form always targets "(default)"; only the array form with an
+    // explicit database reaches the named database the server connects to.
+    expect(Array.isArray(firebase.firestore)).toBe(true);
+    expect(firebase.firestore[0].database).toBe(appConfig.firestoreDatabaseId);
+    expect(firebase.firestore[0].rules).toBe('firestore.rules');
+    expect(firebase.firestore[0].indexes).toBe('firestore.indexes.json');
   });
 
   it('points at the production Firebase project', () => {

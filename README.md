@@ -228,17 +228,13 @@ The emulator UI is available at `http://localhost:4000` by default. Update rewri
 Prerequisites: `firebase login`, project selected in `.firebaserc` (default `nice-unity-1mbw7`).
 
 ```bash
-# Build first (predeploy also runs builds)
-npm run build
-npm --prefix functions run build
-
-# Deploy everything configured
+# Deploy everything configured (predeploy builds the frontend and the Function)
 firebase deploy
 
-# Or deploy selectively
+# Or deploy selectively (each target builds what it needs)
 firebase deploy --only hosting
 firebase deploy --only functions
-firebase deploy --only firestore:rules,firestore:indexes
+firebase deploy --only firestore
 ```
 
 Hosting rewrites `/api/**`, `/healthz`, `/health`, `/.well-known/**` to the `api` Cloud Function; all other routes fall back to `/index.html`. Functions run on Node 22 with CommonJS output from `functions/lib/`.
