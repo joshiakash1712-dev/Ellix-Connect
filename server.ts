@@ -1151,6 +1151,23 @@ app.use(express.static(path.resolve(process.cwd(), 'public'), {
 // STATIC ASSETS OR VITE DEV MIDDLEWARE
 // ==========================================
 
+// Named handlers so the Cloud Functions branch can mount the same API surface.
+const apiNotFoundHandler = (req: express.Request, res: express.Response) => {
+  res.status(404).json({ error: 'API endpoint not found', path: req.originalUrl });
+};
+
+// Global Express Error Handler
+const errorHandler = (
+  err: any,
+  _req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  console.error('Unhandled server error:', err);
+  if (res.headersSent) return next(err);
+  res.status(500).json({ error: 'Internal Server Error', message: err?.message || 'Unknown error' });
+};
+
 async function startServer() {
   const distPath = path.resolve(process.cwd(), 'dist');
   const indexPath = path.join(distPath, 'index.html');
@@ -1164,9 +1181,7 @@ async function startServer() {
       lifecycle === 'start');
 
   // Fallback 404 handler for unmatched API routes (must be mounted before SPA catch-all)
-  app.use('/api', (req, res) => {
-    res.status(404).json({ error: 'API endpoint not found', path: req.originalUrl });
-  });
+  app.use('/api', apiNotFoundHandler);
 
   if (!isProduction || !hasDist) {
     const { createServer: createViteServer } = await import('vite');
@@ -1210,12 +1225,7 @@ async function startServer() {
     });
   }
 
-  // Global Express Error Handler
-  app.use((err: any, _req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error('Unhandled server error:', err);
-    if (res.headersSent) return next(err);
-    res.status(500).json({ error: 'Internal Server Error', message: err?.message || 'Unknown error' });
-  });
+  app.use(errorHandler);
 
   const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Ellic Enterprise Server running on http://0.0.0.0:${PORT} [mode: ${isProduction ? 'production' : 'development'}]`);
@@ -1240,7 +1250,14 @@ async function startServer() {
 
 export { app };
 
-if (process.env.VITEST !== 'true') {
+// Cloud Functions (and its local emulator) provide their own HTTP server, so the
+// app must only expose the API surface and must never bind a port itself.
+const isCloudFunctionsRuntime = Boolean(process.env.K_SERVICE || process.env.FUNCTIONS_EMULATOR);
+
+if (isCloudFunctionsRuntime) {
+  app.use('/api', apiNotFoundHandler);
+  app.use(errorHandler);
+} else if (process.env.VITEST !== 'true') {
   startServer().catch((err) => {
     console.error('Fatal server initialization error:', err);
     process.exit(1);
