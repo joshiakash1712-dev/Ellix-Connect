@@ -8,7 +8,7 @@ on:
 
 jobs:
   verify:
-    name: TypeScript Check & Production Build
+    name: TypeScript Check, Tests & Production Build
     runs-on: ubuntu-latest
 
     steps:
@@ -22,10 +22,16 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run TypeScript typecheck
         run: npm run lint
 
+      - name: Run tests
+        run: npm test
+
       - name: Build production bundle
         run: npm run build
+
+      - name: Build Cloud Functions bundle
+        run: npm run build:functions

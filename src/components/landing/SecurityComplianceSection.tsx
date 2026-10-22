@@ -815,7 +815,7 @@ export const SecurityComplianceSection: React.FC<SecurityComplianceSectionProps>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
                       <span>
-                        <strong className="text-slate-900 dark:text-white">Feature-Specific External Services:</strong> When you message the website support assistant, your chat prompt is processed via Google’s Gemini API (when configured). When paid SaaS subscription checkout is active, subscription order metadata is processed via Razorpay’s payment API. Sharing a bill or reminder on WhatsApp opens a direct link in your own WhatsApp app.
+                        <strong className="text-slate-900 dark:text-white">Feature-Specific External Services:</strong> When you message the website support assistant, your chat prompt is answered by our built-in support knowledge base on our own server and is not sent to a third-party AI service. When paid SaaS subscription checkout is active, subscription order metadata is processed via Razorpay’s payment API. Sharing a bill or reminder on WhatsApp opens a direct link in your own WhatsApp app.
                       </span>
                     </li>
                   </ul>
