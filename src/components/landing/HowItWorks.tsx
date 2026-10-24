@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Store, Receipt, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { Store, Receipt, TrendingUp, CheckCircle2, RotateCcw, Sparkles, Clock, Zap } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { WorksWheel, type WorksWheelItem } from '@/components/ui/works-wheel';
+
+import productsImg from '../../assets/images/workflow_products_sku_1792691890542.jpg';
+import billingImg from '../../assets/images/workflow_pos_billing_1792691908115.jpg';
+import recordsImg from '../../assets/images/workflow_tax_records_1792691922332.jpg';
 
 interface Step {
   step: string;
@@ -7,10 +13,12 @@ interface Step {
   time: string;
   description: string;
   icon: React.ElementType;
+  image: string;
   preview: {
     heading: string;
     items: string[];
   };
+  impact: string;
 }
 
 const steps: Step[] = [
@@ -20,14 +28,16 @@ const steps: Step[] = [
     time: '< 5 Minutes',
     description: 'Import your catalog via spreadsheet or scan items on your counter. Set selling prices and GST slabs once.',
     icon: Store,
+    image: productsImg,
     preview: {
       heading: 'Catalog Ready',
       items: [
-        'Scan EAN/UPC barcodes',
-        'Auto-calculate margin (+26%)',
-        'Assign 5/12/18% GST slab',
+        'Scan EAN/UPC barcodes directly at the counter',
+        'Auto-calculate margin (+26%) and retail markup',
+        'Assign 5/12/18% statutory GST tax slabs',
       ],
     },
+    impact: 'Ready for instant optical laser barcode checkout',
   },
   {
     step: '02',
@@ -35,14 +45,16 @@ const steps: Step[] = [
     time: 'Daily Counter',
     description: 'Cashiers scan items with any USB/Bluetooth scanner. Print thermal receipts or send digital bills via WhatsApp.',
     icon: Receipt,
+    image: billingImg,
     preview: {
       heading: 'Sub-0.2s POS',
       items: [
-        'Plug-and-play barcode input',
-        'Dynamic UPI QR code checkout',
-        'Split cash, card, & credit Khata',
+        'Plug-and-play USB & Bluetooth barcode scanner input',
+        'Dynamic exact-amount UPI QR code checkout',
+        'Split tender across cash, cards, & credit Khata',
       ],
     },
+    impact: 'Cuts checkout queue times by over 70%',
   },
   {
     step: '03',
@@ -50,97 +62,250 @@ const steps: Step[] = [
     time: 'Always Live',
     description: 'Every sale automatically decrements stock, updates customer Khata balances, and prepares your daily Z-report.',
     icon: TrendingUp,
+    image: recordsImg,
     preview: {
       heading: 'Auto-Reconciliation',
       items: [
-        'Live inventory count updated',
-        'Zero-paper customer credit logged',
-        '60-second shift drawer close',
+        'Live inventory count deducted across registers',
+        'Zero-paper customer credit balances logged instantly',
+        '60-second end-of-shift cash drawer balancing',
       ],
     },
+    impact: 'Zero night-time bookkeeping or spreadsheet tallies',
   },
 ];
 
+const wheelItems: WorksWheelItem[] = steps.map((s) => ({
+  title: s.title,
+  tagline: s.time,
+  image: s.image,
+  href: `#step-${s.step}`,
+}));
+
 export const HowItWorks: React.FC = () => {
   const [activeStepIndex, setActiveStepIndex] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
+  const currentStep = steps[activeStepIndex] || steps[0];
+  const Icon = currentStep.icon;
+
+  const handleStepSelect = React.useCallback((idx: number) => {
+    setActiveStepIndex(idx);
+  }, []);
 
   return (
     <section
       id="how-it-works"
-      className="py-12 sm:py-16 md:py-24 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors"
+      className="py-12 sm:py-16 md:py-20 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-12 md:mb-16">
+        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-bold tracking-wider sm:tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-2.5 sm:mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
-            <span>How Ellic Works</span>
+            <span>Interactive Onboarding Wheel</span>
             <span className="text-slate-300 dark:text-slate-700">·</span>
             <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">
-              3 Simple Steps
+              Step {activeStepIndex + 1} of {steps.length}
             </span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
             Up and running in minutes.
           </h2>
-          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-            No expensive IT consultants, no long training sessions.
+          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
+            Turn the 3D wheel or click any step to see how your store launches smoothly with zero downtime.
           </p>
         </div>
 
-        {/* 3 Visual Step Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        {/* 3 Step Interactive Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mb-8">
           {steps.map((s, idx) => {
-            const Icon = s.icon;
-            const isSelected = activeStepIndex === idx;
+            const StepIcon = s.icon;
+            const isActive = idx === activeStepIndex;
+            const isPast = idx < activeStepIndex;
             return (
-              <div
+              <button
                 key={s.step}
-                onClick={() => setActiveStepIndex(idx)}
-                className={`p-4.5 sm:p-6 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-                  isSelected
-                    ? 'bg-sky-50/50 dark:bg-blue-950/20 border-blue-500/50 dark:border-blue-700/60 shadow-md ring-1 ring-blue-500/20'
-                    : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                type="button"
+                onClick={() => handleStepSelect(idx)}
+                className={`p-3 sm:p-3.5 rounded-xl border text-left transition-all cursor-pointer relative ${
+                  isActive
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-500/20'
+                    : isPast
+                    ? 'bg-blue-50/70 dark:bg-blue-950/30 border-blue-200/60 dark:border-blue-900/40 text-blue-900 dark:text-blue-200'
+                    : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-3 sm:mb-4">
-                    <span className="text-xs font-mono font-bold text-blue-600 dark:text-sky-400 px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 border border-blue-200 dark:border-blue-900">
-                      Step {s.step}
-                    </span>
-                    <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span
+                    className={`text-[10px] font-mono font-bold ${
+                      isActive ? 'text-blue-100' : isPast ? 'text-blue-600 dark:text-sky-400' : 'text-slate-400'
+                    }`}
+                  >
+                    Step {s.step}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-[10px] font-semibold ${isActive ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'}`}>
                       {s.time}
                     </span>
+                    <StepIcon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : isPast ? 'text-blue-600 dark:text-sky-400' : 'text-slate-400'}`} />
                   </div>
-
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-blue-600 dark:text-sky-400 flex items-center justify-center mb-3 sm:mb-4">
-                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-
-                  <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white mb-1.5 sm:mb-2">
-                    {s.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4 sm:mb-6">
-                    {s.description}
-                  </p>
                 </div>
+                <div className="text-xs sm:text-sm font-bold truncate">{s.title}</div>
+              </button>
+            );
+          })}
+        </div>
 
-                {/* Micro Visual Card */}
-                <div className="p-3 sm:p-3.5 rounded-lg sm:rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 space-y-2">
-                  <div className="text-[11px] font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 pb-1.5 border-b border-slate-100 dark:border-slate-800">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:text-sky-400" />
-                    <span className="truncate">{s.preview.heading}</span>
-                  </div>
-                  {s.preview.items.map((it, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
-                      <span className="leading-snug">{it}</span>
-                    </div>
+        {/* Side-by-Side: 3D WorksWheel on Left, Live Implementation Monitor on Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+          
+          {/* Left: 3D WorksWheel Component */}
+          <div className="lg:col-span-7 flex flex-col">
+            <div className="relative flex-1 min-h-[420px] sm:min-h-[480px] lg:min-h-[520px] rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 shadow-sm overflow-hidden flex flex-col">
+              
+              {/* Wheel Toolbar / Hint */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-10 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+                  <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider text-[11px]">
+                    3D Implementation Drum
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <RotateCcw className="w-3 h-3 text-blue-600 dark:text-sky-400" />
+                  Drag, scroll wheel, or arrow keys to rotate
+                </span>
+              </div>
+
+              {/* The 3D Wheel Stage */}
+              <div className="relative flex-1 w-full overflow-hidden">
+                <WorksWheel
+                  items={wheelItems}
+                  label="Steps '26"
+                  action="Inspect"
+                  activeIndex={activeStepIndex}
+                  onActiveChange={handleStepSelect}
+                  onItemClick={handleStepSelect}
+                  className="h-full min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] bg-transparent"
+                />
+              </div>
+
+              {/* Bottom Quick Jump Dots */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-10 text-xs">
+                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                  Active: <strong className="text-slate-900 dark:text-white">{currentStep.title}</strong>
+                </span>
+
+                <div className="flex items-center gap-1.5">
+                  {steps.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleStepSelect(idx)}
+                      aria-label={`Jump to step ${idx + 1}`}
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                        idx === activeStepIndex
+                          ? 'w-6 bg-blue-600'
+                          : idx < activeStepIndex
+                          ? 'w-2 bg-blue-300 dark:bg-blue-800'
+                          : 'w-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300'
+                      }`}
+                    />
                   ))}
                 </div>
               </div>
-            );
-          })}
+
+            </div>
+          </div>
+
+          {/* Right: Live Implementation Monitor */}
+          <div className="lg:col-span-5 flex flex-col">
+            <div className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full">
+              
+              <div>
+                {/* Header Badge */}
+                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
+                    </div>
+                    <span className="ml-1 text-[11px] font-mono uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">
+                      Live Implementation Monitor
+                    </span>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-sky-300 border border-blue-200 dark:border-blue-800">
+                    Step {currentStep.step} of 03
+                  </span>
+                </div>
+
+                {/* Animated Step Details */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentStep.step}
+                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                    className="space-y-4"
+                  >
+                    {/* Title & Setup Badge */}
+                    <div>
+                      <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>Setup Time: {currentStep.time}</span>
+                      </div>
+                      <h3 className="text-2xl font-extrabold text-slate-950 dark:text-white mt-1">
+                        {currentStep.title}
+                      </h3>
+                      <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        {currentStep.description}
+                      </p>
+                    </div>
+
+                    {/* Operational Impact Card */}
+                    <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">
+                        Operational Impact
+                      </div>
+                      <div className="text-xs font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                        <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
+                        <span>{currentStep.impact}</span>
+                      </div>
+                    </div>
+
+                    {/* Execution Checklist */}
+                    <div className="pt-2 space-y-2.5">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+                        {currentStep.preview.heading}
+                      </div>
+                      {currentStep.preview.items.map((it, i) => (
+                        <div key={i} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+                          <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
+                          <span className="leading-snug">{it}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Bottom Card Footer */}
+              <div className="pt-4 mt-6 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
+                <span className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  Zero IT Consultants Needed
+                </span>
+                <span className="font-mono text-[11px] text-slate-400">
+                  Plug-and-play Hardware
+                </span>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

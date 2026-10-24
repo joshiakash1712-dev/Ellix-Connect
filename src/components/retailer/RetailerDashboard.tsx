@@ -178,6 +178,17 @@ export const RetailerDashboard: React.FC<RetailerDashboardProps> = ({
     onModuleChange?.(mod);
   }, [onModuleChange]);
 
+  React.useEffect(() => {
+    if (propActiveModule) {
+      const moduleMap = ['products', 'customers', 'billing', 'payments', 'inventory', 'records'];
+      const idx = moduleMap.indexOf(propActiveModule);
+      if (idx !== -1 && idx !== activeStep) {
+        setActiveStep(idx);
+        setActiveModule(propActiveModule);
+      }
+    }
+  }, [propActiveModule, activeStep]);
+
 
   // Derived Business Metrics - completely dynamic from POS invoices and inventory
   const validInvoices = useMemo(() => invoices.filter(inv => inv.status !== 'voided'), [invoices]);

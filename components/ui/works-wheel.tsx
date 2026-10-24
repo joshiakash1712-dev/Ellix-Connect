@@ -124,15 +124,31 @@ export function WorksWheel({
   const labelRef = React.useRef<HTMLDivElement>(null);
   const titleRef = React.useRef<HTMLDivElement>(null);
 
-  // The wheel's position, and where it is heading. Only `active` is state -
-  // everything else is written to the DOM, so turning the wheel is not a render.
-  const turn = React.useRef(0);
-  const target = React.useRef(0);
-  const [active, setActive] = React.useState(0);
-  const [stage, setStage] = React.useState<Stage>({ w: 0, h: 0 });
-
   const count = items.length;
   const last = Math.max(count - 1, 0);
+
+  // The wheel's position, and where it is heading. Only `active` is state -
+  // everything else is written to the DOM, so turning the wheel is not a render.
+  const initialTarget =
+    activeIndex !== undefined && activeIndex >= 0 && activeIndex <= last
+      ? activeIndex + 1
+      : 0;
+  const turn = React.useRef(initialTarget);
+  const target = React.useRef(initialTarget);
+  const [active, setActive] = React.useState(activeIndex ?? 0);
+  const [stage, setStage] = React.useState<Stage>({ w: 0, h: 0 });
+
+  // Distinguish user interaction (wheel, drag, keys) from programmatic activeIndex sync
+  const isUserTurning = React.useRef(false);
+  const activeRef = React.useRef(activeIndex ?? 0);
+
+  // Wheel accumulation refs for smooth and discrete tick scrolling
+  const wheelAccumulator = React.useRef(0);
+  const wheelResetTimeout = React.useRef(0);
+  const lastWheelTime = React.useRef(0);
+  const lastWheelDir = React.useRef(0);
+  const settling = React.useRef(0);
+  const drag = React.useRef<number | null>(null);
 
   // Read after mount, not during render: the server has no matchMedia, and
   // branching on it inline is a hydration mismatch. Reduced motion drops the
@@ -180,20 +196,20 @@ export function WorksWheel({
     };
   }, [stage, count]);
 
-  // Track active index with ref to prevent setState inside render loops
+  // Track active index callback with ref to prevent setState inside render loops
   const onActiveChangeRef = React.useRef(onActiveChange);
   React.useEffect(() => {
     onActiveChangeRef.current = onActiveChange;
   }, [onActiveChange]);
 
-  const activeRef = React.useRef(activeIndex ?? 0);
-
   // Handle external synchronization if activeIndex changes
   React.useEffect(() => {
     if (activeIndex !== undefined && activeIndex >= 0 && activeIndex <= last) {
-      target.current = activeIndex + 1;
-      activeRef.current = activeIndex;
-      setActive(activeIndex);
+      if (activeRef.current !== activeIndex) {
+        activeRef.current = activeIndex;
+        target.current = activeIndex + 1;
+        setActive(activeIndex);
+      }
     }
   }, [activeIndex, last]);
 
@@ -206,8 +222,14 @@ export function WorksWheel({
     const draw = () => {
       frame = requestAnimationFrame(draw);
       const gap = target.current - turn.current;
-      if (Math.abs(gap) < 0.0005) turn.current = target.current;
-      else turn.current += gap * (reduced ? 1 : EASE);
+      if (Math.abs(gap) < 0.0005) {
+        turn.current = target.current;
+        if (isUserTurning.current) {
+          isUserTurning.current = false;
+        }
+      } else {
+        turn.current += gap * (reduced ? 1 : 0.14);
+      }
 
       const t = turn.current;
       const m = clamp(t, 0, 1);
@@ -222,7 +244,8 @@ export function WorksWheel({
 
       for (let i = 0; i < count; i++) {
         const d = i - pos;
-        const drumDeg = d * STEP;
+        // Inverted: -d * STEP ensures scrolling down rolls the wheel downward into view
+        const drumDeg = -d * STEP;
         const card = cardRefs.current[i];
         if (card) {
           card.style.transform = place(
@@ -250,8 +273,13 @@ export function WorksWheel({
       if (near !== activeRef.current) {
         activeRef.current = near;
         setActive(near);
-        if (onActiveChangeRef.current) {
-          onActiveChangeRef.current(near);
+        // Only notify parent when changed by user interaction, and defer to microtask
+        // to prevent React's "Cannot update a component while rendering another" error
+        if (isUserTurning.current && onActiveChangeRef.current) {
+          const cb = onActiveChangeRef.current;
+          queueMicrotask(() => {
+            cb(near);
+          });
         }
       }
     };
@@ -262,40 +290,73 @@ export function WorksWheel({
 
   const to = React.useCallback(
     (next: number) => {
-      target.current = clamp(next, 0, last + 1);
+      target.current = clamp(next, 1, last + 1);
     },
     [last],
   );
 
-  // Native listener, because the wheel has to be cancellable - and it only
-  // cancels while it still has somewhere to go, so the page scrolls on at
-  // either end instead of trapping the reader.
+  // Wheel listener: responsive, smooth, 1 tick = 1 step, non-inverted, and boundary pass-through
   React.useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
+
     const onWheel = (event: WheelEvent) => {
-      const next = target.current + event.deltaY / WHEEL_UNITS;
-      if (next > 0 && next < last + 1) event.preventDefault();
-      to(next);
-      // A wheel gesture arrives as a burst of events with no end of its own, so
-      // the rest position is whatever notch it happened to stop on. Left there
-      // the drum sits between two cards - nothing at the front, and the pair
-      // either side of the gap both turned half away. Settle onto an item.
-      window.clearTimeout(settling.current);
-      settling.current = window.setTimeout(
-        () => to(Math.round(target.current)),
-        SETTLE,
-      );
+      // Ignore purely horizontal gestures
+      if (Math.abs(event.deltaY) < 2 && Math.abs(event.deltaX) > 10) return;
+
+      const dy = event.deltaY;
+      const direction = dy > 0 ? 1 : -1;
+      const currentItem = Math.round(target.current);
+
+      // Boundary escape: let the page scroll freely at either end
+      if (direction > 0 && currentItem >= last + 1) {
+        return; // at the end, allow scrolling down past the wheel
+      }
+      if (direction < 0 && currentItem <= 1) {
+        return; // at the beginning, allow scrolling up past the wheel
+      }
+
+      event.preventDefault();
+      isUserTurning.current = true;
+
+      const now = performance.now();
+      const timeSinceLast = now - lastWheelTime.current;
+      lastWheelTime.current = now;
+
+      // Detect discrete mouse wheel tick vs smooth trackpad gesture
+      const isDiscreteTick = event.deltaMode !== 0 || Math.abs(dy) >= 30;
+
+      if (isDiscreteTick) {
+        // Enforce 1 tick = 1 step!
+        if (timeSinceLast > 110 || Math.sign(dy) !== Math.sign(lastWheelDir.current)) {
+          lastWheelDir.current = dy;
+          const nextTarget = clamp(currentItem + direction, 1, last + 1);
+          to(nextTarget);
+        }
+      } else {
+        // Continuous trackpad: accumulate smooth deltas with responsive threshold
+        wheelAccumulator.current += dy;
+        const THRESHOLD = 35;
+        if (Math.abs(wheelAccumulator.current) >= THRESHOLD) {
+          const step = Math.sign(wheelAccumulator.current);
+          const nextTarget = clamp(currentItem + step, 1, last + 1);
+          to(nextTarget);
+          wheelAccumulator.current = 0;
+        }
+
+        window.clearTimeout(wheelResetTimeout.current);
+        wheelResetTimeout.current = window.setTimeout(() => {
+          wheelAccumulator.current = 0;
+        }, 140);
+      }
     };
+
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       el.removeEventListener("wheel", onWheel);
-      window.clearTimeout(settling.current);
+      window.clearTimeout(wheelResetTimeout.current);
     };
   }, [to, last]);
-
-  const drag = React.useRef<number | null>(null);
-  const settling = React.useRef(0);
 
   return (
     <section
@@ -316,21 +377,28 @@ export function WorksWheel({
         style={{ perspective: `${metrics.depth}px` }}
         onPointerDown={(event) => {
           drag.current = event.clientY;
+          isUserTurning.current = true;
           event.currentTarget.setPointerCapture(event.pointerId);
         }}
         onPointerMove={(event) => {
           if (drag.current === null) return;
-          to(target.current + (drag.current - event.clientY) / DRAG_UNITS);
+          const dy = event.clientY - drag.current;
+          // Dragging cursor down pulls the drum down (increases target)
+          to(target.current + dy / DRAG_UNITS);
           drag.current = event.clientY;
         }}
         onPointerUp={() => {
-          // Land on an item rather than between two.
           drag.current = null;
-          if (target.current > 1) to(Math.round(target.current));
+          to(Math.round(target.current));
+          window.clearTimeout(settling.current);
+          settling.current = window.setTimeout(() => {
+            isUserTurning.current = false;
+          }, 180);
         }}
         onKeyDown={(event) => {
-          if (event.key === "ArrowDown") to(Math.round(target.current) + 1);
-          else if (event.key === "ArrowUp") to(Math.round(target.current) - 1);
+          isUserTurning.current = true;
+          if (event.key === "ArrowDown") to(clamp(Math.round(target.current) + 1, 1, last + 1));
+          else if (event.key === "ArrowUp") to(clamp(Math.round(target.current) - 1, 1, last + 1));
           else return;
           event.preventDefault();
         }}
@@ -438,7 +506,10 @@ export function WorksWheel({
           <li key={item.title}>
             <button
               type="button"
-              onClick={() => to(i + 1)}
+              onClick={() => {
+                isUserTurning.current = true;
+                to(i + 1);
+              }}
               className={cn(
                 "focus-visible:outline-foreground cursor-pointer transition-colors outline-none focus-visible:outline-1 px-1 py-0.5 rounded",
                 i === active

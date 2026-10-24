@@ -6,21 +6,36 @@ import {
   Pill,
   Truck,
   CheckCircle2,
+  RotateCcw,
+  Sparkles,
   ArrowRight,
+  ShieldCheck,
 } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { WorksWheel, type WorksWheelItem } from '@/components/ui/works-wheel';
+
+import productsImg from '../../assets/images/workflow_products_sku_1792691890542.jpg';
+import billingImg from '../../assets/images/workflow_pos_billing_1792691908115.jpg';
+import inventoryImg from '../../assets/images/workflow_inventory_stock_1792691922135.jpg';
+import customersImg from '../../assets/images/workflow_customer_khata_1792691907419.jpg';
+import paymentsImg from '../../assets/images/workflow_upi_payments_1792691908068.jpg';
 
 interface Vertical {
   id: string;
+  number: string;
   name: string;
   icon: React.ElementType;
   tagline: string;
   summary: string;
   keyFeatures: string[];
+  image: string;
+  preset: string;
 }
 
 const verticals: Vertical[] = [
   {
     id: 'grocery',
+    number: '01',
     name: 'Supermarkets & Grocery',
     icon: ShoppingBag,
     tagline: 'High Volume & Quick Queues',
@@ -30,9 +45,12 @@ const verticals: Vertical[] = [
       'First-in-first-out (FIFO) batch tracking with expiry alerts',
       'Dynamic UPI QR codes for instant contactless payments',
     ],
+    image: productsImg,
+    preset: 'Pre-loaded with 4,000+ FMCG grocery barcodes & tax slabs',
   },
   {
     id: 'fashion',
+    number: '02',
     name: 'Retail & Fashion',
     icon: Shirt,
     tagline: 'Apparel, Footwear & Variants',
@@ -42,9 +60,12 @@ const verticals: Vertical[] = [
       'Built-in thermal barcode price tag & hang-tag generator',
       'Seasonal promotional discounts & customer loyalty points',
     ],
+    image: billingImg,
+    preset: 'Pre-configured apparel size scales (S-XXL) & footwear sizing',
   },
   {
     id: 'hardware',
+    number: '03',
     name: 'Hardware & Electricals',
     icon: Wrench,
     tagline: 'Tools, Multi-Unit & Contractor Khata',
@@ -54,9 +75,12 @@ const verticals: Vertical[] = [
       'Digital contractor Khata with WhatsApp payment reminders',
       'Serial number & warranty tracking on appliances',
     ],
+    image: inventoryImg,
+    preset: 'Supports loose metric conversions & contractor credit caps',
   },
   {
     id: 'pharmacy',
+    number: '04',
     name: 'Pharmacies & Wellness',
     icon: Pill,
     tagline: 'Batch Numbers & Regulation',
@@ -66,9 +90,12 @@ const verticals: Vertical[] = [
       'Accurate HSN codes and GST slab mapping',
       'Fast counter lookup by brand or generic molecule name',
     ],
+    image: customersImg,
+    preset: 'Strict FIFO batch validation & compliant drug register format',
   },
   {
     id: 'wholesale',
+    number: '05',
     name: 'Wholesale & B2B Supply',
     icon: Truck,
     tagline: 'Trade Invoices & Tiered Pricing',
@@ -78,94 +105,248 @@ const verticals: Vertical[] = [
       'Credit limit safeguards that block billing over credit caps',
       'Full B2B tax invoice and delivery challan printing',
     ],
+    image: paymentsImg,
+    preset: 'Tiered wholesale price levels & bulk packing carton counts',
   },
 ];
 
+const wheelItems: WorksWheelItem[] = verticals.map((v) => ({
+  title: v.name,
+  tagline: v.tagline,
+  image: v.image,
+  href: `#vertical-${v.id}`,
+}));
+
 export const WhoItsFor: React.FC = () => {
-  const [selectedVerticalId, setSelectedVerticalId] = useState('grocery');
-  const selectedVertical =
-    verticals.find((v) => v.id === selectedVerticalId) || verticals[0];
+  const [activeVerticalIndex, setActiveVerticalIndex] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
+  const currentVertical = verticals[activeVerticalIndex] || verticals[0];
+  const Icon = currentVertical.icon;
+
+  const handleVerticalSelect = React.useCallback((idx: number) => {
+    setActiveVerticalIndex(idx);
+  }, []);
 
   return (
     <section
       id="who-its-for"
-      className="py-12 sm:py-16 md:py-24 bg-slate-50/70 dark:bg-slate-900/50 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors"
+      className="py-12 sm:py-16 md:py-20 bg-slate-50/70 dark:bg-slate-900/50 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-12 md:mb-16">
+        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-bold tracking-wider sm:tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-2.5 sm:mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
-            <span>Tailored for Retail</span>
+            <span>Interactive Industry Wheel</span>
             <span className="text-slate-300 dark:text-slate-700">·</span>
             <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">
-              Industry Fit
+              Vertical {activeVerticalIndex + 1} of {verticals.length}
             </span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
             Built for local retailers and small businesses.
           </h2>
-          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-            Tailored workflows for your specific inventory, customers, and checkout needs.
+          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
+            Turn the 3D wheel or select your trade vertical to see industry-tailored workflows and out-of-the-box presets.
           </p>
         </div>
 
-        {/* Vertical Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3 mb-6 sm:mb-8">
-          {verticals.map((vert) => {
-            const Icon = vert.icon;
-            const isSelected = vert.id === selectedVerticalId;
+        {/* 5 Industry Step Buttons */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2.5 mb-8">
+          {verticals.map((vert, idx) => {
+            const VertIcon = vert.icon;
+            const isActive = idx === activeVerticalIndex;
+            const isPast = idx < activeVerticalIndex;
             return (
               <button
                 key={vert.id}
                 type="button"
-                onClick={() => setSelectedVerticalId(vert.id)}
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer ${
-                  isSelected
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-md'
+                onClick={() => handleVerticalSelect(idx)}
+                className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all cursor-pointer relative ${
+                  isActive
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-500/20'
+                    : isPast
+                    ? 'bg-blue-50/70 dark:bg-blue-950/30 border-blue-200/60 dark:border-blue-900/40 text-blue-900 dark:text-blue-200'
                     : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isSelected ? 'text-white' : 'text-blue-600 dark:text-sky-400'}`} />
-                <span>{vert.name}</span>
+                <div className="flex items-center justify-between mb-1">
+                  <span
+                    className={`text-[10px] font-mono font-bold ${
+                      isActive ? 'text-blue-100' : isPast ? 'text-blue-600 dark:text-sky-400' : 'text-slate-400'
+                    }`}
+                  >
+                    {vert.number}
+                  </span>
+                  <VertIcon
+                    className={`w-3.5 h-3.5 ${
+                      isActive ? 'text-white' : isPast ? 'text-blue-600 dark:text-sky-400' : 'text-slate-400'
+                    }`}
+                  />
+                </div>
+                <div className="text-xs font-bold truncate">{vert.name}</div>
+                <div
+                  className={`hidden sm:block text-[10px] truncate mt-0.5 ${
+                    isActive ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
+                  }`}
+                >
+                  {vert.tagline}
+                </div>
               </button>
             );
           })}
         </div>
 
-        {/* Selected Vertical Detail Card */}
-        <div className="max-w-4xl mx-auto p-4 sm:p-8 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center">
-          <div className="md:col-span-7 space-y-3 sm:space-y-4">
-            <span className="inline-block text-[11px] sm:text-xs font-mono font-bold text-blue-600 dark:text-sky-400 px-2 sm:px-2.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-900">
-              {selectedVertical.tagline}
-            </span>
-            <h3 className="text-lg sm:text-2xl font-bold text-slate-950 dark:text-white">
-              {selectedVertical.name}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              {selectedVertical.summary}
-            </p>
-            <div className="space-y-2 sm:space-y-2.5 pt-1 sm:pt-2">
-              {selectedVertical.keyFeatures.map((feat, idx) => (
-                <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-800 dark:text-slate-200">
-                  <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
-                  <span className="leading-snug">{feat}</span>
+        {/* Side-by-Side: 3D WorksWheel on Left, Live Industry Monitor on Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+          
+          {/* Left: 3D WorksWheel Component */}
+          <div className="lg:col-span-7 flex flex-col">
+            <div className="relative flex-1 min-h-[420px] sm:min-h-[480px] lg:min-h-[520px] rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40 shadow-sm overflow-hidden flex flex-col">
+              
+              {/* Wheel Toolbar / Hint */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-10 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+                  <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider text-[11px]">
+                    3D Vertical Drum
+                  </span>
                 </div>
-              ))}
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <RotateCcw className="w-3 h-3 text-blue-600 dark:text-sky-400" />
+                  Drag, scroll wheel, or arrow keys to rotate
+                </span>
+              </div>
+
+              {/* The 3D Wheel Stage */}
+              <div className="relative flex-1 w-full overflow-hidden">
+                <WorksWheel
+                  items={wheelItems}
+                  label="Retail '26"
+                  action="Inspect"
+                  activeIndex={activeVerticalIndex}
+                  onActiveChange={handleVerticalSelect}
+                  onItemClick={handleVerticalSelect}
+                  className="h-full min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] bg-transparent"
+                />
+              </div>
+
+              {/* Bottom Quick Jump Dots */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-10 text-xs">
+                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                  Active: <strong className="text-slate-900 dark:text-white">{currentVertical.name}</strong>
+                </span>
+
+                <div className="flex items-center gap-1.5">
+                  {verticals.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleVerticalSelect(idx)}
+                      aria-label={`Jump to vertical ${idx + 1}`}
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                        idx === activeVerticalIndex
+                          ? 'w-6 bg-blue-600'
+                          : idx < activeVerticalIndex
+                          ? 'w-2 bg-blue-300 dark:bg-blue-800'
+                          : 'w-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+
             </div>
           </div>
 
-          <div className="md:col-span-5 bg-slate-50 dark:bg-slate-950 p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800/80 text-center space-y-2.5 sm:space-y-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-sky-400 flex items-center justify-center mx-auto border border-blue-200 dark:border-blue-900">
-              {React.createElement(selectedVertical.icon, { className: 'w-5 h-5 sm:w-6 sm:h-6' })}
+          {/* Right: Live Industry Profile Monitor */}
+          <div className="lg:col-span-5 flex flex-col">
+            <div className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full">
+              
+              <div>
+                {/* Header Badge */}
+                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
+                    </div>
+                    <span className="ml-1 text-[11px] font-mono uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">
+                      Live Industry Profile
+                    </span>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-sky-300 border border-blue-200 dark:border-blue-800">
+                    Vertical {currentVertical.number} of 05
+                  </span>
+                </div>
+
+                {/* Animated Vertical Details */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentVertical.id}
+                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                    className="space-y-4"
+                  >
+                    {/* Title & Tagline */}
+                    <div>
+                      <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">
+                        <Icon className="w-3.5 h-3.5" />
+                        <span>{currentVertical.tagline}</span>
+                      </div>
+                      <h3 className="text-2xl font-extrabold text-slate-950 dark:text-white mt-1">
+                        {currentVertical.name}
+                      </h3>
+                      <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        {currentVertical.summary}
+                      </p>
+                    </div>
+
+                    {/* Pre-Configured Preset Card */}
+                    <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1 flex items-center gap-1.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                        <span>Pre-Configured Out of the Box</span>
+                      </div>
+                      <div className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+                        {currentVertical.preset}
+                      </div>
+                    </div>
+
+                    {/* Key Features Checklist */}
+                    <div className="pt-2 space-y-2.5">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+                        Specialized Workflows
+                      </div>
+                      {currentVertical.keyFeatures.map((feat, idx) => (
+                        <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+                          <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
+                          <span className="leading-snug">{feat}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Bottom Card Footer */}
+              <div className="pt-4 mt-6 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
+                <span className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  Instant Template Loading
+                </span>
+                <span className="font-mono text-[11px] text-slate-400">
+                  Zero Custom Coding
+                </span>
+              </div>
+
             </div>
-            <div className="text-xs font-bold text-slate-900 dark:text-white">
-              Configured Out of the Box
-            </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-              No custom coding or software development needed. Select your store category during onboarding to get pre-configured presets.
-            </p>
           </div>
+
         </div>
       </div>
     </section>
