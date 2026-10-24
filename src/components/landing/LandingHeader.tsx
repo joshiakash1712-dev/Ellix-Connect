@@ -17,7 +17,6 @@ const navItems: NavItem[] = [
   { name: 'Workflow', href: '#workflow', id: 'workflow' },
   { name: 'Capabilities', href: '#features', id: 'features' },
   { name: 'How It Works', href: '#how-it-works', id: 'how-it-works' },
-  { name: 'Preview', href: '#product', id: 'product' },
 ];
 
 interface LandingHeaderProps {

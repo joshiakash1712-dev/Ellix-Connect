@@ -183,63 +183,9 @@ export const ConnectedWorkflow: React.FC = () => {
         
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-bold tracking-wider sm:tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-2.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
-            <span>Interactive 3D Workflow Wheel</span>
-          </div>
-          
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
             How data flows through your store.
           </h2>
-          <p className="mt-2.5 text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
-            Turn the 3D wheel or click any stage to see how each retail milestone triggers the next automated action in real time.
-          </p>
-        </div>
-
-        {/* 6-Step Visual Sequence Buttons (Interactive Navigation Bar) */}
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2.5 mb-8">
-          {stages.map((stage, idx) => {
-            const Icon = stage.icon;
-            const isActive = idx === activeStageIndex;
-            const isPast = idx < activeStageIndex;
-            return (
-              <button
-                key={stage.id}
-                type="button"
-                onClick={() => handleStageSelect(idx)}
-                className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all cursor-pointer relative ${
-                  isActive
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-500/20'
-                    : isPast
-                    ? 'bg-blue-50/70 dark:bg-blue-950/30 border-blue-200/60 dark:border-blue-900/40 text-blue-900 dark:text-blue-200'
-                    : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span
-                    className={`text-[10px] font-mono font-bold ${
-                      isActive ? 'text-blue-100' : isPast ? 'text-blue-600 dark:text-sky-400' : 'text-slate-400'
-                    }`}
-                  >
-                    {stage.number}
-                  </span>
-                  <Icon
-                    className={`w-3.5 h-3.5 ${
-                      isActive ? 'text-white' : isPast ? 'text-blue-600 dark:text-sky-400' : 'text-slate-400'
-                    }`}
-                  />
-                </div>
-                <div className="text-xs font-bold truncate">{stage.name}</div>
-                <div
-                  className={`hidden sm:block text-[10px] truncate mt-0.5 ${
-                    isActive ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
-                  }`}
-                >
-                  {stage.tagline}
-                </div>
-              </button>
-            );
-          })}
         </div>
 
         {/* Side-by-Side: 3D WorksWheel on Left, Live Workflow Monitor on Right */}

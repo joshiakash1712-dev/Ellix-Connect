@@ -179,62 +179,9 @@ export const CoreCapabilities: React.FC = () => {
         
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-bold tracking-wider sm:tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-2.5 sm:mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
-            <span>Interactive Capabilities Wheel</span>
-          </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
             Six tools unified into one calm platform.
           </h2>
-          <p className="mt-2.5 sm:mt-3 text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
-            Turn the 3D wheel or click any module to inspect all six capabilities that drive your store every day.
-          </p>
-        </div>
-
-        {/* 6 Capabilities Step Buttons */}
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2.5 mb-8">
-          {capabilities.map((cap, idx) => {
-            const CapIcon = cap.icon;
-            const isActive = idx === activeCapIndex;
-            const isPast = idx < activeCapIndex;
-            return (
-              <button
-                key={cap.id}
-                type="button"
-                onClick={() => handleCapSelect(idx)}
-                className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all cursor-pointer relative ${
-                  isActive
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-500/20'
-                    : isPast
-                    ? 'bg-blue-50/70 dark:bg-blue-950/30 border-blue-200/60 dark:border-blue-900/40 text-blue-900 dark:text-blue-200'
-                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span
-                    className={`text-[10px] font-mono font-bold ${
-                      isActive ? 'text-blue-100' : isPast ? 'text-blue-600 dark:text-sky-400' : 'text-slate-400'
-                    }`}
-                  >
-                    {cap.number}
-                  </span>
-                  <CapIcon
-                    className={`w-3.5 h-3.5 ${
-                      isActive ? 'text-white' : isPast ? 'text-blue-600 dark:text-sky-400' : 'text-slate-400'
-                    }`}
-                  />
-                </div>
-                <div className="text-xs font-bold truncate">{cap.title}</div>
-                <div
-                  className={`hidden sm:block text-[10px] truncate mt-0.5 ${
-                    isActive ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
-                  }`}
-                >
-                  {cap.badge}
-                </div>
-              </button>
-            );
-          })}
         </div>
 
         {/* Side-by-Side: 3D WorksWheel on Left, Live Capability Monitor on Right */}

@@ -12,10 +12,10 @@
 // transforms straight to the DOM. 0 is the ring, 1 is the drum with item 0 at
 // the front, and every whole number after that is one more item turned past.
 import * as React from "react";
-import { useMotionValue, useSpring, motion, AnimatePresence } from "framer-motion";
-import { SlidersHorizontal, Zap, Target, Check, X } from "lucide-react";
+import { useMotionValue, useSpring } from "framer-motion";
 
 import { cn } from "@/lib/utils";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 export interface WorksWheelItem {
   /** Project name. Shown beside the front card and in the index. */
@@ -85,12 +85,6 @@ export interface WorksWheelProps extends Omit<
   onActiveChange?: (index: number) => void;
   /** Optional click handler on card */
   onItemClick?: (index: number) => void;
-  /** Initial or controlled physics mode ('momentum' or 'precision') @default 'momentum' */
-  defaultPhysicsMode?: PhysicsMode;
-  /** Callback fired when physics mode is toggled */
-  onPhysicsModeChange?: (mode: PhysicsMode) => void;
-  /** Whether to show the physics configuration panel. @default true */
-  showPhysicsConfig?: boolean;
   /** Custom spring physics configuration for framer-motion momentum */
   springConfig?: {
     stiffness?: number;
@@ -98,6 +92,10 @@ export interface WorksWheelProps extends Omit<
     mass?: number;
     restDelta?: number;
   };
+  /** When true, internal wheel listener on the stage is disabled (used when parent handles sticky scroll) */
+  disableWheelListener?: boolean;
+  /** When true, toggles overflow: hidden on document.body while wheel is active and in-view */
+  lockScrollWhenActive?: boolean;
 }
 
 /* Geometry. The card is measured against the stage; everything else is measured
@@ -173,10 +171,9 @@ export function WorksWheel({
   activeIndex,
   onActiveChange,
   onItemClick,
-  defaultPhysicsMode = 'momentum',
-  onPhysicsModeChange,
-  showPhysicsConfig = true,
   springConfig,
+  disableWheelListener = false,
+  lockScrollWhenActive = false,
   ...props
 }: WorksWheelProps) {
   const stageRef = React.useRef<HTMLDivElement>(null);
@@ -184,50 +181,33 @@ export function WorksWheel({
   const cardRefs = React.useRef<(HTMLElement | null)[]>([]);
   const labelRef = React.useRef<HTMLDivElement>(null);
   const titleRef = React.useRef<HTMLDivElement>(null);
-  const configPanelRef = React.useRef<HTMLDivElement>(null);
+
+  const [isWheelInView, setIsWheelInView] = React.useState(false);
+  const [isPointerOverWheel, setIsPointerOverWheel] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!lockScrollWhenActive) return;
+    const el = stageRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsWheelInView(entry.isIntersecting);
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [lockScrollWhenActive]);
+
+  useScrollLock(lockScrollWhenActive && isWheelInView && isPointerOverWheel);
 
   const count = items.length;
   const last = Math.max(count - 1, 0);
 
-  // Configuration panel state: High Momentum vs Precision
-  const [physicsMode, setPhysicsMode] = React.useState<PhysicsMode>(defaultPhysicsMode);
-  const [isConfigOpen, setIsConfigOpen] = React.useState(false);
-
-  // Handle external defaultPhysicsMode changes if any
-  React.useEffect(() => {
-    if (defaultPhysicsMode) {
-      setPhysicsMode(defaultPhysicsMode);
-    }
-  }, [defaultPhysicsMode]);
-
   const activeSpringConfig = React.useMemo(() => {
     if (springConfig) return springConfig;
-    return PHYSICS_PRESETS[physicsMode].settings;
-  }, [physicsMode, springConfig]);
-
-  // Close configuration panel on click outside or Escape
-  React.useEffect(() => {
-    if (!isConfigOpen) return;
-    const handleDown = (e: MouseEvent | TouchEvent) => {
-      if (configPanelRef.current && !configPanelRef.current.contains(e.target as Node)) {
-        setIsConfigOpen(false);
-      }
-    };
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsConfigOpen(false);
-    };
-    window.addEventListener("pointerdown", handleDown);
-    window.addEventListener("keydown", handleKey);
-    return () => {
-      window.removeEventListener("pointerdown", handleDown);
-      window.removeEventListener("keydown", handleKey);
-    };
-  }, [isConfigOpen]);
-
-  const handleModeToggle = (mode: PhysicsMode) => {
-    setPhysicsMode(mode);
-    onPhysicsModeChange?.(mode);
-  };
+    return PHYSICS_PRESETS.momentum.settings;
+  }, [springConfig]);
 
   // The wheel's position, and where it is heading. Only `active` is state -
   // everything else is written to the DOM, so turning the wheel is not a render.
@@ -420,6 +400,7 @@ export function WorksWheel({
 
   // Wheel listener: responsive, smooth, 1 tick = 1 step, inverted rotation mapping (downward scroll = clockwise rotation), and boundary pass-through
   React.useEffect(() => {
+    if (disableWheelListener) return;
     const el = stageRef.current;
     if (!el) return;
 
@@ -481,11 +462,19 @@ export function WorksWheel({
       el.removeEventListener("wheel", onWheel);
       window.clearTimeout(wheelResetTimeout.current);
     };
-  }, [to, last]);
+  }, [to, last, disableWheelListener]);
 
   return (
     <section
       aria-label={label}
+      onPointerEnter={(e) => {
+        setIsPointerOverWheel(true);
+        props.onPointerEnter?.(e);
+      }}
+      onPointerLeave={(e) => {
+        setIsPointerOverWheel(false);
+        props.onPointerLeave?.(e);
+      }}
       className={cn(
         "bg-background text-foreground relative h-full min-h-[24rem] w-full overflow-hidden select-none",
         className,
@@ -647,147 +636,6 @@ export function WorksWheel({
           </li>
         ))}
       </ol>
-
-      {/* Physics Settings & Mode Configuration Panel */}
-      {showPhysicsConfig && (
-        <div
-          ref={configPanelRef}
-          className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 pointer-events-auto select-none"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Segmented Quick Toggle Bar with Settings Trigger */}
-          <div className="flex items-center gap-1 p-1 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-sm">
-            <button
-              type="button"
-              onClick={() => handleModeToggle('momentum')}
-              title="Switch to High Momentum mode (fluid inertia & glide)"
-              className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer",
-                physicsMode === 'momentum'
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
-              )}
-            >
-              <Zap className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">High Momentum</span>
-              <span className="sm:hidden">Momentum</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleModeToggle('precision')}
-              title="Switch to Precision mode (crisp lock-in & zero overshoot)"
-              className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer",
-                physicsMode === 'precision'
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
-              )}
-            >
-              <Target className="w-3.5 h-3.5" />
-              <span>Precision</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsConfigOpen((prev) => !prev)}
-              aria-label="Toggle Physics Configuration Panel"
-              title="Physics Settings & Parameters"
-              className={cn(
-                "p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer",
-                isConfigOpen ? "bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white" : "hover:bg-slate-100 dark:hover:bg-slate-800"
-              )}
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {/* Detailed Configuration Panel Popover */}
-          <AnimatePresence>
-            {isConfigOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -6, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -6, scale: 0.96 }}
-                transition={{ duration: 0.16, ease: "easeOut" }}
-                className="mt-2 w-72 sm:w-80 p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl backdrop-blur-xl"
-              >
-                <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <span className="p-1 rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-sky-400">
-                      <SlidersHorizontal className="w-3.5 h-3.5" />
-                    </span>
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white">Spring Dynamics</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Framer Motion physics engine</div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsConfigOpen(false)}
-                    className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
-                    aria-label="Close configuration panel"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                {/* Mode Selectors */}
-                <div className="space-y-2">
-                  {(['momentum', 'precision'] as const).map((mode) => {
-                    const preset = PHYSICS_PRESETS[mode];
-                    const isSelected = physicsMode === mode;
-                    const Icon = mode === 'momentum' ? Zap : Target;
-
-                    return (
-                      <div
-                        key={mode}
-                        onClick={() => handleModeToggle(mode)}
-                        className={cn(
-                          "p-2.5 rounded-xl border text-left cursor-pointer transition-all",
-                          isSelected
-                            ? "bg-blue-50/70 dark:bg-blue-950/40 border-blue-500/70 shadow-sm ring-1 ring-blue-500/30"
-                            : "bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
-                        )}
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <div className="flex items-center gap-1.5">
-                            <Icon className={cn("w-3.5 h-3.5", isSelected ? "text-blue-600 dark:text-sky-400" : "text-slate-400")} />
-                            <span className="text-xs font-bold text-slate-900 dark:text-white">
-                              {preset.label}
-                            </span>
-                          </div>
-                          {isSelected && (
-                            <span className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white">
-                              <Check className="w-2.5 h-2.5" />
-                            </span>
-                          )}
-                        </div>
-
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug">
-                          {preset.description}
-                        </p>
-
-                        {/* Live Physics Parameters Readout */}
-                        <div className="mt-2 pt-2 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400">
-                          <span>mass: <strong>{preset.settings.mass}</strong></span>
-                          <span>damping: <strong>{preset.settings.damping}</strong></span>
-                          <span>stiffness: <strong>{preset.settings.stiffness}</strong></span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-3 text-[10px] text-slate-400 dark:text-slate-500 text-center">
-                  Scroll or drag the drum to feel the spring response
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      )}
     </section>
   );
 }
