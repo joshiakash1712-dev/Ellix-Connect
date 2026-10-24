@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   Sparkles,
   ArrowRight,
-  RotateCcw,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { WorksWheel, type WorksWheelItem } from '@/components/ui/works-wheel';
@@ -116,10 +115,6 @@ export const ProductPreview: React.FC = () => {
           <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-1.5 sm:mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
             <span>Interactive Product Wheel</span>
-            <span className="text-slate-300 dark:text-slate-700">·</span>
-            <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">
-              Module {activeTabIndex + 1} of {tabs.length}
-            </span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight">
             Designed for speed at the counter.
@@ -182,20 +177,6 @@ export const ProductPreview: React.FC = () => {
           <div className="lg:col-span-6 xl:col-span-6 flex flex-col">
             <div className="relative flex-1 min-h-[420px] sm:min-h-[480px] lg:min-h-[520px] rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 shadow-sm overflow-hidden flex flex-col">
               
-              {/* Wheel Toolbar / Hint */}
-              <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-10 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-                  <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider text-[11px]">
-                    3D Module Drum
-                  </span>
-                </div>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                  <RotateCcw className="w-3 h-3 text-blue-600 dark:text-sky-400" />
-                  Drag, scroll wheel, or arrow keys to rotate
-                </span>
-              </div>
-
               {/* The 3D Wheel Stage */}
               <div className="relative flex-1 w-full overflow-hidden">
                 <WorksWheel

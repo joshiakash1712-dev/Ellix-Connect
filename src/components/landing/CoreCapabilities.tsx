@@ -7,7 +7,6 @@ import {
   ShieldCheck,
   BarChart3,
   CheckCircle2,
-  RotateCcw,
   Sparkles,
   ArrowRight,
 } from 'lucide-react';
@@ -183,10 +182,6 @@ export const CoreCapabilities: React.FC = () => {
           <div className="inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-bold tracking-wider sm:tracking-widest text-blue-600 dark:text-sky-400 uppercase select-none mb-2.5 sm:mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]" />
             <span>Interactive Capabilities Wheel</span>
-            <span className="text-slate-300 dark:text-slate-700">·</span>
-            <span className="text-slate-500 dark:text-slate-400 font-semibold normal-case tracking-normal">
-              Feature {activeCapIndex + 1} of {capabilities.length}
-            </span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
             Six tools unified into one calm platform.
@@ -249,20 +244,6 @@ export const CoreCapabilities: React.FC = () => {
           <div className="lg:col-span-7 flex flex-col">
             <div className="relative flex-1 min-h-[420px] sm:min-h-[480px] lg:min-h-[520px] rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40 shadow-sm overflow-hidden flex flex-col">
               
-              {/* Wheel Toolbar / Hint */}
-              <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-10 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-                  <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider text-[11px]">
-                    3D Capabilities Drum
-                  </span>
-                </div>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                  <RotateCcw className="w-3 h-3 text-blue-600 dark:text-sky-400" />
-                  Drag, scroll wheel, or arrow keys to rotate
-                </span>
-              </div>
-
               {/* The 3D Wheel Stage */}
               <div className="relative flex-1 w-full overflow-hidden">
                 <WorksWheel
@@ -321,9 +302,6 @@ export const CoreCapabilities: React.FC = () => {
                       Live Capability Monitor
                     </span>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-sky-300 border border-blue-200 dark:border-blue-800">
-                    Feature {currentCap.number} of 06
-                  </span>
                 </div>
 
                 {/* Animated Capability Details */}

@@ -12,6 +12,7 @@
 // transforms straight to the DOM. 0 is the ring, 1 is the drum with item 0 at
 // the front, and every whole number after that is one more item turned past.
 import * as React from "react";
+import { useMotionValue, useSpring } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
@@ -41,6 +42,13 @@ export interface WorksWheelProps extends Omit<
   onActiveChange?: (index: number) => void;
   /** Optional click handler on card */
   onItemClick?: (index: number) => void;
+  /** Custom spring physics configuration for framer-motion momentum */
+  springConfig?: {
+    stiffness?: number;
+    damping?: number;
+    mass?: number;
+    restDelta?: number;
+  };
 }
 
 /* Geometry. The card is measured against the stage; everything else is measured
@@ -116,6 +124,7 @@ export function WorksWheel({
   activeIndex,
   onActiveChange,
   onItemClick,
+  springConfig,
   ...props
 }: WorksWheelProps) {
   const stageRef = React.useRef<HTMLDivElement>(null);
@@ -135,6 +144,16 @@ export function WorksWheel({
       : 0;
   const turn = React.useRef(initialTarget);
   const target = React.useRef(initialTarget);
+
+  // Framer-motion spring physics for natural tactile momentum and settling
+  const targetMotion = useMotionValue(initialTarget);
+  const springTurn = useSpring(targetMotion, {
+    stiffness: springConfig?.stiffness ?? 220,
+    damping: springConfig?.damping ?? 26,
+    mass: springConfig?.mass ?? 0.85,
+    restDelta: springConfig?.restDelta ?? 0.001,
+  });
+
   const [active, setActive] = React.useState(activeIndex ?? 0);
   const [stage, setStage] = React.useState<Stage>({ w: 0, h: 0 });
 
@@ -207,11 +226,18 @@ export function WorksWheel({
     if (activeIndex !== undefined && activeIndex >= 0 && activeIndex <= last) {
       if (activeRef.current !== activeIndex) {
         activeRef.current = activeIndex;
-        target.current = activeIndex + 1;
+        const nextTarget = activeIndex + 1;
+        target.current = nextTarget;
+        if (reduced) {
+          targetMotion.jump(nextTarget);
+          springTurn.jump(nextTarget);
+        } else {
+          targetMotion.set(nextTarget);
+        }
         setActive(activeIndex);
       }
     }
-  }, [activeIndex, last]);
+  }, [activeIndex, last, reduced, targetMotion, springTurn]);
 
   // One pass per frame: ease toward the target, then write every transform.
   React.useEffect(() => {
@@ -221,14 +247,17 @@ export function WorksWheel({
 
     const draw = () => {
       frame = requestAnimationFrame(draw);
-      const gap = target.current - turn.current;
-      if (Math.abs(gap) < 0.0005) {
+
+      // Use framer-motion spring physics for tactile momentum effect
+      if (reduced) {
         turn.current = target.current;
-        if (isUserTurning.current) {
-          isUserTurning.current = false;
-        }
       } else {
-        turn.current += gap * (reduced ? 1 : 0.14);
+        turn.current = springTurn.get();
+      }
+
+      const gap = target.current - turn.current;
+      if (Math.abs(gap) < 0.001 && isUserTurning.current) {
+        isUserTurning.current = false;
       }
 
       const t = turn.current;
@@ -244,7 +273,6 @@ export function WorksWheel({
 
       for (let i = 0; i < count; i++) {
         const d = i - pos;
-        // Inverted: -d * STEP ensures scrolling down rolls the wheel downward into view
         const drumDeg = -d * STEP;
         const card = cardRefs.current[i];
         if (card) {
@@ -286,16 +314,23 @@ export function WorksWheel({
 
     frame = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(frame);
-  }, [metrics, stage.h, count, last, reduced]);
+  }, [metrics, stage.h, count, last, reduced, springTurn]);
 
   const to = React.useCallback(
     (next: number) => {
-      target.current = clamp(next, 1, last + 1);
+      const nextTarget = clamp(next, 1, last + 1);
+      target.current = nextTarget;
+      if (reduced) {
+        targetMotion.jump(nextTarget);
+        springTurn.jump(nextTarget);
+      } else {
+        targetMotion.set(nextTarget);
+      }
     },
-    [last],
+    [last, reduced, targetMotion, springTurn],
   );
 
-  // Wheel listener: responsive, smooth, 1 tick = 1 step, non-inverted, and boundary pass-through
+  // Wheel listener: responsive, smooth, 1 tick = 1 step, inverted rotation mapping (downward scroll = clockwise rotation), and boundary pass-through
   React.useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
@@ -304,6 +339,8 @@ export function WorksWheel({
       // Ignore purely horizontal gestures
       if (Math.abs(event.deltaY) < 2 && Math.abs(event.deltaX) > 10) return;
 
+      // Inverted rotation mapping: scrolling downward on the mouse (deltaY > 0) triggers a clockwise rotation,
+      // and scrolling upward on the mouse (deltaY < 0) triggers a counter-clockwise rotation.
       const dy = event.deltaY;
       const direction = dy > 0 ? 1 : -1;
       const currentItem = Math.round(target.current);

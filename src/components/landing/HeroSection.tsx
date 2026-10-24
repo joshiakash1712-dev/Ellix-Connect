@@ -107,8 +107,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           >
             <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-600 dark:bg-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.7)] animate-pulse shrink-0" />
             <span>Retail &amp; Commerce Operating System</span>
-            <span className="text-slate-300 dark:text-slate-700">·</span>
-            <span className="text-slate-500 dark:text-slate-400 normal-case tracking-normal font-semibold">Zero Complexity</span>
           </motion.div>
 
           {/* 2. Large Headline — Blur-to-sharp entrance motion with balanced typography */}
@@ -181,9 +179,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" /> Works on any device
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" /> Offline resilient
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" /> Instant digital bills
@@ -292,7 +287,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="p-3 sm:p-6 bg-slate-50/50 dark:bg-slate-950/50 space-y-3.5 sm:space-y-5">
               
               {/* Dynamic Quick Stats Row according to activeWorkspaceMode */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
                 {activeWorkspaceMode === 'pos' && (
                   <>
                     <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
@@ -311,15 +306,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       </div>
                       <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">38 Bills</div>
                       <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 truncate">Avg. ₹1,127 / bill</div>
-                    </div>
-
-                    <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
-                      <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1 gap-1">
-                        <span className="text-[11px] sm:text-xs font-medium truncate">Inventory Health</span>
-                        <Package className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover:-translate-y-0.5 transition-transform duration-200 shrink-0" />
-                      </div>
-                      <div className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tabular-nums truncate">99.2%</div>
-                      <div className="text-[10px] sm:text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5 truncate">2 items low on stock</div>
                     </div>
 
                     <div className="website-card-hover bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-default group min-w-0">
