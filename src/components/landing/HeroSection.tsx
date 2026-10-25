@@ -32,20 +32,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
-  const [activeSyncStep, setActiveSyncStep] = useState<number>(0);
-  const [hoveredSyncStep, setHoveredSyncStep] = useState<number | null>(null);
   const [activeWorkspaceMode, setActiveWorkspaceMode] = useState<'pos' | 'inventory' | 'finance'>('pos');
-
-  // Subtle background data-flow cycle across the 3 Connected Sync Engine steps
-  useEffect(() => {
-    if (prefersReducedMotion || hoveredSyncStep !== null) return;
-    const timer = setInterval(() => {
-      setActiveSyncStep((prev) => (prev + 1) % 3);
-    }, 2600);
-    return () => clearInterval(timer);
-  }, [prefersReducedMotion, hoveredSyncStep]);
-
-  const currentSyncStep = hoveredSyncStep !== null ? hoveredSyncStep : activeSyncStep;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -403,8 +390,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               {/* Main Workstage Split according to activeWorkspaceMode */}
               {activeWorkspaceMode === 'pos' && (
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 relative animate-in fade-in duration-200">
-                  {/* Left: Active Billing Terminal (7 Cols) */}
-                  <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-3 sm:p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-blue-500/30">
+                  {/* Active Billing Terminal */}
+                  <div className="lg:col-span-12 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-3 sm:p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-blue-500/30">
                     <div>
                       <div className="flex items-center justify-between gap-2 pb-2.5 sm:pb-3 mb-2.5 sm:mb-3 border-b border-slate-100 dark:border-slate-800">
                         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
@@ -489,125 +476,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           Stock Deducted
                         </div>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Right: Connected System Flow Stream (5 Cols) — Live Active Sync Pulse */}
-                  <div
-                    className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-3 sm:p-4 shadow-sm flex flex-col justify-between transition-colors hover:border-blue-500/30"
-                    onMouseLeave={() => setHoveredSyncStep(null)}
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 pb-2.5 sm:pb-3 mb-2.5 sm:mb-3 border-b border-slate-100 dark:border-slate-800">
-                        <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-1.5 min-w-0">
-                          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse shrink-0" />
-                          <span className="truncate">Connected Sync Engine</span>
-                        </span>
-                        <span className="text-[10px] sm:text-[11px] font-mono text-blue-600 dark:text-sky-400 bg-sky-50 dark:bg-blue-950/60 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md border border-sky-200/60 dark:border-sky-800/60 whitespace-nowrap shrink-0">
-                          0.04s latency
-                        </span>
-                      </div>
-
-                      <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 mb-2.5 sm:mb-3">
-                        One counter checkout automatically updates every corner of your business:
-                      </p>
-
-                      <div className="space-y-2.5 text-xs relative">
-                        {/* Step 1: Inventory Level Updated */}
-                        <div
-                          onMouseEnter={() => setHoveredSyncStep(0)}
-                          className={`flex items-start gap-2.5 p-2 rounded-lg border transition-all duration-300 cursor-default ${
-                            currentSyncStep === 0
-                              ? 'bg-sky-50/60 dark:bg-blue-950/35 border-sky-400/60 dark:border-sky-500/50 shadow-2xs translate-x-0.5'
-                              : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800'
-                          }`}
-                        >
-                          <div
-                            className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5 transition-all duration-300 ${
-                              currentSyncStep === 0
-                                ? 'bg-blue-600 text-white shadow-[0_0_8px_rgba(37,99,235,0.5)] scale-105'
-                                : 'bg-sky-100 dark:bg-blue-950 text-blue-700 dark:text-sky-400'
-                            }`}
-                          >
-                            1
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-1">
-                              <span className="font-semibold text-slate-900 dark:text-white">Inventory Level Updated</span>
-                              {currentSyncStep === 0 && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-                              )}
-                            </div>
-                            <div className="text-[11px] text-slate-500 dark:text-slate-400">Groundnut Oil: 14 → 13 units remaining</div>
-                          </div>
-                        </div>
-
-                        {/* Step 2: Customer History Synced */}
-                        <div
-                          onMouseEnter={() => setHoveredSyncStep(1)}
-                          className={`flex items-start gap-2.5 p-2 rounded-lg border transition-all duration-300 cursor-default ${
-                            currentSyncStep === 1
-                              ? 'bg-sky-50/60 dark:bg-blue-950/35 border-sky-400/60 dark:border-sky-500/50 shadow-2xs translate-x-0.5'
-                              : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800'
-                          }`}
-                        >
-                          <div
-                            className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5 transition-all duration-300 ${
-                              currentSyncStep === 1
-                                ? 'bg-blue-600 text-white shadow-[0_0_8px_rgba(37,99,235,0.5)] scale-105'
-                                : 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400'
-                            }`}
-                          >
-                            2
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-1">
-                              <span className="font-semibold text-slate-900 dark:text-white">Customer History Synced</span>
-                              {currentSyncStep === 1 && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-                              )}
-                            </div>
-                            <div className="text-[11px] text-slate-500 dark:text-slate-400">₹1,120 added to Rajesh&apos;s lifetime ledger</div>
-                          </div>
-                        </div>
-
-                        {/* Step 3: Accounting & Tax Recorded */}
-                        <div
-                          onMouseEnter={() => setHoveredSyncStep(2)}
-                          className={`flex items-start gap-2.5 p-2 rounded-lg border transition-all duration-300 cursor-default ${
-                            currentSyncStep === 2
-                              ? 'bg-sky-50/60 dark:bg-blue-950/35 border-sky-400/60 dark:border-sky-500/50 shadow-2xs translate-x-0.5'
-                              : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800'
-                          }`}
-                        >
-                          <div
-                            className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5 transition-all duration-300 ${
-                              currentSyncStep === 2
-                                ? 'bg-blue-600 text-white shadow-[0_0_8px_rgba(37,99,235,0.5)] scale-105'
-                                : 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-400'
-                            }`}
-                          >
-                            3
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-1">
-                              <span className="font-semibold text-slate-900 dark:text-white">Accounting &amp; Tax Recorded</span>
-                              {currentSyncStep === 2 && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-                              )}
-                            </div>
-                            <div className="text-[11px] text-slate-500 dark:text-slate-400">CGST ₹26.50 + SGST ₹26.50 entered in GST report</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between gap-1">
-                      <span className="truncate">Cloud: Synced 2s ago</span>
-                      <span className="text-blue-600 dark:text-sky-400 font-medium flex items-center gap-1 shrink-0">
-                        <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-                        <span>100% Integrity</span>
-                      </span>
                     </div>
                   </div>
                 </div>

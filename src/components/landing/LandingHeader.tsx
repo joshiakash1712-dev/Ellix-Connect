@@ -12,12 +12,7 @@ interface NavItem {
   id: string;
 }
 
-const navItems: NavItem[] = [
-  { name: 'Problem', href: '#problem', id: 'problem' },
-  { name: 'Workflow', href: '#workflow', id: 'workflow' },
-  { name: 'Capabilities', href: '#features', id: 'features' },
-  { name: 'How It Works', href: '#how-it-works', id: 'how-it-works' },
-];
+const navItems: NavItem[] = [];
 
 interface LandingHeaderProps {
   onOpenSignIn?: () => void;
@@ -73,6 +68,8 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
         setIsScrolled((prev) => (prev !== nextScrolled ? nextScrolled : prev));
 
         // 2. Detect active section based on cached scroll offsets
+        if (navItems.length === 0) return;
+
         if (currentScrollY < 180) {
           setActiveSection((prev) => (prev !== '' ? '' : prev));
           return;
@@ -177,43 +174,45 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
         </a>
 
         {/* Desktop Navigation with Smooth Scroll & Active Indicator */}
-        <nav className="hidden md:flex items-center gap-0.5 lg:gap-1.5 text-sm font-medium shrink-0">
-          {navItems.map((item) => {
-            const isActive = activeSection === item.id;
-            const isGuide = item.id === 'guide';
-            return (
-              <a
-                key={item.id}
-                href={item.href}
-                data-cursor="hover"
-                onClick={(e) => scrollToSection(e, item.href, item.id)}
-                className={`website-nav-hover relative px-2.5 lg:px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap ${
-                  isActive
-                    ? 'text-emerald-700 dark:text-emerald-400 font-semibold bg-emerald-50/80 dark:bg-emerald-950/40'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60'
-                }`}
-              >
-                <span>{item.name}</span>
-                {isGuide && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-                    {guideCompleted
-                      ? '✓'
-                      : guideProgressStep && guideProgressStep > 0
-                      ? `${guideProgressStep}/12`
-                      : 'Tour'}
-                  </span>
-                )}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeNavIndicator"
-                    className="absolute bottom-0 left-3 right-3 h-0.5 bg-emerald-600 dark:bg-emerald-400 rounded-full"
-                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                  />
-                )}
-              </a>
-            );
-          })}
-        </nav>
+        {navItems.length > 0 && (
+          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1.5 text-sm font-medium shrink-0">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.id;
+              const isGuide = item.id === 'guide';
+              return (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  data-cursor="hover"
+                  onClick={(e) => scrollToSection(e, item.href, item.id)}
+                  className={`website-nav-hover relative px-2.5 lg:px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                    isActive
+                      ? 'text-emerald-700 dark:text-emerald-400 font-semibold bg-emerald-50/80 dark:bg-emerald-950/40'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/60'
+                  }`}
+                >
+                  <span>{item.name}</span>
+                  {isGuide && (
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                      {guideCompleted
+                        ? '✓'
+                        : guideProgressStep && guideProgressStep > 0
+                        ? `${guideProgressStep}/12`
+                        : 'Tour'}
+                    </span>
+                  )}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavIndicator"
+                      className="absolute bottom-0 left-3 right-3 h-0.5 bg-emerald-600 dark:bg-emerald-400 rounded-full"
+                      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                    />
+                  )}
+                </a>
+              );
+            })}
+          </nav>
+        )}
 
         {/* Static Header Actions & Theme Toggle */}
         <div className="flex items-center gap-2 sm:gap-3">
@@ -330,40 +329,42 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
             transition={{ duration: 0.2 }}
             className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-900/98 backdrop-blur-md px-4 pt-3 pb-6 space-y-4 shadow-xl overflow-hidden"
           >
-            <div className="flex flex-col space-y-1 text-sm font-semibold">
-              {navItems.map((item) => {
-                const isActive = activeSection === item.id;
-                const isGuide = item.id === 'guide';
-                return (
-                  <a
-                    key={item.id}
-                    href={item.href}
-                    onClick={(e) => scrollToSection(e, item.href, item.id)}
-                    className={`px-3 py-2.5 rounded-xl transition-colors flex items-center justify-between ${
-                      isActive
-                        ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-bold'
-                        : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span>{item.name}</span>
-                      {isGuide && (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-                          {guideCompleted
-                            ? 'Completed ✓'
-                            : guideProgressStep && guideProgressStep > 0
-                            ? `Step ${guideProgressStep}/12`
-                            : '12-Step Tour'}
-                        </span>
+            {navItems.length > 0 && (
+              <div className="flex flex-col space-y-1 text-sm font-semibold">
+                {navItems.map((item) => {
+                  const isActive = activeSection === item.id;
+                  const isGuide = item.id === 'guide';
+                  return (
+                    <a
+                      key={item.id}
+                      href={item.href}
+                      onClick={(e) => scrollToSection(e, item.href, item.id)}
+                      className={`px-3 py-2.5 rounded-xl transition-colors flex items-center justify-between ${
+                        isActive
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-bold'
+                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span>{item.name}</span>
+                        {isGuide && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                            {guideCompleted
+                              ? 'Completed ✓'
+                              : guideProgressStep && guideProgressStep > 0
+                              ? `Step ${guideProgressStep}/12`
+                              : '12-Step Tour'}
+                          </span>
+                        )}
+                      </span>
+                      {isActive && (
+                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
                       )}
-                    </span>
-                    {isActive && (
-                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                    )}
-                  </a>
-                );
-              })}
-            </div>
+                    </a>
+                  );
+                })}
+              </div>
+            )}
 
             <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2.5">
               <div className="flex items-center justify-between py-1.5 px-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl">

@@ -187,14 +187,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUserProfile(updatedProfile);
         return updatedProfile;
       } else {
-        const requestedCanonical = normalizeCanonicalRole(additionalData?.role);
-        const allowedSelfRegRoles: ProfileRole[] = ['client', 'crew', 'wholesaler_admin'];
-        const initialRole: ProfileRole = isAdminUser
-          ? 'super_admin'
-          : allowedSelfRegRoles.includes(requestedCanonical)
-          ? requestedCanonical
-          : 'client';
-
+        const initialRole: ProfileRole = isAdminUser ? 'super_admin' : 'client';
         const defaultClientId = `client-${user.uid}`;
         const newProfile: UserProfile = {
           uid: user.uid,
@@ -206,7 +199,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           photoURL: user.photoURL || '',
           role: initialRole,
           clientId: defaultClientId,
-          assignedStoreIds: initialRole === 'crew' ? [] : ['store-1'],
+          assignedStoreIds: isAdminUser ? ['store-1'] : [],
           status: 'active',
           linkedProviders: linkedProviders.length > 0 ? linkedProviders : ['anonymous'],
           passwordSynchronized: hasPassword,
