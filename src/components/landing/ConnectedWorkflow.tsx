@@ -10,16 +10,11 @@ import {
   ArrowLeft,
   CheckCircle2,
   Sparkles,
+  MousePointer,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { WorksWheel, type WorksWheelItem } from '@/components/ui/works-wheel';
-
-import productsImg from '../../assets/images/workflow_products_sku_1792691890542.jpg';
-import customersImg from '../../assets/images/workflow_customer_khata_1792691907419.jpg';
-import billingImg from '../../assets/images/workflow_pos_billing_1792691908115.jpg';
-import paymentsImg from '../../assets/images/workflow_upi_payments_1792691908068.jpg';
-import inventoryImg from '../../assets/images/workflow_inventory_stock_1792691922135.jpg';
-import recordsImg from '../../assets/images/workflow_tax_records_1792691922332.jpg';
+import { WorkWheelStage } from './WorkWheelStage';
+import { useCardWheelScroll } from '../../hooks/useCardWheelScroll';
 
 interface WorkflowStage {
   id: string;
@@ -29,7 +24,6 @@ interface WorkflowStage {
   tagline: string;
   summary: string;
   rippleEffect: string;
-  image: string;
   mockupSnippet: {
     title: string;
     badge: string;
@@ -46,7 +40,6 @@ const stages: WorkflowStage[] = [
     tagline: 'Catalog & Barcodes',
     summary: 'Add SKUs once with barcode, purchase price, selling price, and GST tax slab.',
     rippleEffect: 'Immediately ready for counter barcode scanners and stock tracking.',
-    image: productsImg,
     mockupSnippet: {
       title: 'Catalog Record',
       badge: 'Active SKU',
@@ -65,7 +58,6 @@ const stages: WorkflowStage[] = [
     tagline: 'Profiles & Khata',
     summary: 'Identify repeat buyers by phone number and manage customer credit limits.',
     rippleEffect: 'Links purchase history and credit balance to the customer’s profile.',
-    image: customersImg,
     mockupSnippet: {
       title: 'Customer Profile',
       badge: 'VIP Member',
@@ -84,7 +76,6 @@ const stages: WorkflowStage[] = [
     tagline: 'Counter Scan-to-Bill',
     summary: 'Scan items in sub-seconds with optical laser or keyboard search.',
     rippleEffect: 'Generates instant GST-compliant thermal receipts or WhatsApp bills.',
-    image: billingImg,
     mockupSnippet: {
       title: 'POS Active Invoice',
       badge: 'INV-2026-0842',
@@ -103,7 +94,6 @@ const stages: WorkflowStage[] = [
     tagline: 'Cash, UPI QR, Cards & Split',
     summary: 'Accept any tender: dynamic scan-and-pay UPI QR, cards, cash, or credit Khata.',
     rippleEffect: 'Settles payment instantly and flags any remaining credit balance.',
-    image: paymentsImg,
     mockupSnippet: {
       title: 'Payment Settlement',
       badge: 'Split Tender Ready',
@@ -122,7 +112,6 @@ const stages: WorkflowStage[] = [
     tagline: 'Live Stock Deduction',
     summary: 'Stock automatically deducts across registers the instant a bill is completed.',
     rippleEffect: 'Warns you before shelves run empty and drafts wholesale reorders.',
-    image: inventoryImg,
     mockupSnippet: {
       title: 'Live Stock Engine',
       badge: 'Real-Time Sync',
@@ -141,7 +130,6 @@ const stages: WorkflowStage[] = [
     tagline: 'Reports, GST & Audit Logs',
     summary: 'Sales, drawer cash, and GST tax schedules update without manual tallying.',
     rippleEffect: 'No late-night spreadsheets. End-of-day Z-reports are ready in 60 seconds.',
-    image: recordsImg,
     mockupSnippet: {
       title: 'Daily Business Summary',
       badge: 'Automated Record',
@@ -154,13 +142,6 @@ const stages: WorkflowStage[] = [
   },
 ];
 
-const wheelItems: WorksWheelItem[] = stages.map((stage) => ({
-  title: stage.name,
-  tagline: stage.tagline,
-  image: stage.image,
-  href: `#stage-${stage.id}`,
-}));
-
 export const ConnectedWorkflow: React.FC = () => {
   const [activeStageIndex, setActiveStageIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion();
@@ -170,14 +151,25 @@ export const ConnectedWorkflow: React.FC = () => {
     setActiveStageIndex(idx);
   }, []);
 
-  const handleActiveChange = React.useCallback((idx: number) => {
-    setActiveStageIndex(idx);
-  }, []);
+  // Work wheel scrolling with screen centering and page-lock until last card
+  const {
+    sectionRef,
+    cardRef,
+    scrollProps,
+    isLastItem,
+    scrollToNextSection,
+  } = useCardWheelScroll({
+    totalItems: stages.length,
+    activeIndex: activeStageIndex,
+    onActiveChange: setActiveStageIndex,
+    sectionId: 'workflow',
+  });
 
   return (
     <section
+      ref={sectionRef}
       id="workflow"
-      className="relative bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors py-12 sm:py-16 md:py-20 overflow-hidden"
+      className="relative scroll-mt-16 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors py-12 sm:py-16 md:py-20 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -188,71 +180,64 @@ export const ConnectedWorkflow: React.FC = () => {
           </h2>
         </div>
 
-        {/* Side-by-Side: 3D WorksWheel on Left, Live Workflow Monitor on Right */}
+        {/* Side-by-Side: Interactive Work Wheel on Left, Live Scrolling Monitor Card on Right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           
-          {/* Left: 3D WorksWheel Component */}
-          <div className="lg:col-span-7 flex flex-col">
-            <div className="relative flex-1 min-h-[420px] sm:min-h-[480px] lg:min-h-[520px] rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 shadow-sm overflow-hidden flex flex-col">
-              
-              {/* The 3D Wheel Stage */}
-              <div className="relative flex-1 w-full overflow-hidden">
-                <WorksWheel
-                  items={wheelItems}
-                  label="Workflow '26"
-                  action="Inspect"
-                  activeIndex={activeStageIndex}
-                  onActiveChange={handleActiveChange}
-                  onItemClick={handleStageSelect}
-                  className="h-full min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] bg-transparent"
-                />
-              </div>
-
-              {/* Bottom Quick Jump Dots for mobile touch convenience */}
-              <div className="flex items-center justify-between px-4 py-2.5 border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-10 text-xs">
-                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                  Active: <strong className="text-slate-900 dark:text-white">{currentStage.name}</strong>
-                </span>
-
-                <div className="flex items-center gap-1.5">
-                  {stages.map((_, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleStageSelect(idx)}
-                      aria-label={`Jump to stage ${idx + 1}`}
-                      className={`h-2 rounded-full transition-all cursor-pointer ${
-                        idx === activeStageIndex
-                          ? 'w-6 bg-blue-600'
-                          : idx < activeStageIndex
-                          ? 'w-2 bg-blue-300 dark:bg-blue-800'
-                          : 'w-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-            </div>
+          {/* Left: Vector Work Wheel Dial Component (Hidden on mobile for clean preview, visible on desktop) */}
+          <div className="hidden lg:flex lg:col-span-6 xl:col-span-6 flex-col">
+            <WorkWheelStage
+              items={stages.map((s) => ({
+                id: s.id,
+                number: s.number,
+                title: s.name,
+                tagline: s.tagline,
+                icon: s.icon,
+              }))}
+              activeIndex={activeStageIndex}
+              onActiveChange={handleStageSelect}
+              label="Workflow '26"
+              sublabel="Live Sync"
+              className="h-full min-h-[380px] sm:min-h-[440px]"
+            />
           </div>
 
-          {/* Right: Live Workflow Monitor (Anchored details for user reading) */}
-          <div className="lg:col-span-5 flex flex-col">
-            <div className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full">
-              
+          {/* Right: Live Workflow Monitor (Target Card with Work Wheel scrolling applied) */}
+          <div className="lg:col-span-6 xl:col-span-6 flex flex-col">
+            <div
+              ref={cardRef}
+              {...scrollProps}
+              className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full outline-none focus:ring-2 focus:ring-blue-500/30 transition-all cursor-grab active:cursor-grabbing"
+            >
               <div>
                 {/* Header Badge */}
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5">
+                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800 gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
                       <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
                       <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
                     </div>
-                    <span className="ml-1 text-[11px] font-mono uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">
+                    <span className="ml-1 text-[11px] font-mono uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 truncate">
                       Live Workflow Monitor
                     </span>
                   </div>
+
+                  {isLastItem ? (
+                    <button
+                      type="button"
+                      onClick={scrollToNextSection}
+                      className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700/60 px-2.5 py-1 rounded hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer shrink-0"
+                      title="All cards viewed. Scroll or click to continue to next section"
+                    >
+                      <span>Unlocked • Scroll down ↓</span>
+                    </button>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-blue-700 dark:text-sky-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 px-2 py-0.5 rounded shrink-0 font-medium">
+                      <MousePointer className="w-2.5 h-2.5" />
+                      <span className="hidden sm:inline">Anchored ({activeStageIndex + 1}/{stages.length}) • Scroll down</span>
+                      <span className="sm:hidden">{activeStageIndex + 1}/{stages.length} • Scroll</span>
+                    </span>
+                  )}
                 </div>
 
                 {/* Animated Stage Details */}
@@ -343,11 +328,16 @@ export const ConnectedWorkflow: React.FC = () => {
 
                 <button
                   type="button"
-                  disabled={activeStageIndex === stages.length - 1}
-                  onClick={() => handleStageSelect(Math.min(stages.length - 1, activeStageIndex + 1))}
-                  className="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer shadow-sm"
+                  onClick={() => {
+                    if (activeStageIndex < stages.length - 1) {
+                      handleStageSelect(activeStageIndex + 1);
+                    } else {
+                      scrollToNextSection();
+                    }
+                  }}
+                  className="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1 cursor-pointer shadow-sm transition-colors"
                 >
-                  <span>Next Stage</span>
+                  <span>{activeStageIndex === stages.length - 1 ? 'Next Section' : 'Next Stage'}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -361,5 +351,3 @@ export const ConnectedWorkflow: React.FC = () => {
     </section>
   );
 };
-
-

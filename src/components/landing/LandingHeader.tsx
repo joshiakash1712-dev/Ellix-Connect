@@ -216,6 +216,19 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
 
         {/* Static Header Actions & Theme Toggle */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Support 24/7 Text Trigger */}
+          <button
+            type="button"
+            id="btn-header-support-24-7"
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent('open-support-chat', { detail: { toggle: true } }));
+            }}
+            className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer whitespace-nowrap px-1.5 sm:px-2 py-1"
+            title="24/7 Customer Support & Help"
+          >
+            Support 24/7
+          </button>
+
           {/* Global Language Switcher */}
           <LanguageSwitcher variant="landing" />
 
@@ -367,6 +380,20 @@ export const LandingHeader: React.FC<LandingHeaderProps> = ({
             )}
 
             <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2.5">
+              {/* Mobile Support 24/7 Text Trigger */}
+              <button
+                type="button"
+                id="btn-mobile-drawer-support-24-7"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  window.dispatchEvent(new CustomEvent('open-support-chat', { detail: { toggle: true } }));
+                }}
+                className="w-full py-2.5 px-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer flex items-center justify-between"
+              >
+                <span>Support 24/7</span>
+                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-mono">Live</span>
+              </button>
+
               <div className="flex items-center justify-between py-1.5 px-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl">
                 <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Theme</span>
                 <ThemeToggle id="btn-theme-toggle-mobile" showLabel />

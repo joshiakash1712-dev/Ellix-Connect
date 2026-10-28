@@ -210,6 +210,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ onNavigateToWebsite }) => {
 
     // Retailer Views
     if (activeModule === 'retailer') {
+      if (canonicalRole === 'ellix_admin') {
+        return <AdminPanel />;
+      }
+
       if (isCrew) {
         switch (activeView) {
           case 'inventory':
@@ -414,10 +418,6 @@ const WebsitePage: React.FC<{ onNavigateToApp: () => void; onLaunchDemo: () => v
   return (
     <>
       <EllixLandingPage onLaunchApp={onNavigateToApp} onLaunchDemo={onLaunchDemo} />
-      {/* 24/7 AI Customer Support Chatbot - isolated to the Website page */}
-      <Suspense fallback={null}>
-        <SupportChatbot />
-      </Suspense>
       <AuthModal />
     </>
   );
@@ -595,19 +595,23 @@ const AppContent: React.FC = () => {
     }
   };
 
-  if (currentPage === 'app' && hasAuthorizedAppEntryRef.current && authUserIsSignedIn(currentUser)) {
-    return <ApplicationPage onNavigateToWebsite={() => navigateToPage('website')} />;
-  }
-
-  if (currentPage === 'demo') {
-    return <DemoApplicationPage onExitDemo={() => navigateToPage('website')} />;
-  }
-
   return (
-    <WebsitePage
-      onNavigateToApp={() => navigateToPage('app')}
-      onLaunchDemo={() => navigateToPage('demo')}
-    />
+    <>
+      {currentPage === 'app' && hasAuthorizedAppEntryRef.current && authUserIsSignedIn(currentUser) ? (
+        <ApplicationPage onNavigateToWebsite={() => navigateToPage('website')} />
+      ) : currentPage === 'demo' ? (
+        <DemoApplicationPage onExitDemo={() => navigateToPage('website')} />
+      ) : (
+        <WebsitePage
+          onNavigateToApp={() => navigateToPage('app')}
+          onLaunchDemo={() => navigateToPage('demo')}
+        />
+      )}
+      {/* 24/7 Customer Support Chatbot - accessible from headers across the platform */}
+      <Suspense fallback={null}>
+        <SupportChatbot />
+      </Suspense>
+    </>
   );
 };
 

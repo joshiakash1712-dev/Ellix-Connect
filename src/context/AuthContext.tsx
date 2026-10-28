@@ -134,7 +134,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const snap = await getDoc(userDocRef);
       const nowIso = new Date().toISOString();
 
-      const isAdminUser = user.email === 'joshiakash1712@gmail.com' && isEmailVerified;
+      const isSuperAdminEmail = user.email?.toLowerCase() === 'joshiakash1712@gmail.com' && isEmailVerified;
+      const isEllixAdminEmail = user.email?.toLowerCase() === 'ellic.admin11@gmail.com' && isEmailVerified;
 
       if (snap.exists()) {
         const existingData = snap.data() as UserProfile;
@@ -151,9 +152,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return inactiveProfile;
         }
 
-        // Preserve authoritative role already saved in Firestore; fail closed if unrecognized
-        const resolvedCanonical = isAdminUser
+        // Preserve authoritative role already saved in Firestore; resolve super_admin and ellix_admin emails
+        const resolvedCanonical = isSuperAdminEmail
           ? 'super_admin'
+          : isEllixAdminEmail
+          ? 'ellix_admin'
           : normalizeCanonicalRole(existingData.role);
 
         // Only write safe profile metadata fields to Firestore (never mutate role, clientId, assignedStoreIds, or status)
@@ -180,26 +183,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           uid: user.uid,
           email: existingData.email || user.email || '',
           role: resolvedCanonical,
-          clientId: existingData.clientId || 'client-001',
-          assignedStoreIds: existingData.assignedStoreIds || (resolvedCanonical === 'crew' ? ['store-1'] : ['store-1', 'store-2']),
+          clientId: existingData.clientId || (isEllixAdminEmail || isSuperAdminEmail ? 'platform' : 'client-001'),
+          assignedStoreIds: existingData.assignedStoreIds || (resolvedCanonical === 'crew' ? ['store-1'] : []),
           status: existingData.status || 'active'
         };
         setUserProfile(updatedProfile);
         return updatedProfile;
       } else {
-        const initialRole: ProfileRole = isAdminUser ? 'super_admin' : 'client';
-        const defaultClientId = `client-${user.uid}`;
+        const initialRole: ProfileRole = isSuperAdminEmail
+          ? 'super_admin'
+          : isEllixAdminEmail
+          ? 'ellix_admin'
+          : 'client';
+        const defaultClientId = (isSuperAdminEmail || isEllixAdminEmail) ? 'platform' : `client-${user.uid}`;
         const newProfile: UserProfile = {
           uid: user.uid,
           email: user.email || '',
           emailVerified: isEmailVerified,
           phoneNumber: user.phoneNumber || '',
           phoneVerified: hasPhone,
-          displayName: user.displayName || additionalData?.displayName || (user.email ? user.email.split('@')[0] : 'Merchant'),
+          displayName: user.displayName || additionalData?.displayName || (isEllixAdminEmail ? 'Ellic Admin' : (user.email ? user.email.split('@')[0] : 'Merchant')),
           photoURL: user.photoURL || '',
           role: initialRole,
           clientId: defaultClientId,
-          assignedStoreIds: isAdminUser ? ['store-1'] : [],
+          assignedStoreIds: [],
           status: 'active',
           linkedProviders: linkedProviders.length > 0 ? linkedProviders : ['anonymous'],
           passwordSynchronized: hasPassword,
@@ -216,10 +223,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error?.code === 'permission-denied') {
         handleFirestoreError(error, OperationType.WRITE, `users/${user.uid}`);
       }
-      const isVerifiedRoot = user.email === 'joshiakash1712@gmail.com' && isEmailVerified;
+      const isVerifiedRoot = user.email?.toLowerCase() === 'joshiakash1712@gmail.com' && isEmailVerified;
+      const isVerifiedEllix = user.email?.toLowerCase() === 'ellic.admin11@gmail.com' && isEmailVerified;
       const requestedCanonical = normalizeCanonicalRole(additionalData?.role);
       const safeFallbackRole: ProfileRole = isVerifiedRoot
         ? 'super_admin'
+        : isVerifiedEllix
+        ? 'ellix_admin'
         : (requestedCanonical === 'crew' || requestedCanonical === 'wholesaler_admin' || requestedCanonical === 'client')
         ? requestedCanonical
         : 'client';

@@ -712,7 +712,8 @@ export class FirestoreSyncManager {
 
     try {
       const canonicalRole = normalizeCanonicalRole(authOptions?.userRole ?? 'client');
-      if (canonicalRole === 'unauthorized') {
+      // Ellix Admin manages platform tenants, client access, and stores, but is explicitly restricted from accessing store internal private business data
+      if (canonicalRole === 'unauthorized' || canonicalRole === 'ellix_admin') {
         clearTimeout(safetyTimer);
         callbacks.onProductsUpdate?.([]);
         callbacks.onCustomersUpdate?.([]);
@@ -725,6 +726,12 @@ export class FirestoreSyncManager {
         callbacks.onSuppliersUpdate?.([]);
         callbacks.onRestockLogsUpdate?.([]);
         callbacks.onInitialDataLoaded?.();
+        callbacks.onSyncStateChange?.({
+          status: 'synced',
+          lastSyncedAt: new Date().toISOString(),
+          lastError: null,
+          syncedCounts: { ...counts }
+        });
         return () => {};
       }
 
@@ -732,7 +739,6 @@ export class FirestoreSyncManager {
       const isWholesalerRole = canonicalRole === 'wholesaler_admin';
       const canManageStoreRole =
         canonicalRole === 'super_admin' ||
-        canonicalRole === 'ellix_admin' ||
         canonicalRole === 'client';
 
       // 1. Products Collection (Wholesaler queries only sharedWithWholesalers == true)

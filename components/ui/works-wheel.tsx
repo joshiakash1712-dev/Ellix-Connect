@@ -20,8 +20,8 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 export interface WorksWheelItem {
   /** Project name. Shown beside the front card and in the index. */
   title: string;
-  /** Cover art. Any src an <img> takes. */
-  image: string;
+  /** Cover art. Any src an <img> takes (optional). */
+  image?: string;
   /** Where the card links to. Omit for a wheel that only browses. */
   href?: string;
   /** Optional subtitle or step tagline */
@@ -547,25 +547,48 @@ export function WorksWheel({
                     marginTop: -metrics.cardH / 2,
                   }}
                 >
-                  <span className="bg-muted shadow-foreground/12 relative block size-full overflow-hidden rounded-lg shadow-[0_18px_40px_-18px_var(--tw-shadow-color)] border border-slate-200/60 dark:border-slate-800/80">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      draggable={false}
-                      className="size-full object-cover"
-                    />
-                    {/* Visual Scrim for contrast */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                  <span className="bg-slate-900 shadow-foreground/12 relative block size-full overflow-hidden rounded-lg shadow-[0_18px_40px_-18px_var(--tw-shadow-color)] border border-slate-700/60 dark:border-slate-800/80">
+                    {item.image ? (
+                      <>
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          draggable={false}
+                          className="size-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                      </>
+                    ) : (
+                      <div className="size-full bg-gradient-to-br from-slate-900 via-slate-850 to-slate-950 p-4 flex flex-col justify-between text-white relative">
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-600/15 via-transparent to-transparent pointer-events-none" />
+                        <div className="relative flex items-center justify-between z-10">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-sky-300 border border-blue-400/30 font-bold">
+                            {`0${i + 1}`}
+                          </span>
+                          <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                        </div>
+                        <div className="relative z-10">
+                          <div className="text-[10px] font-mono font-bold text-sky-400 uppercase tracking-wider">
+                            {item.tagline || 'Retail Step'}
+                          </div>
+                          <div className="text-xs sm:text-sm font-bold text-white drop-shadow-sm truncate mt-0.5">
+                            {item.title}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     
-                    {/* Card Title & Tagline overlay */}
-                    <div className="absolute bottom-2.5 left-3 right-3 pointer-events-none">
-                      <div className="text-[10px] font-mono font-bold text-sky-300 uppercase tracking-wider">
-                        {`0${i + 1}`} · {item.tagline || 'Retail Step'}
+                    {/* Card Title & Tagline overlay if image present */}
+                    {item.image && (
+                      <div className="absolute bottom-2.5 left-3 right-3 pointer-events-none">
+                        <div className="text-[10px] font-mono font-bold text-sky-300 uppercase tracking-wider">
+                          {`0${i + 1}`} · {item.tagline || 'Retail Step'}
+                        </div>
+                        <div className="text-xs sm:text-sm font-bold text-white drop-shadow-sm truncate">
+                          {item.title}
+                        </div>
                       </div>
-                      <div className="text-xs sm:text-sm font-bold text-white drop-shadow-sm truncate">
-                        {item.title}
-                      </div>
-                    </div>
+                    )}
 
                     {action && (
                       <span className="bg-background/90 text-foreground pointer-events-none absolute right-2.5 top-2.5 flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.65rem] font-semibold opacity-90 backdrop-blur-sm transition group-hover:opacity-100 border border-slate-200/50 dark:border-slate-700/50">

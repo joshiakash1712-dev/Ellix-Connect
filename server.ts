@@ -157,11 +157,17 @@ async function getAuthenticatedCaller(req: express.Request) {
       }
 
       const isVerifiedRootAdmin =
-        decodedToken.email === 'joshiakash1712@gmail.com' &&
+        decodedToken.email?.toLowerCase() === 'joshiakash1712@gmail.com' &&
+        decodedToken.email_verified === true;
+
+      const isVerifiedEllixAdmin =
+        decodedToken.email?.toLowerCase() === 'ellic.admin11@gmail.com' &&
         decodedToken.email_verified === true;
 
       const canonicalRole: CanonicalRole = isVerifiedRootAdmin
         ? 'super_admin'
+        : isVerifiedEllixAdmin
+        ? 'ellix_admin'
         : normalizeCanonicalRole(rawRole);
 
       return {

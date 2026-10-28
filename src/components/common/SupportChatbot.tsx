@@ -47,7 +47,6 @@ export const SupportChatbot: React.FC = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
-  const [hasPromptedGreeting, setHasPromptedGreeting] = useState(false);
 
   const initialWelcomeText = `Hello${
     currentUser?.displayName ? ` ${currentUser.displayName}` : ''
@@ -83,11 +82,15 @@ How can I help you today? You can ask me about:
     }
   }, [messages, isOpen, isMinimized, isLoading]);
 
-  // Listen to global open-support-chat event from other components (Footer, Sidebar, etc.)
+  // Listen to global open-support-chat event from Header, Footer, Sidebar, etc.
   useEffect(() => {
     const handleOpenChat = (event: Event) => {
-      const customEvent = event as CustomEvent<{ initialPrompt?: string }>;
-      setIsOpen(true);
+      const customEvent = event as CustomEvent<{ initialPrompt?: string; toggle?: boolean }>;
+      if (customEvent.detail?.toggle) {
+        setIsOpen(prev => !prev);
+      } else {
+        setIsOpen(true);
+      }
       setIsMinimized(false);
       if (customEvent.detail?.initialPrompt) {
         handleSendMessage(customEvent.detail.initialPrompt);
@@ -96,14 +99,6 @@ How can I help you today? You can ask me about:
 
     window.addEventListener('open-support-chat', handleOpenChat);
     return () => window.removeEventListener('open-support-chat', handleOpenChat);
-  }, []);
-
-  // Show a gentle greeting pill after 4 seconds on initial visit
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setHasPromptedGreeting(true);
-    }, 4000);
-    return () => clearTimeout(timer);
   }, []);
 
   const handleSendMessage = async (queryText?: string) => {
@@ -248,48 +243,8 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
   return (
     <div
       id="customer-support-chatbot-container"
-      className="fixed bottom-20 sm:bottom-20 md:bottom-22 right-3.5 sm:right-6 z-50 flex flex-col items-end pointer-events-none max-w-[calc(100vw-1.75rem)] box-border"
+      className="fixed bottom-4 sm:bottom-6 right-3.5 sm:right-6 z-50 flex flex-col items-end pointer-events-none max-w-[calc(100vw-1.75rem)] box-border"
     >
-      
-      {/* Floating Prompt Bubble on Initial Visit (Desktop/Tablet only to prevent mobile screen clutter) */}
-      <AnimatePresence>
-        {!isOpen && hasPromptedGreeting && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.25 }}
-            className="hidden sm:flex mb-2.5 max-w-xs bg-slate-900/95 backdrop-blur-md border border-sky-500/40 rounded-2xl p-3 shadow-2xl pointer-events-auto items-start gap-2.5 text-slate-200"
-          >
-            <div className="w-7 h-7 rounded-xl bg-slate-900 border border-sky-500/40 flex items-center justify-center shrink-0 p-0.5 shadow-sm">
-              <EllixConnectLogo variant="symbol" size={20} alt="Ellic" />
-            </div>
-            <div className="flex-1 text-xs">
-              <p className="font-semibold text-white">Need help with POS or billing?</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">Chat with Ellic Assistant 24/7 for instant support.</p>
-              <button
-                id="btn-prompt-open-chat"
-                onClick={() => {
-                  setIsOpen(true);
-                  setIsMinimized(false);
-                }}
-                className="mt-1.5 text-[11px] font-bold text-sky-400 hover:text-sky-300 flex items-center gap-1"
-              >
-                <span>Ask a question &rarr;</span>
-              </button>
-            </div>
-            <button
-              id="btn-dismiss-prompt"
-              onClick={() => setHasPromptedGreeting(false)}
-              className="text-slate-500 hover:text-slate-300 p-0.5"
-              title="Dismiss"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Main Chatbot Window Drawer / Modal */}
       <AnimatePresence>
         {isOpen && (
@@ -303,7 +258,7 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
             }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className={`w-[calc(100vw-1.75rem)] sm:w-[400px] max-w-md bg-slate-950/98 backdrop-blur-xl border border-slate-800/90 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto mb-2.5 sm:mb-3 transition-all ${
+            className={`w-[calc(100vw-1.75rem)] sm:w-[400px] max-w-md bg-slate-950/98 backdrop-blur-xl border border-slate-800/90 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto transition-all ${
               isMinimized
                 ? 'h-auto'
                 : 'h-[calc(100dvh-5.5rem)] max-h-[520px] sm:h-[540px] sm:max-h-[calc(100dvh-6.5rem)]'
@@ -508,39 +463,6 @@ I am momentarily experiencing a connection glitch, but our dedicated team is her
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Floating Chat Trigger Button */}
-      <motion.button
-        id="btn-toggle-support-chatbot"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-          setIsOpen(!isOpen);
-          setIsMinimized(false);
-          setHasPromptedGreeting(false);
-        }}
-        className={`pointer-events-auto h-12 sm:h-13 px-4 rounded-2xl flex items-center gap-2.5 shadow-2xl transition-colors duration-200 border shrink-0 whitespace-nowrap box-border ${
-          isOpen
-            ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border-slate-700'
-            : 'bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white border-sky-400/40 shadow-blue-900/40'
-        }`}
-        title={isOpen ? 'Close Support' : 'Customer Support & Help'}
-      >
-        <div className="relative flex items-center justify-center">
-          {isOpen ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <EllixConnectLogo variant="symbol" size={24} className="shrink-0 drop-shadow" alt="Ellic" />
-          )}
-          {!isOpen && (
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-sky-300 border-2 border-slate-950 animate-ping" />
-          )}
-        </div>
-        <span className="font-bold text-xs sm:text-sm tracking-wide">
-          {isOpen ? 'Close Help' : 'Support 24/7'}
-        </span>
-      </motion.button>
-
     </div>
   );
 };

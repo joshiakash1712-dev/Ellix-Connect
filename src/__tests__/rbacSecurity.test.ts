@@ -92,6 +92,17 @@ describe('Ellix Connect — Canonical RBAC & Security Verification Suite', () =>
       expect(rulesContent).toContain('request.auth.token.email_verified == true');
     });
 
+    it('registers ellic.admin11@gmail.com as Level 2 Ellix Admin with email_verified requirement', () => {
+      expect(rulesContent).toContain("request.auth.token.email == 'ellic.admin11@gmail.com'");
+      expect(rulesContent).toContain("incoming().role == 'ellix_admin'");
+    });
+
+    it('enforces that store subcollection access is restricted to store owners and crew, blocking ellix_admin from store private data', () => {
+      expect(rulesContent).toContain('function isClientOwnerOfStore(storeId)');
+      expect(rulesContent).toContain('function isStoreAuthorizedUser(storeId)');
+      expect(rulesContent).not.toContain('function isClientOwnerOfStore(storeId) {\n      return isSignedIn() && (\n        isEllixAdmin()');
+    });
+
     it('enforces isActiveUser() across all role helpers', () => {
       expect(rulesContent).toContain('function isActiveUser()');
       expect(rulesContent).toContain("(!('status' in getUserDoc()) || getUserDoc().status == 'active')");

@@ -145,9 +145,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Primary mobile bottom navigation items
   const primaryBottomNavItems = items.slice(0, 4);
 
+  const isEllixAdmin = canonicalRole === 'ellix_admin';
+
   const modulesList: { id: ActiveModule; label: string; icon: React.ReactNode }[] = [
-    ...(!isWholesaler ? [{ id: 'retailer' as ActiveModule, label: 'Store', icon: <StoreIcon className="w-3.5 h-3.5" /> }] : []),
-    ...(!isCrew ? [{ id: 'wholesaler' as ActiveModule, label: 'Wholesale', icon: <Truck className="w-3.5 h-3.5" /> }] : []),
+    ...(!isWholesaler && !isEllixAdmin ? [{ id: 'retailer' as ActiveModule, label: 'Store', icon: <StoreIcon className="w-3.5 h-3.5" /> }] : []),
+    ...(!isCrew && !isEllixAdmin ? [{ id: 'wholesaler' as ActiveModule, label: 'Wholesale', icon: <Truck className="w-3.5 h-3.5" /> }] : []),
     ...((isDemoMode || isPlatformAdmin) ? [{ id: 'admin' as ActiveModule, label: 'Admin', icon: <ShieldAlert className="w-3.5 h-3.5" /> }] : [])
   ];
 

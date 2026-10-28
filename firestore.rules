@@ -65,14 +65,16 @@ service cloud.firestore {
             getUserDoc().role == 'platform_admin' ||
             getUserDoc().role == 'admin'
           )
-        )
+        ) ||
+        (request.auth.token.email == 'ellic.admin11@gmail.com' && request.auth.token.email_verified == true && (!hasUserDoc() || isActiveUser()))
       );
     }
 
     // Level 3: Client (Merchant business owner — canonical + supported legacy aliases)
+    // Note: Level 2 Ellix Admins govern the platform and manage client access/stores, but are NOT store owners
     function isClient() {
       return isSignedIn() && (
-        isEllixAdmin() ||
+        isSuperAdmin() ||
         (
           isActiveUser() && (
             getUserDoc().role == 'client' ||
@@ -140,7 +142,7 @@ service cloud.firestore {
     // Check if user is assigned to this specific store_id (as Crew / Employee / Cashier)
     function isCrewAssignedToStore(storeId) {
       return isSignedIn() && (
-        isEllixAdmin() ||
+        isSuperAdmin() ||
         (
           isCrewRole() &&
           hasMatchingCrewTenant(storeId) &&
@@ -154,9 +156,10 @@ service cloud.firestore {
     }
 
     // Check if user is the Client / Tenant Owner of this specific store
+    // Super Admin retains break-glass access, but Level 2 Ellix Admins cannot access internal store data
     function isClientOwnerOfStore(storeId) {
       return isSignedIn() && (
-        isEllixAdmin() ||
+        isSuperAdmin() ||
         (
           isActiveUser() &&
           getUserDoc().role in ['client', 'retailer', 'owner'] &&
@@ -295,6 +298,8 @@ service cloud.firestore {
         isValidUser(incoming()) &&
         (
           isSuperAdmin() ||
+          // Bootstrapped registration for designated Level 2 Ellix Admin
+          (request.auth.token.email == 'ellic.admin11@gmail.com' && request.auth.token.email_verified == true && incoming().role == 'ellix_admin') ||
           (
             // Normal user registration: can only register as 'client' (never super_admin, ellix_admin, platform_admin, admin, or unknown role)
             (!('role' in incoming()) || incoming().role == 'client') &&

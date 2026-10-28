@@ -577,8 +577,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode; isDemoMode?: b
         console.warn('[RBAC] Denied module switch to wholesaler for crew role');
         return;
       }
-      if (requestedModule === 'retailer' && isWholesalerRole) {
-        console.warn('[RBAC] Denied module switch to retailer for wholesaler role');
+      if (requestedModule === 'retailer' && (isWholesalerRole || canonicalRole === 'ellix_admin')) {
+        console.warn('[RBAC] Denied module switch to retailer for role:', canonicalRole);
         return;
       }
     }

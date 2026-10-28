@@ -53,21 +53,27 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     normalizeCanonicalRole(activeRole) === 'super_admin' ||
     normalizeCanonicalRole(userProfile?.role) === 'super_admin';
 
+  const isPlatformAdmin =
+    normalizeCanonicalRole(activeRole) === 'super_admin' ||
+    normalizeCanonicalRole(activeRole) === 'ellix_admin' ||
+    normalizeCanonicalRole(userProfile?.role) === 'super_admin' ||
+    normalizeCanonicalRole(userProfile?.role) === 'ellix_admin';
+
   const [activeTab, setActiveTab] = useState<AdminTab>(() => {
-    if (!isSuperAdmin && (initialTab === 'users' || initialTab === 'security' || initialTab === 'database')) {
+    if (!isSuperAdmin && (initialTab === 'security' || initialTab === 'database')) {
       return 'overview';
     }
     return initialTab;
   });
 
   useEffect(() => {
-    if (!isSuperAdmin && (activeTab === 'users' || activeTab === 'security' || activeTab === 'database')) {
+    if (!isSuperAdmin && (activeTab === 'security' || activeTab === 'database')) {
       setActiveTab('overview');
     }
   }, [isSuperAdmin, activeTab]);
 
   const handleSelectTab = (tab: AdminTab) => {
-    if (!isSuperAdmin && (tab === 'users' || tab === 'security' || tab === 'database')) {
+    if (!isSuperAdmin && (tab === 'security' || tab === 'database')) {
       return;
     }
     setActiveTab(tab);
@@ -87,9 +93,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       badge: pendingAppsCount > 0 ? `${pendingAppsCount} Pending` : undefined
     },
     { id: 'stores', label: 'Stores & Franchises', icon: <Building2 className="w-4 h-4" />, badge: stores.length },
+    {
+      id: 'users',
+      label: isSuperAdmin ? 'Crew & RBAC Governance' : 'Client & User Access',
+      icon: <Users className="w-4 h-4" />,
+      badge: employees.length
+    },
     { id: 'wholesalers', label: 'Wholesale Hub', icon: <Truck className="w-4 h-4" />, badge: wholesalers.length },
     ...(isSuperAdmin ? [
-      { id: 'users' as AdminTab, label: 'Crew & RBAC', icon: <Users className="w-4 h-4" />, badge: employees.length },
       { id: 'database' as AdminTab, label: 'Database & Sync', icon: <Database className="w-4 h-4" /> },
       { id: 'security' as AdminTab, label: 'Security & Hardware', icon: <Lock className="w-4 h-4" /> }
     ] : []),

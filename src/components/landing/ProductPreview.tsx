@@ -5,19 +5,14 @@ import {
   Users,
   LayoutDashboard,
   BarChart3,
-  CheckCircle2,
   Sparkles,
   ArrowRight,
+  ArrowLeft,
+  MousePointer,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { WorksWheel, type WorksWheelItem } from '@/components/ui/works-wheel';
-
-import productsImg from '../../assets/images/workflow_products_sku_1792691890542.jpg';
-import customersImg from '../../assets/images/workflow_customer_khata_1792691907419.jpg';
-import billingImg from '../../assets/images/workflow_pos_billing_1792691908115.jpg';
-import paymentsImg from '../../assets/images/workflow_upi_payments_1792691908068.jpg';
-import inventoryImg from '../../assets/images/workflow_inventory_stock_1792691922135.jpg';
-import recordsImg from '../../assets/images/workflow_tax_records_1792691922332.jpg';
+import { WorkWheelStage } from './WorkWheelStage';
+import { useCardWheelScroll } from '../../hooks/useCardWheelScroll';
 
 type TabKey = 'pos' | 'inventory' | 'khata' | 'dashboard' | 'reports';
 
@@ -29,7 +24,6 @@ interface TabItem {
   icon: React.ElementType;
   headline: string;
   description: string;
-  image: string;
 }
 
 const tabs: TabItem[] = [
@@ -41,7 +35,6 @@ const tabs: TabItem[] = [
     icon: Receipt,
     headline: 'Express Optical Checkout',
     description: 'Instant barcode scanning, dynamic UPI QR code generation, and 1-click thermal printing.',
-    image: billingImg,
   },
   {
     id: 'inventory',
@@ -51,7 +44,6 @@ const tabs: TabItem[] = [
     icon: Boxes,
     headline: 'Real-Time Batch Control',
     description: 'Automatic stock deductions on every sale with proactive low-stock alerts and expiry monitoring.',
-    image: inventoryImg,
   },
   {
     id: 'khata',
@@ -61,7 +53,6 @@ const tabs: TabItem[] = [
     icon: Users,
     headline: 'Digital Customer Credit Book',
     description: 'Enforce safety credit limits and send automated WhatsApp payment reminders with UPI links.',
-    image: customersImg,
   },
   {
     id: 'dashboard',
@@ -71,7 +62,6 @@ const tabs: TabItem[] = [
     icon: LayoutDashboard,
     headline: 'Live Store Command',
     description: 'Monitor daily sales revenue, net profit margins, completed bills, and active registers.',
-    image: productsImg,
   },
   {
     id: 'reports',
@@ -81,16 +71,8 @@ const tabs: TabItem[] = [
     icon: BarChart3,
     headline: 'Automated Tax & Z-Reports',
     description: 'Statutory GSTR-1 sales schedules, gross margin audits, and end-of-day register balancing.',
-    image: recordsImg,
   },
 ];
-
-const wheelItems: WorksWheelItem[] = tabs.map((tab) => ({
-  title: tab.label,
-  tagline: tab.badge,
-  image: tab.image,
-  href: `#product-${tab.id}`,
-}));
 
 export const ProductPreview: React.FC = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -103,10 +85,25 @@ export const ProductPreview: React.FC = () => {
     setActiveTabIndex(idx);
   }, []);
 
+  // Work wheel scrolling with screen centering and page-lock until last card
+  const {
+    sectionRef,
+    cardRef,
+    scrollProps,
+    isLastItem,
+    scrollToNextSection,
+  } = useCardWheelScroll({
+    totalItems: tabs.length,
+    activeIndex: activeTabIndex,
+    onActiveChange: setActiveTabIndex,
+    sectionId: 'product',
+  });
+
   return (
     <section
+      ref={sectionRef}
       id="product"
-      className="py-12 sm:py-16 md:py-20 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
+      className="py-12 sm:py-16 md:py-20 scroll-mt-16 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -117,59 +114,34 @@ export const ProductPreview: React.FC = () => {
           </h2>
         </div>
 
-
-        {/* Side-by-Side: 3D WorksWheel on Left, Live UI Simulator on Right */}
+        {/* Side-by-Side: Interactive Work Wheel on Left, Live Scrolling UI Simulator on Right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           
-          {/* Left: 3D WorksWheel Component */}
-          <div className="lg:col-span-6 xl:col-span-6 flex flex-col">
-            <div className="relative flex-1 min-h-[420px] sm:min-h-[480px] lg:min-h-[520px] rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 shadow-sm overflow-hidden flex flex-col">
-              
-              {/* The 3D Wheel Stage */}
-              <div className="relative flex-1 w-full overflow-hidden">
-                <WorksWheel
-                  items={wheelItems}
-                  label="Product '26"
-                  action="Inspect"
-                  activeIndex={activeTabIndex}
-                  onActiveChange={handleTabSelect}
-                  onItemClick={handleTabSelect}
-                  className="h-full min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] bg-transparent"
-                />
-              </div>
-
-              {/* Bottom Quick Jump Dots */}
-              <div className="flex items-center justify-between px-4 py-2.5 border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-10 text-xs">
-                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                  Active: <strong className="text-slate-900 dark:text-white">{activeTabMeta.label}</strong>
-                </span>
-
-                <div className="flex items-center gap-1.5">
-                  {tabs.map((_, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleTabSelect(idx)}
-                      aria-label={`Jump to tab ${idx + 1}`}
-                      className={`h-2 rounded-full transition-all cursor-pointer ${
-                        idx === activeTabIndex
-                          ? 'w-6 bg-blue-600'
-                          : idx < activeTabIndex
-                          ? 'w-2 bg-blue-300 dark:bg-blue-800'
-                          : 'w-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-            </div>
+          {/* Left: Vector Work Wheel Dial Component (Hidden on mobile for clean preview, visible on desktop) */}
+          <div className="hidden lg:flex lg:col-span-6 xl:col-span-6 flex-col">
+            <WorkWheelStage
+              items={tabs.map((t) => ({
+                id: t.id,
+                number: t.number,
+                title: t.label,
+                tagline: t.badge,
+                icon: t.icon,
+              }))}
+              activeIndex={activeTabIndex}
+              onActiveChange={handleTabSelect}
+              label="Product '26"
+              sublabel="POS Modules"
+              className="h-full min-h-[380px] sm:min-h-[440px]"
+            />
           </div>
 
-          {/* Right: Live Interactive UI Simulator Window */}
+          {/* Right: Live Interactive UI Simulator Window (Target Card with Work Wheel scrolling applied) */}
           <div className="lg:col-span-6 xl:col-span-6 flex flex-col">
-            <div className="rounded-2xl border border-slate-300/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden flex flex-col justify-between h-full">
-              
+            <div
+              ref={cardRef}
+              {...scrollProps}
+              className="rounded-2xl border border-slate-300/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden flex flex-col justify-between h-full outline-none focus:ring-2 focus:ring-blue-500/30 transition-all cursor-grab active:cursor-grabbing"
+            >
               <div>
                 {/* Window Header */}
                 <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 px-3.5 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2">
@@ -181,9 +153,28 @@ export const ProductPreview: React.FC = () => {
                       Ellic Enterprise • {activeTabMeta.label}
                     </span>
                   </div>
-                  <span className="text-[10px] sm:text-[11px] font-mono font-semibold px-2 sm:px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-sky-300 border border-blue-200 dark:border-blue-900 shrink-0 whitespace-nowrap">
-                    {activeTabMeta.badge}
-                  </span>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    {isLastItem ? (
+                      <button
+                        type="button"
+                        onClick={scrollToNextSection}
+                        className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700/60 px-2 py-0.5 rounded hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer"
+                        title="All modules viewed. Scroll or click to continue to next section"
+                      >
+                        <span>Unlocked • Scroll down ↓</span>
+                      </button>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono text-blue-700 dark:text-sky-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 px-2 py-0.5 rounded font-medium">
+                        <MousePointer className="w-2.5 h-2.5" />
+                        <span className="hidden sm:inline">Anchored ({activeTabIndex + 1}/{tabs.length}) • Scroll down</span>
+                        <span className="sm:hidden">{activeTabIndex + 1}/{tabs.length} • Scroll</span>
+                      </span>
+                    )}
+                    <span className="text-[10px] sm:text-[11px] font-mono font-semibold px-2 sm:px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-sky-300 border border-blue-200 dark:border-blue-900 shrink-0 whitespace-nowrap">
+                      {activeTabMeta.badge}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Module Simulator Content */}
@@ -392,15 +383,36 @@ export const ProductPreview: React.FC = () => {
                 </div>
               </div>
 
-              {/* Bottom Card Footer */}
-              <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500 bg-slate-50/50 dark:bg-slate-950/40">
-                <span className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300 text-[11px]">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  Live Counter Engine
-                </span>
-                <span className="font-mono text-[10px] text-slate-400">
-                  Sub-0.2s Transaction Latency
-                </span>
+              {/* Bottom Card Controls & Footer */}
+              <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2 text-xs text-slate-500 bg-slate-50/50 dark:bg-slate-950/40">
+                <button
+                  type="button"
+                  disabled={activeTabIndex === 0}
+                  onClick={() => handleTabSelect(Math.max(0, activeTabIndex - 1))}
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Prev</span>
+                </button>
+
+                <div className="text-[11px] font-mono font-medium text-slate-400">
+                  {activeTabIndex + 1} / {tabs.length}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (activeTabIndex < tabs.length - 1) {
+                      handleTabSelect(activeTabIndex + 1);
+                    } else {
+                      scrollToNextSection();
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1 cursor-pointer shadow-sm transition-colors"
+                >
+                  <span>{activeTabIndex === tabs.length - 1 ? 'Next Section' : 'Next'}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
               </div>
 
             </div>

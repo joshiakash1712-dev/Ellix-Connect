@@ -72,13 +72,13 @@ export const AdminClients: React.FC = () => {
       createdAt: '2026-01-01'
     },
     {
-      uid: 'ea-ops-1',
-      name: 'Platform Operations Admin',
-      email: 'ops.admin@ellic.com',
+      uid: 'ea-ops-ellic-admin',
+      name: 'Ellic Admin',
+      email: 'ellic.admin11@gmail.com',
       role: 'ellix_admin',
       status: 'active',
-      department: 'Client Onboarding & Subscriptions',
-      createdAt: '2026-02-15'
+      department: 'Client & Store Governance',
+      createdAt: '2026-10-25'
     }
   ]);
   const [isLoadingTeam, setIsLoadingTeam] = useState(false);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
-import { ActiveModule, UserRole, AppRole } from '../../types';
+import { ActiveModule, UserRole, AppRole, normalizeCanonicalRole } from '../../types';
 import { NotificationCenter } from './NotificationCenter';
 import { SettingsModal } from './SettingsModal';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -108,8 +108,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
   }, []);
 
-  const isCrew = activeRole === 'crew' || userProfile?.role === 'crew';
-  const isClientOwner = !isCrew && (activeRole === 'client' || userProfile?.role === 'client');
+  const canonicalRole = normalizeCanonicalRole(activeRole);
+  const isCrew = canonicalRole === 'crew' || userProfile?.role === 'crew';
+  const isClientOwner = !isCrew && (canonicalRole === 'client' || userProfile?.role === 'client');
   const canShowDevRoleSwitcher = Boolean(isDemoMode || ((import.meta as any).env?.DEV && (!authUser || userProfile?.role === 'super_admin')));
   const allowedStores = isCrew
     ? stores.filter(s => (storeUser?.assignedStoreIds || [activeStore.id]).includes(s.id))
@@ -218,63 +219,74 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             {/* Active Store Indicator & Switcher (FIX 3: Clear Current Store Visibility) */}
-            <div ref={storeDropdownRef} className="relative">
-              <button
-                id="btn-navbar-store-select"
-                onClick={() => {
-                  setShowStoreDropdown(!showStoreDropdown);
-                  setShowRoleDropdown(false);
-                }}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm max-w-[130px] xs:max-w-[165px] sm:max-w-[230px] ${
-                  isCrew
-                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-200 hover:bg-amber-500/20'
-                    : 'bg-sky-500/10 border-sky-500/30 text-sky-300 hover:bg-blue-500/20'
-                }`}
-                title={isCrew ? `Current Assigned Store: ${activeStore.name}` : `Current Active Store: ${activeStore.name}`}
+            {canonicalRole === 'ellix_admin' ? (
+              <div
+                id="badge-navbar-admin-platform"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-sky-500/30 bg-sky-500/10 text-sky-300 text-xs font-bold shadow-sm"
+                title="Level 2 Platform Administrator: Managing Clients & Stores"
               >
-                <span className={`w-2 h-2 rounded-full shrink-0 ${isCrew ? 'bg-amber-400 animate-pulse' : 'bg-sky-400'}`} />
-                <StoreIcon className={`w-3.5 h-3.5 shrink-0 ${isCrew ? 'text-amber-400' : 'text-sky-400'}`} />
-                <span className="truncate font-extrabold text-white">
-                  {activeStore.name}{activeStore.city ? ` · ${activeStore.city}` : ''}
-                </span>
-                {allowedStores.length > 1 && (
-                  <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
-                )}
-              </button>
+                <ShieldCheck className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                <span className="truncate font-extrabold text-white">Platform Admin</span>
+              </div>
+            ) : (
+              <div ref={storeDropdownRef} className="relative">
+                <button
+                  id="btn-navbar-store-select"
+                  onClick={() => {
+                    setShowStoreDropdown(!showStoreDropdown);
+                    setShowRoleDropdown(false);
+                  }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm max-w-[130px] xs:max-w-[165px] sm:max-w-[230px] ${
+                    isCrew
+                      ? 'bg-amber-500/10 border-amber-500/30 text-amber-200 hover:bg-amber-500/20'
+                      : 'bg-sky-500/10 border-sky-500/30 text-sky-300 hover:bg-blue-500/20'
+                  }`}
+                  title={isCrew ? `Current Assigned Store: ${activeStore.name}` : `Current Active Store: ${activeStore.name}`}
+                >
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${isCrew ? 'bg-amber-400 animate-pulse' : 'bg-sky-400'}`} />
+                  <StoreIcon className={`w-3.5 h-3.5 shrink-0 ${isCrew ? 'text-amber-400' : 'text-sky-400'}`} />
+                  <span className="truncate font-extrabold text-white">
+                    {activeStore.name}{activeStore.city ? ` · ${activeStore.city}` : ''}
+                  </span>
+                  {allowedStores.length > 1 && (
+                    <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
+                  )}
+                </button>
 
-              {showStoreDropdown && (
-                <div className="absolute left-0 mt-2 w-64 max-w-[calc(100vw-24px)] rounded-xl bg-[#161D2C] border border-slate-700/80 shadow-2xl p-2 z-50">
-                  <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 px-2 py-1 flex items-center justify-between">
-                    <span>Active Store</span>
-                    {isCrew && <span className="text-amber-400 text-[9px] font-mono">Assigned Only</span>}
+                {showStoreDropdown && (
+                  <div className="absolute left-0 mt-2 w-64 max-w-[calc(100vw-24px)] rounded-xl bg-[#161D2C] border border-slate-700/80 shadow-2xl p-2 z-50">
+                    <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 px-2 py-1 flex items-center justify-between">
+                      <span>Active Store</span>
+                      {isCrew && <span className="text-amber-400 text-[9px] font-mono">Assigned Only</span>}
+                    </div>
+                    <div className="space-y-1 max-h-52 overflow-y-auto mt-1">
+                      {allowedStores.map(store => (
+                        <button
+                          key={store.id}
+                          onClick={() => {
+                            setActiveStore(store);
+                            setShowStoreDropdown(false);
+                          }}
+                          className={`w-full text-left px-2.5 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                            activeStore.id === store.id
+                              ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30 font-bold'
+                              : 'text-slate-300 hover:bg-slate-800/80'
+                          }`}
+                        >
+                          <div className="truncate">
+                            <div className="font-semibold text-slate-200 truncate">{store.name}</div>
+                            <div className="text-[10px] text-slate-500 truncate">{store.address}</div>
+                          </div>
+                          {activeStore.id === store.id && (
+                            <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0 ml-1.5" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <div className="space-y-1 max-h-52 overflow-y-auto mt-1">
-                    {allowedStores.map(store => (
-                      <button
-                        key={store.id}
-                        onClick={() => {
-                          setActiveStore(store);
-                          setShowStoreDropdown(false);
-                        }}
-                        className={`w-full text-left px-2.5 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
-                          activeStore.id === store.id
-                            ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30 font-bold'
-                            : 'text-slate-300 hover:bg-slate-800/80'
-                        }`}
-                      >
-                        <div className="truncate">
-                          <div className="font-semibold text-slate-200 truncate">{store.name}</div>
-                          <div className="text-[10px] text-slate-500 truncate">{store.address}</div>
-                        </div>
-                        {activeStore.id === store.id && (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0 ml-1.5" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Global Subscription Status Indicator (FIX 9: Client/Store Owner only) */}
@@ -294,6 +306,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action Controls */}
           <div className="flex items-center gap-2 shrink-0">
+
+            {/* Support 24/7 Text Trigger */}
+            <button
+              type="button"
+              id="btn-navbar-support-24-7"
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('open-support-chat', { detail: { toggle: true } }));
+              }}
+              className="text-xs sm:text-sm font-medium text-slate-300 hover:text-white transition-colors cursor-pointer whitespace-nowrap px-1.5 sm:px-2 py-1"
+              title="24/7 Customer Support & Help"
+            >
+              Support 24/7
+            </button>
 
             {/* Global Multi-Language Switcher */}
             <LanguageSwitcher variant="compact" />

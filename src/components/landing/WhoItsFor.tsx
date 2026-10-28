@@ -8,17 +8,13 @@ import {
   CheckCircle2,
   Sparkles,
   ArrowRight,
+  ArrowLeft,
   ShieldCheck,
+  MousePointer,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { WorksWheel, type WorksWheelItem } from '@/components/ui/works-wheel';
-import { useScrollLock } from '@/hooks/useScrollLock';
-
-import productsImg from '../../assets/images/workflow_products_sku_1792691890542.jpg';
-import billingImg from '../../assets/images/workflow_pos_billing_1792691908115.jpg';
-import inventoryImg from '../../assets/images/workflow_inventory_stock_1792691922135.jpg';
-import customersImg from '../../assets/images/workflow_customer_khata_1792691907419.jpg';
-import paymentsImg from '../../assets/images/workflow_upi_payments_1792691908068.jpg';
+import { WorkWheelStage } from './WorkWheelStage';
+import { useCardWheelScroll } from '../../hooks/useCardWheelScroll';
 
 interface Vertical {
   id: string;
@@ -28,7 +24,6 @@ interface Vertical {
   tagline: string;
   summary: string;
   keyFeatures: string[];
-  image: string;
   preset: string;
 }
 
@@ -45,7 +40,6 @@ const verticals: Vertical[] = [
       'First-in-first-out (FIFO) batch tracking with expiry alerts',
       'Dynamic UPI QR codes for instant contactless payments',
     ],
-    image: productsImg,
     preset: 'Pre-loaded with 4,000+ FMCG grocery barcodes & tax slabs',
   },
   {
@@ -60,7 +54,6 @@ const verticals: Vertical[] = [
       'Built-in thermal barcode price tag & hang-tag generator',
       'Seasonal promotional discounts & customer loyalty points',
     ],
-    image: billingImg,
     preset: 'Pre-configured apparel size scales (S-XXL) & footwear sizing',
   },
   {
@@ -75,7 +68,6 @@ const verticals: Vertical[] = [
       'Digital contractor Khata with WhatsApp payment reminders',
       'Serial number & warranty tracking on appliances',
     ],
-    image: inventoryImg,
     preset: 'Supports loose metric conversions & contractor credit caps',
   },
   {
@@ -90,7 +82,6 @@ const verticals: Vertical[] = [
       'Accurate HSN codes and GST slab mapping',
       'Fast counter lookup by brand or generic molecule name',
     ],
-    image: customersImg,
     preset: 'Strict FIFO batch validation & compliant drug register format',
   },
   {
@@ -105,308 +96,197 @@ const verticals: Vertical[] = [
       'Credit limit safeguards that block billing over credit caps',
       'Full B2B tax invoice and delivery challan printing',
     ],
-    image: paymentsImg,
     preset: 'Tiered wholesale price levels & bulk packing carton counts',
   },
 ];
 
-const wheelItems: WorksWheelItem[] = verticals.map((v) => ({
-  title: v.name,
-  tagline: v.tagline,
-  image: v.image,
-  href: `#vertical-${v.id}`,
-}));
-
-const TOTAL_STOPS = verticals.length;
-
 export const WhoItsFor: React.FC = () => {
   const [activeVerticalIndex, setActiveVerticalIndex] = useState(0);
-  const [isInView, setIsInView] = useState(false);
-  const [isInteracting, setIsInteracting] = useState(false);
-  const [isBoundaryEscaping, setIsBoundaryEscaping] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const currentVertical = verticals[activeVerticalIndex] || verticals[0];
   const Icon = currentVertical.icon;
 
-  const sectionRef = React.useRef<HTMLElement>(null);
-  const activeVerticalIndexRef = React.useRef(activeVerticalIndex);
-  activeVerticalIndexRef.current = activeVerticalIndex;
-
-  // Toggle overflow: hidden on the body element only when the Work Wheel is active/in-view
-  useScrollLock(isInView && isInteracting && !isBoundaryEscaping);
-
-  // Observe when the Work Wheel component is actively in view
-  React.useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-      },
-      {
-        threshold: 0.3,
-      }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const wheelAccumulatorRef = React.useRef(0);
-  const wheelResetTimeoutRef = React.useRef<number | null>(null);
-  const lastWheelTimeRef = React.useRef(0);
-  const lastWheelDirRef = React.useRef(0);
-
-  // Handle clicking on industry buttons or indicators
   const handleVerticalSelect = React.useCallback((idx: number) => {
-    const clampedIdx = Math.max(0, Math.min(TOTAL_STOPS - 1, idx));
-    activeVerticalIndexRef.current = clampedIdx;
-    setActiveVerticalIndex(clampedIdx);
+    setActiveVerticalIndex(idx);
   }, []);
 
-  // Section-level wheel listener for in-place 1-step navigation without scrolling the site away
-  React.useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    const onWheel = (event: WheelEvent) => {
-      // Ignore horizontal trackpad swipes
-      if (Math.abs(event.deltaY) < 2 && Math.abs(event.deltaX) > 10) return;
-
-      const dy = event.deltaY;
-      if (Math.abs(dy) < 3) return;
-
-      const rect = el.getBoundingClientRect();
-      // Only capture when section is in active view on screen
-      const isInActiveView =
-        rect.top < window.innerHeight * 0.75 && rect.bottom > window.innerHeight * 0.25;
-      if (!isInActiveView) {
-        return; // Allow natural page scrolling when not viewing section
-      }
-
-      const direction = dy > 0 ? 1 : -1; // 1 = down/forward, -1 = up/reverse
-      const currentIdx = activeVerticalIndexRef.current;
-
-      // Natural boundary escape:
-      // At index 0, scrolling up allows the site to scroll up to previous section (How It Works)
-      if (direction < 0 && currentIdx <= 0) {
-        setIsBoundaryEscaping(true);
-        return;
-      }
-      // At index 4 (last stop), scrolling down allows the site to scroll down to next section (Product Preview)
-      if (direction > 0 && currentIdx >= TOTAL_STOPS - 1) {
-        setIsBoundaryEscaping(true);
-        return;
-      }
-
-      setIsBoundaryEscaping(false);
-
-      // Between 0 and 4: preventDefault prevents the page from scrolling down or up!
-      event.preventDefault();
-
-      const now = performance.now();
-      const timeSinceLast = now - lastWheelTimeRef.current;
-      lastWheelTimeRef.current = now;
-
-      const isDiscreteTick = event.deltaMode !== 0 || Math.abs(dy) >= 28;
-
-      if (isDiscreteTick) {
-        // Enforce 1 mouse wheel notch = 1 step
-        if (timeSinceLast > 120 || Math.sign(dy) !== Math.sign(lastWheelDirRef.current)) {
-          lastWheelDirRef.current = dy;
-          const nextIdx = Math.max(0, Math.min(TOTAL_STOPS - 1, currentIdx + direction));
-          if (nextIdx !== currentIdx) {
-            activeVerticalIndexRef.current = nextIdx;
-            setActiveVerticalIndex(nextIdx);
-          }
-        }
-      } else {
-        // Continuous trackpad swipe: accumulate smooth deltas
-        wheelAccumulatorRef.current += dy;
-        const THRESHOLD = 36;
-        if (Math.abs(wheelAccumulatorRef.current) >= THRESHOLD) {
-          const step = Math.sign(wheelAccumulatorRef.current);
-          const nextIdx = Math.max(0, Math.min(TOTAL_STOPS - 1, currentIdx + step));
-          if (nextIdx !== currentIdx) {
-            activeVerticalIndexRef.current = nextIdx;
-            setActiveVerticalIndex(nextIdx);
-          }
-          wheelAccumulatorRef.current = 0;
-        }
-
-        if (wheelResetTimeoutRef.current) window.clearTimeout(wheelResetTimeoutRef.current);
-        wheelResetTimeoutRef.current = window.setTimeout(() => {
-          wheelAccumulatorRef.current = 0;
-        }, 150);
-      }
-    };
-
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => {
-      el.removeEventListener('wheel', onWheel);
-      if (wheelResetTimeoutRef.current) window.clearTimeout(wheelResetTimeoutRef.current);
-    };
-  }, []);
+  // Work wheel scrolling with screen centering and page-lock until last card
+  const {
+    sectionRef,
+    cardRef,
+    scrollProps,
+    isLastItem,
+    scrollToNextSection,
+  } = useCardWheelScroll({
+    totalItems: verticals.length,
+    activeIndex: activeVerticalIndex,
+    onActiveChange: setActiveVerticalIndex,
+    sectionId: 'who-its-for',
+  });
 
   return (
     <section
-      id="who-its-for"
       ref={sectionRef}
-      onPointerEnter={() => {
-        setIsInteracting(true);
-        setIsBoundaryEscaping(false);
-      }}
-      onPointerLeave={() => {
-        setIsInteracting(false);
-        setIsBoundaryEscaping(false);
-      }}
-      className="py-12 sm:py-16 md:py-20 bg-slate-50/70 dark:bg-slate-900/50 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
+      id="who-its-for"
+      className="py-12 sm:py-16 md:py-20 scroll-mt-16 bg-slate-50/70 dark:bg-slate-900/50 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-          {/* Section Header */}
-          <div className="max-w-3xl mx-auto text-center mb-6 sm:mb-8 lg:mb-5">
-            <h2 className="text-2xl sm:text-3xl lg:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
-              Built for local retailers and small businesses.
-            </h2>
-          </div>
-
-          {/* Side-by-Side: 3D WorksWheel on Left, Live Industry Monitor on Right */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-stretch">
-            
-            {/* Left: 3D WorksWheel Component */}
-            <div className="lg:col-span-7 flex flex-col">
-              <div className="relative flex-1 min-h-[380px] sm:min-h-[440px] lg:h-[460px] rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40 shadow-sm overflow-hidden flex flex-col">
-                
-                {/* The 3D Wheel Stage */}
-                <div className="relative flex-1 w-full overflow-hidden">
-                  <WorksWheel
-                    items={wheelItems}
-                    label="Retail '26"
-                    action="Inspect"
-                    activeIndex={activeVerticalIndex}
-                    onActiveChange={handleVerticalSelect}
-                    onItemClick={handleVerticalSelect}
-                    disableWheelListener={true}
-                    className="h-full min-h-[340px] sm:min-h-[400px] lg:h-full bg-transparent"
-                  />
-                </div>
-
-                {/* Bottom Quick Jump Dots */}
-                <div className="flex items-center justify-between px-4 py-2.5 border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-10 text-xs">
-                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                    Active: <strong className="text-slate-900 dark:text-white">{currentVertical.name}</strong>
-                  </span>
-
-                  <div className="flex items-center gap-1.5">
-                    {verticals.map((_, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => handleVerticalSelect(idx)}
-                        aria-label={`Jump to vertical ${idx + 1}`}
-                        className={`h-2 rounded-full transition-all cursor-pointer ${
-                          idx === activeVerticalIndex
-                            ? 'w-6 bg-blue-600'
-                            : idx < activeVerticalIndex
-                            ? 'w-2 bg-blue-300 dark:bg-blue-800'
-                            : 'w-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-            {/* Right: Live Industry Profile Monitor */}
-            <div className="lg:col-span-5 flex flex-col">
-              <div className="p-5 sm:p-6 lg:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full lg:h-[460px] overflow-hidden">
-                
-                <div>
-                  {/* Header Badge */}
-                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
-                      </div>
-                      <span className="ml-1 text-[11px] font-mono uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">
-                        Live Industry Profile
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Animated Vertical Details */}
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={currentVertical.id}
-                      initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-                      transition={{ duration: 0.22, ease: 'easeOut' }}
-                      className="space-y-4"
-                    >
-                      {/* Title & Tagline */}
-                      <div>
-                        <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">
-                          <Icon className="w-3.5 h-3.5" />
-                          <span>{currentVertical.tagline}</span>
-                        </div>
-                        <h3 className="text-xl sm:text-2xl font-extrabold text-slate-950 dark:text-white mt-1">
-                          {currentVertical.name}
-                        </h3>
-                        <p className="mt-1.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                          {currentVertical.summary}
-                        </p>
-                      </div>
-
-                      {/* Pre-Configured Preset Card */}
-                      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800">
-                        <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1 flex items-center gap-1.5">
-                          <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
-                          <span>Pre-Configured Out of the Box</span>
-                        </div>
-                        <div className="text-xs font-semibold text-slate-900 dark:text-slate-100">
-                          {currentVertical.preset}
-                        </div>
-                      </div>
-
-                      {/* Key Features Checklist */}
-                      <div className="pt-2 space-y-2.5">
-                        <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
-                          Specialized Workflows
-                        </div>
-                        {currentVertical.keyFeatures.map((feat, idx) => (
-                          <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
-                            <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
-                            <span className="leading-snug">{feat}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-
-                {/* Bottom Card Footer */}
-                <div className="pt-3.5 mt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
-                  <span className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                    Instant Template Loading
-                  </span>
-                  <span className="font-mono text-[11px] text-slate-400">
-                    Zero Custom Coding
-                  </span>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
+        {/* Section Header */}
+        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
+            Tailored for your specific retail floor.
+          </h2>
         </div>
+
+        {/* Side-by-Side: Interactive Work Wheel on Left, Live Scrolling Profile Monitor on Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+          
+          {/* Left: Vector Work Wheel Dial Component (Hidden on mobile for clean preview, visible on desktop) */}
+          <div className="hidden lg:flex lg:col-span-6 xl:col-span-6 flex-col">
+            <WorkWheelStage
+              items={verticals.map((v) => ({
+                id: v.id,
+                number: v.number,
+                title: v.name,
+                tagline: v.tagline,
+                icon: v.icon,
+              }))}
+              activeIndex={activeVerticalIndex}
+              onActiveChange={handleVerticalSelect}
+              label="Retail Sectors"
+              sublabel="Ready Presets"
+              className="h-full min-h-[380px] sm:min-h-[440px]"
+            />
+          </div>
+
+          {/* Right: Live Industry Profile Monitor (Target Card with Work Wheel scrolling applied) */}
+          <div className="lg:col-span-6 xl:col-span-6 flex flex-col">
+            <div
+              ref={cardRef}
+              {...scrollProps}
+              className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full outline-none focus:ring-2 focus:ring-blue-500/30 transition-all cursor-grab active:cursor-grabbing"
+            >
+              <div>
+                {/* Header Badge */}
+                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800 gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
+                    </div>
+                    <span className="ml-1 text-[11px] font-mono uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 truncate">
+                      Live Industry Profile
+                    </span>
+                  </div>
+
+                  {isLastItem ? (
+                    <button
+                      type="button"
+                      onClick={scrollToNextSection}
+                      className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700/60 px-2.5 py-1 rounded hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer shrink-0"
+                      title="All sectors viewed. Scroll or click to continue to next section"
+                    >
+                      <span>Unlocked • Scroll down ↓</span>
+                    </button>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-blue-700 dark:text-sky-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 px-2 py-0.5 rounded shrink-0 font-medium">
+                      <MousePointer className="w-2.5 h-2.5" />
+                      <span className="hidden sm:inline">Anchored ({activeVerticalIndex + 1}/{verticals.length}) • Scroll down</span>
+                      <span className="sm:hidden">{activeVerticalIndex + 1}/{verticals.length} • Scroll</span>
+                    </span>
+                  )}
+                </div>
+
+                {/* Animated Vertical Details */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentVertical.id}
+                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                    className="space-y-4"
+                  >
+                    {/* Title & Tagline */}
+                    <div>
+                      <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">
+                        <Icon className="w-3.5 h-3.5" />
+                        <span>{currentVertical.tagline}</span>
+                      </div>
+                      <h3 className="text-xl sm:text-2xl font-extrabold text-slate-950 dark:text-white mt-1">
+                        {currentVertical.name}
+                      </h3>
+                      <p className="mt-1.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        {currentVertical.summary}
+                      </p>
+                    </div>
+
+                    {/* Pre-Configured Preset Card */}
+                    <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1 flex items-center gap-1.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400" />
+                        <span>Pre-Configured Out of the Box</span>
+                      </div>
+                      <div className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+                        {currentVertical.preset}
+                      </div>
+                    </div>
+
+                    {/* Key Features Checklist */}
+                    <div className="pt-2 space-y-2.5">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+                        Specialized Workflows
+                      </div>
+                      {currentVertical.keyFeatures.map((feat, idx) => (
+                        <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+                          <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
+                          <span className="leading-snug">{feat}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Bottom Card Controls & Footer */}
+              <div className="pt-4 mt-6 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  disabled={activeVerticalIndex === 0}
+                  onClick={() => handleVerticalSelect(Math.max(0, activeVerticalIndex - 1))}
+                  className="px-3.5 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Prev Sector</span>
+                </button>
+
+                <div className="text-[11px] font-mono font-medium text-slate-400">
+                  {activeVerticalIndex + 1} / {verticals.length}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (activeVerticalIndex < verticals.length - 1) {
+                      handleVerticalSelect(activeVerticalIndex + 1);
+                    } else {
+                      scrollToNextSection();
+                    }
+                  }}
+                  className="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1 cursor-pointer shadow-sm transition-colors"
+                >
+                  <span>{activeVerticalIndex === verticals.length - 1 ? 'Next Section' : 'Next Sector'}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
     </section>
   );
 };
