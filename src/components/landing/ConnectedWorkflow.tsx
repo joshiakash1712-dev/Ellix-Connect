@@ -169,19 +169,20 @@ export const ConnectedWorkflow: React.FC = () => {
     <section
       ref={sectionRef}
       id="workflow"
-      className="relative scroll-mt-16 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors py-12 sm:py-16 md:py-20 overflow-hidden"
+      data-work-wheel="true"
+      className="relative scroll-mt-20 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors py-6 sm:py-8 lg:py-10 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
+        <div className="max-w-3xl mx-auto text-center mb-4 sm:mb-6 lg:mb-7">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
             How data flows through your store.
           </h2>
         </div>
 
         {/* Side-by-Side: Interactive Work Wheel on Left, Live Scrolling Monitor Card on Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-stretch">
           
           {/* Left: Vector Work Wheel Dial Component (Hidden on mobile for clean preview, visible on desktop) */}
           <div className="hidden lg:flex lg:col-span-6 xl:col-span-6 flex-col">
@@ -197,7 +198,7 @@ export const ConnectedWorkflow: React.FC = () => {
               onActiveChange={handleStageSelect}
               label="Workflow '26"
               sublabel="Live Sync"
-              className="h-full min-h-[380px] sm:min-h-[440px]"
+              className="h-full min-h-[340px] sm:min-h-[380px] lg:min-h-[420px]"
             />
           </div>
 
@@ -206,11 +207,10 @@ export const ConnectedWorkflow: React.FC = () => {
             <div
               ref={cardRef}
               {...scrollProps}
-              className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full outline-none focus:ring-2 focus:ring-blue-500/30 transition-all cursor-grab active:cursor-grabbing"
+              className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full outline-none focus:ring-2 focus:ring-blue-500/30 transition-all cursor-grab active:cursor-grabbing"
             >
-              <div>
-                {/* Header Badge */}
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800 gap-2">
+              {/* Header Badge */}
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 dark:border-slate-800 gap-2 shrink-0">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="flex items-center gap-1.5 shrink-0">
                       <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
@@ -240,78 +240,79 @@ export const ConnectedWorkflow: React.FC = () => {
                   )}
                 </div>
 
-                {/* Animated Stage Details */}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentStage.id}
-                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-                    transition={{ duration: 0.22, ease: 'easeOut' }}
-                    className="space-y-4"
-                  >
-                    {/* Stage Name & Tagline */}
-                    <div>
-                      <div className="text-[11px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">
-                        {currentStage.tagline}
-                      </div>
-                      <h3 className="text-2xl font-extrabold text-slate-950 dark:text-white mt-0.5 flex items-center gap-2">
-                        <span>{currentStage.name}</span>
-                      </h3>
-                      <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                        {currentStage.summary}
-                      </p>
-                    </div>
-
-                    {/* Stage Live Data Mockup */}
-                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white border border-slate-200/90 dark:border-slate-800 space-y-2.5 font-sans">
-                      <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800 gap-2">
-                        <span className="text-xs font-bold text-slate-800 dark:text-slate-300 flex items-center gap-1.5 truncate">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
-                          <span className="truncate">{currentStage.mockupSnippet.title}</span>
-                        </span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-sky-300 border border-blue-200 dark:border-sky-700/60 shrink-0 font-bold">
-                          {currentStage.mockupSnippet.badge}
-                        </span>
+                {/* Animated Stage Details with internal scroll safeguard */}
+                <div className="flex-1 overflow-y-auto max-h-[min(480px,calc(100dvh-15.5rem))] pr-0.5 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentStage.id}
+                      initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
+                      transition={{ duration: 0.22, ease: 'easeOut' }}
+                      className="space-y-3.5"
+                    >
+                      {/* Stage Name & Tagline */}
+                      <div>
+                        <div className="text-[11px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">
+                          {currentStage.tagline}
+                        </div>
+                        <h3 className="text-xl sm:text-2xl font-extrabold text-slate-950 dark:text-white mt-0.5 flex items-center gap-2">
+                          <span>{currentStage.name}</span>
+                        </h3>
+                        <p className="mt-1.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                          {currentStage.summary}
+                        </p>
                       </div>
 
-                      <div className="space-y-1.5 text-xs">
-                        {currentStage.mockupSnippet.lines.map((l, i) => (
-                          <div
-                            key={i}
-                            className="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2"
-                          >
-                            <span className="text-slate-500 dark:text-slate-400 text-[11px] shrink-0 font-medium">
-                              {l.label}
-                            </span>
-                            <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs sm:text-right break-words">
-                              {l.value}
-                            </span>
-                          </div>
-                        ))}
+                      {/* Stage Live Data Mockup */}
+                      <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white border border-slate-200/90 dark:border-slate-800 space-y-2 font-sans">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800 gap-2">
+                          <span className="text-xs font-bold text-slate-800 dark:text-slate-300 flex items-center gap-1.5 truncate">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
+                            <span className="truncate">{currentStage.mockupSnippet.title}</span>
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-sky-300 border border-blue-200 dark:border-sky-700/60 shrink-0 font-bold">
+                            {currentStage.mockupSnippet.badge}
+                          </span>
+                        </div>
+
+                        <div className="space-y-1.5 text-xs">
+                          {currentStage.mockupSnippet.lines.map((l, i) => (
+                            <div
+                              key={i}
+                              className="p-1.5 sm:p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2"
+                            >
+                              <span className="text-slate-500 dark:text-slate-400 text-[11px] shrink-0 font-medium">
+                                {l.label}
+                              </span>
+                              <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs sm:text-right break-words">
+                                {l.value}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="text-[10px] text-slate-400 dark:text-slate-500 text-center pt-0.5 font-medium">
+                          Synchronized automatically with counter registers
+                        </div>
                       </div>
 
-                      <div className="text-[10px] text-slate-400 dark:text-slate-500 text-center pt-0.5 font-medium">
-                        Synchronized automatically with counter registers
+                      {/* Automated Ripple Consequence Banner */}
+                      <div className="p-3 rounded-xl bg-sky-50/80 dark:bg-blue-950/40 border border-sky-200/80 dark:border-sky-800/60 text-xs">
+                        <div className="flex items-center gap-1.5 font-bold text-blue-700 dark:text-sky-300 mb-0.5">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Next Automated Action:</span>
+                        </div>
+                        <div className="text-slate-700 dark:text-slate-300 text-[11px] leading-relaxed">
+                          {currentStage.rippleEffect}
+                        </div>
                       </div>
-                    </div>
-
-                    {/* Automated Ripple Consequence Banner */}
-                    <div className="p-3.5 rounded-xl bg-sky-50/80 dark:bg-blue-950/40 border border-sky-200/80 dark:border-sky-800/60 text-xs">
-                      <div className="flex items-center gap-1.5 font-bold text-blue-700 dark:text-sky-300 mb-1">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>Next Automated Action:</span>
-                      </div>
-                      <div className="text-slate-700 dark:text-slate-300 text-[11px] leading-relaxed">
-                        {currentStage.rippleEffect}
-                      </div>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
 
               {/* Prev / Next Stage Controls */}
-              <div className="pt-4 mt-4 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between gap-2">
+              <div className="pt-3 mt-3 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
                 <button
                   type="button"
                   disabled={activeStageIndex === 0}

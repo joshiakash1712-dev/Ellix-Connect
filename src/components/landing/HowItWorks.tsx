@@ -109,19 +109,20 @@ export const HowItWorks: React.FC = () => {
     <section
       ref={sectionRef}
       id="how-it-works"
-      className="py-12 sm:py-16 md:py-20 scroll-mt-16 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
+      data-work-wheel="true"
+      className="py-6 sm:py-8 lg:py-10 scroll-mt-20 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
+        <div className="max-w-3xl mx-auto text-center mb-4 sm:mb-6 lg:mb-7">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
             Up and running in minutes.
           </h2>
         </div>
 
         {/* Side-by-Side: Interactive Work Wheel on Left, Live Scrolling Implementation Monitor on Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-stretch">
           
           {/* Left: Vector Work Wheel Dial Component (Hidden on mobile for clean preview, visible on desktop) */}
           <div className="hidden lg:flex lg:col-span-6 xl:col-span-6 flex-col">
@@ -137,7 +138,7 @@ export const HowItWorks: React.FC = () => {
               onActiveChange={handleStepSelect}
               label="Steps '26"
               sublabel="Fast Setup"
-              className="h-full min-h-[380px] sm:min-h-[440px]"
+              className="h-full min-h-[340px] sm:min-h-[380px] lg:min-h-[420px]"
             />
           </div>
 
@@ -146,11 +147,10 @@ export const HowItWorks: React.FC = () => {
             <div
               ref={cardRef}
               {...scrollProps}
-              className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full outline-none focus:ring-2 focus:ring-blue-500/30 transition-all cursor-grab active:cursor-grabbing"
+              className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full outline-none focus:ring-2 focus:ring-blue-500/30 transition-all cursor-grab active:cursor-grabbing"
             >
-              <div>
-                {/* Header Badge */}
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800 gap-2">
+              {/* Header Badge */}
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 dark:border-slate-800 gap-2 shrink-0">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="flex items-center gap-1.5 shrink-0">
                       <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
@@ -180,59 +180,60 @@ export const HowItWorks: React.FC = () => {
                   )}
                 </div>
 
-                {/* Animated Step Details */}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentStep.step}
-                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-                    transition={{ duration: 0.22, ease: 'easeOut' }}
-                    className="space-y-4"
-                  >
-                    {/* Title & Setup Badge */}
-                    <div>
-                      <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span>Setup Time: {currentStep.time}</span>
-                      </div>
-                      <h3 className="text-2xl font-extrabold text-slate-950 dark:text-white mt-1">
-                        {currentStep.title}
-                      </h3>
-                      <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                        {currentStep.description}
-                      </p>
-                    </div>
-
-                    {/* Operational Impact Card */}
-                    <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">
-                        Operational Impact
-                      </div>
-                      <div className="text-xs font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
-                        <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
-                        <span>{currentStep.impact}</span>
-                      </div>
-                    </div>
-
-                    {/* Execution Checklist */}
-                    <div className="pt-2 space-y-2.5">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
-                        {currentStep.preview.heading}
-                      </div>
-                      {currentStep.preview.items.map((it, i) => (
-                        <div key={i} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
-                          <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
-                          <span className="leading-snug">{it}</span>
+                {/* Animated Step Details with internal scroll safeguard */}
+                <div className="flex-1 overflow-y-auto max-h-[min(480px,calc(100dvh-15.5rem))] pr-0.5 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentStep.step}
+                      initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
+                      transition={{ duration: 0.22, ease: 'easeOut' }}
+                      className="space-y-3.5"
+                    >
+                      {/* Title & Setup Badge */}
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>Setup Time: {currentStep.time}</span>
                         </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                        <h3 className="text-xl sm:text-2xl font-extrabold text-slate-950 dark:text-white mt-0.5">
+                          {currentStep.title}
+                        </h3>
+                        <p className="mt-1.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                          {currentStep.description}
+                        </p>
+                      </div>
+
+                      {/* Operational Impact Card */}
+                      <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800">
+                        <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">
+                          Operational Impact
+                        </div>
+                        <div className="text-xs font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                          <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0" />
+                          <span>{currentStep.impact}</span>
+                        </div>
+                      </div>
+
+                      {/* Execution Checklist */}
+                      <div className="pt-1.5 space-y-2">
+                        <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+                          {currentStep.preview.heading}
+                        </div>
+                        {currentStep.preview.items.map((it, i) => (
+                          <div key={i} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
+                            <span className="leading-snug">{it}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
 
               {/* Bottom Card Controls & Footer */}
-              <div className="pt-4 mt-6 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+              <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
                 <button
                   type="button"
                   disabled={activeStepIndex === 0}

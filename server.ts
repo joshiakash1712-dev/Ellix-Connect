@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import fs from 'fs';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
@@ -1158,7 +1159,16 @@ app.use(express.static(path.resolve(process.cwd(), 'public'), {
 // ==========================================
 
 async function startServer() {
-  const distPath = path.resolve(process.cwd(), 'dist');
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+
+  const candidateDirs = [
+    path.resolve(process.cwd(), 'dist'),
+    path.resolve(process.cwd(), 'build'),
+    path.resolve(__dirname, 'dist'),
+    path.resolve(__dirname, 'build'),
+  ];
+  const distPath = candidateDirs.find((dir) => fs.existsSync(path.join(dir, 'index.html'))) || path.resolve(process.cwd(), 'dist');
   const indexPath = path.join(distPath, 'index.html');
   const hasDist = fs.existsSync(indexPath);
   const lifecycle = process.env.npm_lifecycle_event;
@@ -1174,7 +1184,7 @@ async function startServer() {
     res.status(404).json({ error: 'API endpoint not found', path: req.originalUrl });
   });
 
-  if (!isProduction || !hasDist) {
+  if (isExplicitDev) {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -1182,38 +1192,46 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    // Serve immutable content-hashed Vite bundles with long-term caching for fast loads
-    app.use(
-      '/assets',
-      express.static(path.join(distPath, 'assets'), {
-        immutable: true,
-        maxAge: '1y',
-        setHeaders: (res) => {
-          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-        }
-      })
-    );
-
-    // Serve other pre-compiled static files with balanced caching, keeping index.html uncached
-    app.use(
-      express.static(distPath, {
-        index: false,
-        maxAge: '1h',
-        setHeaders: (res, filePath) => {
-          if (filePath.endsWith('index.html')) {
-            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-          } else {
-            res.setHeader('Cache-Control', 'public, max-age=3600');
+    if (hasDist) {
+      // Serve immutable content-hashed Vite bundles with long-term caching for fast loads
+      app.use(
+        '/assets',
+        express.static(path.join(distPath, 'assets'), {
+          immutable: true,
+          maxAge: '1y',
+          setHeaders: (res) => {
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
           }
-        }
-      })
-    );
+        })
+      );
 
-    // SPA fallback: Serve index.html for all non-static page requests
-    app.get('*', (_req, res) => {
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      res.sendFile(indexPath);
-    });
+      // Serve other pre-compiled static files with balanced caching, keeping index.html uncached
+      app.use(
+        express.static(distPath, {
+          index: false,
+          maxAge: '1h',
+          setHeaders: (res, filePath) => {
+            if (filePath.endsWith('index.html')) {
+              res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            } else {
+              res.setHeader('Cache-Control', 'public, max-age=3600');
+            }
+          }
+        })
+      );
+
+      // SPA fallback: Serve index.html for all non-static page requests
+      app.get('*', (_req, res) => {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.sendFile(indexPath);
+      });
+    } else {
+      console.warn('Production mode active but dist/index.html not found. Serving fallback shell.');
+      app.get('*', (_req, res) => {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.status(200).send('<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Ellic</title></head><body style="font-family:sans-serif;padding:40px;text-align:center;"><h1>Ellic Platform Service</h1><p>Application is healthy and initializing.</p></body></html>');
+      });
+    }
   }
 
   // Global Express Error Handler

@@ -103,19 +103,20 @@ export const ProductPreview: React.FC = () => {
     <section
       ref={sectionRef}
       id="product"
-      className="py-12 sm:py-16 md:py-20 scroll-mt-16 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
+      data-work-wheel="true"
+      className="py-6 sm:py-8 lg:py-10 scroll-mt-20 bg-white dark:bg-slate-950 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight">
+        <div className="max-w-3xl mx-auto text-center mb-4 sm:mb-6 lg:mb-7">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight">
             Designed for speed at the counter.
           </h2>
         </div>
 
         {/* Side-by-Side: Interactive Work Wheel on Left, Live Scrolling UI Simulator on Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-stretch">
           
           {/* Left: Vector Work Wheel Dial Component (Hidden on mobile for clean preview, visible on desktop) */}
           <div className="hidden lg:flex lg:col-span-6 xl:col-span-6 flex-col">
@@ -131,7 +132,7 @@ export const ProductPreview: React.FC = () => {
               onActiveChange={handleTabSelect}
               label="Product '26"
               sublabel="POS Modules"
-              className="h-full min-h-[380px] sm:min-h-[440px]"
+              className="h-full min-h-[340px] sm:min-h-[380px] lg:min-h-[420px]"
             />
           </div>
 
@@ -142,43 +143,42 @@ export const ProductPreview: React.FC = () => {
               {...scrollProps}
               className="rounded-2xl border border-slate-300/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden flex flex-col justify-between h-full outline-none focus:ring-2 focus:ring-blue-500/30 transition-all cursor-grab active:cursor-grabbing"
             >
-              <div>
-                {/* Window Header */}
-                <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 px-3.5 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                    <span className="w-2.5 h-2.5 rounded-full bg-rose-400 shrink-0" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0" />
-                    <span className="ml-1 text-[11px] sm:text-xs font-mono font-bold text-slate-600 dark:text-slate-300 truncate">
-                      Ellic Enterprise • {activeTabMeta.label}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    {isLastItem ? (
-                      <button
-                        type="button"
-                        onClick={scrollToNextSection}
-                        className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700/60 px-2 py-0.5 rounded hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer"
-                        title="All modules viewed. Scroll or click to continue to next section"
-                      >
-                        <span>Unlocked • Scroll down ↓</span>
-                      </button>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-mono text-blue-700 dark:text-sky-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 px-2 py-0.5 rounded font-medium">
-                        <MousePointer className="w-2.5 h-2.5" />
-                        <span className="hidden sm:inline">Anchored ({activeTabIndex + 1}/{tabs.length}) • Scroll down</span>
-                        <span className="sm:hidden">{activeTabIndex + 1}/{tabs.length} • Scroll</span>
-                      </span>
-                    )}
-                    <span className="text-[10px] sm:text-[11px] font-mono font-semibold px-2 sm:px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-sky-300 border border-blue-200 dark:border-blue-900 shrink-0 whitespace-nowrap">
-                      {activeTabMeta.badge}
-                    </span>
-                  </div>
+              {/* Window Header */}
+              <div className="bg-slate-100/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 px-3.5 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2 shrink-0">
+                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-400 shrink-0" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0" />
+                  <span className="ml-1 text-[11px] sm:text-xs font-mono font-bold text-slate-600 dark:text-slate-300 truncate">
+                    Ellic Enterprise • {activeTabMeta.label}
+                  </span>
                 </div>
 
-                {/* Module Simulator Content */}
-                <div className="p-4 sm:p-5 md:p-6 space-y-4">
+                <div className="flex items-center gap-2 shrink-0">
+                  {isLastItem ? (
+                    <button
+                      type="button"
+                      onClick={scrollToNextSection}
+                      className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700/60 px-2 py-0.5 rounded hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer"
+                      title="All modules viewed. Scroll or click to continue to next section"
+                    >
+                      <span>Unlocked • Scroll down ↓</span>
+                    </button>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-blue-700 dark:text-sky-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 px-2 py-0.5 rounded font-medium">
+                      <MousePointer className="w-2.5 h-2.5" />
+                      <span className="hidden sm:inline">Anchored ({activeTabIndex + 1}/{tabs.length}) • Scroll down</span>
+                      <span className="sm:hidden">{activeTabIndex + 1}/{tabs.length} • Scroll</span>
+                    </span>
+                  )}
+                  <span className="text-[10px] sm:text-[11px] font-mono font-semibold px-2 sm:px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-sky-300 border border-blue-200 dark:border-blue-900 shrink-0 whitespace-nowrap">
+                    {activeTabMeta.badge}
+                  </span>
+                </div>
+              </div>
+
+              {/* Module Simulator Content with internal scroll safeguard */}
+              <div className="flex-1 overflow-y-auto max-h-[min(480px,calc(100dvh-15.5rem))] p-3.5 sm:p-4 md:p-5 space-y-3.5 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeTab}
@@ -381,10 +381,9 @@ export const ProductPreview: React.FC = () => {
                     </motion.div>
                   </AnimatePresence>
                 </div>
-              </div>
 
               {/* Bottom Card Controls & Footer */}
-              <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2 text-xs text-slate-500 bg-slate-50/50 dark:bg-slate-950/40">
+              <div className="px-4 py-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2 text-xs text-slate-500 bg-slate-50/50 dark:bg-slate-950/40 shrink-0">
                 <button
                   type="button"
                   disabled={activeTabIndex === 0}

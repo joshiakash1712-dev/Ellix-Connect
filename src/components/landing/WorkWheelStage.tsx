@@ -106,16 +106,16 @@ export const WorkWheelStage: React.FC<WorkWheelStageProps> = ({
       </div>
 
       {/* Center 2D/3D Wheel Visual Stage */}
-      <div className="relative flex-1 min-h-[340px] sm:min-h-[400px] flex items-center justify-center p-4 overflow-hidden">
+      <div className="relative flex-1 min-h-[300px] sm:min-h-[340px] lg:min-h-[360px] flex items-center justify-center p-3 sm:p-4 overflow-hidden">
         {/* Background subtle radial rings & mesh */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40 dark:opacity-30">
-          <div className="w-[380px] h-[380px] rounded-full border border-dashed border-blue-400/40 dark:border-sky-500/30" />
-          <div className="w-[280px] h-[280px] rounded-full border border-slate-300 dark:border-slate-700" />
-          <div className="w-[180px] h-[180px] rounded-full border border-blue-500/20 dark:border-sky-400/20" />
+          <div className="w-[340px] h-[340px] rounded-full border border-dashed border-blue-400/40 dark:border-sky-500/30" />
+          <div className="w-[260px] h-[260px] rounded-full border border-slate-300 dark:border-slate-700" />
+          <div className="w-[170px] h-[170px] rounded-full border border-blue-500/20 dark:border-sky-400/20" />
         </div>
 
         {/* The Rotating Wheel Assembly */}
-        <div className="relative w-[300px] sm:w-[340px] h-[300px] sm:h-[340px] flex items-center justify-center">
+        <div className="relative w-[280px] sm:w-[310px] lg:w-[330px] h-[280px] sm:h-[310px] lg:h-[330px] flex items-center justify-center">
           
           {/* Animated Rotating Node Ring */}
           <motion.div
@@ -159,11 +159,11 @@ export const WorkWheelStage: React.FC<WorkWheelStageProps> = ({
               </defs>
             </svg>
 
-            {/* Positioned Node Buttons along circular perimeter */}
+            {/* Positioned Node Buttons along circular perimeter (proportional to 340px SVG viewBox) */}
             {items.map((item, idx) => {
               const nodeAngle = idx * anglePerItem - 90; // Start at 12 o'clock
               const rad = (nodeAngle * Math.PI) / 180;
-              const radius = 130; // Radius in pixels
+              const radius = 130; // Radius in SVG units
               const cx = 170 + radius * Math.cos(rad);
               const cy = 170 + radius * Math.sin(rad);
               const isActive = idx === activeIndex;
@@ -174,8 +174,8 @@ export const WorkWheelStage: React.FC<WorkWheelStageProps> = ({
                   key={item.id}
                   style={{
                     position: 'absolute',
-                    left: `${cx}px`,
-                    top: `${cy}px`,
+                    left: `${(cx / 340) * 100}%`,
+                    top: `${(cy / 340) * 100}%`,
                     transform: 'translate(-50%, -50%)',
                   }}
                   className="z-20"
@@ -195,11 +195,11 @@ export const WorkWheelStage: React.FC<WorkWheelStageProps> = ({
                       aria-label={`Jump to ${item.title}`}
                       className={`relative flex items-center justify-center rounded-2xl transition-all cursor-pointer group ${
                         isActive
-                          ? 'w-13 h-13 sm:w-14 sm:h-14 bg-gradient-to-tr from-blue-600 to-sky-500 text-white shadow-lg shadow-blue-500/30 ring-4 ring-blue-400/20 scale-110'
-                          : 'w-11 h-11 sm:w-12 sm:h-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400 hover:text-blue-600 dark:hover:text-sky-400 shadow-sm hover:scale-105'
+                          ? 'w-12 h-12 sm:w-13 sm:h-13 bg-gradient-to-tr from-blue-600 to-sky-500 text-white shadow-lg shadow-blue-500/30 ring-4 ring-blue-400/20 scale-110'
+                          : 'w-10 h-10 sm:w-11 sm:h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400 hover:text-blue-600 dark:hover:text-sky-400 shadow-sm hover:scale-105'
                       }`}
                     >
-                      <Icon className={isActive ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4 sm:w-5 sm:h-5'} />
+                      <Icon className={isActive ? 'w-5 h-5 sm:w-5.5 sm:h-5.5' : 'w-4 h-4 sm:w-4.5 sm:h-4.5'} />
 
                       {/* Number Tag Badge */}
                       <span
@@ -219,14 +219,14 @@ export const WorkWheelStage: React.FC<WorkWheelStageProps> = ({
           </motion.div>
 
           {/* Central Hub Emblem */}
-          <div className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl flex flex-col items-center justify-center p-2 text-center pointer-events-none">
+          <div className="relative z-10 w-22 h-22 sm:w-26 sm:h-26 rounded-full bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl flex flex-col items-center justify-center p-2 text-center pointer-events-none">
             <div className="text-[9px] font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-sky-400">
               {items[activeIndex]?.number || '01'}
             </div>
-            <div className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white truncate max-w-[85px] sm:max-w-[100px] leading-tight">
+            <div className="text-xs sm:text-sm font-extrabold text-slate-950 dark:text-white truncate max-w-[80px] sm:max-w-[95px] leading-tight">
               {items[activeIndex]?.title}
             </div>
-            <div className="text-[9px] text-slate-400 mt-0.5 truncate max-w-[85px]">
+            <div className="text-[9px] text-slate-400 mt-0.5 truncate max-w-[80px]">
               {sublabel}
             </div>
           </div>

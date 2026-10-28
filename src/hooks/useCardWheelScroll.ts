@@ -1,4 +1,5 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react';
+import { useReducedMotion } from 'motion/react';
 
 export interface UseCardWheelScrollOptions {
   totalItems: number;
@@ -11,23 +12,23 @@ export interface UseCardWheelScrollOptions {
 }
 
 /**
- * Hook to anchor work-wheel sections when they reach the middle of the screen
- * and intercept mouse wheel, trackpad, and touch gestures.
+ * Viewport-Aware Section Anchoring and Scroll-Lock Hook for Ellic Work Wheel
  * 
- * Behavior:
- * - When the section is centered in the viewport, downward wheel gestures
- *   advance through the work-wheel cards in-place while keeping the section anchored.
- * - The website is PREVENTED from scrolling down until the user reaches the LAST card.
- * - Once on the last card, scrolling down naturally releases the anchor and scrolls
- *   the page down to the next section.
- * - Symmetrically, upward scrolling reverses the cards until card 0, at which point
- *   upward page scrolling resumes.
+ * Capabilities:
+ * - Dynamically calculates visible browser viewport height (accounting for sticky header).
+ * - Centers the Work Wheel section within the visible viewport when it fits; anchors just below
+ *   the header with scroll-safe containment when the window is compact or zoomed.
+ * - Pins the section when the user enters the section, preventing the document from moving vertically
+ *   while intermediate cards (0 to totalItems - 1) are rotated/navigated.
+ * - Releases the scroll-lock naturally on the LAST card when scrolling DOWN, smoothly continuing to the next section.
+ * - Releases the scroll-lock naturally on the FIRST card when scrolling UP, smoothly returning to the previous section.
+ * - Adapts cleanly across 100% zoom, 80% zoom, resized windows, reduced-height screens, and mobile.
  */
 export function useCardWheelScroll({
   totalItems,
   activeIndex,
   onActiveChange,
-  wheelThreshold = 35,
+  wheelThreshold = 38,
   debounceMs = 260,
   sectionId,
   enableAnchor = true,
@@ -35,6 +36,7 @@ export function useCardWheelScroll({
   const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [isAnchored, setIsAnchored] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const isLastItem = activeIndex === totalItems - 1;
   const isFirstItem = activeIndex === 0;
@@ -48,29 +50,92 @@ export function useCardWheelScroll({
   const onActiveChangeRef = useRef(onActiveChange);
   onActiveChangeRef.current = onActiveChange;
 
+  const isPinnedRef = useRef(false);
   const wheelAccumulatorRef = useRef(0);
   const lastStepTimeRef = useRef(0);
+  const lastDockTimeRef = useRef(0);
   const touchStartYRef = useRef(0);
   const touchStartXRef = useRef(0);
 
-  // Smoothly center section in the viewport if it has entered the anchor zone (Desktop only)
-  const anchorToCenter = useCallback(() => {
-    if (!enableAnchor) return;
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
+  // Dynamically compute the optimal viewport scroll position for this section
+  const calculateTargetScrollY = useCallback((el: HTMLElement): number => {
+    const rect = el.getBoundingClientRect();
+    const headerEl = document.querySelector('header');
+    const headerHeight = headerEl ? Math.round(headerEl.getBoundingClientRect().height) : 68;
+    const vh = window.innerHeight;
+    const availableHeight = Math.max(200, vh - headerHeight);
+    const sectionHeight = Math.round(rect.height);
+
+    let targetTop: number;
+    if (sectionHeight <= availableHeight) {
+      // Center the complete section vertically in the visible space under the sticky header
+      targetTop = headerHeight + Math.max(8, (availableHeight - sectionHeight) / 2);
+    } else {
+      // Section is taller than visible viewport: anchor top just under sticky header
+      targetTop = headerHeight + 8;
+    }
+
+    return Math.round(window.scrollY + rect.top - targetTop);
+  }, []);
+
+  // Determine if this section is the dominant focused Work Wheel section in the viewport
+  const isDominantSection = useCallback((): boolean => {
+    if (typeof window === 'undefined' || window.innerWidth < 1024) return false;
     const el = sectionRef.current;
-    if (!el) return;
+    if (!el) return false;
+
     const rect = el.getBoundingClientRect();
     const vh = window.innerHeight;
-    const sectionCenter = rect.top + rect.height / 2;
-    const viewportCenter = vh / 2;
+    const headerEl = document.querySelector('header');
+    const headerHeight = headerEl ? Math.round(headerEl.getBoundingClientRect().height) : 68;
 
-    // If section center is slightly off from viewport center, gently snap it into center
-    if (Math.abs(sectionCenter - viewportCenter) > 35) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Must be in active view
+    if (rect.top >= vh * 0.78 || rect.bottom <= headerHeight + 40) {
+      return false;
     }
-  }, [enableAnchor]);
 
-  // Advance or reverse by delta (-1 or +1)
+    const viewportCenter = headerHeight + (vh - headerHeight) / 2;
+    const sectionCenter = rect.top + rect.height / 2;
+    const myDistance = Math.abs(sectionCenter - viewportCenter);
+
+    // Multi-section arbitration: compare distance with other Work Wheel sections
+    const allWorkSections = Array.from(document.querySelectorAll<HTMLElement>('section[data-work-wheel="true"]'));
+    if (allWorkSections.length <= 1) return true;
+
+    for (const other of allWorkSections) {
+      if (other === el) continue;
+      const otherRect = other.getBoundingClientRect();
+      const otherCenter = otherRect.top + otherRect.height / 2;
+      const otherDistance = Math.abs(otherCenter - viewportCenter);
+      if (otherDistance < myDistance) {
+        return false;
+      }
+    }
+
+    return true;
+  }, []);
+
+  // Smoothly dock section to its optimal viewport position
+  const ensureDocked = useCallback(
+    (behavior: ScrollBehavior = 'smooth') => {
+      if (!enableAnchor) return;
+      if (typeof window === 'undefined' || window.innerWidth < 1024) return;
+      const el = sectionRef.current;
+      if (!el) return;
+
+      const targetY = calculateTargetScrollY(el);
+      const diff = Math.abs(window.scrollY - targetY);
+      if (diff > 5) {
+        window.scrollTo({
+          top: targetY,
+          behavior: prefersReducedMotion ? 'instant' : behavior,
+        });
+      }
+    },
+    [enableAnchor, calculateTargetScrollY, prefersReducedMotion]
+  );
+
+  // Step active card by delta (-1 or +1) while keeping viewport stationary
   const stepBy = useCallback(
     (delta: number): boolean => {
       const now = performance.now();
@@ -86,12 +151,11 @@ export function useCardWheelScroll({
         lastStepTimeRef.current = now;
         wheelAccumulatorRef.current = 0;
         onActiveChangeRef.current(next);
-        anchorToCenter();
         return true;
       }
       return false;
     },
-    [debounceMs, anchorToCenter]
+    [debounceMs]
   );
 
   // Programmatically scroll down to the next section or element
@@ -118,13 +182,13 @@ export function useCardWheelScroll({
     }
   }, []);
 
-  // Main native wheel event logic
+  // Main wheel event handler
   const handleWheelNative = useCallback(
     (e: WheelEvent, source: 'section' | 'window') => {
-      // Only engage wheel scroll locking on desktop/PC preview (>= 1024px) where wheel dial is visible
+      // On mobile viewports (< 1024px) where wheel dial is hidden, allow natural fluid scroll
       if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
 
-      // Ignore horizontal trackpad swipes
+      // Ignore pure horizontal gestures
       if (Math.abs(e.deltaY) < 3 && Math.abs(e.deltaX) > 10) return;
 
       const dy = e.deltaY;
@@ -133,45 +197,45 @@ export function useCardWheelScroll({
       const el = sectionRef.current;
       if (!el) return;
 
-      const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const sectionCenter = rect.top + rect.height / 2;
-      const viewportCenter = vh / 2;
-      const distFromCenter = Math.abs(sectionCenter - viewportCenter);
-
-      // Check if section is the active/centered section in the viewport
-      if (source === 'window') {
-        const isDominant = distFromCenter < vh * 0.42 && rect.top < vh * 0.65 && rect.bottom > vh * 0.35;
-        if (!isDominant) return;
-      } else {
-        const inView = rect.top < vh * 0.85 && rect.bottom > vh * 0.15;
-        if (!inView) return;
+      // If from window listener, only handle if this section is the dominant focused section
+      if (source === 'window' && !isDominantSection()) {
+        return;
       }
 
       const direction = dy > 0 ? 1 : -1;
       const current = activeIndexRef.current;
       const total = totalItemsRef.current;
 
-      // BOUNDARY CHECK:
-      // When scrolling DOWN and on the LAST card -> allow natural page scroll to next section!
+      // BOUNDARY 1: Scrolling DOWN and on the LAST card -> Release lock and let website scroll down!
       if (direction > 0 && current >= total - 1) {
+        isPinnedRef.current = false;
         setIsAnchored(false);
-        return; // Website scrolls down!
+        wheelAccumulatorRef.current = 0;
+        return;
       }
 
-      // When scrolling UP and on the FIRST card -> allow natural page scroll to previous section!
+      // BOUNDARY 2: Scrolling UP and on the FIRST card -> Release lock and let website scroll up!
       if (direction < 0 && current <= 0) {
+        isPinnedRef.current = false;
         setIsAnchored(false);
-        return; // Website scrolls up!
+        wheelAccumulatorRef.current = 0;
+        return;
       }
 
-      // WITHIN WORK WHEEL RANGE:
-      // Cancel native page scroll and step through work wheel cards!
+      // WITHIN WORK WHEEL RANGE: Pin section in viewport and step cards in-place
       e.preventDefault();
       e.stopPropagation();
+
+      const now = performance.now();
+      // Ensure section is nicely docked in viewport when starting to step
+      if (!isPinnedRef.current || now - lastDockTimeRef.current > 1200) {
+        ensureDocked('smooth');
+        lastDockTimeRef.current = now;
+      }
+      isPinnedRef.current = true;
       setIsAnchored(true);
 
-      const isDiscreteTick = e.deltaMode !== 0 || Math.abs(dy) >= 30;
+      const isDiscreteTick = e.deltaMode !== 0 || Math.abs(dy) >= 35;
 
       if (isDiscreteTick) {
         stepBy(direction);
@@ -180,14 +244,17 @@ export function useCardWheelScroll({
         wheelAccumulatorRef.current += dy;
         if (Math.abs(wheelAccumulatorRef.current) >= wheelThreshold) {
           const step = Math.sign(wheelAccumulatorRef.current);
-          stepBy(step);
+          const stepped = stepBy(step);
+          if (stepped) {
+            wheelAccumulatorRef.current = 0;
+          }
         }
       }
     },
-    [wheelThreshold, stepBy]
+    [isDominantSection, ensureDocked, stepBy, wheelThreshold]
   );
 
-  // Touch swipe support on mobile devices
+  // Touch swipe support for touchscreens on desktop/tablet preview (>= 1024px)
   const handleTouchStartNative = useCallback((e: TouchEvent) => {
     if (e.touches.length > 0) {
       touchStartYRef.current = e.touches[0].clientY;
@@ -197,24 +264,18 @@ export function useCardWheelScroll({
 
   const handleTouchMoveNative = useCallback(
     (e: TouchEvent) => {
-      // On mobile viewports (< 1024px) where wheel dial is hidden, allow natural fluid touch scroll
       if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
-
       if (e.touches.length === 0) return;
+
       const currentY = e.touches[0].clientY;
       const currentX = e.touches[0].clientX;
-      const deltaY = touchStartYRef.current - currentY; // positive = scroll down
+      const deltaY = touchStartYRef.current - currentY; // positive = swipe up (scroll down)
       const deltaX = currentX - touchStartXRef.current;
 
       if (Math.abs(deltaY) < 25) return;
       if (Math.abs(deltaX) > Math.abs(deltaY) * 1.6) return;
 
-      const el = sectionRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const distFromCenter = Math.abs(rect.top + rect.height / 2 - vh / 2);
-      if (distFromCenter > vh * 0.45) return;
+      if (!isDominantSection()) return;
 
       const direction = deltaY > 0 ? 1 : -1;
       const current = activeIndexRef.current;
@@ -232,10 +293,10 @@ export function useCardWheelScroll({
         touchStartYRef.current = currentY;
       }
     },
-    [stepBy]
+    [isDominantSection, stepBy]
   );
 
-  // Attach non-passive event listeners to ensure preventDefault() works reliably
+  // Attach non-passive native event listeners
   useEffect(() => {
     const sectionEl = sectionRef.current;
     if (!sectionEl) return;
@@ -256,7 +317,41 @@ export function useCardWheelScroll({
     };
   }, [handleWheelNative, handleTouchStartNative, handleTouchMoveNative]);
 
-  // Keyboard navigation when card container has focus
+  // Recalculate and re-anchor on window resize, zoom change, or section dimension change
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    let resizeTimer: number;
+    const handleResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        if (isPinnedRef.current && isDominantSection()) {
+          ensureDocked('instant');
+        }
+      }, 50);
+    };
+
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('orientationchange', handleResize, { passive: true });
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(() => {
+        handleResize();
+      });
+      observer.observe(el);
+    }
+
+    return () => {
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      if (observer) observer.disconnect();
+    };
+  }, [isDominantSection, ensureDocked]);
+
+  // Keyboard navigation when focused
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
       const current = activeIndexRef.current;

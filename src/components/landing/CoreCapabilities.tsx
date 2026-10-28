@@ -170,19 +170,20 @@ export const CoreCapabilities: React.FC = () => {
     <section
       ref={sectionRef}
       id="features"
-      className="py-12 sm:py-16 md:py-20 scroll-mt-16 bg-slate-50/70 dark:bg-slate-900/50 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
+      data-work-wheel="true"
+      className="py-6 sm:py-8 lg:py-10 scroll-mt-20 bg-slate-50/70 dark:bg-slate-900/50 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
+        <div className="max-w-3xl mx-auto text-center mb-4 sm:mb-6 lg:mb-7">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight break-words">
             Six tools unified into one calm platform.
           </h2>
         </div>
 
         {/* Side-by-Side: Interactive Work Wheel on Left, Live Scrolling Capability Monitor on Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-stretch">
           
           {/* Left: Vector Work Wheel Dial Component (Hidden on mobile for clean preview, visible on desktop) */}
           <div className="hidden lg:flex lg:col-span-6 xl:col-span-6 flex-col">
@@ -198,7 +199,7 @@ export const CoreCapabilities: React.FC = () => {
               onActiveChange={handleCapSelect}
               label="Capabilities '26"
               sublabel="Core Platform"
-              className="h-full min-h-[380px] sm:min-h-[440px]"
+              className="h-full min-h-[340px] sm:min-h-[380px] lg:min-h-[420px]"
             />
           </div>
 
@@ -207,11 +208,10 @@ export const CoreCapabilities: React.FC = () => {
             <div
               ref={cardRef}
               {...scrollProps}
-              className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full outline-none focus:ring-2 focus:ring-blue-500/30 transition-all cursor-grab active:cursor-grabbing"
+              className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex flex-col justify-between h-full outline-none focus:ring-2 focus:ring-blue-500/30 transition-all cursor-grab active:cursor-grabbing"
             >
-              <div>
-                {/* Header Badge */}
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800 gap-2">
+              {/* Header Badge */}
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 dark:border-slate-800 gap-2 shrink-0">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="flex items-center gap-1.5 shrink-0">
                       <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
@@ -241,64 +241,65 @@ export const CoreCapabilities: React.FC = () => {
                   )}
                 </div>
 
-                {/* Animated Capability Details */}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentCap.id}
-                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-                    transition={{ duration: 0.22, ease: 'easeOut' }}
-                    className="space-y-4"
-                  >
-                    {/* Title & Tagline */}
-                    <div>
-                      <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">
-                        <Icon className="w-3.5 h-3.5" />
-                        <span>{currentCap.badge}</span>
-                      </div>
-                      <h3 className="text-2xl font-extrabold text-slate-950 dark:text-white mt-1">
-                        {currentCap.title}
-                      </h3>
-                      <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                        {currentCap.description}
-                      </p>
-                    </div>
-
-                    {/* Operational Telemetry Card */}
-                    <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800">
-                      <div className="flex items-center justify-between text-xs mb-1">
-                        <span className="text-slate-500 dark:text-slate-400 font-medium">
-                          {currentCap.telemetry.label}
-                        </span>
-                        <span className="font-mono font-bold text-blue-600 dark:text-sky-400">
-                          {currentCap.telemetry.value}
-                        </span>
-                      </div>
-                      <div className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>{currentCap.telemetry.status}</span>
-                      </div>
-                    </div>
-
-                    {/* Feature Points Checklist */}
-                    <div className="pt-2 space-y-2.5">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
-                        Included In Store License
-                      </div>
-                      {currentCap.points.map((point, idx) => (
-                        <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
-                          <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
-                          <span className="leading-snug">{point}</span>
+                {/* Animated Capability Details with internal scroll safeguard */}
+                <div className="flex-1 overflow-y-auto max-h-[min(480px,calc(100dvh-15.5rem))] pr-0.5 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentCap.id}
+                      initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
+                      transition={{ duration: 0.22, ease: 'easeOut' }}
+                      className="space-y-3.5"
+                    >
+                      {/* Title & Tagline */}
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">
+                          <Icon className="w-3.5 h-3.5" />
+                          <span>{currentCap.badge}</span>
                         </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                        <h3 className="text-xl sm:text-2xl font-extrabold text-slate-950 dark:text-white mt-0.5">
+                          {currentCap.title}
+                        </h3>
+                        <p className="mt-1.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                          {currentCap.description}
+                        </p>
+                      </div>
+
+                      {/* Operational Telemetry Card */}
+                      <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800">
+                        <div className="flex items-center justify-between text-xs mb-1">
+                          <span className="text-slate-500 dark:text-slate-400 font-medium">
+                            {currentCap.telemetry.label}
+                          </span>
+                          <span className="font-mono font-bold text-blue-600 dark:text-sky-400">
+                            {currentCap.telemetry.value}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span>{currentCap.telemetry.status}</span>
+                        </div>
+                      </div>
+
+                      {/* Feature Points Checklist */}
+                      <div className="pt-1.5 space-y-2">
+                        <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+                          Included In Store License
+                        </div>
+                        {currentCap.points.map((point, idx) => (
+                          <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 mt-0.5" />
+                            <span className="leading-snug">{point}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
 
               {/* Bottom Card Controls & Footer */}
-              <div className="pt-4 mt-6 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+              <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2 shrink-0">
                 <button
                   type="button"
                   disabled={activeCapIndex === 0}
