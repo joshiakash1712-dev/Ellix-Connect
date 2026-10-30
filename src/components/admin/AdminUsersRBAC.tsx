@@ -43,6 +43,7 @@ export const AdminUsersRBAC: React.FC = () => {
     addEmployee,
     updateEmployee,
     deleteEmployee,
+    updateUserRole,
     batchUpdateEmployees,
     batchDeleteEmployees,
     addAuditLog
@@ -171,14 +172,17 @@ export const AdminUsersRBAC: React.FC = () => {
   };
 
   // Batch Execution Handlers
-  const handleExecuteBatchRole = () => {
+  const handleExecuteBatchRole = async () => {
     if (selectedIds.length === 0) return;
     batchUpdateEmployees(
       selectedIds,
       { role: batchRole },
       `Assigned role "${batchRole.replace('_', ' ')}" to ${selectedIds.length} staff accounts`
     );
-    showFeedback(`Successfully updated role to "${batchRole.replace('_', ' ')}" for ${selectedIds.length} staff member(s).`);
+    for (const id of selectedIds) {
+      await updateUserRole(id, batchRole as any);
+    }
+    showFeedback(`Successfully updated role to "${batchRole.replace('_', ' ')}" for ${selectedIds.length} account(s).`);
     closeBatchModal();
     setSelectedIds([]);
   };
@@ -307,11 +311,12 @@ export const AdminUsersRBAC: React.FC = () => {
     });
   };
 
-  const handleSaveEdit = (e: React.FormEvent) => {
+  const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingEmployee || !formData.name.trim()) return;
 
     updateEmployee(editingEmployee.id, formData);
+    await updateUserRole(editingEmployee.id, formData.role);
     setEditingEmployee(null);
   };
 
@@ -417,11 +422,14 @@ export const AdminUsersRBAC: React.FC = () => {
             className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-sky-500 shadow-sm capitalize w-full sm:w-auto"
           >
             <option value="all">All Roles</option>
+            <option value="customer">Platform Customer</option>
+            <option value="client">Store Client (Owner)</option>
             <option value="owner">Franchise Owner</option>
             <option value="manager">Store Manager</option>
             <option value="cashier">POS Cashier</option>
             <option value="inventory_manager">Inventory Specialist</option>
             <option value="wholesaler_admin">Wholesale Admin</option>
+            <option value="ellix_admin">Platform Admin</option>
           </select>
 
           {/* Status Filter */}
@@ -1053,6 +1061,18 @@ export const AdminUsersRBAC: React.FC = () => {
                     <div className="space-y-2">
                       {[
                         {
+                          id: 'customer',
+                          name: 'Platform Customer',
+                          desc: 'Default role on new login: End user, customer portal, personal purchase history',
+                          badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                        },
+                        {
+                          id: 'client',
+                          name: 'Store Client (Owner)',
+                          desc: 'Paid store subscriber with full outlet operations and subscription access',
+                          badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/30'
+                        },
+                        {
                           id: 'cashier',
                           name: 'POS Cashier',
                           desc: 'Point-of-sale checkout, barcode scanning, cash tender & receipt printing',
@@ -1074,13 +1094,19 @@ export const AdminUsersRBAC: React.FC = () => {
                           id: 'wholesaler_admin',
                           name: 'Wholesale Admin',
                           desc: 'B2B order dispatch, trade catalogues, credit limit overrides',
-                          badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/30'
+                          badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/30'
                         },
                         {
                           id: 'owner',
                           name: 'Franchise Owner',
                           desc: 'Unrestricted administrative access to financial logs, RBAC, and all outlets',
-                          badgeColor: 'bg-sky-500/20 text-sky-300 border-sky-500/30'
+                          badgeColor: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                        },
+                        {
+                          id: 'ellix_admin',
+                          name: 'Platform Admin',
+                          desc: 'Administrative authority to manage stores, pause unpaid clients, and govern roles',
+                          badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30'
                         }
                       ].map(r => (
                         <label
@@ -1776,11 +1802,14 @@ export const AdminUsersRBAC: React.FC = () => {
                       onChange={e => setFormData(prev => ({ ...prev, role: e.target.value as UserRole }))}
                       className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     >
+                      <option value="customer">Platform Customer</option>
+                      <option value="client">Store Client (Owner)</option>
                       <option value="cashier">POS Cashier</option>
                       <option value="manager">Store Manager</option>
                       <option value="inventory_manager">Inventory Specialist</option>
                       <option value="owner">Franchise Owner</option>
                       <option value="wholesaler_admin">Wholesaler Admin</option>
+                      <option value="ellix_admin">Platform Admin</option>
                     </select>
                   </div>
                   <div>
@@ -1909,11 +1938,14 @@ export const AdminUsersRBAC: React.FC = () => {
                       onChange={e => setFormData(prev => ({ ...prev, role: e.target.value as UserRole }))}
                       className="w-full bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
                     >
+                      <option value="customer">Platform Customer</option>
+                      <option value="client">Store Client (Owner)</option>
                       <option value="cashier">POS Cashier</option>
                       <option value="manager">Store Manager</option>
                       <option value="inventory_manager">Inventory Specialist</option>
                       <option value="owner">Franchise Owner</option>
                       <option value="wholesaler_admin">Wholesaler Admin</option>
+                      <option value="ellix_admin">Platform Admin</option>
                     </select>
                   </div>
                   <div>

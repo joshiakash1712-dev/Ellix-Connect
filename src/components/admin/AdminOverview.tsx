@@ -173,12 +173,14 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
 
           <div className="space-y-2 text-xs">
             <div className="flex justify-between text-slate-400">
-              <span>Active POS Terminals</span>
-              <span className="font-mono font-bold text-white">{stores.length * 2} Connected</span>
+              <span>Active Online Stores</span>
+              <span className="font-mono font-bold text-sky-400">{stores.filter(s => s.status !== 'paused').length} Operational</span>
             </div>
             <div className="flex justify-between text-slate-400">
-              <span>Managed Inventory SKUs</span>
-              <span className="font-mono font-bold text-sky-400">{products.length} Items</span>
+              <span>Paused Stores (Unpaid)</span>
+              <span className={`font-mono font-bold ${stores.filter(s => s.status === 'paused').length > 0 ? 'text-amber-400' : 'text-slate-400'}`}>
+                {stores.filter(s => s.status === 'paused').length} Paused
+              </span>
             </div>
             <div className="flex justify-between text-slate-400">
               <span>Total Customers in Ledger</span>

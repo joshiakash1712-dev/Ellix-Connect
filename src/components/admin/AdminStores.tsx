@@ -18,7 +18,10 @@ import {
   X,
   ExternalLink,
   ShieldCheck,
-  Check
+  Check,
+  PauseCircle,
+  PlayCircle,
+  AlertTriangle
 } from 'lucide-react';
 import { Store } from '../../types';
 
@@ -34,6 +37,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
     addStore,
     updateStore,
     deleteStore,
+    toggleStorePause,
     products,
     invoices,
     employees
@@ -41,6 +45,7 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [cityFilter, setCityFilter] = useState('all');
+  const [subscriptionFilter, setSubscriptionFilter] = useState<'all' | 'paid' | 'unpaid'>('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingStore, setEditingStore] = useState<Store | null>(null);
   const [selectedStoreDetail, setSelectedStoreDetail] = useState<Store | null>(null);
@@ -74,9 +79,13 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
         s.ownerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.address.toLowerCase().includes(searchQuery.toLowerCase());
       const matchCity = cityFilter === 'all' || s.city === cityFilter;
-      return matchSearch && matchCity;
+      const matchSub =
+        subscriptionFilter === 'all' ||
+        (subscriptionFilter === 'paid' && s.status !== 'paused' && s.subscriptionStatus !== 'unpaid') ||
+        (subscriptionFilter === 'unpaid' && (s.status === 'paused' || s.subscriptionStatus === 'unpaid'));
+      return matchSearch && matchCity && matchSub;
     });
-  }, [stores, searchQuery, cityFilter]);
+  }, [stores, searchQuery, cityFilter, subscriptionFilter]);
 
   const [statusFeedback, setStatusFeedback] = useState<string | null>(null);
 
@@ -189,7 +198,19 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          {/* Subscription Status Filter */}
+          <select
+            value={subscriptionFilter}
+            onChange={e => setSubscriptionFilter(e.target.value as any)}
+            className="bg-[#0A0E1A] border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-sky-500 shadow-sm w-full sm:w-auto"
+          >
+            <option value="all">All Subscriptions</option>
+            <option value="paid">Paid & Active Stores</option>
+            <option value="unpaid">Unpaid / Paused Stores</option>
+          </select>
+
+          {/* City Filter */}
           <select
             value={cityFilter}
             onChange={e => setCityFilter(e.target.value)}
@@ -204,10 +225,18 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
         </div>
       </div>
 
+      {statusFeedback && (
+        <div className="p-3.5 rounded-xl bg-blue-950/60 border border-sky-500/40 text-sky-200 text-xs flex items-center gap-2 shadow-lg">
+          <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
+          <span>{statusFeedback}</span>
+        </div>
+      )}
+
       {/* Stores Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredStores.map(st => {
           const isCurrent = activeStore.id === st.id;
+          const isPaused = st.status === 'paused' || st.subscriptionStatus === 'unpaid';
           const storeSkusCount = products.filter(p => p.storeId === st.id).length || products.length;
           const storeEmployeesCount = employees.filter(e => e.storeId === st.id).length || 1;
 
@@ -215,18 +244,33 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
             <div
               key={st.id}
               className={`p-5 rounded-xl bg-[#121826] border transition-all flex flex-col justify-between gap-4 shadow-lg ${
-                isCurrent ? 'border-sky-500/60 shadow-blue-500/10' : 'border-slate-800 hover:border-slate-700'
+                isPaused
+                  ? 'border-amber-500/40 bg-gradient-to-b from-[#121826] to-amber-950/10'
+                  : isCurrent
+                  ? 'border-sky-500/60 shadow-blue-500/10'
+                  : 'border-slate-800 hover:border-slate-700'
               }`}
             >
               <div className="space-y-3">
                 {/* Store Top Row */}
                 <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-0.5">
+                  <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="text-sm font-bold text-white tracking-tight">{st.name}</h3>
                       {isCurrent && (
                         <span className="text-[9px] px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-400 font-extrabold border border-sky-500/30">
                           Active Branch
+                        </span>
+                      )}
+                      {isPaused ? (
+                        <span className="text-[9px] px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30 flex items-center gap-1">
+                          <AlertTriangle className="w-2.5 h-2.5" />
+                          <span>Paused (Unpaid)</span>
+                        </span>
+                      ) : (
+                        <span className="text-[9px] px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/25 flex items-center gap-1">
+                          <CheckCircle2 className="w-2.5 h-2.5" />
+                          <span>Paid & Active</span>
                         </span>
                       )}
                     </div>
@@ -278,14 +322,40 @@ export const AdminStores: React.FC<AdminStoresProps> = () => {
                     <Globe className="w-3 h-3 text-slate-500" />
                     <span className="truncate">{st.address}</span>
                   </div>
+                  {isPaused && st.pausedReason && (
+                    <div className="text-[11px] text-amber-300/90 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
+                      Reason: {st.pausedReason}
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Bottom Card Controls */}
-              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5 text-[11px]">
-                  <span className={`w-2 h-2 rounded-full ${st.isOnline ? 'bg-sky-400' : 'bg-slate-500'}`} />
-                  <span className="text-slate-300 font-medium">{st.isOnline ? 'POS Online' : 'Offline'}</span>
+              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={async () => {
+                      try {
+                        await toggleStorePause(st.id, !isPaused, isPaused ? undefined : 'Unpaid subscription renewal');
+                        showStatusFeedback(
+                          isPaused
+                            ? `Store "${st.name}" successfully activated! Subscription marked paid.`
+                            : `Store "${st.name}" paused! Access restricted until subscription payment.`
+                        );
+                      } catch (err: any) {
+                        showStatusFeedback(`Failed to update store status: ${err?.message || 'Error'}`);
+                      }
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all flex items-center gap-1 ${
+                      isPaused
+                        ? 'bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border-emerald-500/30'
+                        : 'bg-amber-500/10 hover:bg-amber-500/25 text-amber-300 border-amber-500/30'
+                    }`}
+                    title={isPaused ? "Reactivate store operations" : "Pause store operations for unpaid subscription"}
+                  >
+                    {isPaused ? <PlayCircle className="w-3.5 h-3.5" /> : <PauseCircle className="w-3.5 h-3.5" />}
+                    <span>{isPaused ? 'Activate Store' : 'Pause Store'}</span>
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-2">

@@ -32,6 +32,7 @@ export type ProfileRole =
   | 'super_admin'
   | 'ellix_admin'
   | 'client'
+  | 'customer'
   | 'crew'
   | 'wholesaler_admin'
   | 'unauthorized'
@@ -134,8 +135,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const snap = await getDoc(userDocRef);
       const nowIso = new Date().toISOString();
 
-      const isSuperAdminEmail = user.email?.toLowerCase() === 'joshiakash1712@gmail.com' && isEmailVerified;
-      const isEllixAdminEmail = user.email?.toLowerCase() === 'ellic.admin11@gmail.com' && isEmailVerified;
+      const userEmail = user.email?.toLowerCase() || '';
+      const isSuperAdminEmail = (userEmail === 'ellixorrr@gmail.com' || userEmail === 'joshiakash1712@gmail.com') && isEmailVerified;
+      const isEllixAdminEmail = userEmail === 'ellic.admin11@gmail.com' && isEmailVerified;
 
       if (snap.exists()) {
         const existingData = snap.data() as UserProfile;
@@ -164,7 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           emailVerified: isEmailVerified,
           phoneNumber: user.phoneNumber || existingData.phoneNumber || '',
           phoneVerified: hasPhone,
-          displayName: user.displayName || additionalData?.displayName || existingData.displayName || (user.email ? user.email.split('@')[0] : 'Merchant'),
+          displayName: user.displayName || additionalData?.displayName || existingData.displayName || (user.email ? user.email.split('@')[0] : 'Customer'),
           photoURL: user.photoURL || existingData.photoURL || '',
           linkedProviders: mergedProviders,
           passwordSynchronized: additionalData?.passwordSynchronized ?? existingData.passwordSynchronized ?? hasPassword,
@@ -183,7 +185,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           uid: user.uid,
           email: existingData.email || user.email || '',
           role: resolvedCanonical,
-          clientId: existingData.clientId || (isEllixAdminEmail || isSuperAdminEmail ? 'platform' : 'client-001'),
+          clientId: existingData.clientId || (isEllixAdminEmail || isSuperAdminEmail ? 'platform' : resolvedCanonical === 'client' ? 'client-001' : 'customer'),
           assignedStoreIds: existingData.assignedStoreIds || (resolvedCanonical === 'crew' ? ['store-1'] : []),
           status: existingData.status || 'active'
         };
@@ -194,15 +196,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           ? 'super_admin'
           : isEllixAdminEmail
           ? 'ellix_admin'
-          : 'client';
-        const defaultClientId = (isSuperAdminEmail || isEllixAdminEmail) ? 'platform' : `client-${user.uid}`;
+          : 'customer';
+        const defaultClientId = (isSuperAdminEmail || isEllixAdminEmail) ? 'platform' : 'customer';
         const newProfile: UserProfile = {
           uid: user.uid,
           email: user.email || '',
           emailVerified: isEmailVerified,
           phoneNumber: user.phoneNumber || '',
           phoneVerified: hasPhone,
-          displayName: user.displayName || additionalData?.displayName || (isEllixAdminEmail ? 'Ellic Admin' : (user.email ? user.email.split('@')[0] : 'Merchant')),
+          displayName: user.displayName || additionalData?.displayName || (isEllixAdminEmail ? 'Ellic Admin' : isSuperAdminEmail ? 'Ellic Super Admin' : (user.email ? user.email.split('@')[0] : 'Customer')),
           photoURL: user.photoURL || '',
           role: initialRole,
           clientId: defaultClientId,
@@ -223,8 +225,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error?.code === 'permission-denied') {
         handleFirestoreError(error, OperationType.WRITE, `users/${user.uid}`);
       }
-      const isVerifiedRoot = user.email?.toLowerCase() === 'joshiakash1712@gmail.com' && isEmailVerified;
-      const isVerifiedEllix = user.email?.toLowerCase() === 'ellic.admin11@gmail.com' && isEmailVerified;
+      const userEmail = user.email?.toLowerCase() || '';
+      const isVerifiedRoot = (userEmail === 'ellixorrr@gmail.com' || userEmail === 'joshiakash1712@gmail.com') && isEmailVerified;
+      const isVerifiedEllix = userEmail === 'ellic.admin11@gmail.com' && isEmailVerified;
       const requestedCanonical = normalizeCanonicalRole(additionalData?.role);
       const safeFallbackRole: ProfileRole = isVerifiedRoot
         ? 'super_admin'
@@ -232,7 +235,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ? 'ellix_admin'
         : (requestedCanonical === 'crew' || requestedCanonical === 'wholesaler_admin' || requestedCanonical === 'client')
         ? requestedCanonical
-        : 'client';
+        : 'customer';
 
       const fallbackProfile: UserProfile = {
         uid: user.uid,
@@ -326,7 +329,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     email: string,
     pass: string,
     displayName: string,
-    role: 'retailer' | 'wholesaler' | 'admin' | 'employee' = 'retailer'
+    role: ProfileRole = 'customer'
   ) => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email.trim(), pass);

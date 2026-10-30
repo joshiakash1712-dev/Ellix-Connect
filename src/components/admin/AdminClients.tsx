@@ -22,7 +22,10 @@ import {
   Trash2,
   UserPlus,
   Mail,
-  Shield
+  Shield,
+  PauseCircle,
+  PlayCircle,
+  AlertTriangle
 } from 'lucide-react';
 import { BusinessApplication, normalizeCanonicalRole } from '../../types';
 
@@ -44,6 +47,7 @@ export const AdminClients: React.FC = () => {
     stores,
     subscription,
     updateSubscription,
+    toggleStorePause,
     activeRole
   } = useStore();
 
@@ -63,12 +67,12 @@ export const AdminClients: React.FC = () => {
   // Admin Team Management State (Super Admin Only)
   const [adminTeam, setAdminTeam] = useState<AdminMember[]>([
     {
-      uid: 'sa-root',
-      name: 'Ellic Creator',
-      email: 'joshiakash1712@gmail.com',
+      uid: 'sa-sole-superadmin',
+      name: 'Sole Super Admin',
+      email: 'ellixorrr@gmail.com',
       role: 'super_admin',
       status: 'active',
-      department: 'Root Executive',
+      department: 'Platform Governance & Executive',
       createdAt: '2026-01-01'
     },
     {
@@ -439,28 +443,80 @@ export const AdminClients: React.FC = () => {
             </div>
 
             <div className="divide-y divide-slate-800">
-              {stores.map(st => (
-                <div key={st.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 font-black text-sm shrink-0">
-                      {st.name.slice(0, 2).toUpperCase()}
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-white">{st.name}</div>
-                      <div className="text-xs text-slate-400">{st.city} • GSTIN: {st.gstin || 'Unregistered'}</div>
-                    </div>
-                  </div>
+              {stores.map(st => {
+                const isPaused = st.status === 'paused' || st.subscriptionStatus === 'unpaid';
 
-                  <div className="flex items-center gap-3 text-xs">
-                    <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 font-medium">
-                      Plan: {subscription.planName || 'Enterprise Pro'}
-                    </span>
-                    <span className="px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 font-bold">
-                      {subscription.status.toUpperCase()}
-                    </span>
+                return (
+                  <div key={st.id} className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-lg border flex items-center justify-center font-black text-sm shrink-0 ${
+                        isPaused
+                          ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                          : 'bg-sky-500/10 border-sky-500/20 text-sky-400'
+                      }`}>
+                        {st.name.slice(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-sm font-bold text-white">{st.name}</span>
+                          {isPaused ? (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                              <AlertTriangle className="w-3 h-3" />
+                              <span>UNPAID / PAUSED</span>
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3" />
+                              <span>PAID & ACTIVE</span>
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-xs text-slate-400 mt-0.5">
+                          {st.city} • GSTIN: {st.gstin || 'Unregistered'} • Owner: {st.ownerName}
+                        </div>
+                        {isPaused && st.pausedReason && (
+                          <div className="text-[11px] text-amber-300/80 mt-1">
+                            Paused reason: {st.pausedReason}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
+                      <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 font-medium text-xs">
+                        Plan: {subscription.planName || 'Growth Pro'}
+                      </span>
+                      <button
+                        onClick={async () => {
+                          try {
+                            await toggleStorePause(st.id, !isPaused, isPaused ? undefined : 'Unpaid subscription renewal');
+                            setFeedbackMsg({
+                              type: 'success',
+                              text: isPaused
+                                ? `Client store "${st.name}" successfully activated! Subscription marked paid.`
+                                : `Client store "${st.name}" paused! Access restricted until subscription payment.`
+                            });
+                          } catch (err: any) {
+                            setFeedbackMsg({
+                              type: 'error',
+                              text: `Failed to update store status: ${err?.message || 'Error'}`
+                            });
+                          }
+                        }}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1.5 shadow-sm ${
+                          isPaused
+                            ? 'bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border-emerald-500/30'
+                            : 'bg-amber-500/10 hover:bg-amber-500/25 text-amber-300 border-amber-500/30'
+                        }`}
+                        title={isPaused ? "Reactivate store and mark subscription paid" : "Pause store access until subscription is paid"}
+                      >
+                        {isPaused ? <PlayCircle className="w-3.5 h-3.5" /> : <PauseCircle className="w-3.5 h-3.5" />}
+                        <span>{isPaused ? 'Reactivate Store' : 'Pause Store (Unpaid)'}</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

@@ -19,7 +19,10 @@ export const SubscriptionPaywall: React.FC = () => {
   const {
     subscription,
     renewSubscription,
+    toggleStorePause,
     activeStore,
+    stores,
+    setActiveStore,
     setIsSettingsModalOpen
   } = useStore();
   const { logout, currentUser: authUser } = useAuth();
@@ -27,6 +30,7 @@ export const SubscriptionPaywall: React.FC = () => {
   const [isRenewing, setIsRenewing] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
+  const isStorePaused = activeStore.status === 'paused' || activeStore.subscriptionStatus === 'unpaid';
   const isBlocked = subscription.status === 'blocked';
   const isCancelled = subscription.status === 'cancelled';
   const isGracePeriod = subscription.status === 'grace_period';
@@ -35,8 +39,11 @@ export const SubscriptionPaywall: React.FC = () => {
     setIsRenewing(true);
     setFeedback(null);
     try {
+      if (isStorePaused) {
+        await toggleStorePause(activeStore.id, false);
+      }
       await renewSubscription();
-      setFeedback('Subscription successfully renewed! Full store access restored.');
+      setFeedback('Subscription payment received! Full store operations and terminal access restored.');
     } catch (err: any) {
       setFeedback(err?.message || 'Renewal failed. Please check payment method.');
     } finally {
@@ -58,7 +65,9 @@ export const SubscriptionPaywall: React.FC = () => {
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-300 text-[11px] font-bold font-mono uppercase tracking-wider mb-1">
               <ShieldAlert className="w-3.5 h-3.5" />
               <span>
-                {isBlocked
+                {isStorePaused
+                  ? 'Store Paused by Admin: Unpaid Subscription'
+                  : isBlocked
                   ? 'Access Blocked: Payment Past Due'
                   : isCancelled
                   ? 'Subscription Cancelled'
@@ -68,12 +77,13 @@ export const SubscriptionPaywall: React.FC = () => {
               </span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-white">
-              Store Operations Suspended
+              {isStorePaused ? 'Store Operations Paused' : 'Store Operations Suspended'}
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 mt-1">
-              Access to POS Billing, Inventory, Customer CRM, and Reports for{' '}
-              <strong className="text-white">{activeStore.name}</strong> is currently restricted
-              due to an unpaid subscription or cancellation.
+              Access to POS Billing, Inventory, and CRM for{' '}
+              <strong className="text-white">{activeStore.name}</strong> has been paused by the platform administrator
+              {activeStore.pausedReason ? ` (${activeStore.pausedReason})` : ' due to unpaid subscription'}.
+              Pay subscription below to restore immediate full access.
             </p>
           </div>
         </div>

@@ -7,12 +7,13 @@ export type ActiveModule = 'retailer' | 'wholesaler' | 'admin';
 // Level 4: crew (In-store staff member / cashier)
 // B2B: wholesaler_admin
 // Fail-closed: unauthorized
-export type AppRole = 'super_admin' | 'ellix_admin' | 'client' | 'crew';
+export type AppRole = 'super_admin' | 'ellix_admin' | 'client' | 'customer' | 'crew';
 
 export type CanonicalRole =
   | 'super_admin'
   | 'ellix_admin'
   | 'client'
+  | 'customer'
   | 'crew'
   | 'wholesaler_admin'
   | 'unauthorized';
@@ -21,6 +22,7 @@ export type UserRole =
   | 'super_admin'
   | 'ellix_admin'
   | 'client'
+  | 'customer'
   | 'crew'
   | 'wholesaler_admin'
   | 'unauthorized'
@@ -54,6 +56,10 @@ export function normalizeCanonicalRole(rawRole: unknown): CanonicalRole {
     case 'owner':
     case 'retailer':
       return 'client';
+    case 'customer':
+    case 'shopper':
+    case 'buyer':
+      return 'customer';
     case 'crew':
     case 'employee':
     case 'cashier':
@@ -121,6 +127,12 @@ export interface Store {
   latitude: number;
   longitude: number;
   isOnline: boolean;
+  status?: 'active' | 'paused' | 'unpaid' | 'pending';
+  subscriptionStatus?: 'paid' | 'unpaid' | 'expired' | 'trial';
+  subscriptionPlan?: string;
+  pausedReason?: string;
+  pausedAt?: string;
+  pausedBy?: string;
 }
 
 export interface Supplier {
@@ -529,7 +541,7 @@ export interface Employee {
   clientId?: string;
   assignedStoreIds?: string[];
   name: string;
-  role: 'crew' | 'owner' | 'manager' | 'inventory_staff' | 'cashier' | string;
+  role: 'crew' | 'client' | 'customer' | 'owner' | 'manager' | 'inventory_staff' | 'cashier' | 'ellix_admin' | 'super_admin' | string;
   email: string;
   phone: string;
   permissions: {
@@ -616,5 +628,25 @@ export interface OfflineSyncItem {
   docId: string;
   data?: any;
   timestamp: string;
+}
+
+export interface DailyTrendItem {
+  date: string;
+  visitors: number;
+  pageViews: number;
+  conversions: number;
+}
+
+export interface PlatformTelemetryStats {
+  activeVisitors: number;
+  totalVisitors: number;
+  todayVisitors: number;
+  dailyTrends: DailyTrendItem[];
+  clientCount: number;
+  customerCount: number;
+  onlineStores: number;
+  pausedStores: number;
+  totalReviews: number;
+  averageRating: number;
 }
 

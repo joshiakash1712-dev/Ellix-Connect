@@ -36,7 +36,10 @@ export const mockStores: Store[] = [
     image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=800',
     latitude: 19.076,
     longitude: 72.8777,
-    isOnline: true
+    isOnline: true,
+    status: 'active',
+    subscriptionStatus: 'paid',
+    subscriptionPlan: 'Enterprise Pro'
   },
   {
     id: 'store-2',
@@ -55,7 +58,10 @@ export const mockStores: Store[] = [
     image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800',
     latitude: 19.06,
     longitude: 72.83,
-    isOnline: true
+    isOnline: true,
+    status: 'active',
+    subscriptionStatus: 'paid',
+    subscriptionPlan: 'Growth Pro'
   },
   {
     id: 'store-3',
@@ -74,7 +80,11 @@ export const mockStores: Store[] = [
     image: 'https://images.unsplash.com/photo-1580913428706-c311e67898b3?auto=format&fit=crop&q=80&w=800',
     latitude: 18.995,
     longitude: 72.825,
-    isOnline: true
+    isOnline: false,
+    status: 'paused',
+    subscriptionStatus: 'unpaid',
+    subscriptionPlan: 'Enterprise Pro',
+    pausedReason: 'Monthly platform license subscription unpaid'
   }
 ];
 
@@ -702,12 +712,84 @@ export const mockBusinessApplications: BusinessApplication[] = [
 
 export const mockEmployees: Employee[] = [
   {
+    id: 'usr-sa-root',
+    storeId: 'platform',
+    clientId: 'platform',
+    assignedStoreIds: ['store-1', 'store-2', 'store-3'],
+    name: 'Ellic Executive',
+    role: 'super_admin',
+    email: 'ellixorrr@gmail.com',
+    phone: '+91 98000 00001',
+    permissions: {
+      canApplyDiscount: true,
+      inventoryEdit: true,
+      reports: true,
+      employeeManagement: true,
+      restockOrders: true
+    },
+    status: 'active'
+  },
+  {
+    id: 'usr-ea-ops',
+    storeId: 'platform',
+    clientId: 'platform',
+    assignedStoreIds: ['store-1', 'store-2', 'store-3'],
+    name: 'Ellic Operations Admin',
+    role: 'ellix_admin',
+    email: 'ellic.admin11@gmail.com',
+    phone: '+91 98000 00002',
+    permissions: {
+      canApplyDiscount: true,
+      inventoryEdit: true,
+      reports: true,
+      employeeManagement: true,
+      restockOrders: true
+    },
+    status: 'active'
+  },
+  {
+    id: 'usr-cust-01',
+    storeId: 'store-1',
+    clientId: 'customer',
+    assignedStoreIds: [],
+    name: 'Priya Sharma',
+    role: 'customer',
+    email: 'priya.sharma@gmail.com',
+    phone: '+91 98444 11223',
+    permissions: {
+      canApplyDiscount: false,
+      inventoryEdit: false,
+      reports: false,
+      employeeManagement: false,
+      restockOrders: false
+    },
+    status: 'active'
+  },
+  {
+    id: 'usr-cust-02',
+    storeId: 'store-2',
+    clientId: 'customer',
+    assignedStoreIds: [],
+    name: 'Ananya Deshmukh',
+    role: 'customer',
+    email: 'ananya.deshmukh@gmail.com',
+    phone: '+91 98555 22334',
+    permissions: {
+      canApplyDiscount: false,
+      inventoryEdit: false,
+      reports: false,
+      employeeManagement: false,
+      restockOrders: false
+    },
+    status: 'active'
+  },
+  {
     id: 'emp-1',
     storeId: 'store-1',
     clientId: 'client-001',
     assignedStoreIds: ['store-1', 'store-2', 'store-3'],
     name: 'Vikram Malhotra',
-    role: 'owner',
+    role: 'client',
     email: 'client@ellic.com',
     phone: '+91 98765 43210',
     permissions: {
